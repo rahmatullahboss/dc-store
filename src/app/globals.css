@@ -123,3 +123,118 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Animations */
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(400%);
+    opacity: 0;
+  }
+}
+
+.motion-safe\:animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+.motion-safe\:animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+
+.animate-shine {
+  animation: shine 5s ease-in-out infinite;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Brand styling: golden gradient - same as Online-Bazar */
+.brand-text {
+  background-image: linear-gradient(90deg, #b8860b, #daa520, #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-glow {
+  background-image: radial-gradient(
+    closest-side,
+    rgba(255, 215, 0, 0.5),
+    rgba(255, 215, 0, 0)
+  );
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .motion-reduce\:brand-gradient-static {
+    background-image: linear-gradient(90deg, #b8860b, #daa520, #ffd700);
+    background-size: 200% 200%;
+    background-position: center;
+  }
+
+  .motion-reduce\:fade-in-reset {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Lightweight motion tweaks for small screens */
+@media (max-width: 768px) {
+  .motion-safe\:animate-gradient-x {
+    animation-duration: 4s;
+  }
+
+  .motion-safe\:animate-fade-in {
+    animation-duration: 1.25s;
+  }
+}
+
+/* Safe area for mobile bottom nav */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

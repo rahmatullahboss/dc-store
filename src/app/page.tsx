@@ -1,20 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
-import {
-  ArrowRight,
-  Truck,
-  Shield,
-  RefreshCcw,
-  Clock,
-  Star,
-  Zap,
-  Gift,
-  Percent,
-} from "lucide-react";
+import { ArrowRight, Zap, Gift, Clock, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
+import { siteConfig } from "@/lib/config";
 import type { Product } from "@/db/schema";
 
 // Demo products for initial display - simulating database products
@@ -34,7 +23,7 @@ const featuredProducts: Product[] = [
     quantity: 50,
     lowStockThreshold: 5,
     trackQuantity: true,
-    categoryId: "electronics",
+    categoryId: "Electronics",
     images: [],
     featuredImage:
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
@@ -61,7 +50,7 @@ const featuredProducts: Product[] = [
     quantity: 30,
     lowStockThreshold: 5,
     trackQuantity: true,
-    categoryId: "electronics",
+    categoryId: "Electronics",
     images: [],
     featuredImage:
       "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
@@ -88,7 +77,7 @@ const featuredProducts: Product[] = [
     quantity: 20,
     lowStockThreshold: 5,
     trackQuantity: true,
-    categoryId: "fashion",
+    categoryId: "Fashion",
     images: [],
     featuredImage:
       "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
@@ -112,10 +101,10 @@ const featuredProducts: Product[] = [
     costPrice: 3500,
     sku: "RS-001",
     barcode: null,
-    quantity: 0,
+    quantity: 45,
     lowStockThreshold: 5,
     trackQuantity: true,
-    categoryId: "sports",
+    categoryId: "Sports",
     images: [],
     featuredImage:
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
@@ -128,63 +117,59 @@ const featuredProducts: Product[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
-];
-
-const categories = [
   {
-    name: "Electronics",
-    image:
-      "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=300&h=300&fit=crop",
-    slug: "electronics",
-    count: 120,
+    id: "5",
+    name: "Vintage Camera Collection",
+    slug: "vintage-camera-collection",
+    description: "Classic vintage camera for photography enthusiasts.",
+    shortDescription: "Retro design, modern features",
+    price: 15999,
+    compareAtPrice: 19999,
+    costPrice: 10000,
+    sku: "VC-001",
+    barcode: null,
+    quantity: 15,
+    lowStockThreshold: 3,
+    trackQuantity: true,
+    categoryId: "Electronics",
+    images: [],
+    featuredImage:
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop",
+    isActive: true,
+    isFeatured: true,
+    weight: 0.6,
+    weightUnit: "kg",
+    metaTitle: null,
+    metaDescription: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
-    name: "Fashion",
-    image:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?w=300&h=300&fit=crop",
-    slug: "fashion",
-    count: 250,
-  },
-  {
-    name: "Home & Living",
-    image:
-      "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=300&h=300&fit=crop",
-    slug: "home-living",
-    count: 180,
-  },
-  {
-    name: "Sports & Fitness",
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop",
-    slug: "sports",
-    count: 95,
-  },
-];
-
-const features = [
-  {
-    icon: Truck,
-    title: "Free Shipping",
-    description: "On orders over ৳1000",
-    color: "bg-blue-500",
-  },
-  {
-    icon: Shield,
-    title: "Secure Payment",
-    description: "100% secure checkout",
-    color: "bg-green-500",
-  },
-  {
-    icon: RefreshCcw,
-    title: "Easy Returns",
-    description: "7-day return policy",
-    color: "bg-purple-500",
-  },
-  {
-    icon: Clock,
-    title: "Fast Delivery",
-    description: "2-5 business days",
-    color: "bg-orange-500",
+    id: "6",
+    name: "Minimalist Desk Lamp",
+    slug: "minimalist-desk-lamp",
+    description: "Modern LED desk lamp with adjustable brightness.",
+    shortDescription: "Touch control, USB charging",
+    price: 2499,
+    compareAtPrice: 3499,
+    costPrice: 1200,
+    sku: "DL-001",
+    barcode: null,
+    quantity: 60,
+    lowStockThreshold: 10,
+    trackQuantity: true,
+    categoryId: "Home",
+    images: [],
+    featuredImage:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    isActive: true,
+    isFeatured: false,
+    weight: 0.4,
+    weightUnit: "kg",
+    metaTitle: null,
+    metaDescription: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
@@ -198,6 +183,7 @@ const offers = [
     icon: Zap,
     color: "from-red-500 to-orange-500",
     bgColor: "bg-red-50",
+    iconBg: "bg-red-500",
     timeLeft: "2h 30m",
   },
   {
@@ -208,6 +194,7 @@ const offers = [
     icon: Gift,
     color: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-50",
+    iconBg: "bg-purple-500",
     timeLeft: "5h left",
   },
   {
@@ -218,299 +205,152 @@ const offers = [
     icon: Percent,
     color: "from-blue-500 to-cyan-500",
     bgColor: "bg-blue-50",
+    iconBg: "bg-blue-500",
     timeLeft: "Limited",
   },
 ];
 
 export default function HomePage() {
   return (
-    <div className="space-y-12 sm:space-y-16 pb-20 md:pb-16">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-purple-500/20 blur-3xl animate-pulse delay-1000" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100 text-gray-800">
+      {/* Animated Background Elements - hidden on mobile for better LCP */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 motion-safe:animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-rose-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 motion-safe:animate-pulse animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 motion-safe:animate-pulse animation-delay-4000"></div>
+      </div>
 
-        <div className="container relative px-4 py-16 sm:py-24 md:py-32 lg:py-40">
-          <div className="mx-auto max-w-4xl text-center">
-            <Badge className="mb-4 sm:mb-6 bg-white/10 text-white hover:bg-white/20 border-0 px-4 py-1.5">
-              ✨ New Arrivals Just Dropped
-            </Badge>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-white">
-              Discover Your
-              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Perfect Style
-              </span>
-            </h1>
-            <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-base sm:text-lg text-slate-300 md:text-xl px-4">
-              Shop the latest trends with exclusive deals. Quality products,
-              fast delivery, and exceptional service.
-            </p>
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
+      <div className="relative z-10">
+        {/* Hero Section */}
+        <section className="relative pt-8 pb-8 sm:pt-24 sm:pb-16 flex items-center justify-center overflow-hidden">
+          {/* Floating Elements - hidden on mobile */}
+          <div className="absolute inset-0 pointer-events-none hidden md:block">
+            <div className="absolute top-20 left-10 w-4 h-4 bg-amber-300 rounded-full opacity-60 motion-safe:animate-bounce animation-delay-1000"></div>
+            <div className="absolute top-40 right-20 w-6 h-6 bg-rose-300 rounded-full opacity-50 motion-safe:animate-bounce animation-delay-2000"></div>
+            <div className="absolute bottom-40 left-20 w-3 h-3 bg-blue-300 rounded-full opacity-60 motion-safe:animate-bounce animation-delay-3000"></div>
+            <div className="absolute bottom-20 right-10 w-5 h-5 bg-amber-200 rounded-full opacity-40 motion-safe:animate-bounce animation-delay-4000"></div>
+          </div>
+
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+            <div className="space-y-4 sm:space-y-8">
+              <div className="space-y-2 sm:space-y-4">
+                <h2 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter">
+                  <span className="brand-text motion-safe:animate-gradient-x">
+                    {siteConfig.name}
+                  </span>
+                  <br />
+                  <span className="text-gray-800">Reimagined</span>
+                </h2>
+                <div className="h-1 w-24 sm:w-32 bg-gradient-to-r from-amber-400 to-rose-400 mx-auto rounded-full"></div>
+              </div>
+              <p className="text-base sm:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Experience the future of shopping with our curated collection of
+                premium items, delivered with precision and passion.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Hot Deals Section */}
+        <section className="py-8 sm:py-12 bg-gradient-to-r from-amber-50 via-rose-50 to-purple-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Section Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-xl text-white">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+                    🔥 Hot Deals
+                  </h2>
+                  <p className="text-sm text-gray-500 hidden sm:block">
+                    Limited time offers
+                  </p>
+                </div>
+              </div>
+              <Link href="/offers">
+                <Button variant="outline" size="sm" className="gap-1">
+                  View All <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+
+            {/* Offers Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {offers.map((offer) => (
+                <Link
+                  key={offer.id}
+                  href="/offers"
+                  className={`${offer.bgColor} rounded-xl p-4 border border-gray-100 hover:shadow-lg transition-all hover:scale-[1.02]`}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div
+                      className={`p-2 rounded-lg ${offer.iconBg} text-white`}
+                    >
+                      <offer.icon className="w-4 h-4" />
+                    </div>
+                    <Badge
+                      className={`bg-gradient-to-r ${offer.color} text-white text-xs border-0`}
+                    >
+                      {offer.badge}
+                    </Badge>
+                  </div>
+
+                  <h3 className="font-bold text-gray-800 mb-1 line-clamp-1">
+                    {offer.name}
+                  </h3>
+
+                  <p
+                    className={`text-lg font-bold bg-gradient-to-r ${offer.color} bg-clip-text text-transparent mb-2`}
+                  >
+                    {offer.discount}
+                  </p>
+
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Clock className="w-3 h-3" />
+                    <span>{offer.timeLeft}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Product Grid Section */}
+        <div className="container mx-auto px-2 py-8 sm:px-6 sm:py-16 lg:px-8">
+          <section className="space-y-6 sm:space-y-12">
+            <div className="text-center space-y-2 sm:space-y-4">
+              <h3 className="text-3xl sm:text-5xl font-bold brand-text">
+                Our Collection
+              </h3>
+              <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto">
+                Handcrafted experiences, delivered to perfection
+              </p>
+            </div>
+
+            {/* Products Grid - exact Online-Bazar layout */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {featuredProducts.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </div>
+
+            {/* View All Products Button */}
+            <div className="text-center pt-4">
               <Button
                 size="lg"
-                className="w-full sm:w-auto bg-white text-slate-900 hover:bg-slate-100 h-12 px-8 text-base"
+                className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full px-8"
                 asChild
               >
                 <Link href="/products">
-                  Shop Now <ArrowRight className="ml-2 h-4 w-4" />
+                  View All Products <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
-                asChild
-              >
-                <Link href="/categories">Browse Categories</Link>
-              </Button>
             </div>
-          </div>
+          </section>
         </div>
-      </section>
-
-      {/* Hot Offers Section */}
-      <section className="container px-4">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-xl text-white">
-              <Zap className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold">🔥 Hot Deals</h2>
-              <p className="text-sm text-muted-foreground hidden sm:block">
-                Limited time offers
-              </p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/offers">
-              View All <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {offers.map((offer) => (
-            <Link
-              key={offer.id}
-              href="/offers"
-              className={`${offer.bgColor} rounded-xl p-4 sm:p-5 border border-gray-100 hover:shadow-lg transition-all hover:scale-[1.02] group`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div
-                  className={`p-2.5 rounded-xl bg-gradient-to-r ${offer.color} text-white shadow-lg`}
-                >
-                  <offer.icon className="w-5 h-5" />
-                </div>
-                <Badge
-                  className={`bg-gradient-to-r ${offer.color} text-white border-0 shadow-md`}
-                >
-                  {offer.badge}
-                </Badge>
-              </div>
-              <h3 className="font-bold text-gray-800 mb-1">{offer.name}</h3>
-              <p
-                className={`text-2xl font-bold bg-gradient-to-r ${offer.color} bg-clip-text text-transparent mb-2`}
-              >
-                {offer.discount}
-              </p>
-              <div className="flex items-center gap-1 text-xs text-gray-500">
-                <Clock className="w-3 h-3" />
-                <span>{offer.timeLeft}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="container px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-          {features.map((feature) => (
-            <Card
-              key={feature.title}
-              className="border-0 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
-            >
-              <CardContent className="flex flex-col items-center text-center p-4 sm:p-6">
-                <div
-                  className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full ${feature.color} flex items-center justify-center mb-3 sm:mb-4 shadow-lg`}
-                >
-                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-sm sm:text-base">
-                  {feature.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  {feature.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="container px-4">
-        <div className="flex items-center justify-between mb-6 sm:mb-8">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold md:text-3xl">
-              Shop by Category
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-              Find what you&apos;re looking for
-            </p>
-          </div>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/categories">
-              View All <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-          {categories.map((category) => (
-            <Link
-              key={category.slug}
-              href={`/products?category=${category.slug}`}
-              className="group relative aspect-square overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
-            >
-              <Image
-                src={category.image}
-                alt={category.name}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-              <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
-                <h3 className="text-base sm:text-lg font-bold text-white">
-                  {category.name}
-                </h3>
-                <p className="text-xs sm:text-sm text-white/80">
-                  {category.count}+ Products
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured Products */}
-      <section className="container px-4">
-        <div className="flex items-center justify-between mb-6 sm:mb-8">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold md:text-3xl">
-              Featured Products
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-              Handpicked just for you
-            </p>
-          </div>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/products">
-              View All <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="container px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold md:text-3xl">
-            What Our Customers Say
-          </h2>
-          <p className="text-muted-foreground mt-1">
-            Trusted by thousands of happy customers
-          </p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            {
-              name: "Sarah J.",
-              rating: 5,
-              comment:
-                "Amazing quality and super fast delivery! Will definitely order again.",
-              avatar: "S",
-            },
-            {
-              name: "Mike R.",
-              rating: 5,
-              comment:
-                "Best online shopping experience. The products exceeded my expectations.",
-              avatar: "M",
-            },
-            {
-              name: "Lisa K.",
-              rating: 5,
-              comment:
-                "Great customer service and the return process was hassle-free.",
-              avatar: "L",
-            },
-          ].map((review, index) => (
-            <Card key={index} className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-1 mb-3">
-                  {Array.from({ length: review.rating }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4 fill-amber-400 text-amber-400"
-                    />
-                  ))}
-                </div>
-                <p className="text-muted-foreground mb-4">
-                  &quot;{review.comment}&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-primary to-primary/60 flex items-center justify-center text-white font-bold">
-                    {review.avatar}
-                  </div>
-                  <span className="font-medium">{review.name}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="container px-4">
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-r from-blue-600 to-purple-600">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-white/10 blur-3xl" />
-          </div>
-          <CardContent className="relative p-6 sm:p-8 md:p-12 lg:p-16 text-center">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">
-              Get 20% Off Your First Order
-            </h2>
-            <p className="mt-3 sm:mt-4 text-white/80 max-w-2xl mx-auto text-sm sm:text-base">
-              Subscribe to our newsletter and receive exclusive offers, new
-              arrivals updates, and special discounts.
-            </p>
-            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
-              />
-              <Button
-                size="lg"
-                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-slate-100"
-              >
-                Subscribe
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      </div>
     </div>
   );
 }
