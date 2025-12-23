@@ -7,6 +7,21 @@ compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 account_id = "474078d5f990169d7dadf4e1df83214a"
 
+# Custom Domain Route
+routes = [
+  { pattern = "dcstore.digitalcare.site", custom_domain = true }
+]
+
+# Enable observability/logging
+[observability]
+enabled = true
+head_sampling_rate = 1  # 100% of requests logged
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+head_sampling_rate = 1
+
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
@@ -18,10 +33,10 @@ migrations_dir = "drizzle/migrations"
 
 # Environment variables (non-sensitive)
 [vars]
-NEXT_PUBLIC_APP_URL = "https://dc-store.rahmatullahzisan.workers.dev"
+NEXT_PUBLIC_APP_URL = "https://dcstore.digitalcare.site"
 NEXT_PUBLIC_APP_NAME = "DC Store"
 NEXT_PUBLIC_BRAND_NAME = "DC Store"
-BETTER_AUTH_URL = "https://dc-store.rahmatullahzisan.workers.dev"
+BETTER_AUTH_URL = "https://dcstore.digitalcare.site"
 
 # Secrets (set via: npx wrangler secret put SECRET_NAME)
 # - BETTER_AUTH_SECRET
