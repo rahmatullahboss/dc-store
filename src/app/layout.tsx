@@ -5,7 +5,9 @@ import { siteConfig } from "@/lib/config";
 import { CartProvider } from "@/lib/cart-context";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { CartSheet } from "@/components/cart/cart-sheet";
+import { FloatingContactButtons } from "@/components/common/floating-contact-buttons";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
@@ -60,10 +62,12 @@ export default function RootLayout({
         <CartProvider>
           <div className="relative flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-16 md:pb-0">{children}</main>
             <Footer />
           </div>
           <CartSheet />
+          <MobileBottomNav />
+          <FloatingContactButtons />
           <Toaster position="bottom-right" richColors />
         </CartProvider>
       </body>
