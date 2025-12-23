@@ -18,10 +18,10 @@ migrations_dir = "drizzle/migrations"
 
 # Environment variables (non-sensitive)
 [vars]
-NEXT_PUBLIC_APP_URL = "https://dc-store.your-domain.workers.dev"
+NEXT_PUBLIC_APP_URL = "https://dc-store.rahmatullahzisan.workers.dev"
 NEXT_PUBLIC_APP_NAME = "DC Store"
 NEXT_PUBLIC_BRAND_NAME = "DC Store"
-BETTER_AUTH_URL = "https://dc-store.your-domain.workers.dev"
+BETTER_AUTH_URL = "https://dc-store.rahmatullahzisan.workers.dev"
 
 # Secrets (set via: npx wrangler secret put SECRET_NAME)
 # - BETTER_AUTH_SECRET
