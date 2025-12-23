@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { CartSheet } from "@/components/cart/cart-sheet";
 import { FloatingContactButtons } from "@/components/common/floating-contact-buttons";
+import { ChatBot } from "@/components/chat/chat-bot";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
@@ -68,6 +69,7 @@ export default function RootLayout({
           <CartSheet />
           <MobileBottomNav />
           <FloatingContactButtons />
+          <ChatBot />
           <Toaster position="bottom-right" richColors />
         </CartProvider>
       </body>

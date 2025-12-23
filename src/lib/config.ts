@@ -11,7 +11,9 @@ export const siteConfig = {
   // Contact Information
   email: "support@dcstore.com",
   phone: "+880 1234-567890",
+  whatsapp: "+8801234567890", // WhatsApp number for chat handoff
   address: "Dhaka, Bangladesh",
+  facebookPageId: "dcstore", // Facebook page ID for Messenger
 
   // Social Links
   social: {

@@ -262,6 +262,38 @@ export const settings = sqliteTable("settings", {
 });
 
 // ===========================================
+// Chat Tables
+// ===========================================
+
+export const chatConversations = sqliteTable("chat_conversations", {
+  id: text("id").primaryKey(),
+  sessionId: text("session_id").notNull().unique(),
+  userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+  guestName: text("guest_name"),
+  guestPhone: text("guest_phone"),
+  messageCount: integer("message_count").default(0),
+  lastMessageAt: integer("last_message_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
+export const chatMessages = sqliteTable("chat_messages", {
+  id: text("id").primaryKey(),
+  conversationId: text("conversation_id")
+    .notNull()
+    .references(() => chatConversations.id, { onDelete: "cascade" }),
+  role: text("role", { enum: ["user", "assistant"] }).notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
+// ===========================================
 // Relations
 // ===========================================
 
@@ -271,6 +303,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   orders: many(orders),
   reviews: many(reviews),
   carts: many(carts),
+  chatConversations: many(chatConversations),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -339,6 +372,24 @@ export const cartsRelations = relations(carts, ({ one }) => ({
   }),
 }));
 
+export const chatConversationsRelations = relations(
+  chatConversations,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [chatConversations.userId],
+      references: [users.id],
+    }),
+    messages: many(chatMessages),
+  })
+);
+
+export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
+  conversation: one(chatConversations, {
+    fields: [chatMessages.conversationId],
+    references: [chatConversations.id],
+  }),
+}));
+
 // ===========================================
 // Types
 // ===========================================
@@ -354,6 +405,8 @@ export type Cart = typeof carts.$inferSelect;
 export type Review = typeof reviews.$inferSelect;
 export type Coupon = typeof coupons.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
+export type ChatConversation = typeof chatConversations.$inferSelect;
+export type ChatMessage = typeof chatMessages.$inferSelect;
 
 export interface CartItem {
   productId: string;
