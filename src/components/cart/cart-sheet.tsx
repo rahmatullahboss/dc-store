@@ -19,8 +19,8 @@ export function CartSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
-      <SheetContent className="flex flex-col w-full sm:max-w-lg">
-        <SheetHeader>
+      <SheetContent className="flex flex-col w-full sm:max-w-lg p-0">
+        <SheetHeader className="p-4 pb-0 border-b">
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
             Shopping Cart ({items.length})
@@ -28,7 +28,7 @@ export function CartSheet() {
         </SheetHeader>
 
         {items.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6">
             <ShoppingCart className="h-16 w-16 text-muted-foreground" />
             <p className="text-muted-foreground">Your cart is empty</p>
             <Button onClick={() => toggleCart(false)} asChild>
@@ -37,7 +37,7 @@ export function CartSheet() {
           </div>
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto py-4">
+            <div className="flex-1 overflow-y-auto p-4">
               <ul className="space-y-4">
                 {items.map((item) => (
                   <li
@@ -45,7 +45,7 @@ export function CartSheet() {
                     className="flex gap-4"
                   >
                     {/* Product Image */}
-                    <div className="relative h-20 w-20 overflow-hidden rounded-lg bg-muted">
+                    <div className="relative h-20 w-20 overflow-hidden rounded-lg bg-muted flex-shrink-0">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -61,15 +61,15 @@ export function CartSheet() {
                     </div>
 
                     {/* Product Info */}
-                    <div className="flex flex-1 flex-col">
-                      <div className="flex justify-between">
-                        <h3 className="font-medium line-clamp-1">
+                    <div className="flex flex-1 flex-col min-w-0">
+                      <div className="flex justify-between gap-2">
+                        <h3 className="font-medium line-clamp-2 text-sm">
                           {item.name}
                         </h3>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6 -mt-1 -mr-2"
+                          className="h-6 w-6 flex-shrink-0"
                           onClick={() =>
                             removeItem(item.productId, item.variantId)
                           }
@@ -82,8 +82,8 @@ export function CartSheet() {
                       </p>
 
                       {/* Quantity Controls */}
-                      <div className="flex items-center justify-between mt-auto">
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between mt-auto pt-2">
+                        <div className="flex items-center gap-1">
                           <Button
                             variant="outline"
                             size="icon"
@@ -98,7 +98,7 @@ export function CartSheet() {
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="w-8 text-center text-sm">
+                          <span className="w-8 text-center text-sm font-medium">
                             {item.quantity}
                           </span>
                           <Button
@@ -116,7 +116,7 @@ export function CartSheet() {
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <p className="font-medium">
+                        <p className="font-semibold text-amber-600">
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
@@ -126,15 +126,15 @@ export function CartSheet() {
               </ul>
             </div>
 
-            <div className="space-y-4 pt-4 border-t">
+            <div className="space-y-4 p-4 border-t bg-gray-50/50">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Subtotal</span>
-                <span>{formatPrice(subtotal)}</span>
+                <span className="text-amber-600">{formatPrice(subtotal)}</span>
               </div>
               <p className="text-sm text-muted-foreground text-center">
                 Shipping and taxes calculated at checkout
               </p>
-              <Button className="w-full" size="lg" asChild>
+              <Button className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600" size="lg" asChild>
                 <Link href="/checkout" onClick={() => toggleCart(false)}>
                   Proceed to Checkout
                 </Link>
