@@ -13,7 +13,6 @@ import {
   Phone,
   ShoppingCart,
   ExternalLink,
-  MessageCircle,
 } from "lucide-react";
 import { FaFacebookMessenger, FaWhatsapp } from "react-icons/fa";
 import Image from "next/image";
@@ -373,29 +372,11 @@ export function ChatBot() {
 
   return (
     <>
-      {/* Chat Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed z-50 bottom-20 md:bottom-6 left-4 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300",
-          isOpen
-            ? "bg-gray-600 hover:bg-gray-700"
-            : "bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600"
-        )}
-        aria-label={isOpen ? "Close chat" : "Open chat"}
-      >
-        {isOpen ? (
-          <X className="w-6 h-6 text-white" />
-        ) : (
-          <MessageCircle className="w-6 h-6 text-white" />
-        )}
-      </button>
-
-      {/* Chat Window */}
+      {/* Chat Window - positioned on right side */}
       <div
         className={cn(
           "fixed z-50 transition-all duration-300 ease-out",
-          "bottom-36 md:bottom-24 left-4",
+          "bottom-36 md:bottom-24 right-4",
           "w-[calc(100vw-2rem)] max-w-sm",
           isOpen
             ? "opacity-100 translate-y-0"

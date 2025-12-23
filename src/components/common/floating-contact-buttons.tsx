@@ -5,13 +5,9 @@ import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
 
 export function FloatingContactButtons() {
-  const handleChat = () => {
-    // Open WhatsApp or chatbot
-    const whatsappUrl = `https://wa.me/${siteConfig.phone.replace(
-      /[^0-9]/g,
-      ""
-    )}`;
-    window.open(whatsappUrl, "_blank");
+  const handleOpenChat = () => {
+    // Dispatch custom event to open chatbot
+    window.dispatchEvent(new CustomEvent("open-chatbot"));
   };
 
   return (
@@ -28,14 +24,14 @@ export function FloatingContactButtons() {
         </a>
       </Button>
 
-      {/* WhatsApp/Chat Button */}
+      {/* Chat Button */}
       <Button
         size="sm"
-        onClick={handleChat}
-        className="bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-200"
+        onClick={handleOpenChat}
+        className="bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-lg shadow-amber-500/30 hover:scale-105 transition-all duration-200"
       >
         <MessageCircle className="h-4 w-4 mr-2" />
-        WhatsApp
+        Chat
       </Button>
     </div>
   );
