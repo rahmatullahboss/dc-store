@@ -4,7 +4,7 @@ import { ArrowRight, Truck, Shield, RefreshCcw, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { siteConfig, formatPrice } from "@/lib/config";
+import { formatPrice } from "@/lib/config";
 
 // Demo products for initial display
 const featuredProducts = [
@@ -166,7 +166,7 @@ export default function HomePage() {
           <div>
             <h2 className="text-2xl font-bold md:text-3xl">Shop by Category</h2>
             <p className="text-muted-foreground mt-1">
-              Find what you're looking for
+              Find what you&apos;re looking for
             </p>
           </div>
           <Button variant="ghost" asChild>
