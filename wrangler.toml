@@ -1,0 +1,32 @@
+# Wrangler Configuration for DC Store
+# https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "dc-store"
+main = ".open-next/worker.js"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "dc-store-db"
+database_id = "YOUR_DATABASE_ID" # Replace with actual D1 database ID
+migrations_dir = "drizzle/migrations"
+
+# R2 Storage for images
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "dc-store-assets"
+
+# Environment variables (use wrangler secret for production)
+[vars]
+NEXT_PUBLIC_APP_URL = "http://localhost:3000"
+
+# Assets configuration
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# Build configuration
+[build]
+command = "npx opennextjs-cloudflare build"
