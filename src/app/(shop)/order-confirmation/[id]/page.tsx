@@ -8,7 +8,8 @@ import { formatPrice } from "@/lib/config";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 
-export const runtime = "edge";
+// Force dynamic rendering for Cloudflare context
+export const dynamic = "force-dynamic";
 
 interface OrderConfirmationPageProps {
   params: Promise<{ id: string }>;

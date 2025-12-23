@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
+// Using default runtime for OpenNext compatibility
 
 interface SaveChatRequest {
   sessionId: string;

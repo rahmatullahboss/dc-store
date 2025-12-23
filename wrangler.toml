@@ -5,22 +5,32 @@ name = "dc-store"
 main = ".open-next/worker.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "474078d5f990169d7dadf4e1df83214a"
 
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
 database_name = "dc-store-db"
-database_id = "YOUR_DATABASE_ID" # Replace with actual D1 database ID
+database_id = "3cad0fb5-4cc8-419b-9979-d097ffa0260e"
 migrations_dir = "drizzle/migrations"
 
-# R2 Storage for images
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "dc-store-assets"
+# Using Cloudinary for image storage instead of R2
 
-# Environment variables (use wrangler secret for production)
+# Environment variables (non-sensitive)
 [vars]
-NEXT_PUBLIC_APP_URL = "http://localhost:3000"
+NEXT_PUBLIC_APP_URL = "https://dc-store.your-domain.workers.dev"
+NEXT_PUBLIC_APP_NAME = "DC Store"
+NEXT_PUBLIC_BRAND_NAME = "DC Store"
+BETTER_AUTH_URL = "https://dc-store.your-domain.workers.dev"
+
+# Secrets (set via: npx wrangler secret put SECRET_NAME)
+# - BETTER_AUTH_SECRET
+# - GOOGLE_CLIENT_ID
+# - GOOGLE_CLIENT_SECRET
+# - CLOUDINARY_API_KEY
+# - CLOUDINARY_API_SECRET
+# - NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+# - GROQ_API_KEY
 
 # Assets configuration
 [assets]

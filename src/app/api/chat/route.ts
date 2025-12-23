@@ -2,7 +2,7 @@ import { createGroq } from "@ai-sdk/groq";
 import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { siteConfig, formatPrice } from "@/lib/config";
 
-export const runtime = "edge";
+// Using default runtime for OpenNext compatibility
 
 // Demo products for chat context (in real app, fetch from D1)
 const demoProducts = [

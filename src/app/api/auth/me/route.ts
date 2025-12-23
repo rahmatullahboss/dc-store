@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
+// Using default runtime for OpenNext compatibility
 
 export async function GET() {
   // TODO: Implement actual auth check with Better Auth

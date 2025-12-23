@@ -4,7 +4,7 @@ import { orders } from "@/db/schema";
 import type { OrderItem, Address } from "@/db/schema";
 import { nanoid } from "nanoid";
 
-export const runtime = "edge";
+// Using default runtime for OpenNext compatibility
 
 interface CreateOrderRequest {
   items: OrderItem[];

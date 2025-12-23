@@ -11,7 +11,8 @@ import { formatPrice } from "@/lib/config";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export const runtime = "edge";
+// Force dynamic rendering for Cloudflare context
+export const dynamic = "force-dynamic";
 
 const statusConfig = {
   pending: { label: "Pending", color: "bg-yellow-100 text-yellow-800", icon: Clock },
