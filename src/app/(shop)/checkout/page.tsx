@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCart } from "@/lib/cart-context";
+import { useSession } from "@/lib/auth-client";
 import { formatPrice, siteConfig } from "@/lib/config";
 import { toast } from "sonner";
 
@@ -65,6 +66,7 @@ interface FormData {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -75,6 +77,17 @@ export default function CheckoutPage() {
     address: "",
     notes: "",
   });
+
+  // Pre-fill form with user profile data when session loads
+  useEffect(() => {
+    if (session?.user) {
+      setFormData(prev => ({
+        ...prev,
+        name: prev.name || session.user.name || "",
+        email: prev.email || session.user.email || "",
+      }));
+    }
+  }, [session]);
 
   const shippingCost = subtotal >= siteConfig.shipping.freeShippingThreshold 
     ? 0 
