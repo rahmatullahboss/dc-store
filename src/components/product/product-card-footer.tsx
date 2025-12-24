@@ -59,12 +59,13 @@ export function ProductCardFooter({
             image: product.featuredImage || undefined,
           }}
           compact
-          className="hidden sm:flex !px-2.5 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-sm"
+          className="hidden sm:flex !h-9 !px-4 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-sm"
         />
         <OrderNowButton
           productSlug={product.slug}
           compact
           wrapperClassName="w-full sm:w-auto"
+          className="!h-9 !px-4"
         />
       </div>
     </CardFooter>

@@ -34,7 +34,7 @@ export const siteConfig = {
   currency: {
     code: process.env.NEXT_PUBLIC_CURRENCY_CODE || "BDT",
     symbol: process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "৳",
-    locale: process.env.NEXT_PUBLIC_CURRENCY_LOCALE || "bn-BD",
+    locale: process.env.NEXT_PUBLIC_CURRENCY_LOCALE || "en-BD",
   },
 
   // Shipping Settings
