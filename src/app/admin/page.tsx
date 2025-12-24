@@ -1,0 +1,291 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { StatCard } from "@/components/admin/stat-card";
+import { formatPrice } from "@/lib/config";
+import {
+  DollarSign,
+  ShoppingCart,
+  Package,
+  Users,
+  Plus,
+  ArrowRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+interface Stats {
+  totalRevenue: number;
+  ordersToday: number;
+  activeProducts: number;
+  totalUsers: number;
+}
+
+interface RecentOrder {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  total: number;
+  status: string;
+  createdAt: string;
+}
+
+interface RevenueDay {
+  date: string;
+  revenue: number;
+}
+
+const statusColors: Record<string, string> = {
+  pending: "bg-yellow-500/20 text-yellow-400",
+  confirmed: "bg-blue-500/20 text-blue-400",
+  processing: "bg-purple-500/20 text-purple-400",
+  shipped: "bg-cyan-500/20 text-cyan-400",
+  delivered: "bg-green-500/20 text-green-400",
+  cancelled: "bg-red-500/20 text-red-400",
+  refunded: "bg-gray-500/20 text-gray-400",
+};
+
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
+  const [revenueByDay, setRevenueByDay] = useState<RevenueDay[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch("/api/admin/stats");
+        if (res.ok) {
+          const data = await res.json() as { stats: Stats; recentOrders: RecentOrder[]; revenueByDay: RevenueDay[] };
+          setStats(data.stats);
+          setRecentOrders(data.recentOrders || []);
+          setRevenueByDay(data.revenueByDay || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 animate-pulse"
+            >
+              <div className="h-4 bg-slate-700 rounded w-1/3 mb-2" />
+              <div className="h-8 bg-slate-700 rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const maxRevenue = Math.max(...revenueByDay.map((d) => d.revenue), 1);
+
+  return (
+    <div className="space-y-6">
+      {/* Page Title */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
+        <div className="flex gap-2">
+          <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
+            <Link href="/admin/products/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Revenue"
+          value={formatPrice(stats?.totalRevenue || 0)}
+          icon={DollarSign}
+        />
+        <StatCard
+          title="Orders Today"
+          value={stats?.ordersToday || 0}
+          icon={ShoppingCart}
+        />
+        <StatCard
+          title="Active Products"
+          value={stats?.activeProducts || 0}
+          icon={Package}
+        />
+        <StatCard
+          title="Total Users"
+          value={stats?.totalUsers || 0}
+          icon={Users}
+        />
+      </div>
+
+      {/* Revenue Chart */}
+      <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-white mb-4">
+          Revenue (Last 7 Days)
+        </h2>
+        <div className="h-48 flex items-end gap-2">
+          {revenueByDay.length > 0 ? (
+            revenueByDay.map((day, i) => (
+              <div
+                key={i}
+                className="flex-1 flex flex-col items-center gap-2"
+              >
+                <div
+                  className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-md transition-all"
+                  style={{
+                    height: `${(day.revenue / maxRevenue) * 100}%`,
+                    minHeight: day.revenue > 0 ? "8px" : "2px",
+                  }}
+                />
+                <span className="text-xs text-slate-400">
+                  {new Date(day.date).toLocaleDateString("en", {
+                    weekday: "short",
+                  })}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-slate-500">
+              No revenue data available
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Orders */}
+      <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">Recent Orders</h2>
+          <Link
+            href="/admin/orders"
+            className="text-sm text-amber-400 hover:text-amber-300 flex items-center gap-1"
+          >
+            View All <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-700">
+                <th className="text-left text-xs font-medium text-slate-400 py-3 px-4">
+                  Order
+                </th>
+                <th className="text-left text-xs font-medium text-slate-400 py-3 px-4">
+                  Customer
+                </th>
+                <th className="text-left text-xs font-medium text-slate-400 py-3 px-4">
+                  Date
+                </th>
+                <th className="text-left text-xs font-medium text-slate-400 py-3 px-4">
+                  Total
+                </th>
+                <th className="text-left text-xs font-medium text-slate-400 py-3 px-4">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentOrders.length > 0 ? (
+                recentOrders.map((order) => (
+                  <tr
+                    key={order.id}
+                    className="border-b border-slate-700/50 hover:bg-slate-800/50"
+                  >
+                    <td className="py-3 px-4">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="text-sm font-medium text-white hover:text-amber-400"
+                      >
+                        #{order.orderNumber}
+                      </Link>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-slate-300">
+                      {order.customerName}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-slate-400">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 px-4 text-sm font-medium text-white">
+                      {formatPrice(order.total)}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={cn(
+                          "text-xs px-2 py-1 rounded-full capitalize",
+                          statusColors[order.status] || statusColors.pending
+                        )}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="py-8 text-center text-slate-500"
+                  >
+                    No orders yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Link
+          href="/admin/products"
+          className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-amber-500/50 transition-colors group"
+        >
+          <Package className="h-8 w-8 text-amber-400 mb-3" />
+          <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
+            Manage Products
+          </h3>
+          <p className="text-sm text-slate-400 mt-1">
+            Add, edit, or remove products
+          </p>
+        </Link>
+        <Link
+          href="/admin/orders"
+          className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-amber-500/50 transition-colors group"
+        >
+          <ShoppingCart className="h-8 w-8 text-amber-400 mb-3" />
+          <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
+            View Orders
+          </h3>
+          <p className="text-sm text-slate-400 mt-1">
+            Process and track orders
+          </p>
+        </Link>
+        <Link
+          href="/admin/customers"
+          className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-amber-500/50 transition-colors group"
+        >
+          <Users className="h-8 w-8 text-amber-400 mb-3" />
+          <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
+            Customers
+          </h3>
+          <p className="text-sm text-slate-400 mt-1">
+            View customer information
+          </p>
+        </Link>
+      </div>
+    </div>
+  );
+}
