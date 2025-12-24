@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, SlidersHorizontal, ShoppingCart } from "lucide-react";
+import { Search, SlidersHorizontal, ShoppingCart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,57 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { useCart } from "@/lib/cart-context";
 import type { Product } from "@/db/schema";
-
-// Demo products for search
-const allProducts: Product[] = [
-  {
-    id: "1", name: "Premium Wireless Headphones Pro Max", slug: "premium-wireless-headphones",
-    description: "Crystal-clear audio", shortDescription: "Crystal-clear audio, 40hr battery",
-    price: 4999, compareAtPrice: 7999, costPrice: 2500, sku: "WH-001", barcode: null,
-    quantity: 50, lowStockThreshold: 5, trackQuantity: true, categoryId: "Electronics",
-    images: [], featuredImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
-    isActive: true, isFeatured: true, weight: 0.3, weightUnit: "kg", metaTitle: null, metaDescription: null,
-    createdAt: new Date(), updatedAt: new Date(),
-  },
-  {
-    id: "2", name: "Smart Watch Series X Ultra", slug: "smart-watch-series-x",
-    description: "Stay connected", shortDescription: "Health tracking, GPS, 7-day battery",
-    price: 12999, compareAtPrice: 15999, costPrice: 8000, sku: "SW-001", barcode: null,
-    quantity: 30, lowStockThreshold: 5, trackQuantity: true, categoryId: "Electronics",
-    images: [], featuredImage: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
-    isActive: true, isFeatured: true, weight: 0.1, weightUnit: "kg", metaTitle: null, metaDescription: null,
-    createdAt: new Date(), updatedAt: new Date(),
-  },
-  {
-    id: "3", name: "Designer Leather Bag Premium", slug: "designer-leather-bag",
-    description: "Elegant leather bag", shortDescription: "Genuine leather, spacious design",
-    price: 8499, compareAtPrice: null, costPrice: 4000, sku: "LB-001", barcode: null,
-    quantity: 20, lowStockThreshold: 5, trackQuantity: true, categoryId: "Fashion",
-    images: [], featuredImage: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
-    isActive: true, isFeatured: false, weight: 0.8, weightUnit: "kg", metaTitle: null, metaDescription: null,
-    createdAt: new Date(), updatedAt: new Date(),
-  },
-  {
-    id: "4", name: "Running Sneakers Pro Max", slug: "running-sneakers-pro",
-    description: "Performance shoes", shortDescription: "Lightweight, maximum comfort",
-    price: 6999, compareAtPrice: 9999, costPrice: 3500, sku: "RS-001", barcode: null,
-    quantity: 45, lowStockThreshold: 5, trackQuantity: true, categoryId: "Sports",
-    images: [], featuredImage: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
-    isActive: true, isFeatured: false, weight: 0.5, weightUnit: "kg", metaTitle: null, metaDescription: null,
-    createdAt: new Date(), updatedAt: new Date(),
-  },
-  {
-    id: "5", name: "Wireless Bluetooth Speaker", slug: "wireless-bluetooth-speaker",
-    description: "Premium sound", shortDescription: "360° sound, waterproof",
-    price: 3499, compareAtPrice: 4999, costPrice: 1800, sku: "BS-001", barcode: null,
-    quantity: 40, lowStockThreshold: 5, trackQuantity: true, categoryId: "Electronics",
-    images: [], featuredImage: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop",
-    isActive: true, isFeatured: false, weight: 0.4, weightUnit: "kg", metaTitle: null, metaDescription: null,
-    createdAt: new Date(), updatedAt: new Date(),
-  },
-];
-
-const categories = ["Electronics", "Fashion", "Sports", "Home"];
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -76,6 +25,28 @@ function SearchContent() {
   const [priceRange, setPriceRange] = useState([0, 20000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("relevance");
+  
+  // Products state
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch products and categories on mount
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/products/search");
+        const data = await response.json() as { products: Product[]; categories: string[] };
+        setAllProducts(data.products || []);
+        setCategories(data.categories || []);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   // Filter products
   let filteredProducts = allProducts.filter((p) =>
@@ -124,6 +95,17 @@ function SearchContent() {
         : [...prev, category]
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-amber-500 mx-auto mb-4" />
+          <p className="text-gray-500">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
