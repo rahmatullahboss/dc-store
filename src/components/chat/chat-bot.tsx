@@ -490,7 +490,7 @@ export function ChatBot() {
           )}
 
           {/* Messages */}
-          {guestInfo && (
+          {guestInfo && guestInfo.phone && (
             <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[200px] max-h-[300px]">
               {messages.length === 0 && (
                 <div className="text-center py-6">
@@ -599,7 +599,7 @@ export function ChatBot() {
           )}
 
           {/* Talk to Human Button */}
-          {guestInfo && (
+          {guestInfo && guestInfo.phone && (
             <div className="px-4 pb-2">
               <button
                 onClick={() => setShowHumanOptions(!showHumanOptions)}
@@ -617,7 +617,7 @@ export function ChatBot() {
           )}
 
           {/* Input */}
-          {guestInfo && (
+          {guestInfo && guestInfo.phone && (
             <form
               onSubmit={handleSubmit}
               className="p-4 border-t border-gray-100"
