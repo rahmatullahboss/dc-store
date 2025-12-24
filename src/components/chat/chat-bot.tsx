@@ -161,6 +161,10 @@ export function ChatBot() {
   const [guestPhone, setGuestPhone] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [historyMessages, setHistoryMessages] = useState<
+    { id: string; role: "user" | "assistant"; content: string }[]
+  >([]);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -239,6 +243,35 @@ export function ChatBot() {
     window.addEventListener("open-chatbot", handleOpenChatbot);
     return () => window.removeEventListener("open-chatbot", handleOpenChatbot);
   }, []);
+
+  // Load chat history from database
+  useEffect(() => {
+    async function loadChatHistory() {
+      if (!sessionId || historyLoaded) return;
+      try {
+        const res = await fetch(`/api/chat-history?sessionId=${sessionId}`);
+        if (res.ok) {
+          const data = await res.json() as {
+            messages: { id: string; role: "user" | "assistant"; content: string }[];
+            guestInfo: { name: string; phone: string } | null;
+          };
+          if (data.messages && data.messages.length > 0) {
+            setHistoryMessages(data.messages);
+          }
+          // If we have saved guestInfo from history, use it
+          if (data.guestInfo && data.guestInfo.phone) {
+            setGuestInfo(data.guestInfo);
+            localStorage.setItem("chat_guest_info", JSON.stringify(data.guestInfo));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load chat history:", error);
+      } finally {
+        setHistoryLoaded(true);
+      }
+    }
+    loadChatHistory();
+  }, [sessionId, historyLoaded]);
 
   // Auto scroll to bottom
   useEffect(() => {
@@ -492,7 +525,7 @@ export function ChatBot() {
           {/* Messages */}
           {guestInfo && guestInfo.phone && (
             <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[200px] max-h-[300px]">
-              {messages.length === 0 && (
+              {historyMessages.length === 0 && messages.length === 0 && (
                 <div className="text-center py-6">
                   <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-r from-amber-100 to-rose-100 flex items-center justify-center">
                     <Bot className="w-7 h-7 text-amber-600" />
@@ -505,6 +538,55 @@ export function ChatBot() {
                   </p>
                 </div>
               )}
+
+              {/* History Messages from Database */}
+              {historyMessages.map((msg) => (
+                <div
+                  key={`history-${msg.id}`}
+                  className={cn(
+                    "flex gap-2",
+                    msg.role === "user" ? "justify-end" : "justify-start"
+                  )}
+                >
+                  {msg.role === "assistant" && (
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-r from-amber-400 to-rose-400 flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  <div
+                    className={cn(
+                      "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
+                      msg.role === "user"
+                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-br-md"
+                        : "bg-gray-100 text-gray-800 rounded-bl-md"
+                    )}
+                  >
+                    <div className="space-y-2">
+                      {parseProductsFromText(msg.content).map((segment, idx) => {
+                        if (segment.type === "text") {
+                          return (
+                            <p key={`text-${idx}`} className="whitespace-pre-wrap">
+                              {segment.content}
+                            </p>
+                          );
+                        } else {
+                          return (
+                            <ChatProductCard
+                              key={`product-${segment.product.slug}-${idx}`}
+                              product={segment.product}
+                            />
+                          );
+                        }
+                      })}
+                    </div>
+                  </div>
+                  {msg.role === "user" && (
+                    <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4 text-gray-600" />
+                    </div>
+                  )}
+                </div>
+              ))}
 
               {messages.map((message) => (
                 <div
