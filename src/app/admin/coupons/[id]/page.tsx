@@ -53,11 +53,12 @@ export default function EditCouponPage({ params }: { params: Promise<{ id: strin
   });
 
   useEffect(() => {
-    fetch(`/api/admin/coupons/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    async function fetchCoupon() {
+      try {
+        const res = await fetch(`/api/admin/coupons/${id}`);
+        const data = await res.json() as { coupon?: Coupon };
         if (data.coupon) {
-          const c = data.coupon as Coupon;
+          const c = data.coupon;
           setFormData({
             code: c.code || "",
             description: c.description || "",
@@ -71,9 +72,13 @@ export default function EditCouponPage({ params }: { params: Promise<{ id: strin
             isActive: c.isActive ?? true,
           });
         }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoading(false));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCoupon();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
