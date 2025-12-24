@@ -44,12 +44,11 @@ export function ProductCardFooter({
             image: product.featuredImage || undefined,
           }}
           compact
-          className="sm:hidden flex-shrink-0 !px-2.5 !py-1 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-[11px]"
+          className="sm:hidden !px-3 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-xs"
         />
       </div>
-
-      {/* Second row on mobile / buttons row on desktop */}
-      <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
+      {/* Second row on mobile: Full width Order button */}
+      <div className="flex gap-2 w-full sm:w-auto">
         {/* Desktop Add Button */}
         <AddToCartButton
           item={{
@@ -59,13 +58,12 @@ export function ProductCardFooter({
             image: product.featuredImage || undefined,
           }}
           compact
-          className="hidden sm:flex !h-9 !px-4 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-sm"
+          className="hidden sm:flex !px-2.5 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-sm"
         />
         <OrderNowButton
           productSlug={product.slug}
           compact
-          wrapperClassName="flex-1 sm:flex-none sm:w-auto"
-          className="!h-8 !px-3 sm:!h-9 sm:!px-4 !text-xs sm:!text-sm"
+          wrapperClassName="w-full sm:w-auto"
         />
       </div>
     </CardFooter>
