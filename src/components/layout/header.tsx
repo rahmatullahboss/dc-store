@@ -90,7 +90,7 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-6 flex-1">
           {navigation.map((item) => (
             <Link
               key={item.name}
@@ -103,7 +103,7 @@ export function Header() {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto md:ml-0">
           {/* Search */}
           {isSearchOpen ? (
             <form 
