@@ -6,7 +6,7 @@ export const siteConfig = {
   name: process.env.NEXT_PUBLIC_BRAND_NAME || "DC Store",
   description: process.env.NEXT_PUBLIC_BRAND_DESCRIPTION || "Your one-stop shop for quality products",
   logo: process.env.NEXT_PUBLIC_BRAND_LOGO || "/logo.svg",
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://dcstore.digitalcare.site",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://store.digitalcare.site",
 
   // Contact Information
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "support@digitalcare.site",

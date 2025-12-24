@@ -9,7 +9,7 @@ account_id = "474078d5f990169d7dadf4e1df83214a"
 
 # Custom Domain Route
 routes = [
-  { pattern = "dcstore.digitalcare.site", custom_domain = true }
+  { pattern = "store.digitalcare.site", custom_domain = true }
 ]
 
 # Enable observability/logging
@@ -39,10 +39,10 @@ migrations_dir = "drizzle/migrations"
 
 # Environment variables (non-sensitive)
 [vars]
-NEXT_PUBLIC_APP_URL = "https://dcstore.digitalcare.site"
+NEXT_PUBLIC_APP_URL = "https://store.digitalcare.site"
 NEXT_PUBLIC_APP_NAME = "DC Store"
 NEXT_PUBLIC_BRAND_NAME = "DC Store"
-BETTER_AUTH_URL = "https://dcstore.digitalcare.site"
+BETTER_AUTH_URL = "https://store.digitalcare.site"
 
 # Secrets (set via: npx wrangler secret put SECRET_NAME)
 # - BETTER_AUTH_SECRET
