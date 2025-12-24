@@ -40,7 +40,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   });
 
   // Create category list with "All" option
-  const categories = ["All", ...categoryIds];
+  const categories = [{ id: "All", name: "All" }, ...categoryIds];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
@@ -74,19 +74,24 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
             {/* Category Filters */}
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-2 md:pb-0 scrollbar-hide">
-              {categories.map((category) => (
-                <Badge
-                  key={category}
-                  variant={category === "All" ? "default" : "outline"}
-                  className={`cursor-pointer whitespace-nowrap px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm ${
-                    category === "All"
-                      ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0 hover:from-amber-600 hover:to-rose-600"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  {category}
-                </Badge>
-              ))}
+              {categories.map((category) => {
+                const isActive = category.id === "All" 
+                  ? !categoryFilter 
+                  : categoryFilter === category.id;
+                return (
+                  <Badge
+                    key={category.id}
+                    variant={isActive ? "default" : "outline"}
+                    className={`cursor-pointer whitespace-nowrap px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm ${
+                      isActive
+                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0 hover:from-amber-600 hover:to-rose-600"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    {category.name}
+                  </Badge>
+                );
+              })}
             </div>
 
             {/* View Toggle & Filters */}

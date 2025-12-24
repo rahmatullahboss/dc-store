@@ -83,7 +83,7 @@ export function Header() {
         </Sheet>
 
         {/* Logo - Centered on mobile */}
-        <Link href="/" className="flex items-center gap-2 flex-1 justify-center md:flex-none md:justify-start">
+        <Link href="/" className="flex items-center gap-2 flex-1 justify-center md:flex-none md:justify-start md:mr-6">
           <span className="text-xl font-bold tracking-tight">
             {siteConfig.name}
           </span>

@@ -194,16 +194,31 @@ export async function getProductReviews(productId: string) {
 
 /**
  * Get unique categories from products (for filter badges)
+ * Returns both id and name for proper display
  */
-export async function getProductCategories(): Promise<string[]> {
+export async function getProductCategories(): Promise<{ id: string; name: string }[]> {
   const db = await getDatabase();
   
-  const result = await db
+  // Get distinct category IDs from active products
+  const productCats = await db
     .selectDistinct({ categoryId: products.categoryId })
     .from(products)
     .where(eq(products.isActive, true));
   
-  return result
+  const categoryIds = productCats
     .map((r) => r.categoryId)
     .filter((id): id is string => id !== null);
+  
+  if (categoryIds.length === 0) return [];
+  
+  // Import categories table
+  const { categories } = await import("@/db/schema");
+  
+  // Fetch category names for these IDs
+  const categoryData = await db
+    .select({ id: categories.id, name: categories.name })
+    .from(categories)
+    .where(sql`${categories.id} IN (${sql.join(categoryIds.map(id => sql`${id}`), sql`, `)})`);
+  
+  return categoryData;
 }
