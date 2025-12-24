@@ -94,17 +94,17 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               })}
             </div>
 
-            {/* View Toggle & Filters */}
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" className="hidden md:flex">
+            {/* View Toggle & Filters - Desktop only */}
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="outline" size="icon">
                 <Grid3X3 className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="hidden md:flex">
+              <Button variant="ghost" size="icon">
                 <List className="h-4 w-4" />
               </Button>
               <Button variant="outline" className="gap-2">
                 <SlidersHorizontal className="h-4 w-4" />
-                <span className="hidden sm:inline">Filters</span>
+                <span>Filters</span>
               </Button>
             </div>
           </div>
