@@ -324,12 +324,30 @@ export function ChatBot() {
     prevStatusRef.current = status;
   }, [status, messages, saveMessage]);
 
-  const handleGuestInfoSubmit = (e: React.FormEvent) => {
+  const handleGuestInfoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (guestName.trim() && guestPhone.trim()) {
-      const info = { name: guestName.trim(), phone: guestPhone.trim() };
+    
+    // For logged-in users, only phone is required
+    const nameToUse = userId ? (guestInfo?.name || guestName.trim()) : guestName.trim();
+    const phoneToUse = guestPhone.trim();
+    
+    if ((userId || nameToUse) && phoneToUse) {
+      const info = { name: nameToUse || "User", phone: phoneToUse };
       setGuestInfo(info);
       localStorage.setItem("chat_guest_info", JSON.stringify(info));
+      
+      // If user is logged in, save phone to their profile
+      if (userId) {
+        try {
+          await fetch("/api/user/profile", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone: info.phone }),
+          });
+        } catch (error) {
+          console.error("Failed to save phone to profile:", error);
+        }
+      }
     }
   };
 
@@ -431,24 +449,28 @@ export function ChatBot() {
             </button>
           </div>
 
-          {/* Guest Info Form (for non-logged in users) */}
-          {!guestInfo && !userId && (
+          {/* Guest Info Form (for non-logged in users OR logged in users missing phone) */}
+          {(!guestInfo || !guestInfo.phone) && (
             <form
               onSubmit={handleGuestInfoSubmit}
               className="p-4 border-b border-gray-100"
             >
               <p className="text-sm text-gray-600 mb-3">
-                আসসালামু আলাইকুম! Chat শুরু করতে আপনার তথ্য দিন:
+                {userId 
+                  ? "Chat শুরু করতে আপনার ফোন নম্বর দিন:"
+                  : "আসসালামু আলাইকুম! Chat শুরু করতে আপনার তথ্য দিন:"}
               </p>
               <div className="space-y-2">
-                <input
-                  type="text"
-                  value={guestName}
-                  onChange={(e) => setGuestName(e.target.value)}
-                  placeholder="আপনার নাম"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-amber-400 text-sm"
-                  required
-                />
+                {!userId && (
+                  <input
+                    type="text"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    placeholder="আপনার নাম"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-amber-400 text-sm"
+                    required
+                  />
+                )}
                 <input
                   type="tel"
                   value={guestPhone}
