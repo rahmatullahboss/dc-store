@@ -100,10 +100,11 @@ export default function AdminCustomersPage() {
                 {customers.map((customer) => (
                   <tr
                     key={customer.id}
-                    className="border-b border-slate-700/50 hover:bg-slate-800/50"
+                    className="border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer"
+                    onClick={() => window.location.href = `/admin/customers/${customer.id}`}
                   >
                     <td className="py-3 px-4">
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-white hover:text-amber-400">
                         {customer.name}
                       </p>
                       <p className="text-xs text-slate-400">{customer.email}</p>
