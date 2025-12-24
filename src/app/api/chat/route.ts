@@ -50,10 +50,10 @@ GREETING: Greet with "সালাম" or "আসসালামু আলাই
 
 ##MANDATORY PRODUCT FORMAT##
 When showing ANY product, you MUST ALWAYS output it in this EXACT format:
-[PRODUCT:id:name:price:category:inStock:imageUrl]
+[PRODUCT:slug:name:price:category:inStock:imageUrl]
 
 Example output:
-[PRODUCT:prod-1:Premium Headphones:4999:Electronics:true:/images/headphones.jpg]
+[PRODUCT:premium-headphones:Premium Headphones:4999:Electronics:true:/images/headphones.jpg]
 
 ##AVAILABLE PRODUCTS (USE ONLY THESE)##
 ${productList}
@@ -85,9 +85,9 @@ export async function POST(req: Request) {
   
   const productListStr = realProducts.length > 0
     ? realProducts
-        .map(
+         .map(
           (p) =>
-            `- ID:${p.id} | ${p.name} | ${formatPrice(p.price)} | ${p.category} | ${
+            `- SLUG:${p.slug} | ${p.name} | ${formatPrice(p.price)} | ${p.category} | ${
               p.inStock ? "In Stock" : "Out"
             } | ${p.image}`
         )
