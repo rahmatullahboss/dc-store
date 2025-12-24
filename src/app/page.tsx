@@ -1,179 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, Zap, Gift, Clock, Percent } from "lucide-react";
+import { ArrowRight, Zap, Gift, Clock, Percent, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
 import { siteConfig } from "@/lib/config";
-import type { Product } from "@/db/schema";
+import { getFeaturedProducts, getProducts } from "@/lib/queries";
 
-// Demo products for initial display - simulating database products
-const featuredProducts: Product[] = [
-  {
-    id: "1",
-    name: "Premium Wireless Headphones Pro Max",
-    slug: "premium-wireless-headphones",
-    description:
-      "Experience crystal-clear audio with our premium wireless headphones.",
-    shortDescription: "Crystal-clear audio, 40hr battery",
-    price: 4999,
-    compareAtPrice: 7999,
-    costPrice: 2500,
-    sku: "WH-001",
-    barcode: null,
-    quantity: 50,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.3,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "2",
-    name: "Smart Watch Series X Ultra",
-    slug: "smart-watch-series-x",
-    description: "Stay connected with our premium smartwatch.",
-    shortDescription: "Health tracking, GPS, 7-day battery",
-    price: 12999,
-    compareAtPrice: 15999,
-    costPrice: 8000,
-    sku: "SW-001",
-    barcode: null,
-    quantity: 30,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.1,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "3",
-    name: "Designer Leather Bag Premium",
-    slug: "designer-leather-bag",
-    description: "Elegant leather bag for the modern professional.",
-    shortDescription: "Genuine leather, spacious design",
-    price: 8499,
-    compareAtPrice: null,
-    costPrice: 4000,
-    sku: "LB-001",
-    barcode: null,
-    quantity: 20,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Fashion",
-    images: [],
-    featuredImage:
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.8,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "4",
-    name: "Running Sneakers Pro Max",
-    slug: "running-sneakers-pro",
-    description: "Performance running shoes for athletes.",
-    shortDescription: "Lightweight, maximum comfort",
-    price: 6999,
-    compareAtPrice: 9999,
-    costPrice: 3500,
-    sku: "RS-001",
-    barcode: null,
-    quantity: 45,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Sports",
-    images: [],
-    featuredImage:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.5,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "5",
-    name: "Vintage Camera Collection",
-    slug: "vintage-camera-collection",
-    description: "Classic vintage camera for photography enthusiasts.",
-    shortDescription: "Retro design, modern features",
-    price: 15999,
-    compareAtPrice: 19999,
-    costPrice: 10000,
-    sku: "VC-001",
-    barcode: null,
-    quantity: 15,
-    lowStockThreshold: 3,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage:
-      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.6,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "6",
-    name: "Minimalist Desk Lamp",
-    slug: "minimalist-desk-lamp",
-    description: "Modern LED desk lamp with adjustable brightness.",
-    shortDescription: "Touch control, USB charging",
-    price: 2499,
-    compareAtPrice: 3499,
-    costPrice: 1200,
-    sku: "DL-001",
-    barcode: null,
-    quantity: 60,
-    lowStockThreshold: 10,
-    trackQuantity: true,
-    categoryId: "Home",
-    images: [],
-    featuredImage:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.4,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+// Force dynamic rendering for Cloudflare context
+export const dynamic = "force-dynamic";
 
-// Demo offers
+// Demo offers (will be replaced with database offers later)
 const offers = [
   {
     id: "1",
@@ -210,7 +46,15 @@ const offers = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch featured products from database, fallback to all products if no featured
+  let featuredProducts = await getFeaturedProducts(6);
+  
+  // If no featured products, get latest products
+  if (featuredProducts.length === 0) {
+    featuredProducts = await getProducts({ limit: 6 });
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100 text-gray-800">
       {/* Animated Background Elements - hidden on mobile for better LCP */}
@@ -329,12 +173,26 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Products Grid - exact Online-Bazar layout */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {featuredProducts.map((product, index) => (
-                <ProductCard key={product.id} product={product} index={index} />
-              ))}
-            </div>
+            {/* Products Grid */}
+            {featuredProducts.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {featuredProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-100 to-rose-100 rounded-full flex items-center justify-center mb-4">
+                  <ShoppingBag className="w-8 h-8 text-amber-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  Products Coming Soon!
+                </h3>
+                <p className="text-gray-500">
+                  We&apos;re preparing our collection for you.
+                </p>
+              </div>
+            )}
 
             {/* View All Products Button */}
             <div className="text-center pt-4">
@@ -354,3 +212,4 @@ export default function HomePage() {
     </div>
   );
 }
+

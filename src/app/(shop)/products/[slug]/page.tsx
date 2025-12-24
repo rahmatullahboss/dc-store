@@ -6,263 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
-import type { Product } from "@/db/schema";
+import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/queries";
 import { ProductActions } from "./product-actions";
 
-// Demo products (same as home page for now - will be from database)
-const demoProducts: Product[] = [
-  {
-    id: "1",
-    name: "Premium Wireless Headphones Pro Max",
-    slug: "premium-wireless-headphones",
-    description: `Experience crystal-clear audio with our premium wireless headphones.
-
-Features:
-• Active Noise Cancellation (ANC) technology
-• 40 hours of battery life on a single charge
-• Premium memory foam ear cushions
-• Bluetooth 5.3 for stable connection
-• Built-in microphone for calls
-• Foldable design for easy storage
-
-Perfect for music lovers, gamers, and professionals who demand the best audio quality. The headphones come with a premium carrying case and USB-C charging cable.`,
-    shortDescription: "Crystal-clear audio, 40hr battery",
-    price: 4999,
-    compareAtPrice: 7999,
-    costPrice: 2500,
-    sku: "WH-001",
-    barcode: null,
-    quantity: 50,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=800&h=800&fit=crop",
-    ],
-    featuredImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=800&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.3,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "2",
-    name: "Smart Watch Series X Ultra",
-    slug: "smart-watch-series-x",
-    description: `Stay connected with our premium smartwatch.
-
-Features:
-• Advanced health monitoring (Heart rate, SpO2, Sleep tracking)
-• Built-in GPS for outdoor activities
-• 7-day battery life
-• Water resistant up to 50 meters
-• 100+ workout modes
-• Always-on Retina display
-
-Stay on top of your fitness goals with detailed analytics and personalized insights. Compatible with both iOS and Android devices.`,
-    shortDescription: "Health tracking, GPS, 7-day battery",
-    price: 12999,
-    compareAtPrice: 15999,
-    costPrice: 8000,
-    sku: "SW-001",
-    barcode: null,
-    quantity: 30,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&h=800&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.1,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "3",
-    name: "Designer Leather Bag Premium",
-    slug: "designer-leather-bag",
-    description: `Elegant leather bag for the modern professional.
-
-Features:
-• 100% genuine leather
-• Multiple compartments for organization
-• Padded laptop sleeve (fits up to 15")
-• Adjustable shoulder strap
-• Premium metal hardware
-• Water-resistant lining
-
-Perfect for work, travel, or everyday use. Each bag is handcrafted with attention to detail.`,
-    shortDescription: "Genuine leather, spacious design",
-    price: 8499,
-    compareAtPrice: null,
-    costPrice: 4000,
-    sku: "LB-001",
-    barcode: null,
-    quantity: 20,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Fashion",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&h=800&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.8,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "4",
-    name: "Running Sneakers Pro Max",
-    slug: "running-sneakers-pro",
-    description: `Performance running shoes for athletes.
-
-Features:
-• Lightweight mesh upper for breathability
-• Advanced cushioning technology
-• Durable rubber outsole
-• Reflective elements for night running
-• Available in multiple colors
-• True-to-size fit
-
-Engineered for speed and comfort. Whether you're training for a marathon or just staying active, these shoes deliver.`,
-    shortDescription: "Lightweight, maximum comfort",
-    price: 6999,
-    compareAtPrice: 9999,
-    costPrice: 3500,
-    sku: "RS-001",
-    barcode: null,
-    quantity: 45,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Sports",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=800&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.5,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "5",
-    name: "Vintage Camera Collection",
-    slug: "vintage-camera-collection",
-    description: `Classic vintage camera for photography enthusiasts.
-
-Features:
-• Retro design with modern internals
-• 35mm film compatible
-• Manual focus lens
-• Built-in light meter
-• Leather carrying strap included
-• Collector's edition packaging
-
-A perfect blend of nostalgia and functionality. Ideal for film photography enthusiasts and collectors.`,
-    shortDescription: "Retro design, modern features",
-    price: 15999,
-    compareAtPrice: 19999,
-    costPrice: 10000,
-    sku: "VC-001",
-    barcode: null,
-    quantity: 15,
-    lowStockThreshold: 3,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&h=800&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.6,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "6",
-    name: "Minimalist Desk Lamp",
-    slug: "minimalist-desk-lamp",
-    description: `Modern LED desk lamp with adjustable brightness.
-
-Features:
-• Touch control for easy operation
-• 5 brightness levels
-• 3 color temperature modes
-• USB charging port
-• Flexible gooseneck design
-• Energy-efficient LED technology
-
-Perfect for home office, study, or bedside. The sleek design complements any modern interior.`,
-    shortDescription: "Touch control, USB charging",
-    price: 2499,
-    compareAtPrice: 3499,
-    costPrice: 1200,
-    sku: "DL-001",
-    barcode: null,
-    quantity: 60,
-    lowStockThreshold: 10,
-    trackQuantity: true,
-    categoryId: "Home",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.4,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
-// Demo reviews
-const demoReviews = [
-  {
-    id: "1",
-    userName: "Rahmat Ullah",
-    rating: 5,
-    title: "Excellent product!",
-    content: "Amazing quality and fast delivery. Highly recommended!",
-    createdAt: new Date("2024-12-20"),
-    verified: true,
-  },
-  {
-    id: "2",
-    userName: "Tasnim K.",
-    rating: 4,
-    title: "Great value for money",
-    content: "Good quality product. Packaging was also very nice.",
-    createdAt: new Date("2024-12-15"),
-    verified: true,
-  },
-  {
-    id: "3",
-    userName: "Sakib Hasan",
-    rating: 5,
-    title: "Love it!",
-    content: "Exactly as described. Will buy again.",
-    createdAt: new Date("2024-12-10"),
-    verified: false,
-  },
-];
+// Force dynamic rendering for Cloudflare context
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -270,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = demoProducts.find((p) => p.slug === slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return {
@@ -291,8 +39,6 @@ export async function generateMetadata({
   };
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function ProductDetailPage({
   params,
 }: {
@@ -300,12 +46,18 @@ export default async function ProductDetailPage({
 }) {
   const { slug } = await params;
   
-  // Find product by slug (will be from database later)
-  const product = demoProducts.find((p) => p.slug === slug);
+  // Fetch product from database
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
+
+  // Fetch related products and reviews in parallel
+  const [relatedProducts, reviews] = await Promise.all([
+    getRelatedProducts(product.id, product.categoryId, 4),
+    getProductReviews(product.id),
+  ]);
 
   const discountPercentage = product.compareAtPrice
     ? Math.round(
@@ -313,13 +65,11 @@ export default async function ProductDetailPage({
       )
     : 0;
 
-  const averageRating = 4.5;
-  const reviewCount = demoReviews.length;
-
-  // Get related products (same category)
-  const relatedProducts = demoProducts
-    .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
-    .slice(0, 4);
+  // Calculate average rating from reviews
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 4.5; // Default rating if no reviews
+  const reviewCount = reviews.length;
 
   const highlightCards = [
     {
@@ -440,7 +190,7 @@ export default async function ProductDetailPage({
                 </p>
                 <div className="flex flex-wrap gap-3 text-sm text-gray-500">
                   <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-amber-700">
-                    ⭐ Rated {averageRating} / 5
+                    ⭐ Rated {averageRating.toFixed(1)} / 5
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full bg-rose-100 px-3 py-1 text-rose-700">
                     {reviewCount} verified reviews
@@ -463,7 +213,7 @@ export default async function ProductDetailPage({
                       variant="secondary"
                       className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-600"
                     >
-                      In Stock
+                      {product.quantity && product.quantity > 0 ? "In Stock" : "Out of Stock"}
                     </Badge>
                   </div>
 
@@ -471,10 +221,12 @@ export default async function ProductDetailPage({
                   <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <div className="flex">
-                        {[1, 2, 3, 4].map((i) => (
+                        {Array.from({ length: Math.floor(averageRating) }).map((_, i) => (
                           <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                         ))}
-                        <StarHalf className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        {averageRating % 1 >= 0.5 && (
+                          <StarHalf className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        )}
                       </div>
                       <span>{reviewCount} Reviews</span>
                     </div>
@@ -573,46 +325,54 @@ export default async function ProductDetailPage({
 
               <TabsContent value="reviews" className="mt-8">
                 <div className="space-y-6">
-                  {demoReviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-gray-800">
-                              {review.userName}
-                            </span>
-                            {review.verified && (
-                              <Badge className="bg-green-100 text-green-700 border-0 text-xs">
-                                Verified Purchase
-                              </Badge>
-                            )}
+                  {reviews.length > 0 ? (
+                    reviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-gray-800">
+                                {review.user?.name || "Anonymous"}
+                              </span>
+                              {review.isVerified && (
+                                <Badge className="bg-green-100 text-green-700 border-0 text-xs">
+                                  Verified Purchase
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="mt-1 flex">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-4 w-4 ${
+                                    i < review.rating
+                                      ? "fill-amber-400 text-amber-400"
+                                      : "text-gray-200"
+                                  }`}
+                                />
+                              ))}
+                            </div>
                           </div>
-                          <div className="mt-1 flex">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-4 w-4 ${
-                                  i < review.rating
-                                    ? "fill-amber-400 text-amber-400"
-                                    : "text-gray-200"
-                                }`}
-                              />
-                            ))}
-                          </div>
+                          <span className="text-sm text-gray-400">
+                            {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ""}
+                          </span>
                         </div>
-                        <span className="text-sm text-gray-400">
-                          {review.createdAt.toLocaleDateString()}
-                        </span>
+                        {review.title && (
+                          <h4 className="mt-3 font-semibold text-gray-800">
+                            {review.title}
+                          </h4>
+                        )}
+                        <p className="mt-2 text-gray-600">{review.content}</p>
                       </div>
-                      <h4 className="mt-3 font-semibold text-gray-800">
-                        {review.title}
-                      </h4>
-                      <p className="mt-2 text-gray-600">{review.content}</p>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No reviews yet. Be the first to review this product!
                     </div>
-                  ))}
+                  )}
                 </div>
               </TabsContent>
 

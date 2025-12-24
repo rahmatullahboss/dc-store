@@ -7,49 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-
-// Demo order data
-const demoOrder = {
-  orderNumber: "ORD-2024-001",
-  status: "shipped",
-  items: [
-    { name: "Premium Wireless Headphones", quantity: 1, price: 4999 },
-    { name: "Smart Watch Series X", quantity: 1, price: 12999 },
-  ],
-  subtotal: 17998,
-  shipping: 60,
-  total: 18058,
-  shippingAddress: {
-    name: "Rahmat Ullah",
-    address: "House 12, Road 5, Dhanmondi",
-    city: "Dhaka",
-    phone: "+880 1712 345678",
-  },
-  estimatedDelivery: new Date("2024-12-28"),
-  trackingNumber: "BD1234567890",
-  timeline: [
-    { status: "placed", date: new Date("2024-12-20T10:30:00"), completed: true },
-    { status: "confirmed", date: new Date("2024-12-20T11:00:00"), completed: true },
-    { status: "processing", date: new Date("2024-12-21T09:00:00"), completed: true },
-    { status: "shipped", date: new Date("2024-12-22T14:00:00"), completed: true },
-    { status: "out_for_delivery", date: null, completed: false },
-    { status: "delivered", date: null, completed: false },
-  ],
-};
+import type { Order, OrderItem } from "@/db/schema";
 
 const statusConfig: Record<string, { label: string; icon: typeof Package; color: string }> = {
-  placed: { label: "Order Placed", icon: Package, color: "text-blue-500" },
+  pending: { label: "Order Placed", icon: Package, color: "text-blue-500" },
   confirmed: { label: "Confirmed", icon: CheckCircle, color: "text-green-500" },
   processing: { label: "Processing", icon: Clock, color: "text-amber-500" },
   shipped: { label: "Shipped", icon: Truck, color: "text-purple-500" },
-  out_for_delivery: { label: "Out for Delivery", icon: Truck, color: "text-orange-500" },
   delivered: { label: "Delivered", icon: CheckCircle, color: "text-green-600" },
+  cancelled: { label: "Cancelled", icon: Package, color: "text-red-500" },
+  refunded: { label: "Refunded", icon: Package, color: "text-gray-500" },
 };
+
+// Timeline status order
+const timelineStatuses = ["pending", "confirmed", "processing", "shipped", "delivered"];
 
 export default function TrackOrderPage() {
   const [orderNumber, setOrderNumber] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [foundOrder, setFoundOrder] = useState<typeof demoOrder | null>(null);
+  const [foundOrder, setFoundOrder] = useState<Order | null>(null);
   const [error, setError] = useState("");
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -63,17 +39,34 @@ export default function TrackOrderPage() {
 
     setIsSearching(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (orderNumber.toUpperCase() === "ORD-2024-001" || orderNumber === "demo") {
-        setFoundOrder(demoOrder);
+    try {
+      const response = await fetch(`/api/orders/track?orderNumber=${encodeURIComponent(orderNumber.trim())}`);
+      const data = await response.json() as { order?: Order; error?: string };
+
+      if (response.ok && data.order) {
+        setFoundOrder(data.order);
         setError("");
       } else {
         setFoundOrder(null);
-        setError("Order not found. Please check the order number and try again.");
+        setError(data.error || "Order not found. Please check the order number and try again.");
       }
+    } catch {
+      setFoundOrder(null);
+      setError("Failed to search. Please try again.");
+    } finally {
       setIsSearching(false);
-    }, 1000);
+    }
+  };
+
+  // Build timeline from order status
+  const getTimeline = (order: Order) => {
+    const currentStatusIndex = timelineStatuses.indexOf(order.status || "pending");
+    
+    return timelineStatuses.map((status, index) => ({
+      status,
+      completed: index <= currentStatusIndex,
+      date: index <= currentStatusIndex ? order.createdAt : null,
+    }));
   };
 
   return (
@@ -124,9 +117,6 @@ export default function TrackOrderPage() {
             {error && (
               <p className="text-sm text-red-500 mt-2">{error}</p>
             )}
-            <p className="text-xs text-gray-400 mt-2">
-              Try: <button type="button" onClick={() => setOrderNumber("ORD-2024-001")} className="text-amber-600 hover:underline">ORD-2024-001</button> (demo order)
-            </p>
           </CardContent>
         </Card>
 
@@ -140,21 +130,21 @@ export default function TrackOrderPage() {
                   <div>
                     <CardTitle className="text-xl">{foundOrder.orderNumber}</CardTitle>
                     <CardDescription>
-                      Tracking #: {foundOrder.trackingNumber}
+                      Placed on {foundOrder.createdAt ? new Date(foundOrder.createdAt).toLocaleDateString() : "N/A"}
                     </CardDescription>
                   </div>
-                  <Badge className="bg-purple-100 text-purple-700 border-0 text-sm px-4 py-1">
-                    {statusConfig[foundOrder.status].label}
+                  <Badge className={`${statusConfig[foundOrder.status || "pending"].color} bg-opacity-10 border-0 text-sm px-4 py-1`}>
+                    {statusConfig[foundOrder.status || "pending"].label}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 {/* Timeline */}
                 <div className="relative">
-                  {foundOrder.timeline.map((step, index) => {
+                  {getTimeline(foundOrder).map((step, index) => {
                     const config = statusConfig[step.status];
                     const Icon = config.icon;
-                    const isLast = index === foundOrder.timeline.length - 1;
+                    const isLast = index === timelineStatuses.length - 1;
 
                     return (
                       <div key={step.status} className="flex gap-4 pb-8 last:pb-0">
@@ -184,9 +174,9 @@ export default function TrackOrderPage() {
                           <p className={`font-medium ${step.completed ? "text-gray-800" : "text-gray-400"}`}>
                             {config.label}
                           </p>
-                          {step.date ? (
+                          {step.completed && step.date ? (
                             <p className="text-sm text-gray-500">
-                              {step.date.toLocaleDateString()} at {step.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(step.date).toLocaleDateString()}
                             </p>
                           ) : (
                             <p className="text-sm text-gray-400">Pending</p>
@@ -211,7 +201,7 @@ export default function TrackOrderPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {foundOrder.items.map((item, index) => (
+                    {(foundOrder.items as OrderItem[])?.map((item, index) => (
                       <div key={index} className="flex justify-between text-sm">
                         <span className="text-gray-600">
                           {item.name} × {item.quantity}
@@ -226,8 +216,14 @@ export default function TrackOrderPage() {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-500">Shipping</span>
-                        <span>৳{foundOrder.shipping}</span>
+                        <span>৳{foundOrder.shippingCost?.toLocaleString() || 0}</span>
                       </div>
+                      {foundOrder.discount && foundOrder.discount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>Discount</span>
+                          <span>-৳{foundOrder.discount.toLocaleString()}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between font-bold mt-2">
                         <span>Total</span>
                         <span>৳{foundOrder.total.toLocaleString()}</span>
@@ -247,22 +243,14 @@ export default function TrackOrderPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm text-gray-600">
-                    <p className="font-medium text-gray-800">{foundOrder.shippingAddress.name}</p>
-                    <p>{foundOrder.shippingAddress.address}</p>
-                    <p>{foundOrder.shippingAddress.city}</p>
-                    <p>{foundOrder.shippingAddress.phone}</p>
-                  </div>
-                  <div className="mt-4 p-3 bg-amber-50 rounded-lg">
-                    <p className="text-sm font-medium text-amber-700">
-                      📅 Estimated Delivery
-                    </p>
-                    <p className="text-lg font-bold text-amber-800">
-                      {foundOrder.estimatedDelivery.toLocaleDateString("en-US", {
-                        weekday: "long",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
+                    <p className="font-medium text-gray-800">{foundOrder.customerName}</p>
+                    {foundOrder.shippingAddress && (
+                      <>
+                        <p>{(foundOrder.shippingAddress as { address?: string }).address}</p>
+                        <p>{(foundOrder.shippingAddress as { city?: string }).city}</p>
+                      </>
+                    )}
+                    <p>{foundOrder.customerPhone}</p>
                   </div>
                 </CardContent>
               </Card>
