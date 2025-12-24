@@ -1,9 +1,28 @@
 import { NextResponse } from "next/server";
+import { getAuth } from "@/lib/cloudflare";
+import { headers } from "next/headers";
 
-// Using default runtime for OpenNext compatibility
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // TODO: Implement actual auth check with Better Auth
-  // For now, return null user (guest mode)
-  return NextResponse.json({ user: null });
+  try {
+    const auth = await getAuth();
+    const headersList = await headers();
+    const session = await auth.api.getSession({ headers: headersList });
+
+    if (!session?.user) {
+      return NextResponse.json({ user: null });
+    }
+
+    return NextResponse.json({
+      user: {
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Error checking auth:", error);
+    return NextResponse.json({ user: null });
+  }
 }
