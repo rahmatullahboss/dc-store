@@ -26,7 +26,7 @@ export function ProductCardFooter({
       {/* First row on mobile: Price + Add button */}
       <div className="flex items-center justify-between w-full sm:w-auto sm:gap-2">
         <div className="flex flex-col">
-          <span className="text-lg sm:text-2xl font-bold text-gray-900">
+          <span className="text-lg sm:text-xl font-bold text-gray-900">
             {formatPrice(displayPrice)}
           </span>
           {hasDiscount && (
