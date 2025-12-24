@@ -44,7 +44,7 @@ export function ProductCardFooter({
             image: product.featuredImage || undefined,
           }}
           compact
-          className="sm:hidden !px-3 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-xs"
+          className="sm:hidden !h-9 !px-3 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-xs"
         />
       </div>
       {/* Second row on mobile: Full width Order button */}
@@ -58,7 +58,7 @@ export function ProductCardFooter({
             image: product.featuredImage || undefined,
           }}
           compact
-          className="hidden sm:flex !px-2.5 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-sm"
+          className="hidden sm:flex !h-9 !px-4 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-sm"
         />
         <OrderNowButton
           productSlug={product.slug}
