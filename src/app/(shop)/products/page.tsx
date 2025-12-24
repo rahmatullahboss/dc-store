@@ -14,12 +14,30 @@ export const metadata = {
   description: "Browse our collection of premium products",
 };
 
-export default async function ProductsPage() {
+interface ProductsPageProps {
+  searchParams: Promise<{ search?: string; category?: string }>;
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const params = await searchParams;
+  const searchQuery = params.search?.toLowerCase() || "";
+  const categoryFilter = params.category || "";
+
   // Fetch products and categories from database
   const [allProducts, categoryIds] = await Promise.all([
     getProducts(),
     getProductCategories(),
   ]);
+
+  // Filter products based on search query
+  const filteredProducts = allProducts.filter((product) => {
+    const matchesSearch = !searchQuery || 
+      product.name.toLowerCase().includes(searchQuery) ||
+      (product.description && product.description.toLowerCase().includes(searchQuery));
+    const matchesCategory = !categoryFilter || categoryFilter === "All" || 
+      product.categoryId === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
 
   // Create category list with "All" option
   const categories = ["All", ...categoryIds];
@@ -30,10 +48,13 @@ export default async function ProductsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-            All Products
+            {searchQuery ? `Search: "${params.search}"` : "All Products"}
           </h1>
           <p className="text-gray-600">
-            Discover our curated collection of premium products
+            {searchQuery 
+              ? `Found ${filteredProducts.length} products matching your search`
+              : "Discover our curated collection of premium products"
+            }
           </p>
         </div>
 
@@ -41,13 +62,15 @@ export default async function ProductsPage() {
         <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-100 mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
             {/* Search */}
-            <div className="relative flex-1">
+            <form action="/products" method="GET" className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
+                name="search"
                 placeholder="Search products..."
+                defaultValue={params.search || ""}
                 className="pl-10 bg-gray-50 border-0"
               />
-            </div>
+            </form>
 
             {/* Category Filters */}
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-2 md:pb-0 scrollbar-hide">
@@ -84,7 +107,7 @@ export default async function ProductsPage() {
           {/* Active Filters */}
           <div className="flex items-center gap-2 mt-4 pt-4 border-t">
             <span className="text-sm text-gray-500">
-              Showing {allProducts.length} products
+              Showing {filteredProducts.length} products
             </span>
             <div className="flex-1" />
             <select className="text-sm border rounded-lg px-3 py-2 bg-white">
@@ -97,9 +120,9 @@ export default async function ProductsPage() {
         </div>
 
         {/* Products Grid */}
-        {allProducts.length > 0 ? (
+        {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 gap-2 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {allProducts.map((product, index) => (
+            {filteredProducts.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}
           </div>
@@ -118,7 +141,7 @@ export default async function ProductsPage() {
         )}
 
         {/* Pagination - only show if products exist */}
-        {allProducts.length > 0 && (
+        {filteredProducts.length > 0 && (
           <div className="flex items-center justify-center gap-2 mt-12">
             <Button variant="outline" disabled>
               Previous

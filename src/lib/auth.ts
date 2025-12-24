@@ -52,7 +52,7 @@ export function createAuth(db: Database) {
     },
     plugins: [nextCookies()],
     trustedOrigins: [
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+      process.env.NEXT_PUBLIC_APP_URL || "https://store.digitalcare.site",
     ],
   });
 }

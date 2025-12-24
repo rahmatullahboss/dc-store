@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+// Initialize OpenNext Cloudflare for local development
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
   // Image optimization configuration
