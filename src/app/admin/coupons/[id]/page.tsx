@@ -107,11 +107,10 @@ export default function EditCouponPage({ params }: { params: Promise<{ id: strin
         toast.success("Coupon updated successfully!");
         router.push("/admin/coupons");
       } else {
-        const error = await res.json();
-        toast.error(error.error || "Failed to update coupon");
+        const errorData = await res.json() as { error?: string };
+        toast.error(errorData.error || "Failed to update coupon");
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("Failed to update coupon");
     } finally {
       setIsSaving(false);

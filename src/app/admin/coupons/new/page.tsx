@@ -61,11 +61,10 @@ export default function NewCouponPage() {
         toast.success("Coupon created successfully!");
         router.push("/admin/coupons");
       } else {
-        const error = await res.json();
-        toast.error(error.error || "Failed to create coupon");
+        const errorData = await res.json() as { error?: string };
+        toast.error(errorData.error || "Failed to create coupon");
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("Failed to create coupon");
     } finally {
       setIsLoading(false);

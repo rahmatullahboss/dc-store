@@ -86,12 +86,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   // Fetch product and categories on mount
   useEffect(() => {
     Promise.all([
-      fetch(`/api/admin/products/${id}`).then((res) => res.json()),
-      fetch("/api/admin/categories").then((res) => res.json()),
+      fetch(`/api/admin/products/${id}`).then((res) => res.json()) as Promise<{ product?: Product }>,
+      fetch("/api/admin/categories").then((res) => res.json()) as Promise<{ categories?: Category[] }>,
     ])
       .then(([productData, categoryData]) => {
         if (productData.product) {
-          const p = productData.product as Product;
+          const p = productData.product;
           setFormData({
             name: p.name || "",
             slug: p.slug || "",
@@ -118,7 +118,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         }
         if (categoryData.categories) setCategories(categoryData.categories);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setIsLoading(false));
   }, [id]);
 
@@ -165,11 +165,10 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         toast.success("Product updated successfully!");
         router.push("/admin/products");
       } else {
-        const error = await res.json();
-        toast.error(error.error || "Failed to update product");
+        const errorData = await res.json() as { error?: string };
+        toast.error(errorData.error || "Failed to update product");
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("Failed to update product");
     } finally {
       setIsSaving(false);
@@ -185,8 +184,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         toast.success("Product deleted");
         router.push("/admin/products");
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("Failed to delete product");
     }
   };

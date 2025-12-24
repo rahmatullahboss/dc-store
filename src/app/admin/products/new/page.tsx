@@ -58,12 +58,14 @@ export default function NewProductPage() {
 
   // Fetch categories on mount
   useEffect(() => {
-    fetch("/api/admin/categories")
-      .then((res) => res.json())
-      .then((data) => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch("/api/admin/categories");
+        const data = await res.json() as { categories?: Category[] };
         if (data.categories) setCategories(data.categories);
-      })
-      .catch(console.error);
+      } catch {}
+    }
+    fetchCategories();
   }, []);
 
   // Auto-generate slug from name
@@ -126,11 +128,10 @@ export default function NewProductPage() {
         toast.success("Product created successfully!");
         router.push("/admin/products");
       } else {
-        const error = await res.json();
-        toast.error(error.error || "Failed to create product");
+        const errorData = await res.json() as { error?: string };
+        toast.error(errorData.error || "Failed to create product");
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("Failed to create product");
     } finally {
       setIsLoading(false);
