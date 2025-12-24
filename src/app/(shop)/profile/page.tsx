@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Mail, Phone, MapPin, Package, Heart, Edit, LogOut, Loader2 } from "lucide-react";
+import { User, Mail, Phone, MapPin, Package, Heart, Edit, LogOut, Loader2, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Demo orders data
 const demoOrders = [
@@ -47,10 +48,85 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-red-100 text-red-700",
 };
 
+interface UserProfile {
+  name?: string;
+  phone?: string;
+  defaultAddress?: {
+    division?: string;
+    district?: string;
+    address?: string;
+  };
+}
+
 export default function ProfilePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [profile, setProfile] = useState<UserProfile>({});
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+  });
+
+  // Fetch user profile on mount
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/user/profile");
+        if (res.ok) {
+          const data = await res.json() as { profile?: UserProfile };
+          if (data.profile) {
+            setProfile(data.profile);
+            setFormData({
+              name: data.profile.name || "",
+              phone: data.profile.phone || "",
+              address: data.profile.defaultAddress?.address || "",
+            });
+          }
+        }
+      } catch {}
+    }
+    if (session?.user) fetchProfile();
+  }, [session?.user]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          defaultAddress: {
+            ...profile.defaultAddress,
+            address: formData.address,
+          },
+        }),
+      });
+      
+      if (res.ok) {
+        setProfile(prev => ({
+          ...prev,
+          name: formData.name,
+          phone: formData.phone,
+          defaultAddress: { ...prev.defaultAddress, address: formData.address },
+        }));
+        setIsEditing(false);
+        toast.success("Profile updated successfully!");
+        router.refresh();
+      } else {
+        toast.error("Failed to update profile");
+      }
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -130,9 +206,14 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="secondary" size="sm" className="gap-2">
-                <Edit className="h-4 w-4" />
-                Edit Profile
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="gap-2"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                {isEditing ? <X className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                {isEditing ? "Cancel" : "Edit Profile"}
               </Button>
               <Button 
                 variant="secondary" 
@@ -201,7 +282,12 @@ export default function ProfilePage() {
               <CardContent className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-500">Full Name</label>
-                  <Input value={user.name || ""} disabled className="mt-1" />
+                  <Input 
+                    value={isEditing ? formData.name : (profile.name || user.name || "")}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    disabled={!isEditing}
+                    className="mt-1" 
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 flex items-center gap-1">
@@ -213,18 +299,41 @@ export default function ProfilePage() {
                   <label className="text-sm font-medium text-gray-500 flex items-center gap-1">
                     <Phone className="h-4 w-4" /> Phone
                   </label>
-                  <Input value="+880 1XXX XXXXXX" disabled className="mt-1" />
+                  <Input 
+                    value={isEditing ? formData.phone : (profile.phone || "")}
+                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    disabled={!isEditing}
+                    placeholder="+880 1XXX XXXXXX"
+                    className="mt-1" 
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 flex items-center gap-1">
                     <MapPin className="h-4 w-4" /> Address
                   </label>
-                  <Input value="Dhaka, Bangladesh" disabled className="mt-1" />
+                  <Input 
+                    value={isEditing ? formData.address : (profile.defaultAddress?.address || "")}
+                    onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                    disabled={!isEditing}
+                    placeholder="Enter your address"
+                    className="mt-1" 
+                  />
                 </div>
-                <Button variant="outline" className="w-full mt-4">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Information
-                </Button>
+                {isEditing ? (
+                  <Button 
+                    className="w-full mt-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                    Save Changes
+                  </Button>
+                ) : (
+                  <Button variant="outline" className="w-full mt-4" onClick={() => setIsEditing(true)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Information
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </div>

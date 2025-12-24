@@ -48,6 +48,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json() as {
+      name?: string;
       phone?: string;
       defaultAddress?: {
         division?: string;
@@ -61,6 +62,10 @@ export async function PATCH(request: Request) {
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
+
+    if (body.name) {
+      updateData.name = body.name;
+    }
 
     if (body.phone) {
       updateData.phone = body.phone;
