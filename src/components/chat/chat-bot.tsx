@@ -22,7 +22,7 @@ import { siteConfig, formatPrice } from "@/lib/config";
 
 // Product type parsed from AI response
 interface Product {
-  id: string;
+  slug: string;
   name: string;
   price: number;
   category: string;
@@ -71,7 +71,7 @@ function parseProductsFromText(text: string): ContentSegment[] {
     segments.push({
       type: "product",
       product: {
-        id: match[1],
+        slug: match[1],
         name: match[2],
         price: parseInt(match[3], 10),
         category: match[4],
@@ -106,7 +106,7 @@ function parseProductsFromText(text: string): ContentSegment[] {
 function ChatProductCard({ product }: { product: Product }) {
   return (
     <Link
-      href={`/products/${product.id}`}
+      href={`/products/${product.slug}`}
       className="block bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden group"
     >
       <div className="flex gap-3 p-2">
@@ -384,7 +384,7 @@ export function ChatBot() {
           } else {
             return (
               <ChatProductCard
-                key={`product-${segment.product.id}-${idx}`}
+                key={`product-${segment.product.slug}-${idx}`}
                 product={segment.product}
               />
             );
