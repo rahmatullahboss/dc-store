@@ -2,13 +2,23 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCart } from "@/lib/cart-context";
+import { useSession, signOut } from "@/lib/auth-client";
 import { siteConfig } from "@/lib/config";
+import { useRouter } from "next/navigation";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -21,6 +31,14 @@ const navigation = [
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { itemCount, toggleCart } = useCart();
+  const { data: session, isPending } = useSession();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -44,6 +62,22 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+              {session?.user && (
+                <>
+                  <Link
+                    href="/profile"
+                    className="text-lg font-medium hover:text-primary transition-colors"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href="/orders"
+                    className="text-lg font-medium hover:text-primary transition-colors"
+                  >
+                    My Orders
+                  </Link>
+                </>
+              )}
             </nav>
           </SheetContent>
         </Sheet>
@@ -97,13 +131,56 @@ export function Header() {
             </Button>
           )}
 
-          {/* User */}
-          <Link href="/login">
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Account</span>
+          {/* User - Session Aware */}
+          {isPending ? (
+            <Button variant="ghost" size="icon" disabled>
+              <User className="h-5 w-5 animate-pulse" />
             </Button>
-          </Link>
+          ) : session?.user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
+                    <AvatarFallback className="text-xs bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                      {session.user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium">{session.user.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/orders" className="cursor-pointer">
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    My Orders
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-red-600">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href="/login">
+              <Button variant="ghost" size="icon">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            </Link>
+          )}
 
           {/* Cart */}
           <Button
