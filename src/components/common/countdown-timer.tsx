@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Clock } from "lucide-react";
 
 interface CountdownTimerProps {
@@ -9,41 +9,32 @@ interface CountdownTimerProps {
 }
 
 export function CountdownTimer({ endDate, className = "" }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isEnded: false,
-  });
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = Date.now();
-      const end = endDate.getTime();
-      const diff = end - now;
-
-      if (diff <= 0) {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0, isEnded: true };
-      }
-
-      return {
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((diff % (1000 * 60)) / 1000),
-        isEnded: false,
-      };
-    };
-
-    setTimeLeft(calculateTimeLeft());
-
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      setNow(Date.now());
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [endDate]);
+  }, []);
+
+  const timeLeft = useMemo(() => {
+    const end = endDate.getTime();
+    const diff = end - now;
+
+    if (diff <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, isEnded: true };
+    }
+
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds: Math.floor((diff % (1000 * 60)) / 1000),
+      isEnded: false,
+    };
+  }, [endDate, now]);
 
   if (timeLeft.isEnded) {
     return <span className="text-red-500 font-medium">Ended</span>;

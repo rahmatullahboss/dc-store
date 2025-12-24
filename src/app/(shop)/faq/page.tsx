@@ -6,7 +6,6 @@ import { Search, ChevronDown, HelpCircle, Package, CreditCard, RotateCcw, User, 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { siteConfig } from "@/lib/config";
 
 const faqCategories = [
   {

@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Zap, Tag, Gift, Package, Truck, Clock, ArrowRight, Percent } from "lucide-react";
+import { Zap, Tag, Gift, Package, Truck, ArrowRight, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/lib/config";

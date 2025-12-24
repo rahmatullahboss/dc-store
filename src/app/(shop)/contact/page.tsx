@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { 
   Mail, 
   Phone, 
@@ -22,7 +21,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { siteConfig } from "@/lib/config";
 
 const contactMethods = [
   {
@@ -31,7 +29,6 @@ const contactMethods = [
     description: "Mon-Sat, 10am-8pm",
     value: "+880 1XXX XXXXXX",
     href: "tel:+8801XXXXXXXXX",
-    color: "from-green-500 to-emerald-500",
   },
   {
     icon: Mail,
@@ -39,7 +36,6 @@ const contactMethods = [
     description: "We'll reply within 24h",
     value: "support@dcstore.com",
     href: "mailto:support@dcstore.com",
-    color: "from-blue-500 to-indigo-500",
   },
   {
     icon: MessageSquare,
@@ -47,7 +43,6 @@ const contactMethods = [
     description: "Chat with our team",
     value: "Start a conversation",
     href: "#",
-    color: "from-purple-500 to-pink-500",
   },
   {
     icon: MapPin,
@@ -55,13 +50,12 @@ const contactMethods = [
     description: "Our main office",
     value: "Dhanmondi, Dhaka",
     href: "#",
-    color: "from-amber-500 to-rose-500",
   },
 ];
 
 const socialLinks = [
-  { name: "Facebook", icon: Facebook, href: "#", color: "hover:bg-blue-500" },
-  { name: "Instagram", icon: Instagram, href: "#", color: "hover:bg-pink-500" },
+  { name: "Facebook", icon: Facebook, href: "#" },
+  { name: "Instagram", icon: Instagram, href: "#" },
 ];
 
 export default function ContactPage() {
@@ -106,16 +100,15 @@ export default function ContactPage() {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
-        <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 h-64 w-64 rounded-full bg-blue-200/40 blur-3xl" />
+        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/30 blur-3xl" />
+        <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/30 blur-3xl" />
       </div>
 
       <div className="relative z-10">
         {/* Hero Section */}
         <section className="container mx-auto px-4 pt-12 pb-8">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-r from-amber-500 via-rose-500 to-purple-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-amber-500/25">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-r from-amber-400 to-rose-400 rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-amber-300/20">
               <Headphones className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
@@ -138,7 +131,7 @@ export default function ContactPage() {
               >
                 <Card className="h-full bg-white/80 backdrop-blur border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-5 text-center">
-                    <div className={`w-14 h-14 mx-auto bg-gradient-to-r ${method.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                    <div className="w-14 h-14 mx-auto bg-gradient-to-r from-amber-400 to-rose-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md">
                       <method.icon className="w-7 h-7 text-white" />
                     </div>
                     <h3 className="font-bold text-gray-800 mb-1">{method.title}</h3>
@@ -157,9 +150,9 @@ export default function ContactPage() {
         <section className="container mx-auto px-4 pb-16">
           <div className="grid lg:grid-cols-5 gap-8 max-w-6xl mx-auto">
             {/* Contact Form - Takes 3 columns */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 space-y-6">
               <Card className="bg-white/90 backdrop-blur border-0 shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-500 via-rose-500 to-purple-500 p-6 text-white">
+                <div className="bg-gradient-to-r from-amber-500 to-rose-500 p-6 text-white">
                   <h2 className="text-2xl font-bold mb-2">Send us a Message</h2>
                   <p className="text-white/80">
                     Fill out the form and we&apos;ll get back to you within 24 hours.
@@ -168,7 +161,7 @@ export default function ContactPage() {
                 <CardContent className="p-6">
                   {isSuccess ? (
                     <div className="text-center py-12">
-                      <div className="w-20 h-20 mx-auto bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                      <div className="w-20 h-20 mx-auto bg-gradient-to-r from-amber-400 to-rose-500 rounded-full flex items-center justify-center mb-6">
                         <CheckCircle className="w-10 h-10 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold text-gray-800 mb-3">Message Sent!</h3>
@@ -280,6 +273,31 @@ export default function ContactPage() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Follow Us - Now under the form on left side */}
+              <Card className="bg-gradient-to-r from-amber-400/90 to-rose-400/90 border-0 shadow-md">
+                <CardContent className="p-6 text-white">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-lg mb-1">Follow Us</h3>
+                      <p className="text-sm text-white/80">
+                        Stay connected for updates and offers!
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      {socialLinks.map((social) => (
+                        <a
+                          key={social.name}
+                          href={social.href}
+                          className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white hover:text-amber-600 transition-all"
+                        >
+                          <social.icon className="w-5 h-5" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Sidebar - Takes 2 columns */}
@@ -327,31 +345,9 @@ export default function ContactPage() {
                 </CardContent>
               </Card>
 
-              {/* Social Links */}
-              <Card className="bg-gradient-to-r from-amber-500 via-rose-500 to-purple-500 border-0 shadow-lg">
-                <CardContent className="p-6 text-white">
-                  <h3 className="font-bold mb-4">Follow Us</h3>
-                  <p className="text-sm text-white/80 mb-4">
-                    Stay connected for updates, offers, and more!
-                  </p>
-                  <div className="flex gap-3">
-                    {socialLinks.map((social) => (
-                      <a
-                        key={social.name}
-                        href={social.href}
-                        className={`w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white hover:text-gray-800 transition-all`}
-                      >
-                        <social.icon className="w-5 h-5" />
-                      </a>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Map Placeholder */}
               <Card className="bg-white/80 backdrop-blur border-0 shadow-lg overflow-hidden">
-                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
-                  <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v11/static/90.3899,23.7465,12,0/400x200?access_token=placeholder')] bg-cover bg-center opacity-50" />
+                <div className="h-48 bg-gradient-to-br from-amber-50 to-rose-50 flex items-center justify-center relative">
                   <div className="relative text-center z-10">
                     <MapPin className="w-10 h-10 text-amber-500 mx-auto mb-2 drop-shadow-lg" />
                     <p className="text-sm font-medium text-gray-700">Dhanmondi, Dhaka</p>

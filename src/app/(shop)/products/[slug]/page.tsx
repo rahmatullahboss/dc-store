@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ShoppingCart, Truck, ShieldCheck, Star, StarHalf } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
