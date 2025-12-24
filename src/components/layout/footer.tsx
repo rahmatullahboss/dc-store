@@ -35,14 +35,14 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div className="space-y-4">
-            <Link href="/" className="text-xl font-bold">
+          <div className="space-y-4 text-center md:text-left">
+            <Link href="/" className="text-xl font-bold inline-block">
               {siteConfig.name}
             </Link>
             <p className="text-sm text-muted-foreground">
               {siteConfig.description}
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 justify-center md:justify-start">
               <Link
                 href={siteConfig.social.facebook}
                 className="text-muted-foreground hover:text-primary transition-colors"

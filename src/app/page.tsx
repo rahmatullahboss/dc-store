@@ -120,13 +120,13 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* Offers Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Offers Grid - Horizontal scroll on mobile */}
+            <div className="flex gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-4 sm:overflow-visible scrollbar-hide">
               {offers.map((offer) => (
                 <Link
                   key={offer.id}
                   href="/offers"
-                  className={`${offer.bgColor} rounded-xl p-4 border border-gray-100 hover:shadow-lg transition-all hover:scale-[1.02]`}
+                  className={`${offer.bgColor} rounded-xl p-3 sm:p-4 border border-gray-100 hover:shadow-lg transition-all hover:scale-[1.02] flex-shrink-0 w-[160px] sm:w-auto`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div
@@ -141,12 +141,12 @@ export default async function HomePage() {
                     </Badge>
                   </div>
 
-                  <h3 className="font-bold text-gray-800 mb-1 line-clamp-1">
+                  <h3 className="font-bold text-gray-800 mb-0.5 sm:mb-1 text-sm sm:text-base line-clamp-1">
                     {offer.name}
                   </h3>
 
                   <p
-                    className={`text-lg font-bold bg-gradient-to-r ${offer.color} bg-clip-text text-transparent mb-2`}
+                    className={`text-base sm:text-lg font-bold bg-gradient-to-r ${offer.color} bg-clip-text text-transparent mb-1 sm:mb-2`}
                   >
                     {offer.discount}
                   </p>

@@ -42,7 +42,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center px-4">
         {/* Mobile Menu */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
@@ -82,8 +82,8 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        {/* Logo - Centered on mobile */}
+        <Link href="/" className="flex items-center gap-2 flex-1 justify-center md:flex-none md:justify-start">
           <span className="text-xl font-bold tracking-tight">
             {siteConfig.name}
           </span>

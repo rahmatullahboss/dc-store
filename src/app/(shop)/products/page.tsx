@@ -38,8 +38,8 @@ export default async function ProductsPage() {
         </div>
 
         {/* Search & Filters Bar */}
-        <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-100 mb-6 sm:mb-8">
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
             {/* Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -50,12 +50,12 @@ export default async function ProductsPage() {
             </div>
 
             {/* Category Filters */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-2 md:pb-0 scrollbar-hide">
               {categories.map((category) => (
                 <Badge
                   key={category}
                   variant={category === "All" ? "default" : "outline"}
-                  className={`cursor-pointer whitespace-nowrap px-4 py-2 ${
+                  className={`cursor-pointer whitespace-nowrap px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm ${
                     category === "All"
                       ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0 hover:from-amber-600 hover:to-rose-600"
                       : "hover:bg-gray-100"
