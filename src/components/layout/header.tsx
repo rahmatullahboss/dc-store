@@ -89,8 +89,8 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 flex-1">
+        {/* Desktop Navigation - Centered */}
+        <nav className="hidden md:flex items-center justify-center gap-6 flex-1">
           {navigation.map((item) => (
             <Link
               key={item.name}
