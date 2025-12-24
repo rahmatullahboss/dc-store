@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, SlidersHorizontal, X, Star, ChevronDown, ShoppingCart, Grid3X3, List } from "lucide-react";
+import { Search, SlidersHorizontal, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
