@@ -195,19 +195,42 @@ export function ChatBot() {
 
   const isLoading = status === "streaming" || status === "submitted";
 
-  // Check if user is logged in
+  // Check if user is logged in and fetch profile data
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        const authData = data as { user?: { id: string; name?: string } };
+    async function fetchUserData() {
+      try {
+        // First check if user is logged in
+        const authRes = await fetch("/api/auth/me");
+        const authData = await authRes.json() as { user?: { id: string; name?: string; email?: string } };
+        
         if (authData.user) {
           setUserId(authData.user.id);
-          setGuestInfo({ name: authData.user.name || "User", phone: "" });
+          
+          // Fetch full profile data including phone
+          const profileRes = await fetch("/api/user/profile");
+          if (profileRes.ok) {
+            const profileData = await profileRes.json() as { 
+              profile?: { name?: string; phone?: string } 
+            };
+            if (profileData.profile) {
+              setGuestInfo({ 
+                name: profileData.profile.name || authData.user.name || "User", 
+                phone: profileData.profile.phone || "" 
+              });
+            } else {
+              setGuestInfo({ name: authData.user.name || "User", phone: "" });
+            }
+          } else {
+            setGuestInfo({ name: authData.user.name || "User", phone: "" });
+          }
         }
-      })
-      .catch(() => {})
-      .finally(() => setIsCheckingAuth(false));
+      } catch {
+        // Ignore auth errors
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    }
+    fetchUserData();
   }, []);
 
   // Listen for custom event to open chatbot
