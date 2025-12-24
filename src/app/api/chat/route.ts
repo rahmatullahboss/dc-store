@@ -1,65 +1,48 @@
 import { createGroq } from "@ai-sdk/groq";
 import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { siteConfig, formatPrice } from "@/lib/config";
+import { getDatabase } from "@/lib/cloudflare";
+import { products } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 // Using default runtime for OpenNext compatibility
+export const dynamic = "force-dynamic";
 
-// Demo products for chat context (in real app, fetch from D1)
-const demoProducts = [
-  {
-    id: "1",
-    name: "Premium Wireless Headphones",
-    price: 4999,
-    category: "Electronics",
-    inStock: true,
-  },
-  {
-    id: "2",
-    name: "Smart Watch Series X",
-    price: 12999,
-    category: "Electronics",
-    inStock: true,
-  },
-  {
-    id: "3",
-    name: "Designer Leather Bag",
-    price: 8499,
-    category: "Fashion",
-    inStock: true,
-  },
-  {
-    id: "4",
-    name: "Running Sneakers Pro",
-    price: 6999,
-    category: "Sports",
-    inStock: true,
-  },
-  {
-    id: "5",
-    name: "Vintage Camera",
-    price: 15999,
-    category: "Electronics",
-    inStock: true,
-  },
-  {
-    id: "6",
-    name: "Minimalist Desk Lamp",
-    price: 2499,
-    category: "Home",
-    inStock: true,
-  },
-];
+// Fetch real products from database
+async function fetchProducts() {
+  try {
+    const db = await getDatabase();
+    const dbProducts = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        price: products.price,
+        categoryId: products.categoryId,
+        quantity: products.quantity,
+        featuredImage: products.featuredImage,
+      })
+      .from(products)
+      .where(eq(products.isActive, true))
+      .limit(30);
 
-function generateSystemPrompt() {
-  const productList = demoProducts
-    .map(
-      (p) =>
-        `- ID:${p.id} | ${p.name} | ${formatPrice(p.price)} | ${p.category} | ${
-          p.inStock ? "In Stock" : "Out"
-        }`
-    )
-    .join("\n");
+    return dbProducts.map(p => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      price: p.price,
+      category: p.categoryId || "General",
+      inStock: (p.quantity || 0) > 0,
+      image: p.featuredImage || "/placeholder.svg",
+    }));
+  } catch (error) {
+    console.error("Error fetching products for chat:", error);
+    // Return empty array if database fetch fails
+    return [];
+  }
+}
 
+function generateSystemPrompt(productList: string) {
   return `You are a helpful customer support assistant for "${siteConfig.name}" e-commerce store.
 
 LANGUAGE: Use Bengali when user writes in Bengali, otherwise English.
@@ -70,7 +53,7 @@ When showing ANY product, you MUST ALWAYS output it in this EXACT format:
 [PRODUCT:id:name:price:category:inStock:imageUrl]
 
 Example output:
-[PRODUCT:1:Premium Headphones:4999:Electronics:true:/images/headphones.jpg]
+[PRODUCT:prod-1:Premium Headphones:4999:Electronics:true:/images/headphones.jpg]
 
 ##AVAILABLE PRODUCTS (USE ONLY THESE)##
 ${productList}
@@ -97,7 +80,21 @@ ${productList}
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
-  const systemPrompt = generateSystemPrompt();
+  // Fetch real products from database
+  const realProducts = await fetchProducts();
+  
+  const productListStr = realProducts.length > 0
+    ? realProducts
+        .map(
+          (p) =>
+            `- ID:${p.id} | ${p.name} | ${formatPrice(p.price)} | ${p.category} | ${
+              p.inStock ? "In Stock" : "Out"
+            } | ${p.image}`
+        )
+        .join("\n")
+    : "No products available at the moment.";
+
+  const systemPrompt = generateSystemPrompt(productListStr);
   const enhancedMessages = await convertToModelMessages(messages);
 
   const groqKey = process.env.GROQ_API_KEY;

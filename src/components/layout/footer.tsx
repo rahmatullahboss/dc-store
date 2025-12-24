@@ -68,7 +68,7 @@ export function Footer() {
           </div>
 
           {/* Shop Links */}
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="font-semibold mb-4">Shop</h3>
             <ul className="space-y-2">
               {footerLinks.shop.map((link) => (
@@ -85,7 +85,7 @@ export function Footer() {
           </div>
 
           {/* Support Links */}
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
@@ -102,10 +102,10 @@ export function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="font-semibold mb-4">Contact</h3>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
+              <li className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4" />
                 <a
                   href={`mailto:${siteConfig.email}`}
@@ -114,7 +114,7 @@ export function Footer() {
                   {siteConfig.email}
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
+              <li className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />
                 <a
                   href={`tel:${siteConfig.phone}`}
@@ -123,7 +123,7 @@ export function Footer() {
                   {siteConfig.phone}
                 </a>
               </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
+              <li className="flex items-start justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mt-0.5" />
                 <span>{siteConfig.address}</span>
               </li>

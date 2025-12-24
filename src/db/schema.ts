@@ -13,6 +13,11 @@ export const users = sqliteTable("users", {
   image: text("image"),
   role: text("role", { enum: ["customer", "admin"] }).default("customer"),
   phone: text("phone"),
+  defaultAddress: text("default_address", { mode: "json" }).$type<{
+    division?: string;
+    district?: string;
+    address?: string;
+  }>(),
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
     () => new Date()
   ),

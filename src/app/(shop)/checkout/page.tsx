@@ -68,6 +68,7 @@ export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
@@ -78,16 +79,41 @@ export default function CheckoutPage() {
     notes: "",
   });
 
-  // Pre-fill form with user profile data when session loads
+  // Fetch and pre-fill form with user profile data
   useEffect(() => {
-    if (session?.user) {
-      setFormData(prev => ({
-        ...prev,
-        name: prev.name || session.user.name || "",
-        email: prev.email || session.user.email || "",
-      }));
+    async function fetchProfile() {
+      if (session?.user && !profileLoaded) {
+        try {
+          const res = await fetch("/api/user/profile");
+          if (res.ok) {
+            const data = await res.json() as { 
+              profile: { 
+                name: string; 
+                email: string; 
+                phone?: string; 
+                defaultAddress?: { division?: string; district?: string; address?: string; } 
+              } 
+            };
+            if (data.profile) {
+              setFormData(prev => ({
+                ...prev,
+                name: prev.name || data.profile.name || "",
+                email: prev.email || data.profile.email || "",
+                phone: prev.phone || data.profile.phone || "",
+                division: prev.division || data.profile.defaultAddress?.division || "",
+                district: prev.district || data.profile.defaultAddress?.district || "",
+                address: prev.address || data.profile.defaultAddress?.address || "",
+              }));
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+        }
+        setProfileLoaded(true);
+      }
     }
-  }, [session]);
+    fetchProfile();
+  }, [session, profileLoaded]);
 
   const shippingCost = subtotal >= siteConfig.shipping.freeShippingThreshold 
     ? 0 
@@ -180,6 +206,27 @@ export default function CheckoutPage() {
 
       const data = await response.json() as { order: { id: string; orderNumber: string } };
       
+      // Save shipping info to user profile for future orders (if logged in)
+      if (session?.user) {
+        try {
+          await fetch("/api/user/profile", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              phone: formData.phone,
+              defaultAddress: {
+                division: formData.division,
+                district: formData.district,
+                address: formData.address,
+              },
+            }),
+          });
+        } catch (error) {
+          console.error("Error saving profile:", error);
+          // Don't block order completion if profile save fails
+        }
+      }
+
       // Clear cart and redirect
       clearCart();
       router.push(`/order-confirmation/${data.order.id}`);

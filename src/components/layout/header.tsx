@@ -51,8 +51,8 @@ export function Header() {
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px]">
-            <nav className="flex flex-col gap-4 mt-8">
+          <SheetContent side="left" className="w-[300px] p-6">
+            <nav className="flex flex-col gap-4 mt-6">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
