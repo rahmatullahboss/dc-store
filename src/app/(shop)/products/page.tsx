@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
 import { getProducts, getProductCategories } from "@/lib/queries";
 
-// ISR: Cache for 60 seconds, on-demand revalidation via admin actions
+// ISR: Cache for 3600 seconds (1 hour), on-demand revalidation via admin actions
 // Note: Only works with manual deploy (wrangler deploy), not Git integration
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata = {
   title: "All Products",

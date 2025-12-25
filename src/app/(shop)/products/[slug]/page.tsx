@@ -9,9 +9,9 @@ import type { Metadata } from "next";
 import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/queries";
 import { ProductActions } from "./product-actions";
 
-// ISR: Cache for 60 seconds, on-demand revalidation via admin actions
+// ISR: Cache for 3600 seconds (1 hour), on-demand revalidation via admin actions
 // Note: Only works with manual deploy (wrangler deploy), not Git integration
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
