@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/providers/theme_provider.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -241,17 +242,11 @@ class ProfileScreen extends ConsumerWidget {
                       subtitle: "Push and email settings",
                       onTap: () {},
                     ),
-                    _MenuItem(
-                      icon: LucideIcons.moon,
-                      title: "Theme",
-                      subtitle: "Light / Dark mode",
-                      trailing: Switch(
-                        value: false,
-                        onChanged: (val) {},
-                        activeColor: AppColors.primary,
-                      ),
-                      onTap: () {},
-                    ),
+                  ]),
+                  const SizedBox(height: 8),
+                  _buildThemeMenuItem(context, ref),
+                  const SizedBox(height: 8),
+                  _buildMenuCard([
                     _MenuItem(
                       icon: LucideIcons.globe,
                       title: "Language",
@@ -363,6 +358,51 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildThemeMenuItem(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isDark = themeMode == ThemeMode.dark;
+
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0xFFF5F5F5), width: 1)),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            isDark ? LucideIcons.moon : LucideIcons.sun,
+            color: AppColors.primary,
+            size: 20,
+          ),
+        ),
+        title: const Text(
+          "Theme",
+          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black87),
+        ),
+        subtitle: Text(
+          isDark ? "Dark mode" : "Light mode",
+          style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+        ),
+        trailing: Switch(
+          value: isDark,
+          onChanged: (val) {
+            ref
+                .read(themeModeProvider.notifier)
+                .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+          },
+          activeColor: AppColors.primary,
+        ),
+        onTap: () {
+          ref.read(themeModeProvider.notifier).toggleTheme();
+        },
       ),
     );
   }
