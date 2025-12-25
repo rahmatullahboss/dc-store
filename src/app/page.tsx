@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/product/product-card";
 import { siteConfig } from "@/lib/config";
 import { getFeaturedProducts, getProducts } from "@/lib/queries";
 
-// ISR: Revalidate every 60 seconds + on-demand revalidation via admin actions
-export const revalidate = 60;
+// Force dynamic - D1 database not available during build (even Cloudflare Git integration)
+export const dynamic = "force-dynamic";
 
 // Demo offers (will be replaced with database offers later)
 const offers = [
