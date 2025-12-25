@@ -41,23 +41,7 @@ const values = [
   },
 ];
 
-const team = [
-  {
-    name: "Rahmat Ullah",
-    role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop",
-  },
-  {
-    name: "Tasnim Khan",
-    role: "Head of Operations",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop",
-  },
-  {
-    name: "Sakib Hasan",
-    role: "Tech Lead",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
-  },
-];
+
 
 export default function AboutPage() {
   return (
@@ -102,16 +86,24 @@ export default function AboutPage() {
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">Our Story</h2>
                 <div className="space-y-4 text-gray-600">
                   <p>
-                    {siteConfig.name} started in 2024 with a simple idea: make quality products accessible to everyone. 
-                    What began as a small online shop has grown into a trusted destination for thousands of customers.
+                    {siteConfig.name} হলো বাংলাদেশের একটি বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম যেখানে আপনি পাবেন 
+                    সেরা মানের পণ্য সাশ্রয়ী মূল্যে। আমরা বিশ্বাস করি অনলাইন শপিং হওয়া উচিত সহজ, নিরাপদ এবং আনন্দদায়ক।
                   </p>
                   <p>
-                    We believe shopping should be an enjoyable experience. That&apos;s why we focus on curating the best 
-                    products, offering competitive prices, and providing exceptional customer service.
+                    আমাদের লক্ষ্য হলো গ্রাহকদের সেরা পণ্য সংগ্রহ করে দেওয়া, প্রতিযোগিতামূলক মূল্যে অফার করা 
+                    এবং অসাধারণ গ্রাহক সেবা প্রদান করা। প্রতিটি পণ্য যত্ন সহকারে নির্বাচন করা হয় যাতে আপনি পান সেরা অভিজ্ঞতা।
                   </p>
                   <p>
-                    Today, we offer over 500 products across 50+ categories, with fast delivery across Bangladesh. 
-                    But our journey is just beginning – we&apos;re constantly expanding and improving to serve you better.
+                    এই স্টোরটি তৈরি করেছে{" "}
+                    <a 
+                      href="https://digitalcare.site" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="font-semibold text-amber-600 hover:text-amber-700 underline decoration-amber-400 underline-offset-2 transition-colors"
+                    >
+                      DigitalCare Team
+                    </a>
+                    {" "}— আমরা আধুনিক প্রযুক্তি ব্যবহার করে ব্যবসায়িক সমাধান তৈরি করি।
                   </p>
                 </div>
                 <div className="mt-6">
@@ -158,31 +150,23 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Team */}
+        {/* Developed By Section */}
         <section className="bg-white/50 py-16">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">Meet the Team</h2>
-              <p className="text-gray-600">The people behind {siteConfig.name}</p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              {team.map((member) => (
-                <Card key={member.name} className="bg-white/80 backdrop-blur text-center overflow-hidden group">
-                  <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <CardContent className="py-4">
-                    <h3 className="font-bold text-gray-800">{member.name}</h3>
-                    <p className="text-sm text-gray-500">{member.role}</p>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">Developed By</h2>
+              <p className="text-gray-600 mb-6">
+                এই ই-কমার্স প্ল্যাটফর্মটি ডিজাইন এবং ডেভেলপ করেছে DigitalCare Team।
+              </p>
+              <a 
+                href="https://digitalcare.site" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-rose-600 transition-all shadow-lg hover:shadow-xl"
+              >
+                Visit DigitalCare
+                <ArrowRight className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </section>
