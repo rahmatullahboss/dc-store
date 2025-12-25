@@ -9,8 +9,8 @@ import type { Metadata } from "next";
 import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/queries";
 import { ProductActions } from "./product-actions";
 
-// Revalidate every 60 seconds (ISR) - on-demand revalidation triggered by admin actions
-export const revalidate = 60;
+// Force dynamic - D1 database not available during static build in GitHub Actions
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/product/product-card";
 import { siteConfig } from "@/lib/config";
 import { getFeaturedProducts, getProducts } from "@/lib/queries";
 
-// Revalidate every 60 seconds (ISR) - on-demand revalidation triggered by admin actions
-export const revalidate = 60;
+// Force dynamic - D1 database not available during static build in GitHub Actions
+export const dynamic = "force-dynamic";
 
 // Demo offers (will be replaced with database offers later)
 const offers = [
