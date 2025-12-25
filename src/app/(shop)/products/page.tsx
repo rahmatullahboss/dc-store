@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
 import { getProducts, getProductCategories } from "@/lib/queries";
 
-// Force dynamic - D1 database not available during build (even Cloudflare Git integration)
-export const dynamic = "force-dynamic";
+// ISR: Cache for 60 seconds, on-demand revalidation via admin actions
+// Note: Only works with manual deploy (wrangler deploy), not Git integration
+export const revalidate = 60;
 
 export const metadata = {
   title: "All Products",
