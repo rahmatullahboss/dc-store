@@ -86,15 +86,15 @@ export default function AboutPage() {
                 <h2 className="text-3xl font-bold text-gray-800 mb-6">Our Story</h2>
                 <div className="space-y-4 text-gray-600">
                   <p>
-                    {siteConfig.name} হলো বাংলাদেশের একটি বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম যেখানে আপনি পাবেন 
-                    সেরা মানের পণ্য সাশ্রয়ী মূল্যে। আমরা বিশ্বাস করি অনলাইন শপিং হওয়া উচিত সহজ, নিরাপদ এবং আনন্দদায়ক।
+                    {siteConfig.name} is a trusted online shopping platform in Bangladesh where you can find 
+                    quality products at affordable prices. We believe online shopping should be easy, safe, and enjoyable.
                   </p>
                   <p>
-                    আমাদের লক্ষ্য হলো গ্রাহকদের সেরা পণ্য সংগ্রহ করে দেওয়া, প্রতিযোগিতামূলক মূল্যে অফার করা 
-                    এবং অসাধারণ গ্রাহক সেবা প্রদান করা। প্রতিটি পণ্য যত্ন সহকারে নির্বাচন করা হয় যাতে আপনি পান সেরা অভিজ্ঞতা।
+                    Our goal is to bring you the best products, offer competitive prices, 
+                    and provide exceptional customer service. Every product is carefully selected to ensure you get the best experience.
                   </p>
                   <p>
-                    এই স্টোরটি তৈরি করেছে{" "}
+                    This store is developed by{" "}
                     <a 
                       href="https://digitalcare.site" 
                       target="_blank" 
@@ -103,7 +103,7 @@ export default function AboutPage() {
                     >
                       DigitalCare Team
                     </a>
-                    {" "}— আমরা আধুনিক প্রযুক্তি ব্যবহার করে ব্যবসায়িক সমাধান তৈরি করি।
+                    {" "}— we build modern business solutions using the latest technology.
                   </p>
                 </div>
                 <div className="mt-6">
@@ -156,7 +156,7 @@ export default function AboutPage() {
             <div className="text-center max-w-2xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-800 mb-4">Developed By</h2>
               <p className="text-gray-600 mb-6">
-                এই ই-কমার্স প্ল্যাটফর্মটি ডিজাইন এবং ডেভেলপ করেছে DigitalCare Team।
+                This e-commerce platform is designed and developed by DigitalCare Team.
               </p>
               <a 
                 href="https://digitalcare.site" 
