@@ -35,6 +35,17 @@ database_name = "dc-store-db"
 database_id = "3cad0fb5-4cc8-419b-9979-d097ffa0260e"
 migrations_dir = "drizzle/migrations"
 
+# KV Namespace for ISR Cache (OpenNext expects this exact binding name)
+[[kv_namespaces]]
+binding = "NEXT_INC_CACHE_KV"
+id = "c8de69b9c1184c389b10d10d058f3cea"
+
+# D1 binding for OpenNext Tag Cache (for on-demand revalidation)
+[[d1_databases]]
+binding = "NEXT_TAG_CACHE_D1"
+database_name = "dc-store-db"
+database_id = "3cad0fb5-4cc8-419b-9979-d097ffa0260e"
+
 # Using Cloudinary for image storage instead of R2
 
 # Environment variables (non-sensitive)

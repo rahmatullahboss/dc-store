@@ -1,9 +1,15 @@
-// open-next.config.ts - Cloudflare Workers configuration
+// open-next.config.ts - Cloudflare Workers configuration with ISR caching
 import { defineCloudflareConfig } from "@opennextjs/cloudflare/config";
+import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
+import d1NextTagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache";
 
-// Using default incremental cache (no R2) since R2 bucket isn't enabled
-// To enable R2 caching, enable R2 in Cloudflare dashboard and add:
-// import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
-// export default defineCloudflareConfig({ incrementalCache: r2IncrementalCache });
+// ISR Configuration:
+// - KV Cache: Stores cached pages (fast key-value storage with built-in edge caching)
+// - D1 Tag Cache: Enables on-demand revalidation via revalidatePath/revalidateTag
+export default defineCloudflareConfig({
+  incrementalCache: kvIncrementalCache,
+  tagCache: d1NextTagCache,
+});
 
-export default defineCloudflareConfig({});
+
+
