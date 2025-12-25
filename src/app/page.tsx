@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/product/product-card";
 import { siteConfig } from "@/lib/config";
 import { getFeaturedProducts, getProducts } from "@/lib/queries";
 
-// Force dynamic rendering for Cloudflare context
-export const dynamic = "force-dynamic";
+// Revalidate every 60 seconds (ISR) - on-demand revalidation triggered by admin actions
+export const revalidate = 60;
 
 // Demo offers (will be replaced with database offers later)
 const offers = [

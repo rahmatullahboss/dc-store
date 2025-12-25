@@ -9,8 +9,8 @@ import type { Metadata } from "next";
 import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/queries";
 import { ProductActions } from "./product-actions";
 
-// Force dynamic rendering for Cloudflare context
-export const dynamic = "force-dynamic";
+// Revalidate every 60 seconds (ISR) - on-demand revalidation triggered by admin actions
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

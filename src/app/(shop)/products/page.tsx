@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
 import { getProducts, getProductCategories } from "@/lib/queries";
 
-// Force dynamic rendering for Cloudflare context
-export const dynamic = "force-dynamic";
+// Revalidate every 60 seconds (ISR) - on-demand revalidation triggered by admin actions
+export const revalidate = 60;
 
 export const metadata = {
   title: "All Products",

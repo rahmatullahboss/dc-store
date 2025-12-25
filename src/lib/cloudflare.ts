@@ -6,7 +6,8 @@ let cachedDb: Database | null = null;
 let cachedAuth: Auth | null = null;
 
 export async function getEnv() {
-  const { env } = await getCloudflareContext();
+  // Use async mode for ISR/static page compatibility
+  const { env } = await getCloudflareContext({ async: true });
   return env as CloudflareEnv;
 }
 
@@ -31,3 +32,4 @@ export function resetCache() {
   cachedDb = null;
   cachedAuth = null;
 }
+

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
 import { products, categories } from "@/db/schema";
 import { eq, like, and, desc } from "drizzle-orm";
@@ -129,9 +130,14 @@ export async function POST(request: Request) {
       metaDescription: body.metaDescription || null,
     });
 
+    // Revalidate product pages for instant updates
+    revalidatePath("/");
+    revalidatePath("/products");
+
     return NextResponse.json({ success: true, id });
   } catch (error) {
     console.error("Create product error:", error);
     return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
   }
 }
+
