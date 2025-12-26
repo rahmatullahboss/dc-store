@@ -273,12 +273,15 @@ export function ChatBot() {
     loadChatHistory();
   }, [sessionId, historyLoaded]);
 
-  // Auto scroll to bottom
+  // Auto scroll to bottom when chat opens or messages change
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current && isOpen) {
+      // Use setTimeout to ensure the DOM has fully rendered
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     }
-  }, [messages, showHumanOptions]);
+  }, [messages, showHumanOptions, isOpen, historyMessages, historyLoaded]);
 
   // Auto-focus input when ready
   useEffect(() => {

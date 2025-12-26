@@ -119,8 +119,7 @@ export async function POST(req: Request) {
       apiKey: openrouterKey,
     });
     const result = streamText({
-      // Using a more capable model that follows instructions better
-      model: openrouter("google/gemini-2.0-flash-001"),
+      model: openrouter("xiaomi/mimo-v2-flash:free"),
       system: systemPrompt,
       messages: enhancedMessages,
     });
