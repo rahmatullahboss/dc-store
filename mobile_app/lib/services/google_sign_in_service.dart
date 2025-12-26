@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 /// Service to handle Google Sign-In authentication
-/// Uses google_sign_in v7.x platform interface API
+/// Uses google_sign_in v7.x API with GoogleSignIn.instance singleton
 class GoogleSignInService {
   static GoogleSignInService? _instance;
   bool _initialized = false;
@@ -15,13 +15,14 @@ class GoogleSignInService {
     return _instance!;
   }
 
-  /// Initialize the Google Sign-In platform
+  /// Initialize the Google Sign-In
   Future<void> _ensureInitialized() async {
     if (_initialized) return;
 
     try {
-      await GoogleSignInPlatform.instance.init(
-        const InitParameters(scopes: ['email', 'profile']),
+      await GoogleSignIn.instance.initialize(
+        // For iOS/Android, client IDs come from GoogleService-Info.plist / google-services.json
+        // For web, configure in index.html meta tag
       );
       _initialized = true;
     } catch (e) {
@@ -31,29 +32,34 @@ class GoogleSignInService {
   }
 
   /// Sign in with Google
-  /// Returns the signed-in user data or null if cancelled/failed
-  Future<GoogleSignInUserData?> signIn() async {
+  /// Returns the signed-in account or null if cancelled/failed
+  Future<GoogleSignInAccount?> signIn() async {
     try {
       await _ensureInitialized();
 
-      // Try silent sign-in first (for returning users)
-      GoogleSignInUserData? user;
-      try {
-        user = await GoogleSignInPlatform.instance.signInSilently();
-      } catch (_) {
-        // Silent sign-in failed, will try interactive sign-in
+      // Try lightweight (silent) sign-in first for returning users
+      GoogleSignInAccount? account;
+
+      final Future<GoogleSignInAccount?>? lightweightFuture = GoogleSignIn
+          .instance
+          .attemptLightweightAuthentication();
+
+      if (lightweightFuture != null) {
+        try {
+          account = await lightweightFuture;
+        } catch (_) {
+          // Lightweight auth failed, will try full authentication
+        }
       }
 
-      // If silent sign-in fails, show the sign-in dialog
-      if (user == null) {
-        user = await GoogleSignInPlatform.instance.signIn();
+      // If lightweight fails, do full authentication
+      account ??= await GoogleSignIn.instance.authenticate();
+
+      if (account != null) {
+        debugPrint('Google Sign-In successful: ${account.email}');
       }
 
-      if (user != null) {
-        debugPrint('Google Sign-In successful: ${user.email}');
-      }
-
-      return user;
+      return account;
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In error: ${e.code} - ${e.description}');
       rethrow;
@@ -67,7 +73,7 @@ class GoogleSignInService {
   Future<void> signOut() async {
     try {
       await _ensureInitialized();
-      await GoogleSignInPlatform.instance.signOut();
+      await GoogleSignIn.instance.signOut();
       debugPrint('Google Sign-Out successful');
     } catch (e) {
       debugPrint('Google Sign-Out error: $e');
@@ -75,36 +81,8 @@ class GoogleSignInService {
     }
   }
 
-  /// Disconnect (revoke access)
-  Future<void> disconnect() async {
-    try {
-      await _ensureInitialized();
-      await GoogleSignInPlatform.instance.disconnect();
-      debugPrint('Google disconnect successful');
-    } catch (e) {
-      debugPrint('Google disconnect error: $e');
-      rethrow;
-    }
-  }
-
-  /// Check if user is currently signed in
-  Future<bool> isSignedIn() async {
-    try {
-      await _ensureInitialized();
-      return await GoogleSignInPlatform.instance.isSignedIn();
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// Get current user (if signed in)
-  Future<GoogleSignInUserData?> getCurrentUser() async {
-    try {
-      await _ensureInitialized();
-      // Try silent sign-in to get current user
-      return await GoogleSignInPlatform.instance.signInSilently();
-    } catch (_) {
-      return null;
-    }
+  /// Get authentication info from account for backend API calls
+  GoogleSignInAuthentication? getAuthentication(GoogleSignInAccount account) {
+    return account.authentication;
   }
 }
