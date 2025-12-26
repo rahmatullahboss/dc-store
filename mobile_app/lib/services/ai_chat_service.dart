@@ -3,21 +3,18 @@ import 'package:dio/dio.dart';
 import '../core/config/white_label_config.dart';
 import '../data/models/chat_message.dart';
 
-/// AI Chat Service using OpenRouter API
+/// AI Chat Service using the backend API
 ///
-/// Provides methods to send messages to AI and get responses.
-/// Supports both regular and streaming responses.
+/// Connects to the existing Next.js API route at /api/chat
+/// which uses OpenRouter with google/gemini-2.0-flash-001 model
 class AIChatService {
   final Dio _dio;
 
   AIChatService({Dio? dio}) : _dio = dio ?? Dio() {
-    _dio.options.baseUrl = WhiteLabelConfig.openRouterBaseUrl;
-    _dio.options.headers = {
-      'Authorization': 'Bearer ${WhiteLabelConfig.openRouterApiKey}',
-      'Content-Type': 'application/json',
-      'HTTP-Referer': WhiteLabelConfig.websiteUrl,
-      'X-Title': WhiteLabelConfig.appName,
-    };
+    _dio.options.baseUrl = WhiteLabelConfig.apiBaseUrl;
+    _dio.options.headers = {'Content-Type': 'application/json'};
+    _dio.options.connectTimeout = const Duration(seconds: 30);
+    _dio.options.receiveTimeout = const Duration(seconds: 60);
   }
 
   /// Send a message and get AI response
@@ -30,48 +27,72 @@ class AIChatService {
     String userMessage,
   ) async {
     try {
-      // Build message list with system prompt
+      // Build message list in the format expected by the API
       final apiMessages = <Map<String, dynamic>>[
-        {'role': 'system', 'content': WhiteLabelConfig.aiSystemPrompt},
         // Add previous messages for context (limit to last 10)
         ...messages
             .skip(messages.length > 10 ? messages.length - 10 : 0)
-            .map((m) => m.toApiMessage()),
+            .map(
+              (m) => ({
+                'role': m.role == ChatRole.user ? 'user' : 'assistant',
+                'content': m.content,
+              }),
+            ),
         // Add new user message
         {'role': 'user', 'content': userMessage},
       ];
 
       final response = await _dio.post(
-        '/chat/completions',
-        data: {
-          'model': WhiteLabelConfig.aiModel,
-          'messages': apiMessages,
-          'max_tokens': 500,
-          'temperature': 0.7,
-        },
+        '/api/chat',
+        data: {'messages': apiMessages},
       );
 
       if (response.statusCode == 200) {
+        // Handle streaming response - collect all data
         final data = response.data;
-        final content = data['choices']?[0]?['message']?['content'] as String?;
-        return content ?? 'Sorry, I could not generate a response.';
+
+        // If raw string response (streamed)
+        if (data is String) {
+          return _parseStreamedResponse(data);
+        }
+
+        // If JSON response
+        if (data is Map) {
+          if (data['error'] != null) {
+            throw AIChatException(data['error'] as String);
+          }
+          // Try to extract content from various response formats
+          final content =
+              data['content'] ??
+              data['text'] ??
+              data['message'] ??
+              data['choices']?[0]?['message']?['content'];
+          return content?.toString() ??
+              'Sorry, I could not generate a response.';
+        }
+
+        return 'Sorry, I could not generate a response.';
       } else {
         throw AIChatException('Failed to get response: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        throw AIChatException(
-          'Invalid API key. Please check your OpenRouter API key.',
-        );
-      } else if (e.response?.statusCode == 429) {
-        throw AIChatException('Rate limit exceeded. Please wait a moment.');
+      if (e.response?.statusCode == 500) {
+        final errorData = e.response?.data;
+        if (errorData is Map && errorData['error'] != null) {
+          throw AIChatException(errorData['error'] as String);
+        }
+        throw AIChatException('Server error. Please try again later.');
       } else if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
         throw AIChatException(
           'Connection timeout. Please check your internet.',
         );
+      } else if (e.type == DioExceptionType.connectionError) {
+        throw AIChatException(
+          'Cannot connect to server. Please check your internet.',
+        );
       } else {
-        throw AIChatException('Network error: ${e.message}');
+        throw AIChatException('Network error. Please try again.');
       }
     } catch (e) {
       if (e is AIChatException) rethrow;
@@ -79,74 +100,49 @@ class AIChatService {
     }
   }
 
-  /// Send a message with streaming response
-  ///
-  /// Returns a stream of response chunks for real-time display
-  Stream<String> sendMessageStream(
-    List<ChatMessage> messages,
-    String userMessage,
-  ) async* {
-    try {
-      // Build message list with system prompt
-      final apiMessages = <Map<String, dynamic>>[
-        {'role': 'system', 'content': WhiteLabelConfig.aiSystemPrompt},
-        ...messages
-            .skip(messages.length > 10 ? messages.length - 10 : 0)
-            .map((m) => m.toApiMessage()),
-        {'role': 'user', 'content': userMessage},
-      ];
+  /// Parse streamed response from the API
+  String _parseStreamedResponse(String data) {
+    final lines = data.split('\n');
+    final buffer = StringBuffer();
 
-      final response = await _dio.post(
-        '/chat/completions',
-        data: {
-          'model': WhiteLabelConfig.aiModel,
-          'messages': apiMessages,
-          'max_tokens': 500,
-          'temperature': 0.7,
-          'stream': true,
-        },
-        options: Options(responseType: ResponseType.stream),
-      );
+    for (final line in lines) {
+      if (line.isEmpty) continue;
 
-      final stream = response.data.stream as Stream<List<int>>;
-      String buffer = '';
+      // Handle data: prefix (SSE format)
+      String content = line;
+      if (line.startsWith('data: ')) {
+        content = line.substring(6);
+      }
 
-      await for (final chunk in stream) {
-        buffer += utf8.decode(chunk);
+      if (content == '[DONE]') break;
 
-        // Parse SSE data
-        final lines = buffer.split('\n');
-        buffer = lines.last; // Keep incomplete line in buffer
-
-        for (final line in lines.take(lines.length - 1)) {
-          if (line.startsWith('data: ')) {
-            final data = line.substring(6);
-            if (data == '[DONE]') break;
-
-            try {
-              final json = jsonDecode(data);
-              final content =
-                  json['choices']?[0]?['delta']?['content'] as String?;
-              if (content != null) {
-                yield content;
-              }
-            } catch (_) {
-              // Skip malformed JSON
-            }
-          }
+      try {
+        final json = jsonDecode(content);
+        // Handle different response formats
+        final text =
+            json['text'] ??
+            json['content'] ??
+            json['delta']?['content'] ??
+            json['choices']?[0]?['delta']?['content'];
+        if (text != null) {
+          buffer.write(text);
+        }
+      } catch (_) {
+        // If not JSON, treat as plain text
+        if (!content.startsWith('{') && !content.startsWith('[')) {
+          buffer.write(content);
         }
       }
-    } catch (e) {
-      if (e is AIChatException) rethrow;
-      throw AIChatException('Stream error: $e');
     }
+
+    final result = buffer.toString().trim();
+    return result.isNotEmpty
+        ? result
+        : 'Sorry, I could not generate a response.';
   }
 
-  /// Check if API key is configured
-  bool get isConfigured {
-    return WhiteLabelConfig.openRouterApiKey != 'YOUR_OPENROUTER_API_KEY' &&
-        WhiteLabelConfig.openRouterApiKey.isNotEmpty;
-  }
+  /// Check if the service is available
+  bool get isConfigured => true; // Always true since we use backend API
 }
 
 /// Custom exception for AI chat errors
