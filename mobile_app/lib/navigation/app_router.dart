@@ -11,6 +11,7 @@ import '../presentation/home/home_screen.dart';
 import '../presentation/splash/splash_screen.dart';
 import '../presentation/onboarding/onboarding_screen.dart';
 import '../presentation/search/search_screen.dart';
+import '../presentation/categories/categories_screen.dart';
 
 // Products
 import '../presentation/products/products_screen.dart';
@@ -143,7 +144,7 @@ class AppRouter {
                   path: AppRoutes.categoriesPath,
                   name: AppRoutes.categories,
                   pageBuilder: (context, state) => AppTransitions.fade(
-                    child: const _CategoriesScreen(),
+                    child: const CategoriesScreen(),
                     state: state,
                   ),
                   routes: [
