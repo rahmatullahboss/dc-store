@@ -294,41 +294,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 // Search Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.05)
-                          : const Color(0xFFE2E8F0).withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 16),
-                        Icon(
-                          Icons.search,
-                          color: isDark
-                              ? const Color(0xFF64748B)
-                              : const Color(0xFF94A3B8),
-                          size: 22,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Search for Nike shoes...',
-                              hintStyle: TextStyle(
+                  child: GestureDetector(
+                    onTap: () => context.push('/search'),
+                    child: Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : const Color(0xFFE2E8F0).withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 16),
+                          Icon(
+                            Icons.search,
+                            color: isDark
+                                ? const Color(0xFF64748B)
+                                : const Color(0xFF94A3B8),
+                            size: 22,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Search for products...',
+                              style: TextStyle(
                                 color: isDark
                                     ? const Color(0xFF64748B)
                                     : const Color(0xFF64748B),
                                 fontSize: 14,
                               ),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
-                        ),
-                      ],
+                          Icon(
+                            Icons.mic_none_outlined,
+                            color: isDark
+                                ? const Color(0xFF64748B)
+                                : const Color(0xFF94A3B8),
+                            size: 22,
+                          ),
+                          const SizedBox(width: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),
