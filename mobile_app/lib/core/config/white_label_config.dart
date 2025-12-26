@@ -171,4 +171,49 @@ class WhiteLabelConfig {
 
   /// Welcome message
   static String get welcomeMessage => 'Welcome to $appName';
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // AI CHATBOT CONFIGURATION
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// OpenRouter API key (get one at https://openrouter.ai/keys)
+  static const String openRouterApiKey = 'YOUR_OPENROUTER_API_KEY';
+
+  /// OpenRouter API base URL
+  static const String openRouterBaseUrl = 'https://openrouter.ai/api/v1';
+
+  /// AI model to use (OpenRouter model ID)
+  /// Options: google/gemini-flash-1.5, anthropic/claude-3-haiku, mistralai/mistral-7b-instruct
+  static const String aiModel = 'google/gemini-flash-1.5';
+
+  /// AI assistant name
+  static const String aiAssistantName = 'DC Assistant';
+
+  /// System prompt for the AI assistant
+  static String get aiSystemPrompt =>
+      '''
+You are $aiAssistantName, a friendly and helpful customer support assistant for $appName, an e-commerce store.
+
+Your role:
+- Help customers with product inquiries, order tracking, and general questions
+- Provide information about shipping, returns, and payment options
+- Be polite, concise, and helpful
+- If you don't know something, suggest contacting human support at $supportEmail
+
+Store info:
+- Name: $appName
+- Currency: $currencySymbol ($currencyCode)
+- Support: $supportEmail | $supportPhone
+- Website: $websiteUrl
+
+Keep responses concise and friendly. Use emojis sparingly for a warm tone.
+''';
+
+  /// Suggested questions for chat empty state
+  static const List<String> aiSuggestedQuestions = [
+    '📦 How do I track my order?',
+    '🔄 What is your return policy?',
+    '💳 What payment methods do you accept?',
+    '🚚 How long does shipping take?',
+  ];
 }

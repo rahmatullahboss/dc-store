@@ -14,6 +14,7 @@ import '../common/widgets/product/color_selector.dart';
 import '../common/widgets/product/size_selector.dart';
 import '../common/widgets/product/offer_card.dart';
 import '../common/widgets/product/quantity_selector.dart';
+import '../common/widgets/animated_heart_button.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   final String id;
@@ -200,11 +201,22 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     isDark: isDark,
                   ),
                   const SizedBox(width: 12),
-                  _buildFloatingButton(
-                    icon: _isWishlisted ? LucideIcons.heart : LucideIcons.heart,
-                    onTap: () => setState(() => _isWishlisted = !_isWishlisted),
-                    isDark: isDark,
-                    isActive: _isWishlisted,
+                  // Animated heart for wishlist
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withAlpha(77),
+                      shape: BoxShape.circle,
+                    ),
+                    child: AnimatedHeartButton(
+                      isWishlisted: _isWishlisted,
+                      onToggle: () =>
+                          setState(() => _isWishlisted = !_isWishlisted),
+                      size: 20,
+                      activeColor: Colors.red,
+                      inactiveColor: Colors.white,
+                    ),
                   ),
                 ],
               ),

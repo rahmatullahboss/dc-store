@@ -1690,20 +1690,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildNewArrivalsSection(bool isDark, Color surfaceColor) {
-    final arrivals = [
-      _ArrivalData(
-        title: 'Sports Collection',
-        description: 'Discover the latest gear for your training sessions.',
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuB7L7b2uxp4NRSk81T8jOEC1iWLzk4U1nBW6uujsUKxVpCvAHdMgECxUR9PHpaw4348CkXxFQbfUrTVRcTIV99gH93NleAUJIiiQ2haVyvkT7zQV8fEwoYD9oda4UAVHOfiXQwwgMBINiKyhT7xEi35JpGvKY1qynns1jm6v6NS1Nx-Tz0ybP3Ew9GV0zG3Fn9nB6HAlPeeodJcFX5CwS5TOB3CKZdPQHvf3UBxwweFfNY-9y2TO-Aw8rxny6c60ECNopysxLlcKeo',
-      ),
-      _ArrivalData(
-        title: 'Urban Streetwear',
-        description: 'Trendy styles for the modern city life.',
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBVS2cj2tlCXUyuUQDPMRLcN0EUUVKc576s34Y5Kk1L-CoGIuvML96q21NBMAZiTozlWGr9W8Jb6O2rALIpAE1-fIUFClznm0gl4_Dks0hZhNO03UPNHMifSGfAShX60MkzK5nJZW8ICoJzPACCdhXeeCzPvyfXnN0Wn7Ya7f2diU9qVxWEMp2I6B1S6IoFMz7mjenuYMR8vOyolE4dl5PtKBH81FJhyiz7QfAv2-L60uac-gZcucvkhNeFlz5e6DnH-Jpb8VBVX_s',
-      ),
-    ];
+    final productsAsync = ref.watch(productsProvider);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
@@ -1731,7 +1718,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => context.push('/products?filter=new'),
                   child: Text(
                     'View All',
                     style: TextStyle(
@@ -1745,87 +1732,157 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            height: 160,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: arrivals.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 16),
-              itemBuilder: (context, index) {
-                final arrival = arrivals[index];
-                return Container(
+          productsAsync.when(
+            loading: () => SizedBox(
+              height: 160,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: 2,
+                separatorBuilder: (context, index) => const SizedBox(width: 16),
+                itemBuilder: (context, index) => Container(
                   width: 280,
                   decoration: BoxDecoration(
+                    color: isDark
+                        ? const Color(0xFF1E293B)
+                        : const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(
-                          arrival.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: _primaryColor.withValues(alpha: 0.2),
-                            );
-                          },
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withValues(alpha: 0.8),
-                              ],
+                ),
+              ),
+            ),
+            error: (err, stack) => const SizedBox(
+              height: 160,
+              child: Center(child: Text('Unable to load new arrivals')),
+            ),
+            data: (products) {
+              // Take the last 4 products as "new arrivals" (or reverse order for newest)
+              final newProducts = products.take(4).toList();
+
+              if (newProducts.isEmpty) {
+                return const SizedBox(
+                  height: 160,
+                  child: Center(child: Text('No new arrivals')),
+                );
+              }
+
+              return SizedBox(
+                height: 160,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: newProducts.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 16),
+                  itemBuilder: (context, index) {
+                    final product = newProducts[index];
+                    return GestureDetector(
+                      onTap: () => context.push('/products/${product.id}'),
+                      child: Container(
+                        width: 280,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
+                          ],
                         ),
-                        Positioned(
-                          bottom: 16,
-                          left: 16,
-                          right: 16,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Stack(
+                            fit: StackFit.expand,
                             children: [
-                              Text(
-                                arrival.title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                              CachedNetworkImage(
+                                imageUrl: product.featuredImage ?? '',
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: _primaryColor.withValues(alpha: 0.2),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: _primaryColor.withValues(alpha: 0.2),
+                                  child: const Icon(
+                                    Icons.image,
+                                    color: Colors.white54,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                arrival.description,
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 12,
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black.withValues(alpha: 0.8),
+                                    ],
+                                  ),
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Positioned(
+                                top: 12,
+                                left: 12,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _primaryColor,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    'NEW',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 16,
+                                left: 16,
+                                right: 16,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '৳${product.price.toStringAsFixed(0)}',
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),
