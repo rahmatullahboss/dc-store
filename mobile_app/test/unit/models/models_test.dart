@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../../lib/data/models/models.dart';
+import 'package:mobile_app/data/models/models.dart';
 import '../../fixtures/test_fixtures.dart';
 
 void main() {
@@ -25,31 +25,19 @@ void main() {
       expect(json['price'], equals(1000.0));
     });
 
-    test('hasDiscount returns true when salePrice is set', () {
+    test('isOnSale returns true when salePrice is set', () {
       final product = ProductModel.fromJson(sampleProductJson);
-      expect(product.hasDiscount, isTrue);
+      expect(product.isOnSale, isTrue);
     });
 
-    test('discountPercentage calculates correctly', () {
+    test('effectivePrice returns salePrice when available', () {
       final product = ProductModel.fromJson(sampleProductJson);
-      // (1000 - 800) / 1000 * 100 = 20%
-      expect(product.discountPercentage, equals(20.0));
+      expect(product.effectivePrice, equals(800.0));
     });
 
-    test('currentPrice returns salePrice when available', () {
+    test('inStock returns true when stock > 0', () {
       final product = ProductModel.fromJson(sampleProductJson);
-      expect(product.currentPrice, equals(800.0));
-    });
-
-    test('isInStock returns true when stock > 0', () {
-      final product = ProductModel.fromJson(sampleProductJson);
-      expect(product.isInStock, isTrue);
-    });
-
-    test('primaryImage returns first primary image', () {
-      final product = ProductModel.fromJson(sampleProductJson);
-      expect(product.primaryImage, isNotNull);
-      expect(product.primaryImage?.isPrimary, isTrue);
+      expect(product.inStock, isTrue);
     });
   });
 
@@ -79,7 +67,6 @@ void main() {
       expect(authResponse.user.id, equals('user_1'));
       expect(authResponse.tokens.accessToken, equals('mock_access_token'));
       expect(authResponse.tokens.refreshToken, equals('mock_refresh_token'));
-      expect(authResponse.tokens.expiresIn, equals(3600));
     });
   });
 
@@ -92,9 +79,9 @@ void main() {
       expect(category.productCount, equals(50));
     });
 
-    test('hasParent returns false when parentId is null', () {
+    test('isRoot returns true when parentId is null', () {
       final category = CategoryModel.fromJson(sampleCategoryJson);
-      expect(category.hasParent, isFalse);
+      expect(category.isRoot, isTrue);
     });
   });
 
@@ -109,12 +96,12 @@ void main() {
       expect(cartItem.quantity, equals(2));
     });
 
-    test('itemTotal calculates correctly', () {
+    test('lineTotal calculates correctly', () {
       final cartItem = CartItemModel.fromJson(
         (sampleCartJson['items'] as List).first as Map<String, dynamic>,
       );
       // price * quantity = 1000 * 2 = 2000
-      expect(cartItem.itemTotal, equals(2000.0));
+      expect(cartItem.lineTotal, equals(2000.0));
     });
   });
 
@@ -153,11 +140,6 @@ void main() {
       expect(address.id, equals('addr_1'));
       expect(address.city, equals('Dhaka'));
       expect(address.isDefault, isTrue);
-    });
-
-    test('fullAddress returns formatted address', () {
-      final address = AddressModel.fromJson(sampleAddressJson);
-      expect(address.fullAddress, contains('123 Test Street'));
     });
   });
 }

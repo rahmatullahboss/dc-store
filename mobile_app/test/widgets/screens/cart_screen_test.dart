@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../lib/features/cart/bloc/cart_cubit.dart';
-import '../../../lib/features/cart/bloc/cart_state.dart';
+import 'package:mobile_app/features/cart/bloc/cart_cubit.dart';
 import '../../mocks/mock_factories.dart';
 import '../../helpers/test_helpers.dart';
 
@@ -97,14 +96,14 @@ void main() {
       verify(() => mockCartCubit.updateQuantity('item_1', 2)).called(1);
     });
 
-    testWidgets('remove button calls removeFromCart', (tester) async {
+    testWidgets('remove button calls removeItem', (tester) async {
       // Arrange
       final cartState = CartState(
         items: [CartFactory.createItem(id: 'item_1')],
       );
       when(() => mockCartCubit.state).thenReturn(cartState);
       when(() => mockCartCubit.stream).thenAnswer((_) => const Stream.empty());
-      when(() => mockCartCubit.removeFromCart(any())).thenReturn(null);
+      when(() => mockCartCubit.removeItem(any())).thenReturn(null);
 
       // Act
       await tester.pumpAppWithBloc(const _TestCartScreen(), mockCartCubit);
@@ -112,7 +111,7 @@ void main() {
       await tester.pump();
 
       // Assert
-      verify(() => mockCartCubit.removeFromCart('item_1')).called(1);
+      verify(() => mockCartCubit.removeItem('item_1')).called(1);
     });
 
     testWidgets('checkout button navigates when cart has items', (
@@ -200,7 +199,7 @@ class _TestCartScreen extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () =>
-                              context.read<CartCubit>().removeFromCart(item.id),
+                              context.read<CartCubit>().removeItem(item.id),
                         ),
                       ],
                     ),

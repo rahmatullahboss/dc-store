@@ -1,4 +1,4 @@
-import '../lib/data/models/models.dart';
+import 'package:mobile_app/data/models/models.dart';
 
 /// Factory for creating mock Product data
 class ProductFactory {
@@ -31,7 +31,7 @@ class ProductFactory {
               id: 'img_1',
               url: 'https://example.com/image.jpg',
               alt: 'Product Image',
-              isPrimary: true,
+              isDefault: true,
             ),
           ],
       isFeatured: isFeatured ?? false,
@@ -78,22 +78,22 @@ class UserFactory {
 class AddressFactory {
   static AddressModel create({
     String? id,
-    String? name,
+    String? fullName,
     String? phone,
-    String? address,
+    String? street,
     String? city,
-    String? area,
-    String? postCode,
+    String? state,
+    String? postalCode,
     bool? isDefault,
   }) {
     return AddressModel(
       id: id ?? 'addr_${DateTime.now().millisecondsSinceEpoch}',
-      name: name ?? 'Test User',
+      fullName: fullName ?? 'Test User',
       phone: phone ?? '+8801700000000',
-      address: address ?? '123 Test Street',
+      street: street ?? '123 Test Street',
       city: city ?? 'Dhaka',
-      area: area ?? 'Gulshan',
-      postCode: postCode ?? '1212',
+      state: state ?? 'Dhaka',
+      postalCode: postalCode ?? '1212',
       isDefault: isDefault ?? false,
     );
   }
@@ -101,8 +101,11 @@ class AddressFactory {
   static List<AddressModel> createList(int count) {
     return List.generate(
       count,
-      (index) =>
-          create(id: 'addr_$index', name: 'User $index', isDefault: index == 0),
+      (index) => create(
+        id: 'addr_$index',
+        fullName: 'User $index',
+        isDefault: index == 0,
+      ),
     );
   }
 }
@@ -164,7 +167,7 @@ class CartFactory {
     final cartItems =
         items ??
         [createItem(), createItem(id: 'item_2', productId: 'product_2')];
-    return CartModel(items: cartItems, appliedCoupon: coupon);
+    return CartModel(items: cartItems, coupon: coupon);
   }
 
   static CouponModel createCoupon({
@@ -174,9 +177,10 @@ class CartFactory {
   }) {
     return CouponModel(
       code: code ?? 'TEST10',
-      discountPercent: discountPercent ?? 10.0,
-      discountAmount: discountAmount,
+      type: 'percentage',
+      value: discountPercent ?? 10.0,
       minOrderAmount: 500.0,
+      maxDiscount: discountAmount,
     );
   }
 }
@@ -197,13 +201,14 @@ class OrderFactory {
       items:
           items ??
           [
-            OrderItemModel(
+            const OrderItemModel(
               id: 'item_1',
               productId: 'product_1',
               productName: 'Test Product',
               productImage: 'https://example.com/product.jpg',
               price: 1000.0,
               quantity: 2,
+              total: 2000.0,
             ),
           ],
       shippingAddress: shippingAddress ?? AddressFactory.create(),
@@ -245,7 +250,7 @@ class AuthFactory {
             accessToken ??
             'mock_access_token_${DateTime.now().millisecondsSinceEpoch}',
         refreshToken: refreshToken ?? 'mock_refresh_token',
-        expiresIn: 3600,
+        expiresAt: DateTime.now().add(const Duration(hours: 1)),
       ),
     );
   }

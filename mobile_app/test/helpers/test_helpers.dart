@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_app/core/network/api_response.dart';
 
 /// Pumps a widget wrapped with necessary providers and Material components
 extension WidgetTesterExtension on WidgetTester {
   /// Pump a widget with MaterialApp wrapper
   Future<void> pumpApp(Widget widget) async {
-    await pumpWidget(
-      MaterialApp(
-        home: widget,
-      ),
-    );
+    await pumpWidget(MaterialApp(home: widget));
     await pumpAndSettle();
   }
 
@@ -21,10 +18,7 @@ extension WidgetTesterExtension on WidgetTester {
   ) async {
     await pumpWidget(
       MaterialApp(
-        home: BlocProvider<B>.value(
-          value: bloc,
-          child: widget,
-        ),
+        home: BlocProvider<B>.value(value: bloc, child: widget),
       ),
     );
     await pumpAndSettle();
@@ -37,10 +31,7 @@ extension WidgetTesterExtension on WidgetTester {
   ) async {
     await pumpWidget(
       MaterialApp(
-        home: MultiBlocProvider(
-          providers: providers,
-          child: widget,
-        ),
+        home: MultiBlocProvider(providers: providers, child: widget),
       ),
     );
     await pumpAndSettle();
@@ -48,11 +39,7 @@ extension WidgetTesterExtension on WidgetTester {
 
   /// Pump with scaffold
   Future<void> pumpScaffold(Widget widget) async {
-    await pumpWidget(
-      MaterialApp(
-        home: Scaffold(body: widget),
-      ),
-    );
+    await pumpWidget(MaterialApp(home: Scaffold(body: widget)));
     await pumpAndSettle();
   }
 }
@@ -67,7 +54,7 @@ void testSuccess(String description, dynamic Function() body) {
   test('✅ $description', body);
 }
 
-/// Failure test helper  
+/// Failure test helper
 void testFailure(String description, dynamic Function() body) {
   test('❌ $description', body);
 }
@@ -78,7 +65,9 @@ void testEdge(String description, dynamic Function() body) {
 }
 
 /// Wait for async operations to complete
-Future<void> wait([Duration duration = const Duration(milliseconds: 100)]) async {
+Future<void> wait([
+  Duration duration = const Duration(milliseconds: 100),
+]) async {
   await Future.delayed(duration);
 }
 
@@ -98,14 +87,12 @@ Matcher hasSnackbarText(String text) => findsOneWidget;
 // API RESPONSE HELPERS
 // ═══════════════════════════════════════════════════════════════
 
-import '../lib/core/network/api_response.dart';
-
 /// Create a successful API response
 ApiResponse<T> successResponse<T>(T data, {String? message}) {
   return ApiResponse.success(data, message: message);
 }
 
-/// Create an error API response  
+/// Create an error API response
 ApiResponse<T> errorResponse<T>(String message, {String? code}) {
   return ApiResponse.fromMessage(message, code: code);
 }

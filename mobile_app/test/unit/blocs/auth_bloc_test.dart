@@ -2,11 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../lib/core/network/api_response.dart';
-import '../../../lib/data/models/models.dart';
-import '../../../lib/features/auth/bloc/auth_bloc.dart';
-import '../../../lib/features/auth/bloc/auth_event.dart';
-import '../../../lib/features/auth/bloc/auth_state.dart';
+import 'package:mobile_app/core/network/api_response.dart';
+import 'package:mobile_app/data/models/models.dart';
+import 'package:mobile_app/features/auth/bloc/auth_bloc.dart';
 import '../../mocks/mock_factories.dart';
 import '../../mocks/mock_repositories.dart';
 
