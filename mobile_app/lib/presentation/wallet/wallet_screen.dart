@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-/// Primary color for the wallet screen (indigo theme)\nconst _primaryColor = Color(0xFF4F46E5);
+/// Primary color for the wallet screen (indigo theme)
+const _primaryColor = Color(0xFF4F46E5);
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
