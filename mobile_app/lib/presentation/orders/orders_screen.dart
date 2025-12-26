@@ -421,7 +421,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
     switch (status) {
       case OrderStatus.processing:
         bgColor = isDark ? const Color(0xFF1E3A5F) : const Color(0xFFEFF6FF);
-        textColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF135bec);
+        textColor = isDark
+            ? const Color(0xFF60A5FA)
+            : WhiteLabelConfig.accentColor;
         label = 'PROCESSING';
         break;
       case OrderStatus.shipped:

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-/// Primary color for the wallet screen (indigo theme)
-const _primaryColor = Color(0xFF4F46E5);
+import '../../core/config/white_label_config.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -183,7 +181,7 @@ class _WalletScreenState extends State<WalletScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: _primaryColor.withValues(alpha: 0.3),
+            color: WhiteLabelConfig.accentColor.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -293,14 +291,14 @@ class _WalletScreenState extends State<WalletScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.add, size: 16, color: _primaryColor),
+                          Icon(Icons.add, size: 16, color: WhiteLabelConfig.accentColor),
                           const SizedBox(width: 8),
                           Text(
                             'Add Money',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: _primaryColor,
+                              color: WhiteLabelConfig.accentColor,
                             ),
                           ),
                         ],
@@ -342,11 +340,11 @@ class _WalletScreenState extends State<WalletScreen> {
                   height: 52,
                   decoration: BoxDecoration(
                     color: isDark
-                        ? _primaryColor.withValues(alpha: 0.15)
+                        ? WhiteLabelConfig.accentColor.withValues(alpha: 0.15)
                         : const Color(0xFFEEF2FF),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(action.icon, color: _primaryColor, size: 24),
+                  child: Icon(action.icon, color: WhiteLabelConfig.accentColor, size: 24),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -389,7 +387,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: _primaryColor,
+                    color: WhiteLabelConfig.accentColor,
                   ),
                 ),
               ),
@@ -807,11 +805,11 @@ class _WalletScreenState extends State<WalletScreen> {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: _primaryColor,
+          color: WhiteLabelConfig.accentColor,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: _primaryColor.withValues(alpha: 0.4),
+              color: WhiteLabelConfig.accentColor.withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -863,7 +861,7 @@ class _WalletScreenState extends State<WalletScreen> {
         Icon(
           icon,
           color: isSelected
-              ? _primaryColor
+              ? WhiteLabelConfig.accentColor
               : (isDark ? const Color(0xFF9CA3AF) : const Color(0xFF9CA3AF)),
           size: 24,
         ),
@@ -874,7 +872,7 @@ class _WalletScreenState extends State<WalletScreen> {
             fontSize: 10,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             color: isSelected
-                ? _primaryColor
+                ? WhiteLabelConfig.accentColor
                 : (isDark ? const Color(0xFF9CA3AF) : const Color(0xFF9CA3AF)),
           ),
         ),
@@ -1018,7 +1016,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? (isDark
-                                        ? _primaryColor.withValues(alpha: 0.15)
+                                        ? WhiteLabelConfig.accentColor.withValues(alpha: 0.15)
                                         : const Color(0xFFEEF2FF))
                                   : (isDark
                                         ? Colors.white.withValues(alpha: 0.05)
@@ -1027,7 +1025,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               border: Border.all(
                                 color: isSelected
                                     ? (isDark
-                                          ? _primaryColor.withValues(alpha: 0.3)
+                                          ? WhiteLabelConfig.accentColor.withValues(alpha: 0.3)
                                           : const Color(0xFFC7D2FE))
                                     : (isDark
                                           ? Colors.white.withValues(alpha: 0.1)
@@ -1040,7 +1038,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
-                                    ? _primaryColor
+                                    ? WhiteLabelConfig.accentColor
                                     : (isDark
                                           ? const Color(0xFF9CA3AF)
                                           : const Color(0xFF374151)),
@@ -1181,7 +1179,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       // TODO: Implement add money logic
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _primaryColor,
+                      backgroundColor: WhiteLabelConfig.accentColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
