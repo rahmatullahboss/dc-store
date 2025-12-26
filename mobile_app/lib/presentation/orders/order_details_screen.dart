@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
+import '../../core/config/white_label_config.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
@@ -15,7 +16,7 @@ class OrderDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    const primaryBlue = Color(0xFF135bec);
+    final primaryBlue = WhiteLabelConfig.accentColor;
     final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF6F6F8);
     final cardColor = isDark ? Colors.grey[850]! : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);

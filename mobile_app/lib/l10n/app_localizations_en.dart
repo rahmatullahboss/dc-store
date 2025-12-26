@@ -420,4 +420,305 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deliveryInfo => 'Delivery Info';
+
+  @override
+  String get myProfile => 'My Profile';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get personalInfo => 'Personal Information';
+
+  @override
+  String get dateOfBirth => 'Date of Birth';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get contactInfo => 'Contact Information';
+
+  @override
+  String get alternativePhone => 'Alternative Phone';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get profileUpdated => 'Profile updated successfully';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get pushNotifications => 'Push Notifications';
+
+  @override
+  String get emailNotifications => 'Email Notifications';
+
+  @override
+  String get orderUpdates => 'Order Updates';
+
+  @override
+  String get promotions => 'Promotions & Offers';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get twoFactorAuth => 'Two-Factor Authentication';
+
+  @override
+  String get biometricLogin => 'Biometric Login';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get termsAndConditions => 'Terms & Conditions';
+
+  @override
+  String get rateApp => 'Rate App';
+
+  @override
+  String get shareApp => 'Share App';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountWarning => 'This action cannot be undone';
+
+  @override
+  String get helpAndSupport => 'Help & Support';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get liveChat => 'Live Chat';
+
+  @override
+  String get callUs => 'Call Us';
+
+  @override
+  String get emailUs => 'Email Us';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get reportIssue => 'Report an Issue';
+
+  @override
+  String get feedback => 'Send Feedback';
+
+  @override
+  String get myAddresses => 'My Addresses';
+
+  @override
+  String get addAddress => 'Add Address';
+
+  @override
+  String get editAddress => 'Edit Address';
+
+  @override
+  String get deleteAddress => 'Delete Address';
+
+  @override
+  String get setAsDefault => 'Set as Default';
+
+  @override
+  String get defaultAddress => 'Default';
+
+  @override
+  String get homeAddress => 'Home';
+
+  @override
+  String get workAddress => 'Work';
+
+  @override
+  String get otherAddress => 'Other';
+
+  @override
+  String get addressLine1 => 'Address Line 1';
+
+  @override
+  String get addressLine2 => 'Address Line 2';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get state => 'State';
+
+  @override
+  String get zipCode => 'ZIP Code';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get landmark => 'Landmark';
+
+  @override
+  String get addressSaved => 'Address saved';
+
+  @override
+  String get addressDeleted => 'Address deleted';
+
+  @override
+  String get myCoupons => 'My Coupons';
+
+  @override
+  String get availableCoupons => 'Available Coupons';
+
+  @override
+  String get usedCoupons => 'Used Coupons';
+
+  @override
+  String get expiredCoupons => 'Expired Coupons';
+
+  @override
+  String get couponCode => 'Coupon Code';
+
+  @override
+  String get validUntil => 'Valid until';
+
+  @override
+  String get minOrder => 'Min. order';
+
+  @override
+  String get copyCoupon => 'Copy';
+
+  @override
+  String get couponCopied => 'Coupon code copied!';
+
+  @override
+  String get useCoupon => 'Use Now';
+
+  @override
+  String get myWishlist => 'My Wishlist';
+
+  @override
+  String get emptyWishlistTitle => 'Your wishlist is empty';
+
+  @override
+  String get emptyWishlistSubtitle => 'Save items you love for later';
+
+  @override
+  String get myOrders => 'My Orders';
+
+  @override
+  String get orderDetails => 'Order Details';
+
+  @override
+  String get orderNumber => 'Order #';
+
+  @override
+  String get orderDate => 'Order Date';
+
+  @override
+  String get orderStatus => 'Status';
+
+  @override
+  String get trackOrder => 'Track Order';
+
+  @override
+  String get reorder => 'Reorder';
+
+  @override
+  String get cancelOrder => 'Cancel Order';
+
+  @override
+  String get returnOrder => 'Return';
+
+  @override
+  String get orderPending => 'Pending';
+
+  @override
+  String get orderProcessing => 'Processing';
+
+  @override
+  String get orderShipped => 'Shipped';
+
+  @override
+  String get orderDelivered => 'Delivered';
+
+  @override
+  String get orderCancelled => 'Cancelled';
+
+  @override
+  String get orderReturned => 'Returned';
+
+  @override
+  String get emptyOrdersTitle => 'No orders yet';
+
+  @override
+  String get emptyOrdersSubtitle =>
+      'When you place orders, they\'ll appear here';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get noNotifications => 'No notifications';
+
+  @override
+  String get markAllAsRead => 'Mark all as read';
+
+  @override
+  String get clearAll => 'Clear All';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get earlier => 'Earlier';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
 }

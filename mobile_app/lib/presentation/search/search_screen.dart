@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../core/config/white_label_config.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -95,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme colors
-    const primaryBlue = Color(0xFF135bec);
+    final primaryBlue = WhiteLabelConfig.accentColor;
     final bgColor = isDark ? const Color(0xFF101622) : Colors.white;
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final inputBgColor = isDark ? Colors.grey[800]! : const Color(0xFFF0F2F4);

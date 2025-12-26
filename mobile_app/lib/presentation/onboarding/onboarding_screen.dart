@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/storage_service.dart';
 import '../../core/constants/storage_keys.dart';
+import '../../core/config/white_label_config.dart';
 
 /// Onboarding data model
 class OnboardingPage {
@@ -108,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final backgroundColor = isDark
         ? const Color(0xFF101622)
         : const Color(0xFFF6F6F8);
-    const primaryColor = Color(0xFF135BEC);
+    final primaryColor = WhiteLabelConfig.accentColor;
 
     return Scaffold(
       backgroundColor: backgroundColor,

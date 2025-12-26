@@ -907,6 +907,606 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delivery Info'**
   String get deliveryInfo;
+
+  /// No description provided for @myProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get myProfile;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInfo;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @contactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInfo;
+
+  /// No description provided for @alternativePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative Phone'**
+  String get alternativePhone;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdated;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get appSettings;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get systemDefault;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @pushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get pushNotifications;
+
+  /// No description provided for @emailNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Notifications'**
+  String get emailNotifications;
+
+  /// No description provided for @orderUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Updates'**
+  String get orderUpdates;
+
+  /// No description provided for @promotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotions & Offers'**
+  String get promotions;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @twoFactorAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-Factor Authentication'**
+  String get twoFactorAuth;
+
+  /// No description provided for @biometricLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Login'**
+  String get biometricLogin;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @rateApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate App'**
+  String get rateApp;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share App'**
+  String get shareApp;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupport;
+
+  /// No description provided for @faq.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faq;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUs;
+
+  /// No description provided for @liveChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Chat'**
+  String get liveChat;
+
+  /// No description provided for @callUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Us'**
+  String get callUs;
+
+  /// No description provided for @emailUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Us'**
+  String get emailUs;
+
+  /// No description provided for @whatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsApp;
+
+  /// No description provided for @reportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an Issue'**
+  String get reportIssue;
+
+  /// No description provided for @feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Feedback'**
+  String get feedback;
+
+  /// No description provided for @myAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'My Addresses'**
+  String get myAddresses;
+
+  /// No description provided for @addAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Address'**
+  String get addAddress;
+
+  /// No description provided for @editAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Address'**
+  String get editAddress;
+
+  /// No description provided for @deleteAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Address'**
+  String get deleteAddress;
+
+  /// No description provided for @setAsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Default'**
+  String get setAsDefault;
+
+  /// No description provided for @defaultAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultAddress;
+
+  /// No description provided for @homeAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeAddress;
+
+  /// No description provided for @workAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get workAddress;
+
+  /// No description provided for @otherAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherAddress;
+
+  /// No description provided for @addressLine1.
+  ///
+  /// In en, this message translates to:
+  /// **'Address Line 1'**
+  String get addressLine1;
+
+  /// No description provided for @addressLine2.
+  ///
+  /// In en, this message translates to:
+  /// **'Address Line 2'**
+  String get addressLine2;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @state.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get state;
+
+  /// No description provided for @zipCode.
+  ///
+  /// In en, this message translates to:
+  /// **'ZIP Code'**
+  String get zipCode;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @landmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark'**
+  String get landmark;
+
+  /// No description provided for @addressSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Address saved'**
+  String get addressSaved;
+
+  /// No description provided for @addressDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Address deleted'**
+  String get addressDeleted;
+
+  /// No description provided for @myCoupons.
+  ///
+  /// In en, this message translates to:
+  /// **'My Coupons'**
+  String get myCoupons;
+
+  /// No description provided for @availableCoupons.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Coupons'**
+  String get availableCoupons;
+
+  /// No description provided for @usedCoupons.
+  ///
+  /// In en, this message translates to:
+  /// **'Used Coupons'**
+  String get usedCoupons;
+
+  /// No description provided for @expiredCoupons.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired Coupons'**
+  String get expiredCoupons;
+
+  /// No description provided for @couponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon Code'**
+  String get couponCode;
+
+  /// No description provided for @validUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get validUntil;
+
+  /// No description provided for @minOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Min. order'**
+  String get minOrder;
+
+  /// No description provided for @copyCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyCoupon;
+
+  /// No description provided for @couponCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon code copied!'**
+  String get couponCopied;
+
+  /// No description provided for @useCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Now'**
+  String get useCoupon;
+
+  /// No description provided for @myWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'My Wishlist'**
+  String get myWishlist;
+
+  /// No description provided for @emptyWishlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wishlist is empty'**
+  String get emptyWishlistTitle;
+
+  /// No description provided for @emptyWishlistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save items you love for later'**
+  String get emptyWishlistSubtitle;
+
+  /// No description provided for @myOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'My Orders'**
+  String get myOrders;
+
+  /// No description provided for @orderDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Details'**
+  String get orderDetails;
+
+  /// No description provided for @orderNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #'**
+  String get orderNumber;
+
+  /// No description provided for @orderDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Date'**
+  String get orderDate;
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get orderStatus;
+
+  /// No description provided for @trackOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Order'**
+  String get trackOrder;
+
+  /// No description provided for @reorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder'**
+  String get reorder;
+
+  /// No description provided for @cancelOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Order'**
+  String get cancelOrder;
+
+  /// No description provided for @returnOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get returnOrder;
+
+  /// No description provided for @orderPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get orderPending;
+
+  /// No description provided for @orderProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get orderProcessing;
+
+  /// No description provided for @orderShipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipped'**
+  String get orderShipped;
+
+  /// No description provided for @orderDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get orderDelivered;
+
+  /// No description provided for @orderCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderCancelled;
+
+  /// No description provided for @orderReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get orderReturned;
+
+  /// No description provided for @emptyOrdersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet'**
+  String get emptyOrdersTitle;
+
+  /// No description provided for @emptyOrdersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When you place orders, they\'ll appear here'**
+  String get emptyOrdersSubtitle;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get noNotifications;
+
+  /// No description provided for @markAllAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllAsRead;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get clearAll;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @earlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get earlier;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationSettings;
 }
 
 class _AppLocalizationsDelegate
