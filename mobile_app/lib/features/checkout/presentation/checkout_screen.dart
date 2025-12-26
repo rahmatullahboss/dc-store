@@ -163,7 +163,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: _savedCards.length + 1,
-                        separatorBuilder: (_, __) => const SizedBox(width: 16),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 16),
                         itemBuilder: (context, index) {
                           if (index == _savedCards.length) {
                             return AddCardButton(

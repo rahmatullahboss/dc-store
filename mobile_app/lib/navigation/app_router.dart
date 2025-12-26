@@ -371,7 +371,7 @@ class AppRouter {
           path: AppRoutes.orderSuccessPath,
           name: AppRoutes.orderSuccess,
           pageBuilder: (context, state) {
-            final orderId = state.pathParameters['orderId']!;
+            // orderId available from state.pathParameters['orderId'] if needed
             return AppTransitions.scale(
               child: const OrderSuccessScreen(),
               state: state,

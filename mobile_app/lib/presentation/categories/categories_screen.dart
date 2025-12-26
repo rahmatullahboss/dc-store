@@ -433,7 +433,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               Image.network(
                 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800',
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (context, error, stackTrace) =>
                     Container(color: AppColors.primary.withValues(alpha: 0.3)),
               ),
               // Gradient Overlay
@@ -782,13 +782,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           ? Image.network(
                               category.image!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Center(
-                                child: Icon(
-                                  Icons.category,
-                                  size: 40,
-                                  color: subtextColor,
-                                ),
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Center(
+                                    child: Icon(
+                                      Icons.category,
+                                      size: 40,
+                                      color: subtextColor,
+                                    ),
+                                  ),
                             )
                           : Center(
                               child: Icon(
@@ -898,7 +899,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                         fit: BoxFit.cover,
                         width: 70,
                         height: 70,
-                        errorBuilder: (_, __, ___) => Center(
+                        errorBuilder: (context, error, stackTrace) => Center(
                           child: Icon(
                             Icons.category,
                             size: 28,

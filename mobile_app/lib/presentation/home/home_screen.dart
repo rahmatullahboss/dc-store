@@ -630,7 +630,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: categories.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               final category = categories[index];
               return SizedBox(
@@ -806,7 +806,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: flashSaleProducts.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 final product = flashSaleProducts[index];
                 return _buildFlashSaleCard(product, isDark, surfaceColor);
@@ -1571,7 +1571,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: arrivals.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              separatorBuilder: (context, index) => const SizedBox(width: 16),
               itemBuilder: (context, index) {
                 final arrival = arrivals[index];
                 return Container(
@@ -1674,7 +1674,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: brands.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              separatorBuilder: (context, index) => const SizedBox(width: 16),
               itemBuilder: (context, index) {
                 return Container(
                   width: 70,
