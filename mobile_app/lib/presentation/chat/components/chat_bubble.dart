@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../data/models/chat_message.dart';
-import '../../core/config/white_label_config.dart';
+import '../../../data/models/chat_message.dart';
+import '../../../core/config/white_label_config.dart';
 
 /// Chat message bubble widget
 class ChatBubble extends StatelessWidget {

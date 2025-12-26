@@ -69,6 +69,9 @@ class AppRoutes {
   static const String privacyPolicy = 'privacy-policy';
   static const String termsOfService = 'terms-of-service';
 
+  // AI Chat
+  static const String chat = 'chat';
+
   // ═══════════════════════════════════════════════════════════════
   // ROUTE PATHS
   // ═══════════════════════════════════════════════════════════════
@@ -134,6 +137,9 @@ class AppRoutes {
   static const String aboutPath = '/about';
   static const String privacyPolicyPath = '/privacy';
   static const String termsOfServicePath = '/terms';
+
+  // AI Chat
+  static const String chatPath = '/chat';
 
   // Deep link patterns
   static const String productDeepLink = '/p/:productId';

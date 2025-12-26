@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../services/external_launcher_service.dart';
 import '../../core/config/white_label_config.dart';
+import '../chat/chat_screen.dart';
 
 /// FAQ Item model
 class FAQItem {
@@ -868,17 +869,10 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
   }
 
   Future<void> _launchChat(BuildContext context) async {
-    final launcher = ExternalLauncherService.instance;
-    final result = await launcher.launchLiveChat();
-
-    if (!result.success && context.mounted) {
-      _showSnackBar(
-        context,
-        result.fallbackAction ??
-            result.errorMessage ??
-            'Could not launch live chat',
-      );
-    }
+    // Navigate to AI Chat screen
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const ChatScreen()));
   }
 
   Future<void> _launchPhone(BuildContext context) async {
