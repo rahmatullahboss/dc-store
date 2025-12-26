@@ -9,9 +9,9 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL || "https://store.digitalcare.site",
 
   // Contact Information
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "support@digitalcare.site",
-  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+880 1234-567890",
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+8801234567890",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "rahmatullahzisan@gmail.com",
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+880 1570-260118",
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+8801570260118",
   address: process.env.NEXT_PUBLIC_STORE_ADDRESS || "Dhaka, Bangladesh",
   facebookPageId: process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID || "dcstore",
 

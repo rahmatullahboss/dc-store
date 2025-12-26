@@ -130,7 +130,7 @@ function generateOrderConfirmationHTML(data: OrderEmailData): string {
           <div style="text-align: center; padding: 20px; background: #f9fafb; border-radius: 12px;">
             <p style="margin: 0; color: #666; font-size: 14px;">
               Questions? Contact us at<br>
-              <a href="mailto:support@digitalcare.site" style="color: #f59e0b;">support@digitalcare.site</a>
+              <a href="mailto:rahmatullahzisan@gmail.com" style="color: #f59e0b;">rahmatullahzisan@gmail.com</a>
             </p>
           </div>
         </div>

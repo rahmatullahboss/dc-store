@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Mail, 
@@ -27,22 +27,23 @@ const contactMethods = [
     icon: Phone,
     title: "Call Us",
     description: "Mon-Sat, 10am-8pm",
-    value: "+880 1XXX XXXXXX",
-    href: "tel:+8801XXXXXXXXX",
+    value: "+880 1570-260118",
+    href: "tel:+8801570260118",
   },
   {
     icon: Mail,
     title: "Email Us",
     description: "We'll reply within 24h",
-    value: "support@dcstore.com",
-    href: "mailto:support@dcstore.com",
+    value: "rahmatullahzisan@gmail.com",
+    href: "mailto:rahmatullahzisan@gmail.com",
   },
   {
     icon: MessageSquare,
     title: "Live Chat",
-    description: "Chat with our team",
+    description: "Chat with our AI assistant",
     value: "Start a conversation",
     href: "#",
+    isChat: true,
   },
   {
     icon: MapPin,
@@ -69,6 +70,31 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  // Fetch profile data on mount
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/user/profile");
+        if (res.ok) {
+          const data = await res.json() as { 
+            profile?: { name?: string; email?: string; phone?: string } 
+          };
+          if (data.profile) {
+            setFormData(prev => ({
+              ...prev,
+              name: data.profile?.name || "",
+              email: data.profile?.email || "",
+              phone: data.profile?.phone || "",
+            }));
+          }
+        }
+      } catch {
+        // Ignore errors - user might not be logged in
+      }
+    }
+    fetchProfile();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
@@ -124,10 +150,16 @@ export default function ContactPage() {
         <section className="container mx-auto px-4 pb-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {contactMethods.map((method) => (
-              <a
+              <div
                 key={method.title}
-                href={method.href}
-                className="group"
+                className="group cursor-pointer"
+                onClick={() => {
+                  if ('isChat' in method && method.isChat) {
+                    window.dispatchEvent(new CustomEvent("open-chatbot"));
+                  } else if (method.href !== "#") {
+                    window.location.href = method.href;
+                  }
+                }}
               >
                 <Card className="h-full bg-white/80 backdrop-blur border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-5 text-center">
@@ -141,7 +173,7 @@ export default function ContactPage() {
                     </p>
                   </CardContent>
                 </Card>
-              </a>
+              </div>
             ))}
           </div>
         </section>

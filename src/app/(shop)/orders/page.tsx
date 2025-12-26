@@ -308,10 +308,14 @@ export default function MyOrdersPage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Button variant="outline" className="rounded-full" asChild>
-              <Link href="tel:+8801712345678">📞 Call Support</Link>
+              <Link href="tel:+8801570260118">📞 Call Support</Link>
             </Button>
-            <Button variant="outline" className="rounded-full" asChild>
-              <Link href="/contact">💬 Contact Us</Link>
+            <Button 
+              variant="outline" 
+              className="rounded-full"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-chatbot"))}
+            >
+              💬 Chat with Us
             </Button>
           </div>
         </div>
