@@ -86,7 +86,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    const primaryBlue = Color(0xFF135bec);
+    final primaryBlue = WhiteLabelConfig.accentColor;
     final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF6F6F8);
     final cardColor = isDark ? const Color(0xFF1A2230) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF111318);

@@ -130,7 +130,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
     final borderColor = isDark
         ? const Color(0xFF2a3344)
         : const Color(0xFFe5e7eb);
-    const primaryColor = Color(0xFF135bec);
+    final primaryColor = WhiteLabelConfig.accentColor;
 
     return Scaffold(
       backgroundColor: bgColor,

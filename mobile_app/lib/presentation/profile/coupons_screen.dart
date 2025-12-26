@@ -213,7 +213,7 @@ class _CouponsScreenState extends State<CouponsScreen>
     final borderColor = isDark
         ? const Color(0xFF2a3344)
         : const Color(0xFFe7ebf3);
-    const primaryColor = Color(0xFF135bec);
+    final primaryColor = WhiteLabelConfig.accentColor;
 
     return Scaffold(
       backgroundColor: bgColor,

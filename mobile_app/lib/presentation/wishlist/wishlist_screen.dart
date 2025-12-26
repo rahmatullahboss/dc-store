@@ -109,7 +109,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme colors
-    const primaryBlue = Color(0xFF135bec);
+    final primaryBlue = WhiteLabelConfig.accentColor;
     final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF6F6F8);
     final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final cardColor = isDark ? Colors.grey[800]! : Colors.white;
