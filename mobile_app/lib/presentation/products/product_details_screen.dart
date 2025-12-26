@@ -226,20 +226,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: Colors.black.withAlpha(51),
+          color: Colors.black.withAlpha(77),
           shape: BoxShape.circle,
         ),
-        child: ClipOval(
-          child: BackdropFilter(
-            filter: ColorFilter.mode(
-              Colors.black.withAlpha(26),
-              BlendMode.srcOver,
-            ),
-            child: Icon(
-              icon,
-              color: isActive ? Colors.red : Colors.white,
-              size: 20,
-            ),
+        child: Center(
+          child: Icon(
+            icon,
+            color: isActive ? Colors.red : Colors.white,
+            size: 20,
           ),
         ),
       ),
