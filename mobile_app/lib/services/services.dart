@@ -12,3 +12,4 @@ export 'share_service.dart';
 export 'cache_service.dart';
 export 'permission_service.dart';
 export 'external_launcher_service.dart';
+export 'ai_chat_service.dart';

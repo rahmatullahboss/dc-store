@@ -1026,151 +1026,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildFlashSaleCard(
-    _FlashSaleProduct product,
-    bool isDark,
-    Color surfaceColor,
-  ) {
-    return Container(
-      width: 140,
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark
-              ? const Color(0xFF7F1D1D).withValues(alpha: 0.3)
-              : const Color(0xFFFECACA),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.image, color: Colors.grey),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              // Discount Badge
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEF4444),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    '-${product.discount}%',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Info
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      '\$${product.price}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFEF4444),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '\$${product.originalPrice}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? const Color(0xFF64748B)
-                            : const Color(0xFF94A3B8),
-                        decoration: TextDecoration.lineThrough,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: product.soldPercent / 100,
-                    backgroundColor: isDark
-                        ? const Color(0xFF334155)
-                        : const Color(0xFFE2E8F0),
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFFEF4444),
-                    ),
-                    minHeight: 6,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${product.leftCount} left',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: isDark
-                        ? const Color(0xFF64748B)
-                        : const Color(0xFF64748B),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Skeleton loading grid for products
   Widget _buildProductGridSkeleton() {
     return GridView.builder(
@@ -1278,188 +1133,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               );
             },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProductCard(
-    _ProductData product,
-    bool isDark,
-    Color surfaceColor,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          Expanded(
-            flex: 5,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-                  child: SizedBox.expand(
-                    child: Image.network(
-                      product.imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: isDark
-                              ? const Color(0xFF1E293B)
-                              : const Color(0xFFF1F5F9),
-                          child: const Icon(Icons.image, color: Colors.grey),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                // Favorite Button
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.black.withValues(alpha: 0.5)
-                          : Colors.white.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.favorite_border,
-                      size: 20,
-                      color: isDark
-                          ? const Color(0xFF94A3B8)
-                          : const Color(0xFF94A3B8),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Info
-          Expanded(
-            flex: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Brand & Rating
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        product.brand,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                          color: isDark
-                              ? const Color(0xFF64748B)
-                              : const Color(0xFF94A3B8),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Color(0xFFFACC15),
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            product.rating.toString(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: isDark
-                                  ? const Color(0xFF64748B)
-                                  : const Color(0xFF64748B),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  // Name
-                  Text(
-                    product.name,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const Spacer(),
-                  // Price & Add to Cart
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (product.originalPrice != null)
-                            Text(
-                              '\$${product.originalPrice}',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: isDark
-                                    ? const Color(0xFF64748B)
-                                    : const Color(0xFF94A3B8),
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                          Text(
-                            '\$${product.price}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: isDark
-                                  ? Colors.white
-                                  : const Color(0xFF0F172A),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _primaryColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.add_shopping_cart,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
@@ -1947,53 +1620,100 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildRecommendedSection(bool isDark, Color surfaceColor) {
-    final products = [
-      _ProductData(
-        name: 'Classic Denim',
-        brand: 'Levi\'s',
-        price: 45,
-        originalPrice: null,
-        rating: 4.3,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBRRwKTLXeaeajNDP7Bhn7va81aU2Wcs1I7cW2M5Wf-4so63F4RkNK_ZZJ4cCatnVUonhWlGJCCnBe4bIcw_cwljjUEAQ9xynHMgv0fAm9FET0PCvQanAoTrJIKbppZPx848UcLjz2DYzWRs6RdQFgBbOi3TPm7V9fleV5ZhsY2j3_f5WMAsXQv7oM3eeV3VOb35HBNu9O8WebP6cm6Jwa4yjfl4S9qfv8RbtH3Mb9WIi_PpjmYGU3IR3ux71JkfymSHkbKywrndCI',
-      ),
-      _ProductData(
-        name: 'Street Kicks',
-        brand: 'Vans',
-        price: 75,
-        originalPrice: null,
-        rating: 4.7,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuCS4Q01ZtF98Uu4vmRsPU7uk8zxAD6emsLb37XdGyCVnwNcy_Wklxgx76swddsvDf0ypHSdch6EqAwoA6mGJekJZefCzj6JWZ4vlALzRPaYHYVCCqF14JZFOU2-Di2Wkn_VvLa-WE4jpxA_R0MxKqbc-UDTaT942mmlhtORubcp_rCEXrOyG9nm65DS16lTxXeVhMVGbT4BpkrHVAFBXxvnTwLhUADubgTz-zBPsmu4xvnnJEmx5asNIjYwaJ5QaQoggg8wYDrXZBg',
-      ),
-    ];
+    final productsAsync = ref.watch(productsProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Recommended For You',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recommended For You',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.push('/products'),
+                child: Text(
+                  'View All',
+                  style: TextStyle(
+                    color: _primaryColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.65,
+          productsAsync.when(
+            loading: () => _buildProductGridSkeleton(),
+            error: (err, stack) => SizedBox(
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Unable to load recommendations',
+                  style: TextStyle(
+                    color: isDark ? Colors.grey : Colors.grey[600],
+                  ),
+                ),
+              ),
             ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return _buildProductCard(products[index], isDark, surfaceColor);
+            data: (products) {
+              if (products.isEmpty) {
+                return SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: Text(
+                      'No products available',
+                      style: TextStyle(
+                        color: isDark ? Colors.grey : Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              // Take products from different positions for variety
+              // Skip the first few (used in featured/new) and take the next 4
+              final skipCount = products.length > 8 ? 4 : 0;
+              final recommendedProducts = products
+                  .skip(skipCount)
+                  .take(4)
+                  .toList();
+
+              // If not enough, just use what we have
+              final displayProducts = recommendedProducts.isNotEmpty
+                  ? recommendedProducts
+                  : products.take(4).toList();
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.65,
+                ),
+                itemCount: displayProducts.length,
+                itemBuilder: (context, index) {
+                  return _buildRealProductCard(
+                        displayProducts[index],
+                        isDark,
+                        surfaceColor,
+                      )
+                      .animate()
+                      .fadeIn(delay: (50 * index).ms, duration: 300.ms)
+                      .slideY(begin: 0.1, end: 0, delay: (50 * index).ms);
+                },
+              );
             },
           ),
         ],
@@ -2102,7 +1822,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-// Data classes
+// Data classes (only keeping used ones)
 class _BannerData {
   final String title;
   final String subtitle;
@@ -2124,54 +1844,4 @@ class _CategoryData {
   final IconData icon;
 
   _CategoryData(this.name, this.icon);
-}
-
-class _FlashSaleProduct {
-  final String name;
-  final int price;
-  final int originalPrice;
-  final int discount;
-  final int soldPercent;
-  final int leftCount;
-  final String imageUrl;
-
-  _FlashSaleProduct({
-    required this.name,
-    required this.price,
-    required this.originalPrice,
-    required this.discount,
-    required this.soldPercent,
-    required this.leftCount,
-    required this.imageUrl,
-  });
-}
-
-class _ProductData {
-  final String name;
-  final String brand;
-  final int price;
-  final int? originalPrice;
-  final double rating;
-  final String imageUrl;
-
-  _ProductData({
-    required this.name,
-    required this.brand,
-    required this.price,
-    required this.originalPrice,
-    required this.rating,
-    required this.imageUrl,
-  });
-}
-
-class _ArrivalData {
-  final String title;
-  final String description;
-  final String imageUrl;
-
-  _ArrivalData({
-    required this.title,
-    required this.description,
-    required this.imageUrl,
-  });
 }
