@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 import '../../cart/presentation/providers/cart_provider.dart';
 import 'widgets/checkout_step_indicator.dart';
 import 'widgets/wallet_section.dart';
@@ -57,13 +59,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cartTotal = ref.watch(cartTotalProvider);
 
-    // Theme colors
-    const primaryBlue = Color(0xFF135bec);
-    final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF6F6F8);
-    final surfaceColor = isDark ? const Color(0xFF1b2431) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtleColor = isDark ? Colors.grey[400]! : Colors.grey[500]!;
-    final borderColor = isDark ? Colors.grey[800]! : Colors.grey[100]!;
+    // Theme-aware colors using AppColors
+    final bgColor = AppColors.getBackground(context);
+    final surfaceColor = AppColors.getCard(context);
+    final textColor = AppColors.getTextPrimary(context);
+    final subtleColor = AppColors.adaptive(
+      context,
+      AppColors.textSecondary,
+      AppColors.darkTextSecondary,
+    );
+    final borderColor = AppColors.adaptive(
+      context,
+      AppColors.border,
+      AppColors.darkBorder,
+    );
+    const primaryAccent = AppColors.accent;
 
     // Calculate total
     final shippingCost = cartTotal > 500 ? 0.0 : 60.0;
@@ -282,12 +292,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           height: 20,
                           decoration: BoxDecoration(
                             color: _billingSameAsShipping
-                                ? primaryBlue
+                                ? primaryAccent
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: _billingSameAsShipping
-                                  ? primaryBlue
+                                  ? primaryAccent
                                   : (isDark
                                         ? Colors.grey[600]!
                                         : Colors.grey[400]!),
@@ -329,13 +339,17 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         autoCloseDuration: const Duration(seconds: 2),
                       );
                     },
-                    icon: Icon(LucideIcons.gift, color: primaryBlue, size: 18),
+                    icon: Icon(
+                      LucideIcons.gift,
+                      color: primaryAccent,
+                      size: 18,
+                    ),
                     label: Text(
                       'Add Gift Card or Promo Code',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: primaryBlue,
+                        color: primaryAccent,
                       ),
                     ),
                     style: TextButton.styleFrom(
@@ -363,7 +377,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               textColor: textColor,
               subtleColor: subtleColor,
               borderColor: borderColor,
-              primaryBlue: primaryBlue,
+              primaryAccent: primaryAccent,
             ),
           ),
         ],
@@ -378,7 +392,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     required Color textColor,
     required Color subtleColor,
     required Color borderColor,
-    required Color primaryBlue,
+    required Color primaryAccent,
   }) {
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -438,7 +452,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: primaryBlue,
+                            color: primaryAccent,
                           ),
                         ),
                       ),
@@ -491,7 +505,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     }
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
+                backgroundColor: primaryAccent,
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: isDark
                     ? Colors.grey[700]
@@ -504,7 +518,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 4,
-                shadowColor: primaryBlue.withAlpha(77),
+                shadowColor: primaryAccent.withAlpha(77),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,

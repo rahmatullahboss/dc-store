@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../features/cart/domain/cart_item_model.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 
@@ -99,13 +100,21 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final cartTotal = ref.watch(cartTotalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Theme colors
-    const primaryBlue = Color(0xFF135bec);
-    final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF6F6F8);
-    final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtleTextColor = isDark ? Colors.grey[400]! : Colors.grey[500]!;
-    final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
+    // Theme-aware colors using AppColors
+    const primaryAccent = AppColors.accent;
+    final bgColor = AppColors.getBackground(context);
+    final surfaceColor = AppColors.getCard(context);
+    final textColor = AppColors.getTextPrimary(context);
+    final subtleTextColor = AppColors.adaptive(
+      context,
+      AppColors.textSecondary,
+      AppColors.darkTextSecondary,
+    );
+    final borderColor = AppColors.adaptive(
+      context,
+      AppColors.border,
+      AppColors.darkBorder,
+    );
 
     // Calculate totals
     final subtotal = cartTotal;
@@ -117,7 +126,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return Scaffold(
       backgroundColor: bgColor,
       body: cartItems.isEmpty
-          ? _buildEmptyCart(context, isDark, textColor, primaryBlue)
+          ? _buildEmptyCart(context, isDark, textColor, primaryAccent)
           : Stack(
               children: [
                 CustomScrollView(
@@ -144,7 +153,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
-                              color: primaryBlue,
+                              color: primaryAccent,
                             ),
                           ),
                         ],
@@ -191,7 +200,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               Icon(
                                 LucideIcons.truck,
                                 size: 16,
-                                color: primaryBlue,
+                                color: primaryAccent,
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -199,7 +208,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
-                                  color: primaryBlue,
+                                  color: primaryAccent,
                                 ),
                               ),
                             ],
@@ -223,7 +232,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             textColor,
                             subtleTextColor,
                             borderColor,
-                            primaryBlue,
+                            primaryAccent,
                           );
                         }, childCount: cartItems.length),
                       ),
@@ -238,7 +247,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           textColor,
                           subtleTextColor,
                           borderColor,
-                          primaryBlue,
+                          primaryAccent,
                         ),
                       ),
 
@@ -250,7 +259,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         textColor,
                         subtleTextColor,
                         borderColor,
-                        primaryBlue,
+                        primaryAccent,
                       ),
                     ),
 
@@ -262,7 +271,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         textColor,
                         subtleTextColor,
                         borderColor,
-                        primaryBlue,
+                        primaryAccent,
                       ),
                     ),
 
@@ -299,7 +308,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     isDark,
                     surfaceColor,
                     borderColor,
-                    primaryBlue,
+                    primaryAccent,
                   ),
                 ),
               ],
@@ -311,7 +320,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     BuildContext context,
     bool isDark,
     Color textColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return Center(
       child: Padding(
@@ -322,13 +331,13 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: primaryBlue.withAlpha(26),
+                color: primaryAccent.withAlpha(26),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.shoppingCart,
                 size: 64,
-                color: primaryBlue,
+                color: primaryAccent,
               ),
             ),
             const SizedBox(height: 24),
@@ -355,7 +364,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               icon: const Icon(LucideIcons.shoppingBag),
               label: const Text("Start Shopping"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
+                backgroundColor: primaryAccent,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -382,7 +391,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     final hasDiscount =
         item.product.compareAtPrice != null &&
@@ -602,7 +611,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     .addToCart(item.product),
                                 isDark: isDark,
                                 surfaceColor: surfaceColor,
-                                primaryBlue: primaryBlue,
+                                primaryAccent: primaryAccent,
                               ),
                             ],
                           ),
@@ -662,7 +671,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     required bool isDark,
     required Color surfaceColor,
     Color? subtleTextColor,
-    Color? primaryBlue,
+    Color? primaryAccent,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -680,7 +689,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ),
           ],
         ),
-        child: Icon(icon, size: 14, color: primaryBlue ?? subtleTextColor),
+        child: Icon(icon, size: 14, color: primaryAccent ?? subtleTextColor),
       ),
     );
   }
@@ -691,7 +700,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -748,7 +757,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           isDark,
                           textColor,
                           subtleTextColor,
-                          primaryBlue,
+                          primaryAccent,
                         ),
                       )
                       .toList(),
@@ -766,7 +775,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     bool isDark,
     Color textColor,
     Color subtleTextColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return Row(
       children: [
@@ -817,7 +826,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: primaryBlue,
+                    color: primaryAccent,
                   ),
                 ),
               ),
@@ -834,7 +843,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
@@ -866,7 +875,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   textColor,
                   subtleTextColor,
                   borderColor,
-                  primaryBlue,
+                  primaryAccent,
                 );
               },
             ),
@@ -883,7 +892,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return SizedBox(
       width: 144,
@@ -934,7 +943,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: primaryBlue),
+                border: Border.all(color: primaryAccent),
               ),
               child: Text(
                 "Add",
@@ -942,7 +951,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: primaryBlue,
+                  color: primaryAccent,
                 ),
               ),
             ),
@@ -958,7 +967,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -1267,7 +1276,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     bool isDark,
     Color surfaceColor,
     Color borderColor,
-    Color primaryBlue,
+    Color primaryAccent,
   ) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1295,11 +1304,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   vertical: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: primaryBlue,
+                  color: primaryAccent,
                   borderRadius: BorderRadius.circular(50),
                   boxShadow: [
                     BoxShadow(
-                      color: primaryBlue.withAlpha(77),
+                      color: primaryAccent.withAlpha(77),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
