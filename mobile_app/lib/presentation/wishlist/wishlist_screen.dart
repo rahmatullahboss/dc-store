@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
+import '../../core/config/white_label_config.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});

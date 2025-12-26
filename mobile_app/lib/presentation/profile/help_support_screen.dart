@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../services/external_launcher_service.dart';
+import '../../core/config/white_label_config.dart';
 
 /// FAQ Item model
 class FAQItem {

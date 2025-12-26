@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../core/config/white_label_config.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});

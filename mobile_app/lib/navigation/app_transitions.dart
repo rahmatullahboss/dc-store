@@ -177,4 +177,121 @@ class AppTransitions {
       },
     );
   }
+
+  /// Zoom transition - product detail style
+  static CustomTransitionPage<T> zoom<T>({
+    required Widget child,
+    required GoRouterState state,
+    Duration duration = const Duration(milliseconds: 350),
+  }) {
+    return CustomTransitionPage<T>(
+      key: state.pageKey,
+      child: child,
+      transitionDuration: duration,
+      reverseTransitionDuration: duration,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return FadeTransition(
+          opacity: curvedAnimation,
+          child: ScaleTransition(
+            scale: Tween<double>(
+              begin: 0.85,
+              end: 1.0,
+            ).animate(curvedAnimation),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  /// iOS-style cupertino transition with parallax effect
+  static CustomTransitionPage<T> cupertino<T>({
+    required Widget child,
+    required GoRouterState state,
+    Duration duration = const Duration(milliseconds: 400),
+  }) {
+    return CustomTransitionPage<T>(
+      key: state.pageKey,
+      child: child,
+      transitionDuration: duration,
+      reverseTransitionDuration: duration,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final slideAnimation =
+            Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutExpo),
+            );
+
+        // Parallax effect on the previous page
+        final secondarySlide =
+            Tween<Offset>(
+              begin: Offset.zero,
+              end: const Offset(-0.25, 0.0),
+            ).animate(
+              CurvedAnimation(
+                parent: secondaryAnimation,
+                curve: Curves.easeOutExpo,
+              ),
+            );
+
+        return SlideTransition(
+          position: secondarySlide,
+          child: SlideTransition(
+            position: slideAnimation,
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(
+                      (animation.value * 25).toInt(),
+                    ),
+                    blurRadius: 20,
+                    offset: const Offset(-4, 0),
+                  ),
+                ],
+              ),
+              child: child,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Fade through - Material Design motion
+  static CustomTransitionPage<T> fadeThrough<T>({
+    required Widget child,
+    required GoRouterState state,
+    Duration duration = const Duration(milliseconds: 300),
+  }) {
+    return CustomTransitionPage<T>(
+      key: state.pageKey,
+      child: child,
+      transitionDuration: duration,
+      reverseTransitionDuration: duration,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+          ),
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.92, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: const Interval(0.0, 1.0, curve: Curves.easeOutCubic),
+              ),
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
 }

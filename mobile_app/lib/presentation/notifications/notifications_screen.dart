@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../core/config/white_label_config.dart';
 
 /// Notification model
 class NotificationItem {
@@ -134,7 +135,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final borderColor = isDark
         ? Colors.white.withAlpha(13)
         : const Color(0xFFf1f5f9);
-    const primaryColor = Color(0xFF135bec);
+    final primaryColor = WhiteLabelConfig.accentColor;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -167,7 +168,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                           TextButton(
                             onPressed: _markAllAsRead,
-                            child: const Text(
+                            child: Text(
                               'Mark all read',
                               style: TextStyle(
                                 color: primaryColor,
@@ -236,7 +237,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 children: [
                   TextButton.icon(
                     onPressed: () {},
-                    icon: const Text(
+                    icon: Text(
                       'Notification Preferences',
                       style: TextStyle(
                         color: primaryColor,
@@ -244,7 +245,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         fontSize: 14,
                       ),
                     ),
-                    label: const Icon(
+                    label: Icon(
                       LucideIcons.arrowRight,
                       size: 16,
                       color: primaryColor,
