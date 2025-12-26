@@ -257,7 +257,6 @@ class ApiError {
         code = 'BAD_CERTIFICATE';
         break;
       case DioExceptionType.unknown:
-      default:
         message = exception.message ?? 'An unexpected error occurred';
         code = 'UNKNOWN';
     }

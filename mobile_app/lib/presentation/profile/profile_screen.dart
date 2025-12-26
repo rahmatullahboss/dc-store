@@ -621,17 +621,6 @@ class ProfileScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            if (item.trailing != null)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Text(
-                                  item.trailing!,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: subtleColor,
-                                  ),
-                                ),
-                              ),
                             Icon(
                               LucideIcons.chevronRight,
                               size: 20,
@@ -915,7 +904,6 @@ class _SettingsItem {
   final Color iconBgColor;
   final Color iconColor;
   final String title;
-  final String? trailing;
   final VoidCallback onTap;
 
   _SettingsItem({
@@ -923,7 +911,6 @@ class _SettingsItem {
     required this.iconBgColor,
     required this.iconColor,
     required this.title,
-    this.trailing,
     required this.onTap,
   });
 }

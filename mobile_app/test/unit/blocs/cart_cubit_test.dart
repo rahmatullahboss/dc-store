@@ -3,7 +3,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:dc_store/core/network/api_response.dart';
-import 'package:dc_store/data/models/models.dart';
 import 'package:dc_store/features/cart/bloc/cart_cubit.dart';
 import '../../mocks/mock_factories.dart';
 import '../../mocks/mock_repositories.dart';

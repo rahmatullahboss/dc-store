@@ -45,7 +45,6 @@ class ErrorInterceptor extends Interceptor {
         );
 
       case DioExceptionType.unknown:
-      default:
         return ServerException(
           message: err.message ?? 'An unexpected error occurred',
           code: 'UNKNOWN',

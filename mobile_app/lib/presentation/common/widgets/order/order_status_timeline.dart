@@ -182,17 +182,6 @@ class _TimelineStep extends StatelessWidget {
     required this.isDark,
   });
 
-  Color get _stepColor {
-    switch (step.status) {
-      case OrderStepStatus.completed:
-        return completedColor;
-      case OrderStepStatus.current:
-        return currentColor;
-      case OrderStepStatus.pending:
-        return pendingColor;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(

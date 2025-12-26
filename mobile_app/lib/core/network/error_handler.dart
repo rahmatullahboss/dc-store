@@ -55,7 +55,6 @@ class ErrorHandler {
         );
 
       case DioExceptionType.unknown:
-      default:
         return ServerException(
           message: error.message ?? 'An error occurred',
           code: 'UNKNOWN',
