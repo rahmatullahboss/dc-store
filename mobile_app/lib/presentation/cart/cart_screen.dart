@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/app_haptics.dart';
 import '../../l10n/app_localizations.dart';
 import '../../features/cart/domain/cart_item_model.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
@@ -224,17 +225,47 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
                           final item = cartItems[index];
-                          return _buildCartItemCard(
-                            context,
-                            ref,
-                            item,
-                            index,
-                            isDark,
-                            surfaceColor,
-                            textColor,
-                            subtleTextColor,
-                            borderColor,
-                            primaryAccent,
+                          return Dismissible(
+                            key: Key('cart-item-${item.product.id}'),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (_) {
+                              AppHaptics.mediumImpact();
+                              ref
+                                  .read(cartProvider.notifier)
+                                  .removeFromCart(item.product.id);
+                              toastification.show(
+                                context: context,
+                                type: ToastificationType.info,
+                                title: const Text('Item removed'),
+                                autoCloseDuration: const Duration(seconds: 2),
+                              );
+                            },
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 24),
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: AppColors.error,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Icon(
+                                LucideIcons.trash2,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                            ),
+                            child: _buildCartItemCard(
+                              context,
+                              ref,
+                              item,
+                              index,
+                              isDark,
+                              surfaceColor,
+                              textColor,
+                              subtleTextColor,
+                              borderColor,
+                              primaryAccent,
+                            ),
                           );
                         }, childCount: cartItems.length),
                       ),
