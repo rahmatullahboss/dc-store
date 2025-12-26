@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../services/google_sign_in_service.dart';
 import '../../domain/user_model.dart';
 
 class AuthState {
@@ -60,7 +61,38 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  /// Sign in with Google
+  Future<bool> signInWithGoogle() async {
+    state = AuthState(isLoading: true);
+    try {
+      final googleService = GoogleSignInService.instance;
+      final account = await googleService.signIn();
+
+      if (account != null) {
+        // Create user from Google account data
+        state = AuthState(
+          user: User(
+            id: account.id,
+            email: account.email,
+            name: account.displayName ?? account.email.split('@')[0],
+            photoUrl: account.photoUrl,
+          ),
+        );
+        return true;
+      } else {
+        // User cancelled the sign-in
+        state = AuthState(error: 'Sign-in cancelled');
+        return false;
+      }
+    } catch (e) {
+      state = AuthState(error: 'Google Sign-In failed: ${e.toString()}');
+      return false;
+    }
+  }
+
   void logout() {
+    // Also sign out from Google
+    GoogleSignInService.instance.signOut();
     state = AuthState();
   }
 }
