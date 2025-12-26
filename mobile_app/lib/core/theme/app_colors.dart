@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 
 /// Complete Color System for DC Store
 /// Supports both Light and Dark themes with semantic naming
+/// Matches web store theme: Primary #0F172A, Accent #3B82F6
 class AppColors {
   AppColors._();
 
   // ═══════════════════════════════════════════════════════════════
-  // BRAND COLORS
+  // BRAND COLORS (Matching Web Store)
   // ═══════════════════════════════════════════════════════════════
 
-  /// Primary brand color - Gold theme
+  /// Primary brand color - Slate theme (matches web)
+  static const Color brandPrimary = Color(0xFF0F172A);
+  static const Color brandAccent = Color(0xFF3B82F6);
+
+  // Legacy gold colors (kept for backwards compatibility)
   static const Color goldDark = Color(0xFFB8860B);
   static const Color goldMedium = Color(0xFFDAA520);
   static const Color goldLight = Color(0xFFFFD700);
@@ -18,19 +23,19 @@ class AppColors {
   // LIGHT THEME COLORS
   // ═══════════════════════════════════════════════════════════════
 
-  // Primary
-  static const Color primary = Color(0xFF343434);
-  static const Color primaryForeground = Color(0xFFFAFAFA);
-  static const Color primaryLight = Color(0xFF5A5A5A);
-  static const Color primaryDark = Color(0xFF1A1A1A);
+  // Primary (Slate - matching web store)
+  static const Color primary = Color(0xFF0F172A);
+  static const Color primaryForeground = Color(0xFFFFFFFF);
+  static const Color primaryLight = Color(0xFF334155);
+  static const Color primaryDark = Color(0xFF020617);
 
   // Secondary
-  static const Color secondary = Color(0xFFF7F7F7);
-  static const Color secondaryForeground = Color(0xFF343434);
+  static const Color secondary = Color(0xFFF1F5F9);
+  static const Color secondaryForeground = Color(0xFF0F172A);
 
-  // Accent
-  static const Color accent = Color(0xFFDAA520);
-  static const Color accentForeground = Color(0xFF1A1A1A);
+  // Accent (Blue - matching web store)
+  static const Color accent = Color(0xFF3B82F6);
+  static const Color accentForeground = Color(0xFFFFFFFF);
 
   // Background & Surface
   static const Color background = Colors.white;
@@ -126,7 +131,7 @@ class AppColors {
   // ═══════════════════════════════════════════════════════════════
 
   static const LinearGradient brandGradient = LinearGradient(
-    colors: [goldDark, goldMedium, goldLight],
+    colors: [brandPrimary, primaryLight],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
@@ -138,7 +143,7 @@ class AppColors {
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [goldDark, goldLight],
+    colors: [Color(0xFF2563EB), accent], // Blue gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
