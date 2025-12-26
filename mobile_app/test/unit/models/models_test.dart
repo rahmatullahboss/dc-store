@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_app/data/models/models.dart';
+import 'package:dc_store/data/models/models.dart';
 import '../../fixtures/test_fixtures.dart';
 
 void main() {

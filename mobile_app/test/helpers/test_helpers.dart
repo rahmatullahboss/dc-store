@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_app/core/network/api_response.dart';
+import 'package:dc_store/core/network/api_response.dart';
 
 /// Pumps a widget wrapped with necessary providers and Material components
 extension WidgetTesterExtension on WidgetTester {

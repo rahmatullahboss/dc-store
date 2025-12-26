@@ -1,10 +1,10 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
-import 'package:mobile_app/core/network/dio_client.dart';
-import 'package:mobile_app/core/network/api_response.dart';
-import 'package:mobile_app/services/storage_service.dart';
-import 'package:mobile_app/services/auth_service.dart';
-import 'package:mobile_app/data/models/models.dart';
+import 'package:dc_store/core/network/dio_client.dart';
+import 'package:dc_store/core/network/api_response.dart';
+import 'package:dc_store/services/storage_service.dart';
+import 'package:dc_store/services/auth_service.dart';
+import 'package:dc_store/data/models/models.dart';
 
 // ═══════════════════════════════════════════════════════════════
 // NETWORK MOCKS

@@ -1,4 +1,4 @@
-import 'package:mobile_app/data/models/models.dart';
+import 'package:dc_store/data/models/models.dart';
 
 /// Factory for creating mock Product data
 class ProductFactory {

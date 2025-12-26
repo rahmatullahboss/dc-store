@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../product/product_model.dart';
 
 part 'common_models.freezed.dart';
 part 'common_models.g.dart';

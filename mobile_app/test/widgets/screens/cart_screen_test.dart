@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:mobile_app/features/cart/bloc/cart_cubit.dart';
+import 'package:dc_store/features/cart/bloc/cart_cubit.dart';
 import '../../mocks/mock_factories.dart';
 import '../../helpers/test_helpers.dart';
 
