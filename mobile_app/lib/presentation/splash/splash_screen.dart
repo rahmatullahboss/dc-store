@@ -34,9 +34,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       // Simulate initialization (network check, auth, data preload)
       await Future.delayed(const Duration(seconds: 2));
 
-      // Navigate to home
+      // Navigate to onboarding
       if (mounted) {
-        context.go('/');
+        context.go('/onboarding');
       }
     } catch (e) {
       if (mounted) {
