@@ -40,6 +40,9 @@ import '../presentation/notifications/notifications_screen.dart';
 import '../presentation/wallet/wallet_screen.dart';
 import '../presentation/wishlist/wishlist_screen.dart';
 
+// AI Chat
+import '../presentation/chat/chat_screen.dart';
+
 // Auth
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/register_screen.dart';
@@ -287,7 +290,7 @@ class AppRouter {
           name: AppRoutes.productDetail,
           pageBuilder: (context, state) {
             final productId = state.pathParameters['productId']!;
-            return AppTransitions.sharedAxisHorizontal(
+            return AppTransitions.zoom(
               child: ProductDetailsScreen(id: productId),
               state: state,
             );
@@ -336,7 +339,7 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.checkoutPath,
           name: AppRoutes.checkout,
-          pageBuilder: (context, state) => AppTransitions.slideUp(
+          pageBuilder: (context, state) => AppTransitions.cupertino(
             child: const CheckoutScreen(),
             state: state,
           ),
@@ -499,6 +502,16 @@ class AppRouter {
             child: const _TermsScreen(),
             state: state,
           ),
+        ),
+
+        // ═══════════════════════════════════════════════════════════════
+        // AI CHAT ROUTES
+        // ═══════════════════════════════════════════════════════════════
+        GoRoute(
+          path: AppRoutes.chatPath,
+          name: AppRoutes.chat,
+          pageBuilder: (context, state) =>
+              AppTransitions.slideUp(child: const ChatScreen(), state: state),
         ),
 
         // ═══════════════════════════════════════════════════════════════
