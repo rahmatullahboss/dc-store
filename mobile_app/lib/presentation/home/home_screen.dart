@@ -2,8 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
+import '../../features/product/presentation/providers/product_provider.dart';
+import '../../features/product/domain/product_model.dart';
 
 /// Primary color for the app
 const _primaryColor = Color(0xFF135BEC);
@@ -973,44 +976,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildFeaturedProductsSection(bool isDark, Color surfaceColor) {
-    final products = [
-      _ProductData(
-        name: 'Air Max 2090',
-        brand: 'Nike',
-        price: 120,
-        originalPrice: 180,
-        rating: 4.5,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuCN28ZbtVlO2YSOHhzuydZIcWulCOoazVs4R4o3rSJRAbGxRvb2DnjIJSt3iInxhuP-9y_bZ0c0TpHtXxVAItnNCcV4wJgOOVj8Es2amaa6Bbg4C4pyp9RMEZjqQIYJhVWs8ftnU58GhNfbDVhYh1a5HTq0ml7guNEKj_cHx-XSNRtHZe0cokF9W2s7VUCQoFHCJ3fBmn9h87spAlitrtk3w0Jw5_oxdjH4XFbX9uIJW5z0xN3E6Vu2Ia-n-h84J3NQ8jl3mhLdzJQ',
-      ),
-      _ProductData(
-        name: 'Aviator Classic',
-        brand: 'Ray-Ban',
-        price: 135,
-        originalPrice: 160,
-        rating: 4.8,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuCM0jyJ1clgwPPNNhoepX1WOgbIj1aT0jOEdg1xoZfopLz5ObWYRDybSuoh5sRJ7xS2y0ATNHccHKwb4JVIRT6laI_T4kT1rAqOqMtFa8x1qWW2KgAAvj7PxsOGLuvSaVkgbYcMckczAj_kksgEn_jerDfx_V0s8dDaKwP0iPqsu8Lw8G3RLBWv-QAvOPDXBeXivvhj3-TGOhDFNwbnEOKpnK-qS4oKXT9oBmcrE8bYhT4QgqPm4aV79bWlylwIiMxsYAydj5huEVU',
-      ),
-      _ProductData(
-        name: 'OneStep 2',
-        brand: 'Polaroid',
-        price: 99,
-        originalPrice: null,
-        rating: 4.2,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuDVr7HQIar2HX8B1-Cyjg_44jCZM0zf61iEZH-WcN-UHmL280VRp05zbvkB9auhHKn8KyJI2Iz8AVuerbMPJQMHsF5dG7vK88JApXOk1iWIQZKbMfuPNdWnzEwTCuZhrqK5uDSAhkqv7etZC-peRYhJe464V262B5Y-ih142WNSSSOo_2lI2tppFr7EoTUQvCYXhle5Sy2iL7n183YQH0jx3QQ2Dy0c8a91aQXgk9xeufF5-0TefLfxlR66x2hB53FFgiLwGWnJbTw',
-      ),
-      _ProductData(
-        name: 'RS-X³ Puzzle',
-        brand: 'Puma',
-        price: 85,
-        originalPrice: 110,
-        rating: 4.6,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBCPuc2TC96iy_bpGpEUK_Gdu1tbefhfF30K2MiDU7sNodIv6QG4qSwtoEwmoi3x5OtCbm7GSQ4q2g3FIfUb6Hv9FGmaN7MUTSD9UnY1MzxbNmgFAS0LaVZdcT6faLydrTkHVUkEOBKPvEJ5m26EjtogJQLMehCsxD4YjLoE19K_Pl66eDgO9vEkJ-kjA3E3n4LZPH_oYaAy432E1Rq5hYgYNUFgkEvZUraq8k0_6hqPka_9IpdsWeiqR0m1TUtZxpi9MFhKIaNGfs',
-      ),
-    ];
+    final productsAsync = ref.watch(productsProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1041,18 +1007,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.65,
+          productsAsync.when(
+            loading: () => const SizedBox(
+              height: 200,
+              child: Center(child: CircularProgressIndicator()),
             ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return _buildProductCard(products[index], isDark, surfaceColor);
+            error: (err, stack) => SizedBox(
+              height: 200,
+              child: Center(
+                child: Text(
+                  'Error loading products',
+                  style: TextStyle(
+                    color: isDark ? Colors.grey : Colors.grey[600],
+                  ),
+                ),
+              ),
+            ),
+            data: (products) {
+              // Take first 4 featured products or all if less than 4
+              final featuredProducts = products
+                  .where((p) => p.isFeatured)
+                  .take(4)
+                  .toList();
+              final displayProducts = featuredProducts.isNotEmpty
+                  ? featuredProducts
+                  : products.take(4).toList();
+
+              if (displayProducts.isEmpty) {
+                return SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: Text(
+                      'No products available',
+                      style: TextStyle(
+                        color: isDark ? Colors.grey : Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.65,
+                ),
+                itemCount: displayProducts.length,
+                itemBuilder: (context, index) {
+                  return _buildRealProductCard(
+                    displayProducts[index],
+                    isDark,
+                    surfaceColor,
+                  );
+                },
+              );
             },
           ),
         ],
@@ -1238,6 +1250,229 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRealProductCard(
+    Product product,
+    bool isDark,
+    Color surfaceColor,
+  ) {
+    final hasDiscount =
+        product.compareAtPrice != null &&
+        product.compareAtPrice! > product.price;
+
+    return GestureDetector(
+      onTap: () => context.push('/products/${product.id}'),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image
+            Expanded(
+              flex: 5,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    child: SizedBox.expand(
+                      child: CachedNetworkImage(
+                        imageUrl: product.featuredImage ?? '',
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: isDark
+                              ? const Color(0xFF1E293B)
+                              : const Color(0xFFF1F5F9),
+                          child: const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: isDark
+                              ? const Color(0xFF1E293B)
+                              : const Color(0xFFF1F5F9),
+                          child: const Icon(Icons.image, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Sale badge
+                  if (hasDiscount)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF4444),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '-${((1 - product.price / product.compareAtPrice!) * 100).round()}%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  // Favorite Button
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.5)
+                            : Colors.white.withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.favorite_border,
+                        size: 20,
+                        color: isDark
+                            ? const Color(0xFF94A3B8)
+                            : const Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Info
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Category & Rating
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            product.categoryId ?? 'General',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                              color: isDark
+                                  ? const Color(0xFF64748B)
+                                  : const Color(0xFF94A3B8),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              size: 14,
+                              color: Color(0xFFFACC15),
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              '4.5',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: isDark
+                                    ? const Color(0xFF64748B)
+                                    : const Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    // Name
+                    Text(
+                      product.name,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    // Price & Add to Cart
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (hasDiscount)
+                              Text(
+                                '৳${product.compareAtPrice!.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: isDark
+                                      ? const Color(0xFF64748B)
+                                      : const Color(0xFF94A3B8),
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                            Text(
+                              '৳${product.price.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0F172A),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: _primaryColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.add_shopping_cart,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
