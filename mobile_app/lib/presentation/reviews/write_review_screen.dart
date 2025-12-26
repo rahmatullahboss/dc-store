@@ -136,7 +136,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
               SliverAppBar(
                 pinned: true,
                 elevation: 0,
-                backgroundColor: cardColor.withOpacity(0.9),
+                backgroundColor: cardColor.withValues(alpha: 0.9),
                 surfaceTintColor: Colors.transparent,
                 leading: IconButton(
                   onPressed: () => context.pop(),
@@ -448,11 +448,11 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                     decoration: BoxDecoration(
                       borderRadius: AppBorderRadius.lgRadius,
                       border: Border.all(
-                        color: primaryColor.withOpacity(0.3),
+                        color: primaryColor.withValues(alpha: 0.3),
                         width: 2,
                         strokeAlign: BorderSide.strokeAlignInside,
                       ),
-                      color: primaryColor.withOpacity(0.05),
+                      color: primaryColor.withValues(alpha: 0.05),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -583,7 +583,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: cardColor.withOpacity(0.8),
+                    color: cardColor.withValues(alpha: 0.8),
                     borderRadius: AppBorderRadius.smRadius,
                   ),
                   child: Text(
@@ -655,7 +655,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
@@ -676,7 +676,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
         border: Border(top: BorderSide(color: borderColor)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),
