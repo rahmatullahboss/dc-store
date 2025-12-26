@@ -9,6 +9,7 @@ import '../services/storage_service.dart';
 // Placeholder screens - will be replaced with actual screens
 import '../presentation/home/home_screen.dart';
 import '../presentation/profile/addresses_screen.dart';
+import '../presentation/notifications/notifications_screen.dart';
 
 /// App Router Configuration
 class AppRouter {
@@ -386,7 +387,7 @@ class AppRouter {
           path: AppRoutes.notificationsPath,
           name: AppRoutes.notifications,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _NotificationsScreen(),
+            child: const NotificationsScreen(),
             state: state,
           ),
         ),
@@ -854,15 +855,6 @@ class _SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Settings')),
     body: const Center(child: Text('Settings Screen')),
-  );
-}
-
-class _NotificationsScreen extends StatelessWidget {
-  const _NotificationsScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Notifications')),
-    body: const Center(child: Text('Notifications Screen')),
   );
 }
 

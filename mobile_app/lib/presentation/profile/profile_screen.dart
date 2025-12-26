@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
@@ -186,22 +184,10 @@ class ProfileScreen extends ConsumerWidget {
                               ),
                             ),
                             child: ClipOval(
-                              child: user.avatarUrl != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: user.avatarUrl!,
-                                      fit: BoxFit.cover,
-                                      placeholder: (_, __) =>
-                                          _buildAvatarPlaceholder(
-                                            user,
-                                            primaryColor,
-                                          ),
-                                      errorWidget: (_, __, ___) =>
-                                          _buildAvatarPlaceholder(
-                                            user,
-                                            primaryColor,
-                                          ),
-                                    )
-                                  : _buildAvatarPlaceholder(user, primaryColor),
+                              child: _buildAvatarPlaceholder(
+                                user,
+                                primaryColor,
+                              ),
                             ),
                           ),
                           Positioned(
