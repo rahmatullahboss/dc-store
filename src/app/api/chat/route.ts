@@ -123,7 +123,7 @@ export async function POST(req: Request) {
       apiKey: openrouterKey,
     });
     const result = streamText({
-      model: openrouter("xiaomi/mimo-vl-2-flash:free"),
+      model: openrouter("xiaomi/mimo-v2-flash:free"),
       system: systemPrompt,
       messages: enhancedMessages,
     });
