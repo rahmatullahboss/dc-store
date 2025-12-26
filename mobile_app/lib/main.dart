@@ -17,6 +17,7 @@ import 'features/checkout/presentation/order_success_screen.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/register_screen.dart';
 import 'presentation/search/search_screen.dart';
+import 'presentation/wishlist/wishlist_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -64,6 +65,10 @@ final _router = GoRouter(
         GoRoute(
           path: '/profile',
           builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: '/wishlist',
+          builder: (context, state) => const WishlistScreen(),
         ),
       ],
     ),
