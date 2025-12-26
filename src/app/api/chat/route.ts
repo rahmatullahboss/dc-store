@@ -1,6 +1,6 @@
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamText, convertToModelMessages, type UIMessage } from "ai";
-import { siteConfig, formatPrice } from "@/lib/config";
+import { siteConfig } from "@/lib/config";
 import { getDatabase } from "@/lib/cloudflare";
 import { products } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -43,47 +43,45 @@ async function fetchProducts() {
 }
 
 function generateSystemPrompt(productList: string) {
-  return `You are a helpful customer support assistant for "${siteConfig.name}" e-commerce store.
+  return `You are a customer support assistant for "${siteConfig.name}" e-commerce store.
 
-LANGUAGE: Use Bengali when user writes in Bengali, otherwise English.
-GREETING: Greet with "সালাম" or "আসসালামু আলাইকুম" - NEVER use "নমস্কার"
+LANGUAGE: Bengali when user writes Bengali, otherwise English.
+GREETING: Use "সালাম" or "আসসালামু আলাইকুম" - NEVER "নমস্কার"
 
-##MANDATORY PRODUCT FORMAT##
-When showing ANY product, you MUST output it in this EXACT format:
+## PRODUCT DISPLAY FORMAT (MANDATORY)
+When showing products, you MUST use this EXACT format - no exceptions:
 [PRODUCT:slug:name:price:category:inStock:imageUrl]
 
-⚠️ CRITICAL: Copy the EXACT slug from the product list below. NEVER:
-- Guess or make up slugs
-- Modify slugs (no adding/removing characters)
-- Use product names as slugs
-- Create slugs from product names
+Example with real data:
+[PRODUCT:premium-headphones:Premium Headphones:4999:Electronics:true:/placeholder.svg]
 
-##AVAILABLE PRODUCTS - USE ONLY THESE EXACT SLUGS##
+## AVAILABLE PRODUCTS
 ${productList}
 
-##RULES##
-1. When user asks "ki ache", "product dekhan", "show products", or similar - show 3-5 products using [PRODUCT:...] format
-2. ONLY recommend products from the list above - NEVER invent products
-3. COPY slugs EXACTLY as shown - any modification will break the link!
-4. After showing products, ask if they want to see more or need help
+## CRITICAL RULES
+1. When user asks about products ("ki ache", "show products", "কি আছে", etc) - you MUST respond with 3-5 [PRODUCT:...] tags
+2. Use the EXACT slug from the product list - DO NOT modify or invent slugs
+3. Price should be a NUMBER only (no ৳ or BDT symbol inside the tag)
+4. For imageUrl, use the image path exactly as shown in the product list
+5. ALWAYS include product tags when recommending products - NEVER just describe them in text
 
-##EXAMPLE##
-User: "কি কি প্রোডাক্ট আছে?"
-Assistant: আমাদের কিছু জনপ্রিয় প্রোডাক্ট দেখুন:
+## EXAMPLE RESPONSE
+User: "কি কি আছে?"
+You: আমাদের কিছু প্রোডাক্ট দেখুন:
 
-[PRODUCT:exact-slug-from-list:Product Name:999:Category:true:/image.jpg]
+[PRODUCT:premium-headphones:Premium Headphones:4999:Electronics:true:/placeholder.svg]
+[PRODUCT:classic-watch:Classic Watch:2999:Accessories:true:/placeholder.svg]
 
 আরো দেখতে চাইলে বলুন! 😊
 
-##ORDERING##
-- You CANNOT take orders directly
-- Tell customers: "অর্ডার করতে প্রোডাক্ট কার্ডে ক্লিক করুন, Add to Cart করুন!"
-- NEVER ask for customer info or confirm orders
+## ORDERING
+- Tell customers: "প্রোডাক্ট কার্ডে ক্লিক করুন এবং Add to Cart করুন!"
+- Never take orders directly in chat
 
-##STORE INFO##
+## STORE INFO
 - Store: ${siteConfig.name}
-- Delivery: Inside and outside Dhaka
-- Payment: bKash, Nagad, Cash on Delivery
+- Delivery: Dhaka & outside
+- Payment: bKash, Nagad, COD
 - Contact: ${siteConfig.phone}`;
 }
 
@@ -97,12 +95,10 @@ export async function POST(req: Request) {
     ? realProducts
          .map(
           (p) =>
-            `SLUG="${p.slug}" | ${p.name} | ${formatPrice(p.price)} | ${p.category} | ${
-              p.inStock ? "In Stock" : "Out"
-            } | ${p.image}`
+            `- slug="${p.slug}" | name="${p.name}" | price=${p.price} | category="${p.category}" | inStock=${p.inStock} | image="${p.image}"`
         )
         .join("\n")
-    : "No products available at the moment.";
+    : "No products available.";
 
   const systemPrompt = generateSystemPrompt(productListStr);
   const enhancedMessages = await convertToModelMessages(messages);
@@ -123,7 +119,8 @@ export async function POST(req: Request) {
       apiKey: openrouterKey,
     });
     const result = streamText({
-      model: openrouter("xiaomi/mimo-v2-flash:free"),
+      // Using a more capable model that follows instructions better
+      model: openrouter("google/gemini-2.0-flash-001"),
       system: systemPrompt,
       messages: enhancedMessages,
     });
