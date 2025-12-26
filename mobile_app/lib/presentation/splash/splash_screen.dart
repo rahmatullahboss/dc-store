@@ -80,7 +80,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final backgroundColor = isDark
         ? AppColors.darkBackground
         : const Color(0xFFF6F6F8);
-    final primaryColor = const Color(0xFFF97316); // Orange - matches web store
+    final primaryColor = WhiteLabelConfig.accentColor;
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final subtextColor = isDark
         ? const Color(0xFF94A3B8)

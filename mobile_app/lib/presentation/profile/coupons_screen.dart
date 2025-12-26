@@ -1259,10 +1259,10 @@ class _CouponsScreenState extends State<CouponsScreen>
       case 'Food':
         return {
           'bg': isDark
-              ? const Color(0xFFF97316).withAlpha(51)
+              ? WhiteLabelConfig.accentColor.withAlpha(51)
               : const Color(0xFFFFF7ED),
           'border': isDark
-              ? const Color(0xFFF97316).withAlpha(77)
+              ? WhiteLabelConfig.accentColor.withAlpha(77)
               : const Color(0xFFFED7AA),
           'icon': isDark ? const Color(0xFFFB923C) : const Color(0xFFEA580C),
           'text': isDark ? const Color(0xFFFDBA74) : const Color(0xFFC2410C),

@@ -11,7 +11,7 @@ import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/product/domain/product_model.dart';
 
 /// Primary/accent color for the app (orange - matches web store)
-const _primaryColor = Color(0xFFF97316);
+final _primaryColor = WhiteLabelConfig.accentColor;
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -367,7 +367,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.location_on, color: _primaryColor, size: 20),
+          Icon(Icons.location_on, color: _primaryColor, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: RichText(

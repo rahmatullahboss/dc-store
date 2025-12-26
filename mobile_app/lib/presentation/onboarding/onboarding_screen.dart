@@ -46,7 +46,7 @@ const _onboardingPages = [
     description:
         'Get your orders delivered to your doorstep in record time with live tracking.',
     icon: Icons.local_shipping_rounded,
-    gradientColor: Color(0xFFF97316), // Orange
+    gradientColor: WhiteLabelConfig.accentColor, // Orange
     imageUrl:
         'https://lh3.googleusercontent.com/aida-public/AB6AXuA6cUefz3LdUpWqUfw8v36lVkqt3I9tJJ6yZPRXxQjA1ADDMKd0_gVCXOwQMVYE5mboZRahPTjpHe_5TcBpu5Mg4z4-WUMVFF_so788dDHLNaHb6OTOD_xa-6ENyV9tR12-jofw_ayGwgxSZMy1ttUFpGai4lkZg1s_PG8ePMNVHRYLs7nLlR9TEWiXQt5f-x1FjEck1byiVbwuddQ7p7WiaioZeEOpplmATyBOnnL1s0ksUM98h6eg33leIi21PO7i1zojIhiXh-E',
   ),
