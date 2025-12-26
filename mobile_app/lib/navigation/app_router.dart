@@ -8,6 +8,7 @@ import '../services/storage_service.dart';
 
 // Placeholder screens - will be replaced with actual screens
 import '../presentation/home/home_screen.dart';
+import '../presentation/profile/addresses_screen.dart';
 
 /// App Router Configuration
 class AppRouter {
@@ -184,7 +185,7 @@ class AppRouter {
                       name: AppRoutes.addresses,
                       pageBuilder: (context, state) =>
                           AppTransitions.slideRight(
-                            child: const _AddressesScreen(),
+                            child: const AddressesScreen(),
                             state: state,
                           ),
                       routes: [
@@ -816,15 +817,6 @@ class _EditProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Edit Profile')),
     body: const Center(child: Text('Edit Profile Screen')),
-  );
-}
-
-class _AddressesScreen extends StatelessWidget {
-  const _AddressesScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Addresses')),
-    body: const Center(child: Text('Addresses Screen')),
   );
 }
 
