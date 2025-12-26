@@ -4,6 +4,7 @@ import 'package:dc_store/core/theme/app_text_styles.dart';
 import '../product/price_widget.dart';
 import '../rating/rating_widget.dart';
 import '../feedback/loading_shimmer.dart';
+import '../animated_heart_button.dart';
 
 /// Enum for ProductCard display variants
 enum ProductCardVariant { grid, list, horizontal }
@@ -417,29 +418,20 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildWishlistButton(bool isDark, {double size = 24}) {
-    return GestureDetector(
-      onTap: onWishlistToggle,
-      child: Container(
-        width: size + 12,
-        height: size + 12,
-        decoration: BoxDecoration(
-          color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
-            alpha: 0.9,
-          ),
-          shape: BoxShape.circle,
+    return Container(
+      width: size + 12,
+      height: size + 12,
+      decoration: BoxDecoration(
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+          alpha: 0.9,
         ),
-        alignment: Alignment.center,
-        child: Icon(
-          isInWishlist
-              ? Icons.favorite_rounded
-              : Icons.favorite_outline_rounded,
-          size: size,
-          color: isInWishlist
-              ? AppColors.error
-              : (isDark
-                    ? AppColors.darkTextSecondary
-                    : AppColors.textSecondary),
-        ),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: AnimatedHeartButton(
+        isWishlisted: isInWishlist,
+        onToggle: onWishlistToggle ?? () {},
+        size: size,
       ),
     );
   }

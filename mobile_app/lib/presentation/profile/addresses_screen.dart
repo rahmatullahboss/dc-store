@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
-
-/// Primary color for the app
-const _primaryColor = Color(0xFF135BEC);
+import '../../core/config/white_label_config.dart';
 
 /// Address Type Enum
 enum AddressType { home, office, other }
@@ -230,7 +228,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
               child: const Text(
                 'Add',
                 style: TextStyle(
-                  color: _primaryColor,
+                  color: WhiteLabelConfig.accentColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -412,7 +410,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: _primaryColor,
+                            color: WhiteLabelConfig.accentColor,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -512,7 +510,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
                             Icon(
                               LucideIcons.edit3,
                               size: 14,
-                              color: _primaryColor,
+                              color: WhiteLabelConfig.accentColor,
                             ),
                             const SizedBox(width: 4),
                             const Text(
@@ -520,7 +518,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
-                                color: _primaryColor,
+                                color: WhiteLabelConfig.accentColor,
                               ),
                             ),
                           ],
@@ -603,7 +601,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
   Color _getTypeColor(AddressType type) {
     switch (type) {
       case AddressType.home:
-        return _primaryColor;
+        return WhiteLabelConfig.accentColor;
       case AddressType.office:
         return Colors.orange;
       case AddressType.other:
@@ -830,7 +828,7 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                                 right: Radius.circular(12),
                               ),
                               borderSide: const BorderSide(
-                                color: _primaryColor,
+                                color: WhiteLabelConfig.accentColor,
                               ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
@@ -950,7 +948,7 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                                   ? const Color(0xFFEFF6FF)
                                   : Colors.transparent,
                               border: Border.all(
-                                color: isSelected ? _primaryColor : borderColor,
+                                color: isSelected ? WhiteLabelConfig.accentColor : borderColor,
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -964,7 +962,7 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: isSelected ? _primaryColor : textColor,
+                                color: isSelected ? WhiteLabelConfig.accentColor : textColor,
                               ),
                             ),
                           ),
@@ -983,11 +981,11 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                           height: 22,
                           decoration: BoxDecoration(
                             color: _isDefault
-                                ? _primaryColor
+                                ? WhiteLabelConfig.accentColor
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
-                              color: _isDefault ? _primaryColor : borderColor,
+                              color: _isDefault ? WhiteLabelConfig.accentColor : borderColor,
                               width: 2,
                             ),
                           ),
@@ -1088,7 +1086,7 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: _primaryColor),
+              borderSide: const BorderSide(color: WhiteLabelConfig.accentColor),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
