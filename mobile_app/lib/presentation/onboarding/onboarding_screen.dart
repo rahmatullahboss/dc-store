@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../services/storage_service.dart';
+import '../../core/constants/storage_keys.dart';
 
 /// Onboarding data model
 class OnboardingPage {
@@ -80,9 +82,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  void _completeOnboarding() {
-    // TODO: Save onboarding completed flag to local storage
-    context.go('/');
+  Future<void> _completeOnboarding() async {
+    // Save onboarding completed flag to local storage
+    final storageService = await StorageService.getInstance();
+    await storageService.setBool(StorageKeys.onboardingComplete, true);
+
+    if (mounted) {
+      context.go('/');
+    }
   }
 
   void _skip() {

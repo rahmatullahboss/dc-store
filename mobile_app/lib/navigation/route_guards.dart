@@ -94,15 +94,9 @@ class RouteGuards {
       return authGuard(state);
     }
 
-    // Check onboarding for first-time users
-    if (path == AppRoutes.homePath && !isOnboardingCompleted) {
-      // Only redirect to onboarding if coming from splash
-      final fromSplash =
-          state.extra is Map && (state.extra as Map)['fromSplash'] == true;
-      if (fromSplash) {
-        return AppRoutes.onboardingPath;
-      }
-    }
+    // Check onboarding for first-time users going to home
+    // Skip onboarding check if user explicitly navigates to home
+    // Onboarding is handled by splash screen navigation
 
     return null;
   }

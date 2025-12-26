@@ -74,7 +74,7 @@ class AppRoutes {
   // ═══════════════════════════════════════════════════════════════
 
   // Initial
-  static const String splashPath = '/';
+  static const String splashPath = '/splash';
   static const String onboardingPath = '/onboarding';
 
   // Auth
@@ -85,7 +85,7 @@ class AppRoutes {
   static const String verifyOtpPath = '/verify-otp';
 
   // Main Tabs (Shell Routes)
-  static const String homePath = '/home';
+  static const String homePath = '/';
   static const String categoriesPath = '/categories';
   static const String searchPath = '/search';
   static const String cartPath = '/cart';
