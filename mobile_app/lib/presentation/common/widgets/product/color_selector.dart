@@ -118,23 +118,31 @@ class ColorSelector extends StatelessWidget {
                         ]
                       : null,
                 ),
-                child: isSelected
-                    ? Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.info, width: 2),
+                child: Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (isSelected)
+                      Positioned.fill(
+                        child: Container(
+                          transform: Matrix4.identity()..scale(1.2),
+                          transformAlignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.info, width: 2),
+                          ),
                         ),
-                        margin: const EdgeInsets.all(-4),
-                      )
-                    : item.inStock
-                    ? null
-                    : Center(
+                      ),
+                    if (!item.inStock)
+                      Center(
                         child: Icon(
                           Icons.close,
                           size: swatchSize * 0.5,
                           color: Colors.white.withAlpha(179),
                         ),
                       ),
+                  ],
+                ),
               ),
             );
           }).toList(),
