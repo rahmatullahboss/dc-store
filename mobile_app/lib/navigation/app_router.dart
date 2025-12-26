@@ -9,9 +9,11 @@ import '../services/storage_service.dart';
 // Placeholder screens - will be replaced with actual screens
 import '../presentation/home/home_screen.dart';
 import '../presentation/profile/addresses_screen.dart';
+import '../presentation/profile/edit_profile_screen.dart';
 import '../presentation/profile/settings_screen.dart';
 import '../presentation/notifications/notifications_screen.dart';
 import '../presentation/profile/help_support_screen.dart';
+import '../presentation/profile/coupons_screen.dart';
 import '../presentation/wallet/wallet_screen.dart';
 
 /// App Router Configuration
@@ -180,7 +182,7 @@ class AppRouter {
                       name: AppRoutes.editProfile,
                       pageBuilder: (context, state) =>
                           AppTransitions.slideRight(
-                            child: const _EditProfileScreen(),
+                            child: const EditProfileScreen(),
                             state: state,
                           ),
                     ),
@@ -403,6 +405,18 @@ class AppRouter {
           name: AppRoutes.wallet,
           pageBuilder: (context, state) => AppTransitions.slideRight(
             child: const WalletScreen(),
+            state: state,
+          ),
+        ),
+
+        // ═══════════════════════════════════════════════════════════════
+        // COUPONS ROUTES
+        // ═══════════════════════════════════════════════════════════════
+        GoRoute(
+          path: AppRoutes.couponsPath,
+          name: AppRoutes.coupons,
+          pageBuilder: (context, state) => AppTransitions.slideRight(
+            child: const CouponsScreen(),
             state: state,
           ),
         ),
@@ -824,16 +838,6 @@ class _TrackOrderScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Track Order')),
     body: Center(child: Text('Tracking: $orderId')),
-  );
-}
-
-class _EditProfileScreen extends StatelessWidget {
-  const _EditProfileScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Edit Profile')),
-    body: const Center(child: Text('Edit Profile Screen')),
-  );
 }
 
 class _AddAddressScreen extends StatelessWidget {

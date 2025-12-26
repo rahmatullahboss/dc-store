@@ -59,6 +59,7 @@ class AppRoutes {
   static const String settings = 'settings';
   static const String notifications = 'notifications';
   static const String wallet = 'wallet';
+  static const String coupons = 'coupons';
 
   // Support
   static const String help = 'help';
@@ -124,6 +125,7 @@ class AppRoutes {
   static const String settingsPath = 'settings';
   static const String notificationsPath = '/notifications';
   static const String walletPath = '/wallet';
+  static const String couponsPath = '/coupons';
 
   // Support
   static const String helpPath = '/help';
