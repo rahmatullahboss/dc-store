@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/providers/theme_provider.dart';
+import '../../core/constants/support_config.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../services/external_launcher_service.dart';
@@ -940,7 +941,7 @@ class ProfileScreen extends ConsumerWidget {
   Future<void> _launchReportProblem(BuildContext context) async {
     final launcher = ExternalLauncherService.instance;
     final result = await launcher.launchEmail(
-      subject: 'Problem Report - DC Store App',
+      subject: SupportConfig.reportProblemSubject,
       body: 'Please describe the problem you encountered:\n\n',
     );
 

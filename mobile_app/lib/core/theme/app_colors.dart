@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import '../config/white_label_config.dart';
 
-/// Complete Color System for DC Store
+/// Complete Color System
 /// Supports both Light and Dark themes with semantic naming
-/// Matches web store theme: Primary #0F172A, Accent #F97316 (Orange)
+/// Colors are sourced from WhiteLabelConfig for easy rebranding
 class AppColors {
   AppColors._();
 
   // ═══════════════════════════════════════════════════════════════
-  // BRAND COLORS (Matching Web Store)
+  // BRAND COLORS (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
-  /// Primary brand color - Slate theme (matches web)
-  static const Color brandPrimary = Color(0xFF0F172A);
-  static const Color brandAccent = Color(0xFFF97316); // Orange
+  /// Primary brand color
+  static const Color brandPrimary = WhiteLabelConfig.primaryColor;
+  static const Color brandAccent = WhiteLabelConfig.accentColor;
 
   // Legacy gold colors (kept for backwards compatibility)
   static const Color goldDark = Color(0xFFB8860B);
@@ -23,18 +24,18 @@ class AppColors {
   // LIGHT THEME COLORS
   // ═══════════════════════════════════════════════════════════════
 
-  // Primary (Slate - matching web store)
-  static const Color primary = Color(0xFF0F172A);
+  // Primary (from WhiteLabelConfig)
+  static const Color primary = WhiteLabelConfig.primaryColor;
   static const Color primaryForeground = Color(0xFFFFFFFF);
-  static const Color primaryLight = Color(0xFF334155);
-  static const Color primaryDark = Color(0xFF020617);
+  static const Color primaryLight = WhiteLabelConfig.primaryLightColor;
+  static const Color primaryDark = WhiteLabelConfig.primaryDarkColor;
 
   // Secondary
   static const Color secondary = Color(0xFFF1F5F9);
-  static const Color secondaryForeground = Color(0xFF0F172A);
+  static const Color secondaryForeground = WhiteLabelConfig.primaryColor;
 
-  // Accent (Orange - matching web store buttons)
-  static const Color accent = Color(0xFFF97316);
+  // Accent (from WhiteLabelConfig)
+  static const Color accent = WhiteLabelConfig.accentColor;
   static const Color accentForeground = Color(0xFFFFFFFF);
 
   // Background & Surface

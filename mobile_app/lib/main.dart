@@ -4,6 +4,7 @@ import 'package:toastification/toastification.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/cache/cache_service.dart';
+import 'core/config/white_label_config.dart';
 import 'navigation/app_router.dart';
 import 'services/storage_service.dart';
 
@@ -39,7 +40,7 @@ class MyApp extends ConsumerWidget {
 
     return ToastificationWrapper(
       child: MaterialApp.router(
-        title: 'DC Store',
+        title: WhiteLabelConfig.appName,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,

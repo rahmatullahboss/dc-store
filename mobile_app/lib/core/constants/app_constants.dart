@@ -1,19 +1,21 @@
+import '../config/white_label_config.dart';
+
 /// Application-wide Constants
 /// General app configuration values and defaults
 class AppConstants {
   AppConstants._();
 
   // ═══════════════════════════════════════════════════════════════
-  // APP INFO
+  // APP INFO (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
-  static const String appName = 'DC Store';
-  static const String appVersion = '1.0.0';
-  static const String buildNumber = '1';
-  static const String appTagline = 'Shop Smart, Live Better';
-  static const String companyName = 'Digital Care';
-  static const String supportEmail = 'support@digitalcare.site';
-  static const String supportPhone = '+880 1234-567890';
+  static String get appName => WhiteLabelConfig.appName;
+  static String get appVersion => WhiteLabelConfig.appVersion;
+  static String get buildNumber => WhiteLabelConfig.buildNumber;
+  static String get appTagline => WhiteLabelConfig.appTagline;
+  static String get companyName => WhiteLabelConfig.companyName;
+  static String get supportEmail => WhiteLabelConfig.supportEmail;
+  static String get supportPhone => WhiteLabelConfig.supportPhone;
 
   // ═══════════════════════════════════════════════════════════════
   // PAGINATION
@@ -157,18 +159,14 @@ class AppConstants {
   static const int searchDebounce = 300;
 
   // ═══════════════════════════════════════════════════════════════
-  // SOCIAL & LINKS
+  // SOCIAL & LINKS (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
-  static const String playStoreUrl =
-      'https://play.google.com/store/apps/details?id=com.digitalcare.dcstore';
-  static const String appStoreUrl =
-      'https://apps.apple.com/app/dc-store/id123456789';
-  static const String websiteUrl = 'https://store.digitalcare.site';
-  static const String privacyPolicyUrl =
-      'https://store.digitalcare.site/privacy';
-  static const String termsOfServiceUrl =
-      'https://store.digitalcare.site/terms';
-  static const String facebookUrl = 'https://facebook.com/digitalcarestore';
-  static const String instagramUrl = 'https://instagram.com/digitalcarestore';
+  static String get playStoreUrl => WhiteLabelConfig.playStoreUrl;
+  static String get appStoreUrl => WhiteLabelConfig.appStoreUrl;
+  static String get websiteUrl => WhiteLabelConfig.websiteUrl;
+  static String get privacyPolicyUrl => WhiteLabelConfig.privacyPolicyUrl;
+  static String get termsOfServiceUrl => WhiteLabelConfig.termsOfServiceUrl;
+  static String get facebookUrl => WhiteLabelConfig.facebookUrl;
+  static String get instagramUrl => WhiteLabelConfig.instagramUrl;
 }

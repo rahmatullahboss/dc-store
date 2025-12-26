@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:share_plus/share_plus.dart';
 import '../core/constants/api_constants.dart';
+import '../core/config/white_label_config.dart';
 
 /// ShareService - Handles content sharing and deep link generation
 class ShareService {
@@ -37,7 +38,10 @@ class ShareService {
     message += '\n\n$link';
 
     await SharePlus.instance.share(
-      ShareParams(text: message, title: 'Check out $productName on DC Store'),
+      ShareParams(
+        text: message,
+        title: 'Check out $productName on ${WhiteLabelConfig.appName}',
+      ),
     );
   }
 
@@ -50,8 +54,9 @@ class ShareService {
 
     await SharePlus.instance.share(
       ShareParams(
-        text: '🏷️ Explore $categoryName collection on DC Store!\n\n$link',
-        title: '$categoryName - DC Store',
+        text:
+            '🏷️ Explore $categoryName collection on ${WhiteLabelConfig.appName}!\n\n$link',
+        title: '$categoryName - ${WhiteLabelConfig.appName}',
       ),
     );
   }
@@ -77,14 +82,15 @@ class ShareService {
   }) async {
     final link = generateReferralDeepLink(referralCode);
 
-    String message = '🎁 Join DC Store with my referral code: $referralCode';
+    String message =
+        '🎁 Join ${WhiteLabelConfig.appName} with my referral code: $referralCode';
     if (discountText != null) {
       message += '\n\nGet $discountText off on your first order!';
     }
     message += '\n\n$link';
 
     await SharePlus.instance.share(
-      ShareParams(text: message, title: 'Join DC Store'),
+      ShareParams(text: message, title: 'Join ${WhiteLabelConfig.appName}'),
     );
   }
 
@@ -95,8 +101,8 @@ class ShareService {
     await SharePlus.instance.share(
       ShareParams(
         text:
-            '📱 Download DC Store - Premium E-commerce App!\n\nShop the best products with great deals.\n\n$link',
-        title: 'Download DC Store App',
+            '📱 Download ${WhiteLabelConfig.appName} - Premium E-commerce App!\n\nShop the best products with great deals.\n\n$link',
+        title: 'Download ${WhiteLabelConfig.appName} App',
       ),
     );
   }

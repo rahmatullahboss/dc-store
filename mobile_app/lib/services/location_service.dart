@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
+import '../core/config/white_label_config.dart';
 
 /// LocationService - Handles location and geocoding
 /// Placeholder - requires geolocator and geocoding packages
@@ -194,7 +195,7 @@ class LocationService {
     return [
       StoreLocation(
         id: 'store_1',
-        name: 'DC Store - Gulshan',
+        name: '${WhiteLabelConfig.appName} - Gulshan',
         address: 'Road 11, Gulshan-2, Dhaka',
         latitude: 23.7925,
         longitude: 90.4078,
@@ -209,7 +210,7 @@ class LocationService {
       ),
       StoreLocation(
         id: 'store_2',
-        name: 'DC Store - Dhanmondi',
+        name: '${WhiteLabelConfig.appName} - Dhanmondi',
         address: 'Road 27, Dhanmondi, Dhaka',
         latitude: 23.7461,
         longitude: 90.3742,

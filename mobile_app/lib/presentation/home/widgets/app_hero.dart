@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/config/white_label_config.dart';
 import '../../common/widgets/gradient_text.dart';
 
 class AppHero extends StatelessWidget {
@@ -17,7 +18,7 @@ class AppHero extends StatelessWidget {
           Column(
             children: [
               GradientText(
-                "DC Store",
+                WhiteLabelConfig.appName,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontWeight: FontWeight.w900,
                   fontSize: 48,

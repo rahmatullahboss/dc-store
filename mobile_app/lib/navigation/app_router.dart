@@ -4,6 +4,7 @@ import 'app_routes.dart';
 import 'app_transitions.dart';
 import 'route_guards.dart';
 import 'navigation_service.dart';
+import '../core/config/white_label_config.dart';
 import '../services/storage_service.dart';
 
 // Layout
@@ -639,7 +640,10 @@ class _SplashScreen extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             const SizedBox(height: 16),
-            Text('DC Store', style: Theme.of(context).textTheme.headlineMedium),
+            Text(
+              WhiteLabelConfig.appName,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
           ],
         ),
       ),

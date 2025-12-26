@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/config/white_label_config.dart';
 import 'providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -120,7 +121,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           type: ToastificationType.success,
           style: ToastificationStyle.minimal,
           title: const Text("Account created!"),
-          description: const Text("Welcome to DC Store"),
+          description: Text(WhiteLabelConfig.welcomeMessage),
           autoCloseDuration: const Duration(seconds: 2),
         );
         context.go('/');

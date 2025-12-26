@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/config/white_label_config.dart';
 import '../../services/storage_service.dart';
 import '../../core/constants/storage_keys.dart';
 
@@ -255,7 +256,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Column(
       children: [
         Text(
-          'DC Store',
+          WhiteLabelConfig.appName,
           style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.w800,

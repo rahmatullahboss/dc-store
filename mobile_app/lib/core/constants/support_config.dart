@@ -1,59 +1,60 @@
+import '../config/white_label_config.dart';
+
 /// SupportConfig - Centralized support contact details
 ///
 /// This class provides a single source of truth for all support-related
-/// contact information. Update these values to change contact details
-/// across the entire application.
+/// contact information. Values are sourced from WhiteLabelConfig.
 class SupportConfig {
   SupportConfig._();
 
   // ═══════════════════════════════════════════════════════════════
-  // EMAIL
+  // EMAIL (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
   /// Primary support email address
-  static const String email = 'support@dcstore.com';
+  static String get email => WhiteLabelConfig.supportEmail;
 
   /// Email subject for general support requests
-  static const String emailSubject = 'Support Request - DC Store App';
+  static String get emailSubject => WhiteLabelConfig.emailSubject;
 
   /// Email subject for problem reports
-  static const String reportProblemSubject = 'Problem Report - DC Store App';
+  static String get reportProblemSubject =>
+      WhiteLabelConfig.reportProblemSubject;
 
   // ═══════════════════════════════════════════════════════════════
-  // PHONE
+  // PHONE (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
   /// Support phone number
-  static const String phone = '+1-800-DC-STORE';
+  static String get phone => WhiteLabelConfig.supportPhone;
 
   /// Display-friendly phone number
-  static const String phoneDisplay = '1-800-DC-STORE';
+  static String get phoneDisplay => WhiteLabelConfig.supportPhoneDisplay;
 
   // ═══════════════════════════════════════════════════════════════
-  // WHATSAPP
+  // WHATSAPP (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
   /// WhatsApp business number (without + or country code formatting)
-  static const String whatsappNumber = '1234567890';
+  static String get whatsappNumber => WhiteLabelConfig.whatsappNumber;
 
   /// Pre-filled message for WhatsApp
-  static const String whatsappMessage =
-      'Hi, I need help with my DC Store order.';
+  static String get whatsappMessage => WhiteLabelConfig.whatsappMessage;
 
   // ═══════════════════════════════════════════════════════════════
-  // LIVE CHAT
+  // LIVE CHAT (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
   /// Live chat URL (Tawk.to, Intercom, etc.)
-  static const String liveChatUrl = 'https://tawk.to/dcstore';
+  static String get liveChatUrl => WhiteLabelConfig.liveChatUrl;
 
   // ═══════════════════════════════════════════════════════════════
-  // SUPPORT HOURS
+  // SUPPORT HOURS (from WhiteLabelConfig)
   // ═══════════════════════════════════════════════════════════════
 
   /// Support availability text
-  static const String supportHours = 'Available 24/7';
+  static String get supportHours => WhiteLabelConfig.supportHours;
 
   /// Average response time
-  static const String responseTime = '< 5 minutes';
+  static String get responseTime => WhiteLabelConfig.responseTime;
 }
