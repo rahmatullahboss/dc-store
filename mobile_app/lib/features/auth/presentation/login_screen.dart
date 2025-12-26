@@ -39,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           context: context,
           type: ToastificationType.success,
           style: ToastificationStyle.minimal,
-          title: const Text("Welcome back!"),
+          title: const Text("Welcome!"),
           autoCloseDuration: const Duration(seconds: 2),
         );
         context.go('/');
@@ -100,7 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       // Title
                       Text(
-                        'Welcome back',
+                        'Welcome',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
