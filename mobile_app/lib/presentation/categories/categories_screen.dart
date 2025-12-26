@@ -1,88 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/providers/repository_providers.dart';
+import '../../data/models/category/category_model.dart';
+
+/// Categories Provider - Fetches categories from repository
+final categoriesProvider = FutureProvider<List<CategoryModel>>((ref) async {
+  final repository = ref.watch(categoryRepositoryProvider);
+  final result = await repository.getCategories();
+  return result.fold(
+    ifLeft: (failure) => throw Exception(failure.message),
+    ifRight: (categories) => categories,
+  );
+});
 
 /// Categories screen showing all product categories
-class CategoriesScreen extends StatefulWidget {
+class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
 
   @override
-  State<CategoriesScreen> createState() => _CategoriesScreenState();
+  ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
+class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _showScrollToTop = false;
   bool _isGridView = true;
-
-  // Demo categories data
-  final List<Map<String, dynamic>> _categories = [
-    {
-      'id': '1',
-      'name': 'Clothing',
-      'itemCount': 1240,
-      'image':
-          'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400',
-      'discount': null,
-    },
-    {
-      'id': '2',
-      'name': 'Shoes',
-      'itemCount': 856,
-      'image':
-          'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
-      'discount': 20,
-    },
-    {
-      'id': '3',
-      'name': 'Accessories',
-      'itemCount': 432,
-      'image':
-          'https://images.unsplash.com/photo-1611923134239-b9be5b4d1b42?w=400',
-      'discount': null,
-    },
-    {
-      'id': '4',
-      'name': 'Watches',
-      'itemCount': 129,
-      'image':
-          'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400',
-      'discount': null,
-    },
-    {
-      'id': '5',
-      'name': 'Beauty',
-      'itemCount': 645,
-      'image':
-          'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-      'discount': 15,
-    },
-    {
-      'id': '6',
-      'name': 'Home',
-      'itemCount': 320,
-      'image':
-          'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-      'discount': null,
-    },
-    {
-      'id': '7',
-      'name': 'Electronics',
-      'itemCount': 890,
-      'image':
-          'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400',
-      'discount': 10,
-    },
-    {
-      'id': '8',
-      'name': 'Sports',
-      'itemCount': 456,
-      'image':
-          'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400',
-      'discount': null,
-    },
-  ];
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -112,6 +58,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     super.dispose();
   }
 
+  List<CategoryModel> _filterCategories(List<CategoryModel> categories) {
+    if (_searchQuery.isEmpty) return categories;
+    return categories
+        .where(
+          (cat) => cat.name.toLowerCase().contains(_searchQuery.toLowerCase()),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -126,6 +81,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.1)
         : const Color(0xFFF3F4F6);
+
+    final categoriesAsync = ref.watch(categoriesProvider);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -199,6 +156,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 ),
                                 child: TextField(
                                   controller: _searchController,
+                                  onChanged: (value) {
+                                    setState(() => _searchQuery = value);
+                                  },
                                   style: TextStyle(
                                     color: textColor,
                                     fontSize: 14,
@@ -230,9 +190,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: IconButton(
-                                onPressed: () {
-                                  // TODO: Show filter options
-                                },
+                                onPressed: () {},
                                 icon: Icon(Icons.tune, color: subtextColor),
                               ),
                             ),
@@ -252,7 +210,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               ),
 
-              // All Categories Section
+              // All Categories Section Header
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -304,22 +262,45 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
               const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-              // Categories Grid/List
-              _isGridView
-                  ? _buildCategoriesGrid(
-                      isDark,
-                      surfaceColor,
-                      textColor,
-                      subtextColor,
-                      borderColor,
-                    )
-                  : _buildCategoriesList(
-                      isDark,
-                      surfaceColor,
-                      textColor,
-                      subtextColor,
-                      borderColor,
-                    ),
+              // Categories Content
+              categoriesAsync.when(
+                data: (categories) {
+                  final filtered = _filterCategories(categories);
+                  if (filtered.isEmpty) {
+                    return SliverToBoxAdapter(
+                      child: _buildEmptyState(isDark, textColor, subtextColor),
+                    );
+                  }
+                  return _isGridView
+                      ? _buildCategoriesGrid(
+                          filtered,
+                          isDark,
+                          surfaceColor,
+                          textColor,
+                          subtextColor,
+                          borderColor,
+                        )
+                      : _buildCategoriesList(
+                          filtered,
+                          isDark,
+                          surfaceColor,
+                          textColor,
+                          subtextColor,
+                          borderColor,
+                        );
+                },
+                loading: () => SliverToBoxAdapter(
+                  child: _buildLoadingState(isDark, surfaceColor, borderColor),
+                ),
+                error: (error, stack) => SliverToBoxAdapter(
+                  child: _buildErrorState(
+                    error.toString(),
+                    isDark,
+                    textColor,
+                    subtextColor,
+                  ),
+                ),
+              ),
 
               // Bottom padding
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -369,7 +350,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         // Navigate to summer collection
       },
       child: Container(
-        height: 180,
+        height: 160,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -407,15 +388,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               // Content
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
-                        vertical: 4,
+                        vertical: 3,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
@@ -425,7 +406,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         'NEW SEASON',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 9,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                         ),
@@ -436,7 +417,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       'Summer Collection',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -445,14 +426,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       'Up to 40% off selected items',
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
+                        horizontal: 14,
+                        vertical: 8,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
@@ -465,7 +446,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         'Shop Now',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -480,7 +461,155 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 
+  Widget _buildEmptyState(bool isDark, Color textColor, Color subtextColor) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 64,
+              color: subtextColor.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No categories found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try a different search term',
+              style: TextStyle(fontSize: 14, color: subtextColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState(
+    bool isDark,
+    Color surfaceColor,
+    Color borderColor,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 0.85,
+        ),
+        itemCount: 6,
+        itemBuilder: (context, index) => Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: borderColor),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 16,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : const Color(0xFFE5E7EB),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      height: 12,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : const Color(0xFFF3F4F6),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(
+    String error,
+    bool isDark,
+    Color textColor,
+    Color subtextColor,
+  ) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red.withValues(alpha: 0.7),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Failed to load categories',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: subtextColor),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => ref.invalidate(categoriesProvider),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCategoriesGrid(
+    List<CategoryModel> categories,
     bool isDark,
     Color surfaceColor,
     Color textColor,
@@ -496,22 +625,23 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           mainAxisSpacing: 16,
           childAspectRatio: 0.85,
         ),
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final category = _categories[index];
-          return _buildCategoryCard(
-            category,
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => _buildCategoryCard(
+            categories[index],
             isDark,
             surfaceColor,
             textColor,
             subtextColor,
             borderColor,
-          );
-        }, childCount: _categories.length),
+          ),
+          childCount: categories.length,
+        ),
       ),
     );
   }
 
   Widget _buildCategoriesList(
+    List<CategoryModel> categories,
     bool isDark,
     Color surfaceColor,
     Color textColor,
@@ -521,26 +651,26 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final category = _categories[index];
-          return Padding(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: _buildCategoryListTile(
-              category,
+              categories[index],
               isDark,
               surfaceColor,
               textColor,
               subtextColor,
               borderColor,
             ),
-          );
-        }, childCount: _categories.length),
+          ),
+          childCount: categories.length,
+        ),
       ),
     );
   }
 
   Widget _buildCategoryCard(
-    Map<String, dynamic> category,
+    CategoryModel category,
     bool isDark,
     Color surfaceColor,
     Color textColor,
@@ -550,8 +680,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return GestureDetector(
       onTap: () {
         context.push(
-          '/category/${category['id']}/products',
-          extra: {'categoryName': category['name']},
+          '/category/${category.id}/products',
+          extra: {'categoryName': category.name},
         );
       },
       child: Container(
@@ -585,20 +715,28 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        category['image'] as String,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.category,
-                            size: 40,
-                            color: subtextColor,
-                          ),
-                        ),
-                      ),
+                      child: category.image != null
+                          ? Image.network(
+                              category.image!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Center(
+                                child: Icon(
+                                  Icons.category,
+                                  size: 40,
+                                  color: subtextColor,
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Icon(
+                                Icons.category,
+                                size: 40,
+                                color: subtextColor,
+                              ),
+                            ),
                     ),
-                    // Discount Badge
-                    if (category['discount'] != null)
+                    // Featured Badge
+                    if (category.isFeatured)
                       Positioned(
                         top: 8,
                         right: 8,
@@ -608,14 +746,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: AppColors.primary,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Text(
-                            '-${category['discount']}%',
-                            style: const TextStyle(
+                          child: const Text(
+                            'Featured',
+                            style: TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
+                              fontSize: 9,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -632,16 +770,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    category['name'] as String,
+                    category.name,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${category['itemCount']} items',
+                    '${category.productCount} items',
                     style: TextStyle(fontSize: 11, color: subtextColor),
                   ),
                 ],
@@ -654,7 +794,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   Widget _buildCategoryListTile(
-    Map<String, dynamic> category,
+    CategoryModel category,
     bool isDark,
     Color surfaceColor,
     Color textColor,
@@ -664,8 +804,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return GestureDetector(
       onTap: () {
         context.push(
-          '/category/${category['id']}/products',
-          extra: {'categoryName': category['name']},
+          '/category/${category.id}/products',
+          extra: {'categoryName': category.name},
         );
       },
       child: Container(
@@ -687,48 +827,29 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     : const Color(0xFFF9FAFB),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      category['image'] as String,
-                      fit: BoxFit.cover,
-                      width: 70,
-                      height: 70,
-                      errorBuilder: (_, __, ___) => Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: category.image != null
+                    ? Image.network(
+                        category.image!,
+                        fit: BoxFit.cover,
+                        width: 70,
+                        height: 70,
+                        errorBuilder: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.category,
+                            size: 28,
+                            color: subtextColor,
+                          ),
+                        ),
+                      )
+                    : Center(
                         child: Icon(
                           Icons.category,
                           size: 28,
                           color: subtextColor,
                         ),
                       ),
-                    ),
-                  ),
-                  if (category['discount'] != null)
-                    Positioned(
-                      top: 4,
-                      right: 4,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          '-${category['discount']}%',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
               ),
             ),
             const SizedBox(width: 16),
@@ -737,17 +858,45 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    category['name'] as String,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          category.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (category.isFeatured)
+                        Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Featured',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${category['itemCount']} items',
+                    '${category.productCount} items',
                     style: TextStyle(fontSize: 13, color: subtextColor),
                   ),
                 ],

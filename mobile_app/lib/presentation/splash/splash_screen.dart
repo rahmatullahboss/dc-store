@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../services/storage_service.dart';
+import '../../core/constants/storage_keys.dart';
 
 /// Splash screen status enumeration
 enum SplashStatus { loading, error }
@@ -31,12 +33,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _initializeApp() async {
     try {
+      // Get storage service and check onboarding status
+      final storageService = await StorageService.getInstance();
+      final isOnboardingComplete =
+          storageService.getBool(StorageKeys.onboardingComplete) ?? false;
+
       // Simulate initialization (network check, auth, data preload)
       await Future.delayed(const Duration(seconds: 2));
 
-      // Navigate to onboarding
+      // Navigate based on onboarding status
       if (mounted) {
-        context.go('/onboarding');
+        if (isOnboardingComplete) {
+          // Onboarding already done, go to home
+          context.go('/');
+        } else {
+          // First time user, show onboarding
+          context.go('/onboarding');
+        }
       }
     } catch (e) {
       if (mounted) {
