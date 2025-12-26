@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 import 'providers/auth_provider.dart';
 
-/// Primary color for the login screen (indigo theme)
-const _primaryColor = Color(0xFF4F46E5);
+/// Primary color for the login screen (orange - matches web store)
+const _primaryColor = Color(0xFFF97316);
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});

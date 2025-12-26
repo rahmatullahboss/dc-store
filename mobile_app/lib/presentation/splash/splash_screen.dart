@@ -66,7 +66,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final backgroundColor = isDark
         ? AppColors.darkBackground
         : const Color(0xFFF6F6F8);
-    final primaryColor = const Color(0xFF135BEC);
+    final primaryColor = const Color(0xFFF97316); // Orange - matches web store
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final subtextColor = isDark
         ? const Color(0xFF94A3B8)
@@ -242,7 +242,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Column(
       children: [
         Text(
-          'ShopWave',
+          'DC Store',
           style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.w800,
@@ -253,12 +253,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          'The future of shopping',
+          'Handcrafted experiences, delivered to perfection',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: subtextColor,
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
