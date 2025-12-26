@@ -5,14 +5,77 @@ import '../../core/theme/app_colors.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../data/models/category/category_model.dart';
 
-/// Categories Provider - Fetches categories from repository
+/// Demo categories for when API is unavailable
+final _demoCategories = [
+  CategoryModel(
+    id: '1',
+    name: 'Electronics',
+    slug: 'electronics',
+    image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400',
+    productCount: 156,
+    isFeatured: true,
+  ),
+  CategoryModel(
+    id: '2',
+    name: 'Fashion',
+    slug: 'fashion',
+    image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=400',
+    productCount: 324,
+    isFeatured: true,
+  ),
+  CategoryModel(
+    id: '3',
+    name: 'Home & Garden',
+    slug: 'home-garden',
+    image: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400',
+    productCount: 89,
+    isFeatured: false,
+  ),
+  CategoryModel(
+    id: '4',
+    name: 'Sports',
+    slug: 'sports',
+    image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400',
+    productCount: 67,
+    isFeatured: false,
+  ),
+  CategoryModel(
+    id: '5',
+    name: 'Beauty',
+    slug: 'beauty',
+    image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
+    productCount: 203,
+    isFeatured: true,
+  ),
+  CategoryModel(
+    id: '6',
+    name: 'Books',
+    slug: 'books',
+    image: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400',
+    productCount: 412,
+    isFeatured: false,
+  ),
+];
+
+/// Categories Provider - Fetches categories from repository with fallback to demo data
 final categoriesProvider = FutureProvider<List<CategoryModel>>((ref) async {
-  final repository = ref.watch(categoryRepositoryProvider);
-  final result = await repository.getCategories();
-  return result.fold(
-    ifLeft: (failure) => throw Exception(failure.message),
-    ifRight: (categories) => categories,
-  );
+  try {
+    final repository = ref.watch(categoryRepositoryProvider);
+    final result = await repository.getCategories();
+    return result.fold(
+      ifLeft: (failure) {
+        debugPrint(
+          'Categories API failed: ${failure.message}, using demo data',
+        );
+        return _demoCategories;
+      },
+      ifRight: (categories) =>
+          categories.isEmpty ? _demoCategories : categories,
+    );
+  } catch (e) {
+    debugPrint('Categories fetch error: $e, using demo data');
+    return _demoCategories;
+  }
 });
 
 /// Categories screen showing all product categories
