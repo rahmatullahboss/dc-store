@@ -240,7 +240,7 @@ class ProfileScreen extends ConsumerWidget {
 
                       // Edit Profile Button
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => context.push('/profile/edit'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: textColor,
                           foregroundColor: surfaceColor,

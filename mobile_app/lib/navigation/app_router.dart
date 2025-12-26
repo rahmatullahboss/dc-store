@@ -838,6 +838,7 @@ class _TrackOrderScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Track Order')),
     body: Center(child: Text('Tracking: $orderId')),
+  );
 }
 
 class _AddAddressScreen extends StatelessWidget {

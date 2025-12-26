@@ -13,7 +13,7 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override
   ThemeMode build() {
     _loadTheme();
-    return ThemeMode.system;
+    return ThemeMode.light; // Default to light theme
   }
 
   Future<void> _loadTheme() async {
