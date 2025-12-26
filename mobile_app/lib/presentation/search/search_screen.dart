@@ -27,7 +27,7 @@ class RecentSearchesNotifier extends StateNotifier<List<String>> {
 
   Future<void> _loadRecentSearches() async {
     try {
-      final storage = await StorageService.instance;
+      final storage = await StorageService.getInstance();
       final searches = storage.getString(_recentSearchesKey);
       if (searches != null && searches.isNotEmpty) {
         state = searches.split('|||').where((s) => s.isNotEmpty).toList();
@@ -52,7 +52,7 @@ class RecentSearchesNotifier extends StateNotifier<List<String>> {
 
     // Persist
     try {
-      final storage = await StorageService.instance;
+      final storage = await StorageService.getInstance();
       await storage.setString(_recentSearchesKey, state.join('|||'));
     } catch (e) {
       debugPrint('Error saving recent searches: $e');
@@ -67,7 +67,7 @@ class RecentSearchesNotifier extends StateNotifier<List<String>> {
 
     // Persist
     try {
-      final storage = await StorageService.instance;
+      final storage = await StorageService.getInstance();
       await storage.setString(_recentSearchesKey, state.join('|||'));
     } catch (e) {
       debugPrint('Error saving recent searches: $e');
@@ -77,7 +77,7 @@ class RecentSearchesNotifier extends StateNotifier<List<String>> {
   Future<void> clearAll() async {
     state = [];
     try {
-      final storage = await StorageService.instance;
+      final storage = await StorageService.getInstance();
       await storage.remove(_recentSearchesKey);
     } catch (e) {
       debugPrint('Error clearing recent searches: $e');
