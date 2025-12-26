@@ -23,13 +23,188 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildGuestView(BuildContext context) {
-    // Redirect to login screen after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.go('/login');
-    });
+    const primaryColor = Color(0xFF4F46E5);
+    final bgColor = const Color(0xFFF9FAFB);
+    final textMain = const Color(0xFF111827);
+    final textSecondary = const Color(0xFF6B7280);
 
-    // Show loading while redirecting
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 400),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(
+                      25,
+                    ), // Equivalent to withValues(alpha: 0.1)
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Lock Icon
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE0E7FF),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(
+                        Icons.lock_outline,
+                        color: primaryColor,
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Title
+                    Text(
+                      'Welcome',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: textMain,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Sign in to access your orders, wishlist, and personalized experience.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: textSecondary),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Sign In Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => context.push('/login'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Create Account Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => context.push('/register'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: textMain,
+                          side: const BorderSide(color: Color(0xFFE5E7EB)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text(
+                          'Create Account',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Divider
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Divider(color: Color(0xFFE5E7EB)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Or continue with',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textSecondary,
+                            ),
+                          ),
+                        ),
+                        const Expanded(
+                          child: Divider(color: Color(0xFFE5E7EB)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Social Login Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildSocialButton(Icons.g_mobiledata, null),
+                        const SizedBox(width: 16),
+                        _buildSocialButton(Icons.apple, Colors.black),
+                        const SizedBox(width: 16),
+                        _buildSocialButton(
+                          Icons.facebook,
+                          const Color(0xFF1877F2),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton(IconData icon, Color? iconColor) {
+    return Container(
+      width: 56,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(
+              7,
+            ), // Equivalent to withValues(alpha: 0.03)
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Icon(icon, size: 24, color: iconColor ?? Colors.black),
+    );
   }
 
   Widget _buildAuthenticatedView(
