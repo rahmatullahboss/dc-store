@@ -9,6 +9,7 @@ import '../../presentation/profile/profile_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/checkout/presentation/checkout_screen.dart';
+import '../../presentation/reviews/write_review_screen.dart';
 
 /// App Router Configuration
 class AppRouter {
@@ -103,6 +104,17 @@ class AppRouter {
             ),
           ),
         ),
+      ),
+
+      // Write Review
+      GoRoute(
+        path: '/write-review',
+        name: 'write-review',
+        builder: (context, state) {
+          final productId = state.uri.queryParameters['productId'];
+          final orderId = state.uri.queryParameters['orderId'];
+          return WriteReviewScreen(productId: productId, orderId: orderId);
+        },
       ),
     ],
     errorBuilder: (context, state) =>
