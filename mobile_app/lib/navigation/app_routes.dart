@@ -58,6 +58,7 @@ class AppRoutes {
   static const String changePassword = 'change-password';
   static const String settings = 'settings';
   static const String notifications = 'notifications';
+  static const String wallet = 'wallet';
 
   // Support
   static const String help = 'help';
@@ -122,6 +123,7 @@ class AppRoutes {
   static const String changePasswordPath = 'change-password';
   static const String settingsPath = 'settings';
   static const String notificationsPath = '/notifications';
+  static const String walletPath = '/wallet';
 
   // Support
   static const String helpPath = '/help';

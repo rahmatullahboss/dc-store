@@ -119,6 +119,8 @@ class OrderDetailsScreen extends StatelessWidget {
                       textColor,
                       subtleTextColor,
                       borderColor,
+                      context,
+                      order.id,
                     ),
 
                     // Delivery & Payment Info
@@ -519,6 +521,8 @@ class OrderDetailsScreen extends StatelessWidget {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
+    BuildContext context,
+    String orderId,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -603,6 +607,47 @@ class OrderDetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 12),
+                        // Write Review Button
+                        GestureDetector(
+                          onTap: () {
+                            context.push(
+                              '/write-review?productId=${item.name.hashCode}&orderId=$orderId',
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? const Color(0xFF135bec).withAlpha(26)
+                                  : const Color(0xFFEFF6FF),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: const Color(0xFF135bec).withAlpha(51),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  LucideIcons.star,
+                                  size: 16,
+                                  color: Color(0xFF135bec),
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Write Review',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF135bec),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),

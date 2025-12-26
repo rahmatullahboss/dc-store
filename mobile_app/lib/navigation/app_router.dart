@@ -12,6 +12,7 @@ import '../presentation/profile/addresses_screen.dart';
 import '../presentation/profile/settings_screen.dart';
 import '../presentation/notifications/notifications_screen.dart';
 import '../presentation/profile/help_support_screen.dart';
+import '../presentation/wallet/wallet_screen.dart';
 
 /// App Router Configuration
 class AppRouter {
@@ -390,6 +391,18 @@ class AppRouter {
           name: AppRoutes.notifications,
           pageBuilder: (context, state) => AppTransitions.slideRight(
             child: const NotificationsScreen(),
+            state: state,
+          ),
+        ),
+
+        // ═══════════════════════════════════════════════════════════════
+        // WALLET ROUTES
+        // ═══════════════════════════════════════════════════════════════
+        GoRoute(
+          path: AppRoutes.walletPath,
+          name: AppRoutes.wallet,
+          pageBuilder: (context, state) => AppTransitions.slideRight(
+            child: const WalletScreen(),
             state: state,
           ),
         ),
