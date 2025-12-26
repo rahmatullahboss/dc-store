@@ -7,8 +7,8 @@ import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/product/domain/product_model.dart';
 
-/// Primary color for the app
-const _primaryColor = Color(0xFF135BEC);
+/// Primary/accent color for the app (orange - matches web store)
+const _primaryColor = Color(0xFFF97316);
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -182,23 +182,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: _primaryColor,
+                              color: const Color(0xFF0F172A),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Center(
                               child: Text(
-                                'S',
+                                'DC',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'ShopApp',
+                            'DC Store',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

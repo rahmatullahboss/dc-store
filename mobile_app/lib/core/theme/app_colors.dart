@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Complete Color System for DC Store
 /// Supports both Light and Dark themes with semantic naming
-/// Matches web store theme: Primary #0F172A, Accent #3B82F6
+/// Matches web store theme: Primary #0F172A, Accent #F97316 (Orange)
 class AppColors {
   AppColors._();
 
@@ -12,7 +12,7 @@ class AppColors {
 
   /// Primary brand color - Slate theme (matches web)
   static const Color brandPrimary = Color(0xFF0F172A);
-  static const Color brandAccent = Color(0xFF3B82F6);
+  static const Color brandAccent = Color(0xFFF97316); // Orange
 
   // Legacy gold colors (kept for backwards compatibility)
   static const Color goldDark = Color(0xFFB8860B);
@@ -33,8 +33,8 @@ class AppColors {
   static const Color secondary = Color(0xFFF1F5F9);
   static const Color secondaryForeground = Color(0xFF0F172A);
 
-  // Accent (Blue - matching web store)
-  static const Color accent = Color(0xFF3B82F6);
+  // Accent (Orange - matching web store buttons)
+  static const Color accent = Color(0xFFF97316);
   static const Color accentForeground = Color(0xFFFFFFFF);
 
   // Background & Surface
@@ -143,7 +143,7 @@ class AppColors {
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [Color(0xFF2563EB), accent], // Blue gradient
+    colors: [Color(0xFFEA580C), accent], // Orange gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
