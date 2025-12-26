@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:toastification/toastification.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
+import 'core/cache/cache_service.dart';
 import 'navigation/app_router.dart';
 import 'services/storage_service.dart';
 
@@ -12,10 +13,19 @@ void main() async {
   // Initialize storage service (singleton)
   final storageService = await StorageService.getInstance();
 
+  // Initialize cache service
+  final cacheService = CacheService();
+  await cacheService.init();
+
   // Create router with storage service for route guards
   final appRouter = AppRouter(storageService);
 
-  runApp(ProviderScope(child: MyApp(appRouter: appRouter)));
+  runApp(
+    ProviderScope(
+      overrides: [cacheServiceProvider.overrideWithValue(cacheService)],
+      child: MyApp(appRouter: appRouter),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {
