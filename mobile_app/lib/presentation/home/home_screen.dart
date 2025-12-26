@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/config/white_label_config.dart';
 import '../../core/widgets/skeleton_loader.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
@@ -79,58 +80,65 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          // Sticky Header
-          _buildStickyHeader(context, isDark, backgroundColor),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(productsProvider);
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        color: _primaryColor,
+        child: CustomScrollView(
+          slivers: [
+            // Sticky Header
+            _buildStickyHeader(context, isDark, backgroundColor),
 
-          // Location Bar
-          SliverToBoxAdapter(child: _buildLocationBar(isDark)),
+            // Location Bar
+            SliverToBoxAdapter(child: _buildLocationBar(isDark)),
 
-          // Main Content
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
+            // Main Content
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
 
-                // Banner Carousel
-                _buildBannerCarousel(isDark),
+                  // Banner Carousel
+                  _buildBannerCarousel(isDark),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Categories Section
-                _buildCategoriesSection(isDark),
+                  // Categories Section
+                  _buildCategoriesSection(isDark),
 
-                const SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
-                // Flash Sale Section
-                _buildFlashSaleSection(isDark, surfaceColor),
+                  // Flash Sale Section
+                  _buildFlashSaleSection(isDark, surfaceColor),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Featured Products
-                _buildFeaturedProductsSection(isDark, surfaceColor),
+                  // Featured Products
+                  _buildFeaturedProductsSection(isDark, surfaceColor),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // New Arrivals
-                _buildNewArrivalsSection(isDark, surfaceColor),
+                  // New Arrivals
+                  _buildNewArrivalsSection(isDark, surfaceColor),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Popular Brands
-                _buildPopularBrandsSection(isDark, surfaceColor),
+                  // Popular Brands
+                  _buildPopularBrandsSection(isDark, surfaceColor),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Recommended For You
-                _buildRecommendedSection(isDark, surfaceColor),
+                  // Recommended For You
+                  _buildRecommendedSection(isDark, surfaceColor),
 
-                const SizedBox(height: 100), // Bottom padding for nav bar
-              ],
+                  const SizedBox(height: 100), // Bottom padding for nav bar
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1080,10 +1088,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 itemCount: displayProducts.length,
                 itemBuilder: (context, index) {
                   return _buildRealProductCard(
-                    displayProducts[index],
-                    isDark,
-                    surfaceColor,
-                  );
+                        displayProducts[index],
+                        isDark,
+                        surfaceColor,
+                      )
+                      .animate()
+                      .fadeIn(delay: (50 * index).ms, duration: 300.ms)
+                      .slideY(begin: 0.1, end: 0, delay: (50 * index).ms);
                 },
               );
             },
