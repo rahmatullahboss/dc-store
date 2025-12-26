@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../services/external_launcher_service.dart';
 
 /// FAQ Item model
 class FAQItem {
@@ -323,7 +324,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => _showAllTickets(context),
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
@@ -522,7 +523,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 surfaceColor: surfaceColor,
                 borderColor: borderColor,
                 primaryColor: primaryColor,
-                onTap: () {},
+                onTap: () => _launchChat(context),
               ),
               _buildQuickActionCard(
                 icon: LucideIcons.phone,
@@ -532,7 +533,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 surfaceColor: surfaceColor,
                 borderColor: borderColor,
                 primaryColor: primaryColor,
-                onTap: () {},
+                onTap: () => _launchPhone(context),
               ),
               _buildQuickActionCard(
                 icon: LucideIcons.mail,
@@ -542,7 +543,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 surfaceColor: surfaceColor,
                 borderColor: borderColor,
                 primaryColor: primaryColor,
-                onTap: () {},
+                onTap: () => _launchEmail(context),
               ),
               _buildQuickActionCard(
                 icon: LucideIcons.messagesSquare,
@@ -552,7 +553,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                 surfaceColor: surfaceColor,
                 borderColor: borderColor,
                 primaryColor: primaryColor,
-                onTap: () {},
+                onTap: () => _launchWhatsApp(context),
               ),
             ],
           ),
@@ -791,7 +792,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: () => _submitFeedback(context, true),
         borderRadius: BorderRadius.circular(4),
         child: Padding(
           padding: const EdgeInsets.all(4),
@@ -850,6 +851,94 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             style: TextStyle(fontSize: 12, color: subtleColor),
           ),
         ],
+      ),
+    );
+  }
+
+  // Helper methods for launching support channels
+  void _showAllTickets(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Support tickets feature coming soon!'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  Future<void> _launchChat(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchLiveChat();
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ??
+            result.errorMessage ??
+            'Could not launch live chat',
+      );
+    }
+  }
+
+  Future<void> _launchPhone(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchPhone();
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ?? result.errorMessage ?? 'Could not open phone',
+      );
+    }
+  }
+
+  Future<void> _launchEmail(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchEmail();
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ?? result.errorMessage ?? 'Could not open email',
+      );
+    }
+  }
+
+  Future<void> _launchWhatsApp(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchWhatsApp();
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ??
+            result.errorMessage ??
+            'Could not open WhatsApp',
+      );
+    }
+  }
+
+  void _submitFeedback(BuildContext context, bool isHelpful) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isHelpful
+              ? 'Thanks for your feedback! 👍'
+              : 'We\'ll improve this answer 📝',
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: isHelpful ? Colors.green : Colors.orange,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

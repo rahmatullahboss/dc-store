@@ -10,3 +10,4 @@ export 'location_service.dart';
 export 'share_service.dart';
 export 'cache_service.dart';
 export 'permission_service.dart';
+export 'external_launcher_service.dart';

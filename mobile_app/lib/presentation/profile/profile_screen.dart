@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/login_screen.dart';
+import '../../services/external_launcher_service.dart';
 
 /// Redesigned Profile Screen
 /// Features: Profile header with stats, grouped settings sections,
@@ -145,7 +146,7 @@ class ProfileScreen extends ConsumerWidget {
 
                       // Edit Profile Button
                       ElevatedButton(
-                        onPressed: () => context.push('/profile/edit'),
+                        onPressed: () => context.goNamed('edit-profile'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: textColor,
                           foregroundColor: surfaceColor,
@@ -276,28 +277,28 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: Colors.blue[50]!,
                   iconColor: Colors.blue[600]!,
                   title: 'Personal Information',
-                  onTap: () {},
+                  onTap: () => context.push('/profile/edit'),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.mapPin,
                   iconBgColor: Colors.orange[50]!,
                   iconColor: Colors.orange[600]!,
                   title: 'Addresses',
-                  onTap: () {},
+                  onTap: () => context.push('/profile/addresses'),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.lock,
                   iconBgColor: Colors.purple[50]!,
                   iconColor: Colors.purple[600]!,
                   title: 'Password & Security',
-                  onTap: () {},
+                  onTap: () => context.push('/profile/change-password'),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.bell,
                   iconBgColor: Colors.pink[50]!,
                   iconColor: Colors.pink[600]!,
                   title: 'Notification Preferences',
-                  onTap: () {},
+                  onTap: () => context.push('/notifications'),
                 ),
               ],
               isDark: isDark,
@@ -324,21 +325,21 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: Colors.indigo[50]!,
                   iconColor: Colors.indigo[600]!,
                   title: 'Payment Methods',
-                  onTap: () {},
+                  onTap: () => _showComingSoonToast(context),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.wallet,
                   iconBgColor: Colors.yellow[50]!,
                   iconColor: Colors.yellow[700]!,
                   title: 'Wallet & Credits',
-                  onTap: () {},
+                  onTap: () => context.push('/wallet'),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.tag,
                   iconBgColor: Colors.red[50]!,
                   iconColor: Colors.red[600]!,
                   title: 'Coupons & Offers',
-                  onTap: () {},
+                  onTap: () => context.push('/coupons'),
                 ),
               ],
               isDark: isDark,
@@ -371,28 +372,28 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: Colors.teal[50]!,
                   iconColor: Colors.teal[600]!,
                   title: 'Help Center / FAQ',
-                  onTap: () {},
+                  onTap: () => context.push('/help'),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.mail,
                   iconBgColor: Colors.teal[50]!,
                   iconColor: Colors.teal[600]!,
                   title: 'Contact Us',
-                  onTap: () {},
+                  onTap: () => _launchEmail(context),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.messageCircle,
                   iconBgColor: Colors.teal[50]!,
                   iconColor: Colors.teal[600]!,
                   title: 'Live Chat',
-                  onTap: () {},
+                  onTap: () => _launchLiveChat(context),
                 ),
                 _SettingsItem(
                   icon: LucideIcons.alertTriangle,
                   iconBgColor: Colors.teal[50]!,
                   iconColor: Colors.teal[600]!,
                   title: 'Report a Problem',
-                  onTap: () {},
+                  onTap: () => _launchReportProblem(context),
                 ),
               ],
               isDark: isDark,
@@ -426,7 +427,7 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
                   iconColor: isDark ? Colors.grey[400]! : Colors.grey[500]!,
                   title: 'Return Policy',
-                  onTap: () {},
+                  onTap: () => context.push('/help'),
                 ),
               ],
               isDark: isDark,
@@ -894,6 +895,69 @@ class ProfileScreen extends ConsumerWidget {
             child: const Text("Sign Out"),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showComingSoonToast(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Coming Soon! 🚀'),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF4F46E5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> _launchEmail(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchEmail();
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ?? result.errorMessage ?? 'Could not open email',
+      );
+    }
+  }
+
+  Future<void> _launchLiveChat(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchLiveChat();
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ??
+            result.errorMessage ??
+            'Could not launch live chat',
+      );
+    }
+  }
+
+  Future<void> _launchReportProblem(BuildContext context) async {
+    final launcher = ExternalLauncherService.instance;
+    final result = await launcher.launchEmail(
+      subject: 'Problem Report - DC Store App',
+      body: 'Please describe the problem you encountered:\n\n',
+    );
+
+    if (!result.success && context.mounted) {
+      _showSnackBar(
+        context,
+        result.fallbackAction ?? result.errorMessage ?? 'Could not open email',
+      );
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

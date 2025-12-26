@@ -6,15 +6,41 @@ import 'route_guards.dart';
 import 'navigation_service.dart';
 import '../services/storage_service.dart';
 
-// Placeholder screens - will be replaced with actual screens
+// Layout
 import '../presentation/home/home_screen.dart';
-import '../presentation/profile/addresses_screen.dart';
+import '../presentation/splash/splash_screen.dart';
+import '../presentation/onboarding/onboarding_screen.dart';
+import '../presentation/search/search_screen.dart';
+
+// Products
+import '../presentation/products/products_screen.dart';
+import '../presentation/products/product_details_screen.dart';
+
+// Cart & Checkout
+import '../presentation/cart/cart_screen.dart';
+import '../features/checkout/presentation/checkout_screen.dart';
+import '../features/checkout/presentation/order_success_screen.dart';
+
+// Profile
+import '../presentation/profile/profile_screen.dart';
 import '../presentation/profile/edit_profile_screen.dart';
+import '../presentation/profile/addresses_screen.dart';
 import '../presentation/profile/settings_screen.dart';
-import '../presentation/notifications/notifications_screen.dart';
 import '../presentation/profile/help_support_screen.dart';
 import '../presentation/profile/coupons_screen.dart';
+
+// Orders
+import '../presentation/orders/orders_screen.dart';
+import '../presentation/orders/order_details_screen.dart';
+
+// Other
+import '../presentation/notifications/notifications_screen.dart';
 import '../presentation/wallet/wallet_screen.dart';
+import '../presentation/wishlist/wishlist_screen.dart';
+
+// Auth
+import '../features/auth/presentation/login_screen.dart';
+import '../features/auth/presentation/register_screen.dart';
 
 /// App Router Configuration
 class AppRouter {
@@ -44,13 +70,13 @@ class AppRouter {
           path: AppRoutes.splashPath,
           name: AppRoutes.splash,
           pageBuilder: (context, state) =>
-              AppTransitions.fade(child: const _SplashScreen(), state: state),
+              AppTransitions.fade(child: const SplashScreen(), state: state),
         ),
         GoRoute(
           path: AppRoutes.onboardingPath,
           name: AppRoutes.onboarding,
           pageBuilder: (context, state) => AppTransitions.fade(
-            child: const _OnboardingScreen(),
+            child: const OnboardingScreen(),
             state: state,
           ),
         ),
@@ -62,13 +88,13 @@ class AppRouter {
           path: AppRoutes.loginPath,
           name: AppRoutes.login,
           pageBuilder: (context, state) =>
-              AppTransitions.slideUp(child: const _LoginScreen(), state: state),
+              AppTransitions.slideUp(child: const LoginScreen(), state: state),
         ),
         GoRoute(
           path: AppRoutes.registerPath,
           name: AppRoutes.register,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _RegisterScreen(),
+            child: const RegisterScreen(),
             state: state,
           ),
         ),
@@ -147,7 +173,7 @@ class AppRouter {
                   path: AppRoutes.searchPath,
                   name: AppRoutes.search,
                   pageBuilder: (context, state) => AppTransitions.fade(
-                    child: const _SearchScreen(),
+                    child: const SearchScreen(),
                     state: state,
                   ),
                 ),
@@ -160,7 +186,7 @@ class AppRouter {
                   path: AppRoutes.cartPath,
                   name: AppRoutes.cart,
                   pageBuilder: (context, state) => AppTransitions.fade(
-                    child: const _CartScreen(),
+                    child: const CartScreen(),
                     state: state,
                   ),
                 ),
@@ -173,7 +199,7 @@ class AppRouter {
                   path: AppRoutes.profilePath,
                   name: AppRoutes.profile,
                   pageBuilder: (context, state) => AppTransitions.fade(
-                    child: const _ProfileScreen(),
+                    child: const ProfileScreen(),
                     state: state,
                   ),
                   routes: [
@@ -250,7 +276,7 @@ class AppRouter {
           path: AppRoutes.productsPath,
           name: AppRoutes.products,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _ProductListScreen(),
+            child: const ProductsScreen(),
             state: state,
           ),
         ),
@@ -260,7 +286,7 @@ class AppRouter {
           pageBuilder: (context, state) {
             final productId = state.pathParameters['productId']!;
             return AppTransitions.sharedAxisHorizontal(
-              child: _ProductDetailScreen(productId: productId),
+              child: ProductDetailsScreen(id: productId),
               state: state,
             );
           },
@@ -297,7 +323,7 @@ class AppRouter {
           path: AppRoutes.wishlistPath,
           name: AppRoutes.wishlist,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _WishlistScreen(),
+            child: const WishlistScreen(),
             state: state,
           ),
         ),
@@ -309,7 +335,7 @@ class AppRouter {
           path: AppRoutes.checkoutPath,
           name: AppRoutes.checkout,
           pageBuilder: (context, state) => AppTransitions.slideUp(
-            child: const _CheckoutScreen(),
+            child: const CheckoutScreen(),
             state: state,
           ),
           routes: [
@@ -345,7 +371,7 @@ class AppRouter {
           pageBuilder: (context, state) {
             final orderId = state.pathParameters['orderId']!;
             return AppTransitions.scale(
-              child: _OrderSuccessScreen(orderId: orderId),
+              child: const OrderSuccessScreen(),
               state: state,
             );
           },
@@ -358,7 +384,7 @@ class AppRouter {
           path: AppRoutes.ordersPath,
           name: AppRoutes.orders,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _OrdersScreen(),
+            child: const OrdersScreen(),
             state: state,
           ),
         ),
@@ -368,7 +394,7 @@ class AppRouter {
           pageBuilder: (context, state) {
             final orderId = state.pathParameters['orderId']!;
             return AppTransitions.slideRight(
-              child: _OrderDetailScreen(orderId: orderId),
+              child: OrderDetailsScreen(orderId: orderId),
               state: state,
             );
           },
