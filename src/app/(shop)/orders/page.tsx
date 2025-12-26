@@ -1,18 +1,14 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Package, ShoppingBag, Eye, Clock, Truck, CheckCircle, XCircle, ArrowRight } from "lucide-react";
+import { Package, ShoppingBag, Eye, Clock, Truck, CheckCircle, XCircle, ArrowRight, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getDatabase } from "@/lib/cloudflare";
-import { getAuth } from "@/lib/cloudflare";
-import { orders } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
 import { formatPrice } from "@/lib/config";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
-// Force dynamic rendering for Cloudflare context
-export const dynamic = "force-dynamic";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const statusConfig = {
   pending: { label: "Pending", color: "bg-yellow-100 text-yellow-800", icon: Clock },
@@ -24,78 +20,165 @@ const statusConfig = {
   refunded: { label: "Refunded", color: "bg-gray-100 text-gray-800", icon: XCircle },
 };
 
-export const metadata = {
-  title: "My Orders",
-  description: "View your order history",
-};
+interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+}
 
-export default async function MyOrdersPage() {
-  const auth = await getAuth();
-  const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
+interface Order {
+  id: string;
+  orderNumber: string;
+  status: string;
+  total: number;
+  items: OrderItem[];
+  paymentMethod: string;
+  createdAt: string;
+}
 
-  if (!session?.user) {
-    redirect("/login?redirect=/orders");
+const filterTabs = ["All", "Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
+
+export default function MyOrdersPage() {
+  const { data: session, isPending: isSessionLoading } = useSession();
+  const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("All");
+
+  useEffect(() => {
+    async function fetchOrders() {
+      if (!session?.user) return;
+      
+      setIsLoading(true);
+      try {
+        const res = await fetch("/api/user/orders");
+        if (res.ok) {
+          const data = await res.json() as { orders: Order[] };
+          setOrders(data.orders || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (session?.user) {
+      fetchOrders();
+    } else if (!isSessionLoading) {
+      router.push("/login?redirect=/orders");
+    }
+  }, [session, isSessionLoading, router]);
+
+  // Filter orders based on active tab
+  const filteredOrders = activeFilter === "All" 
+    ? orders 
+    : orders.filter(order => order.status.toLowerCase() === activeFilter.toLowerCase());
+
+  if (isSessionLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      </div>
+    );
   }
 
-  const db = await getDatabase();
-  const userOrders = await db.query.orders.findMany({
-    where: eq(orders.userId, session.user.id),
-    orderBy: [desc(orders.createdAt)],
-  });
+  if (!session?.user) {
+    return null; // Will redirect
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            My Orders
-          </h1>
-          <p className="text-gray-600">
-            Track and manage your orders
-          </p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              My Orders
+            </h1>
+            <p className="text-gray-600">
+              Track and manage your orders
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => window.location.reload()}
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
         </div>
 
         {/* Filter Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6">
-          {["All", "Pending", "Processing", "Shipped", "Delivered", "Cancelled"].map((tab) => (
+          {filterTabs.map((tab) => (
             <Badge
               key={tab}
-              variant={tab === "All" ? "default" : "outline"}
-              className={`cursor-pointer whitespace-nowrap px-4 py-2 ${
-                tab === "All"
+              variant={activeFilter === tab ? "default" : "outline"}
+              className={`cursor-pointer whitespace-nowrap px-4 py-2 transition-all ${
+                activeFilter === tab
                   ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0"
                   : "hover:bg-gray-100"
               }`}
+              onClick={() => setActiveFilter(tab)}
             >
               {tab}
+              {tab !== "All" && (
+                <span className="ml-1 text-xs opacity-70">
+                  ({orders.filter(o => o.status.toLowerCase() === tab.toLowerCase()).length})
+                </span>
+              )}
             </Badge>
           ))}
         </div>
 
-        {/* Orders List */}
-        {userOrders.length === 0 ? (
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="bg-white rounded-2xl p-12 shadow-lg border border-gray-100 text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-amber-500 mx-auto mb-4" />
+            <p className="text-gray-600">Loading your orders...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          /* Empty State */
           <div className="bg-white rounded-2xl p-12 shadow-lg border border-gray-100 text-center">
             <div className="p-6 bg-gradient-to-br from-amber-100 to-rose-100 rounded-full inline-block mb-6">
               <ShoppingBag className="h-12 w-12 text-amber-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">No orders yet</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">
+              {activeFilter === "All" ? "No orders yet" : `No ${activeFilter.toLowerCase()} orders`}
+            </h2>
             <p className="text-gray-600 mb-6">
-              Start shopping to see your orders here
+              {activeFilter === "All" 
+                ? "Start shopping to see your orders here"
+                : `You don't have any orders with "${activeFilter}" status`
+              }
             </p>
-            <Button 
-              className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
-              asChild
-            >
-              <Link href="/products">
-                Start Shopping <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            {activeFilter === "All" ? (
+              <Button 
+                className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
+                asChild
+              >
+                <Link href="/products">
+                  Start Shopping <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : (
+              <Button 
+                variant="outline"
+                onClick={() => setActiveFilter("All")}
+              >
+                View All Orders
+              </Button>
+            )}
           </div>
         ) : (
+          /* Orders List */
           <div className="space-y-4">
-            {userOrders.map((order) => {
+            {filteredOrders.map((order) => {
               const status = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.pending;
               const StatusIcon = status.icon;
               const firstItem = order.items?.[0];
@@ -136,7 +219,7 @@ export default async function MyOrdersPage() {
                             Order #{order.orderNumber}
                           </h3>
                           <p className="text-sm text-gray-500">
-                            {new Date(order.createdAt!).toLocaleDateString("en-US", {
+                            {new Date(order.createdAt).toLocaleDateString("en-US", {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
@@ -174,16 +257,32 @@ export default async function MyOrdersPage() {
                       </div>
                     </div>
 
-                    {/* Action Button */}
+                    {/* Action Buttons */}
                     <div className="flex md:flex-col gap-2 md:items-end md:justify-center">
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <Eye className="h-4 w-4" />
-                        View Details
+                      <Button variant="outline" size="sm" className="gap-2" asChild>
+                        <Link href={`/orders/${order.id}`}>
+                          <Eye className="h-4 w-4" />
+                          View Details
+                        </Link>
                       </Button>
                       {order.status === "shipped" && (
-                        <Button size="sm" className="gap-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0">
-                          <Truck className="h-4 w-4" />
-                          Track
+                        <Button 
+                          size="sm" 
+                          className="gap-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0"
+                          asChild
+                        >
+                          <Link href={`/track-order?order=${order.orderNumber}`}>
+                            <Truck className="h-4 w-4" />
+                            Track
+                          </Link>
+                        </Button>
+                      )}
+                      {order.status === "delivered" && (
+                        <Button variant="outline" size="sm" className="gap-2" asChild>
+                          <Link href={`/orders/${order.id}?reorder=true`}>
+                            <RefreshCw className="h-4 w-4" />
+                            Reorder
+                          </Link>
                         </Button>
                       )}
                     </div>
@@ -194,6 +293,13 @@ export default async function MyOrdersPage() {
           </div>
         )}
 
+        {/* Order Count Summary */}
+        {orders.length > 0 && (
+          <div className="mt-6 text-center text-sm text-gray-500">
+            Showing {filteredOrders.length} of {orders.length} orders
+          </div>
+        )}
+
         {/* Help Section */}
         <div className="mt-12 bg-gradient-to-r from-amber-50 to-rose-50 rounded-2xl p-6 md:p-8">
           <h2 className="text-lg font-bold text-gray-800 mb-2">Need Help?</h2>
@@ -201,11 +307,11 @@ export default async function MyOrdersPage() {
             Have questions about your order? We&apos;re here to help!
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button variant="outline" className="rounded-full">
-              📞 Call Support
+            <Button variant="outline" className="rounded-full" asChild>
+              <Link href="tel:+8801712345678">📞 Call Support</Link>
             </Button>
-            <Button variant="outline" className="rounded-full">
-              💬 Chat with Us
+            <Button variant="outline" className="rounded-full" asChild>
+              <Link href="/contact">💬 Contact Us</Link>
             </Button>
           </div>
         </div>
