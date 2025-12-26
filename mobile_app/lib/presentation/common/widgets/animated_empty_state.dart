@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:lottie/lottie.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// Types of empty states for different screens
@@ -151,7 +152,21 @@ class AnimatedEmptyState extends StatelessWidget {
   }
 
   Widget _buildIllustration(bool isDark) {
-    // For now, just use fallback icons. Add Lottie assets later.
+    if (lottieAsset != null) {
+      return SizedBox(
+        width: 150,
+        height: 150,
+        child: Lottie.asset(
+          lottieAsset!,
+          fit: BoxFit.contain,
+          repeat: true,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback to icon if Lottie fails
+            return _buildFallbackIcon(isDark);
+          },
+        ),
+      ).animate().fadeIn().scale(begin: const Offset(0.8, 0.8));
+    }
     return _buildFallbackIcon(isDark);
   }
 
