@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:dc_store/core/theme/app_colors.dart';
+import 'package:dc_store/core/utils/app_semantics.dart';
 import 'app_badge.dart';
 import 'shimmer_loading.dart';
 
@@ -148,28 +149,36 @@ class _ProductCardState extends State<ProductCard>
                       Positioned(
                         top: 8,
                         right: 8,
-                        child: GestureDetector(
+                        child: AppSemantics.button(
+                          label: widget.isWishlisted
+                              ? AppSemantics.removeFromWishlistLabel(
+                                  widget.name,
+                                )
+                              : AppSemantics.addToWishlistLabel(widget.name),
                           onTap: widget.onWishlistToggle,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withAlpha(26),
-                                  blurRadius: 8,
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              widget.isWishlisted
-                                  ? LucideIcons.heartHandshake
-                                  : LucideIcons.heart,
-                              size: 18,
-                              color: widget.isWishlisted
-                                  ? Colors.red
-                                  : Colors.grey[600],
+                          child: GestureDetector(
+                            onTap: widget.onWishlistToggle,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withAlpha(26),
+                                    blurRadius: 8,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                widget.isWishlisted
+                                    ? LucideIcons.heartHandshake
+                                    : LucideIcons.heart,
+                                size: 18,
+                                color: widget.isWishlisted
+                                    ? Colors.red
+                                    : Colors.grey[600],
+                              ),
                             ),
                           ),
                         ),
@@ -276,18 +285,22 @@ class _ProductCardState extends State<ProductCard>
                           ],
                           const Spacer(),
                           // Quick Add Button
-                          GestureDetector(
+                          AppSemantics.button(
+                            label: AppSemantics.addToCartLabel(widget.name),
                             onTap: widget.onAddToCart,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withAlpha(26),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                LucideIcons.plus,
-                                size: 18,
-                                color: AppColors.primary,
+                            child: GestureDetector(
+                              onTap: widget.onAddToCart,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withAlpha(26),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  LucideIcons.plus,
+                                  size: 18,
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
                           ),

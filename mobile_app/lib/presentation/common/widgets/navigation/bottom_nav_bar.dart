@@ -142,50 +142,59 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isSelected ? selectedColor : unselectedColor;
     final icon = isSelected ? (item.activeIcon ?? item.icon) : item.icon;
+    final badgeText = item.badgeCount != null && item.badgeCount! > 0
+        ? ', ${item.badgeCount} items'
+        : '';
 
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: animationDuration,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? selectedColor.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AnimatedScale(
-                  scale: isSelected ? 1.1 : 1.0,
-                  duration: animationDuration,
-                  child: Icon(icon, color: color, size: 24),
-                ),
-                if (item.badgeCount != null && item.badgeCount! > 0)
-                  Positioned(
-                    right: -8,
-                    top: -4,
-                    child: _Badge(count: item.badgeCount!),
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: '${item.label} tab$badgeText',
+      hint: isSelected ? 'Currently selected' : 'Double tap to switch',
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: animationDuration,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? selectedColor.withValues(alpha: 0.1)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AnimatedScale(
+                    scale: isSelected ? 1.1 : 1.0,
+                    duration: animationDuration,
+                    child: Icon(icon, color: color, size: 24),
                   ),
-              ],
-            ),
-            if (showLabel) ...[
-              const SizedBox(height: 4),
-              AnimatedDefaultTextStyle(
-                duration: animationDuration,
-                style: AppTextStyles.overline.copyWith(
-                  color: color,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
-                child: Text(item.label),
+                  if (item.badgeCount != null && item.badgeCount! > 0)
+                    Positioned(
+                      right: -8,
+                      top: -4,
+                      child: _Badge(count: item.badgeCount!),
+                    ),
+                ],
               ),
+              if (showLabel) ...[
+                const SizedBox(height: 4),
+                AnimatedDefaultTextStyle(
+                  duration: animationDuration,
+                  style: AppTextStyles.overline.copyWith(
+                    color: color,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                  child: Text(item.label),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
