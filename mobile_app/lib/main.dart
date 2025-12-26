@@ -18,6 +18,8 @@ import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/register_screen.dart';
 import 'presentation/search/search_screen.dart';
 import 'presentation/wishlist/wishlist_screen.dart';
+import 'presentation/orders/orders_screen.dart';
+import 'presentation/orders/order_details_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -70,6 +72,10 @@ final _router = GoRouter(
           path: '/wishlist',
           builder: (context, state) => const WishlistScreen(),
         ),
+        GoRoute(
+          path: '/orders',
+          builder: (context, state) => const OrdersScreen(),
+        ),
       ],
     ),
     // Full screen routes (no bottom nav)
@@ -97,6 +103,12 @@ final _router = GoRouter(
       path: '/search',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SearchScreen(),
+    ),
+    GoRoute(
+      path: '/order/:id',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) =>
+          OrderDetailsScreen(orderId: state.pathParameters['id']!),
     ),
   ],
 );
