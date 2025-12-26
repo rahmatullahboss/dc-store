@@ -399,7 +399,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: const Text(
+            child: Text(
               'Change',
               style: TextStyle(
                 color: _primaryColor,
@@ -479,7 +479,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               color: _primaryColor.withValues(alpha: 0.2),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.image,
                                 size: 48,
                                 color: _primaryColor,
@@ -541,7 +541,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                                 child: Text(
                                   banner.buttonText,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: _primaryColor,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -611,7 +611,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               TextButton(
                 onPressed: () => context.push('/categories'),
-                child: const Text(
+                child: Text(
                   'View All',
                   style: TextStyle(
                     color: _primaryColor,
@@ -1027,7 +1027,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               TextButton(
                 onPressed: () => context.push('/products'),
-                child: const Text(
+                child: Text(
                   'View All',
                   style: TextStyle(
                     color: _primaryColor,
@@ -1552,7 +1552,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: const Text(
+                  child: Text(
                     'View All',
                     style: TextStyle(
                       color: _primaryColor,
@@ -1836,7 +1836,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
-                  const Icon(Icons.check_circle, color: _primaryColor),
+                  Icon(Icons.check_circle, color: _primaryColor),
                 ],
               ),
             ),

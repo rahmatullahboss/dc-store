@@ -17,8 +17,18 @@ final productDetailsProvider = FutureProvider.family<Product?, String>((
   return repository.getProductById(id);
 });
 
-/// Current search query - used for debounced search
-final searchQueryProvider = StateProvider<String>((ref) => '');
+/// Search query - managed via a simple Notifier
+class SearchQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void setQuery(String query) => state = query;
+}
+
+/// Provider for search query
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(
+  SearchQueryNotifier.new,
+);
 
 /// Search results provider - watches query and fetches results
 final searchResultsProvider = FutureProvider<List<Product>>((ref) async {

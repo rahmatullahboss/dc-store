@@ -14,74 +14,27 @@ import '../categories/categories_screen.dart';
 /// Recent searches storage key
 const _recentSearchesKey = 'recent_searches';
 
-/// Provider for recent searches - persisted locally
-final recentSearchesProvider =
-    StateNotifierProvider<RecentSearchesNotifier, List<String>>((ref) {
-      return RecentSearchesNotifier();
-    });
-
-class RecentSearchesNotifier extends StateNotifier<List<String>> {
-  RecentSearchesNotifier() : super([]) {
-    _loadRecentSearches();
+/// Load recent searches from storage
+Future<List<String>> _loadRecentSearches() async {
+  try {
+    final storage = await StorageService.getInstance();
+    final searches = storage.getString(_recentSearchesKey);
+    if (searches != null && searches.isNotEmpty) {
+      return searches.split('|||').where((s) => s.isNotEmpty).toList();
+    }
+  } catch (e) {
+    debugPrint('Error loading recent searches: $e');
   }
+  return [];
+}
 
-  Future<void> _loadRecentSearches() async {
-    try {
-      final storage = await StorageService.getInstance();
-      final searches = storage.getString(_recentSearchesKey);
-      if (searches != null && searches.isNotEmpty) {
-        state = searches.split('|||').where((s) => s.isNotEmpty).toList();
-      }
-    } catch (e) {
-      debugPrint('Error loading recent searches: $e');
-    }
-  }
-
-  Future<void> addSearch(String query) async {
-    if (query.trim().isEmpty) return;
-
-    // Remove if exists to avoid duplicates
-    final newList = state.where((s) => s != query).toList();
-    // Add to front
-    newList.insert(0, query);
-    // Keep only last 10
-    if (newList.length > 10) {
-      newList.removeLast();
-    }
-    state = newList;
-
-    // Persist
-    try {
-      final storage = await StorageService.getInstance();
-      await storage.setString(_recentSearchesKey, state.join('|||'));
-    } catch (e) {
-      debugPrint('Error saving recent searches: $e');
-    }
-  }
-
-  Future<void> removeSearch(int index) async {
-    if (index < 0 || index >= state.length) return;
-    final newList = [...state];
-    newList.removeAt(index);
-    state = newList;
-
-    // Persist
-    try {
-      final storage = await StorageService.getInstance();
-      await storage.setString(_recentSearchesKey, state.join('|||'));
-    } catch (e) {
-      debugPrint('Error saving recent searches: $e');
-    }
-  }
-
-  Future<void> clearAll() async {
-    state = [];
-    try {
-      final storage = await StorageService.getInstance();
-      await storage.remove(_recentSearchesKey);
-    } catch (e) {
-      debugPrint('Error clearing recent searches: $e');
-    }
+/// Save recent searches to storage
+Future<void> _saveRecentSearches(List<String> searches) async {
+  try {
+    final storage = await StorageService.getInstance();
+    await storage.setString(_recentSearchesKey, searches.join('|||'));
+  } catch (e) {
+    debugPrint('Error saving recent searches: $e');
   }
 }
 
@@ -97,6 +50,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _focusNode = FocusNode();
   Timer? _debounceTimer;
   bool _showResults = false;
+  List<String> _recentSearches = [];
 
   // Trending searches (static - could be from analytics in future)
   final List<String> _trendingSearches = [
@@ -113,10 +67,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     // Auto-focus search input
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
+      _initRecentSearches();
     });
 
     // Listen to text changes for debounced search
     _searchController.addListener(_onSearchChanged);
+  }
+
+  Future<void> _initRecentSearches() async {
+    final searches = await _loadRecentSearches();
+    if (mounted) {
+      setState(() => _recentSearches = searches);
+    }
   }
 
   void _onSearchChanged() {
@@ -127,13 +89,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     if (query.isEmpty) {
       setState(() => _showResults = false);
-      ref.read(searchQueryProvider.notifier).state = '';
+      ref.read(searchQueryProvider.notifier).setQuery('');
       return;
     }
 
     // Debounce 300ms
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      ref.read(searchQueryProvider.notifier).state = query;
+      ref.read(searchQueryProvider.notifier).setQuery(query);
       setState(() => _showResults = true);
     });
   }
@@ -146,10 +108,41 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     super.dispose();
   }
 
+  void _addToRecentSearches(String query) async {
+    if (query.trim().isEmpty) return;
+
+    final newList = _recentSearches.where((s) => s != query).toList();
+    newList.insert(0, query);
+    if (newList.length > 10) newList.removeLast();
+
+    setState(() => _recentSearches = newList);
+    await _saveRecentSearches(newList);
+  }
+
+  void _removeFromRecentSearches(int index) async {
+    if (index < 0 || index >= _recentSearches.length) return;
+
+    final newList = [..._recentSearches];
+    newList.removeAt(index);
+
+    setState(() => _recentSearches = newList);
+    await _saveRecentSearches(newList);
+  }
+
+  void _clearAllRecentSearches() async {
+    setState(() => _recentSearches = []);
+    try {
+      final storage = await StorageService.getInstance();
+      await storage.remove(_recentSearchesKey);
+    } catch (e) {
+      debugPrint('Error clearing recent searches: $e');
+    }
+  }
+
   void _performSearch(String query) {
     if (query.trim().isNotEmpty) {
       // Add to recent searches
-      ref.read(recentSearchesProvider.notifier).addSearch(query);
+      _addToRecentSearches(query);
       // Navigate to products with search
       context.push('/products?search=${Uri.encodeComponent(query)}');
     }
@@ -158,7 +151,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final recentSearches = ref.watch(recentSearchesProvider);
     final searchResults = ref.watch(searchResultsProvider);
     final isSearching = ref.watch(isSearchingProvider);
     final categories = ref.watch(categoriesProvider);
@@ -223,9 +215,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   onTap: () {
                                     _searchController.clear();
                                     ref
-                                            .read(searchQueryProvider.notifier)
-                                            .state =
-                                        '';
+                                        .read(searchQueryProvider.notifier)
+                                        .setQuery('');
                                     setState(() => _showResults = false);
                                   },
                                   child: Icon(
@@ -281,7 +272,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Recent Searches Section
-                          if (recentSearches.isNotEmpty) ...[
+                          if (_recentSearches.isNotEmpty) ...[
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                               child: Text(
@@ -294,9 +285,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                 ),
                               ),
                             ),
-                            ...List.generate(recentSearches.length, (index) {
+                            ...List.generate(_recentSearches.length, (index) {
                               return _buildRecentSearchItem(
-                                recentSearches[index],
+                                _recentSearches[index],
                                 index,
                                 isDark,
                                 textColor,
@@ -307,9 +298,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                               child: GestureDetector(
-                                onTap: () => ref
-                                    .read(recentSearchesProvider.notifier)
-                                    .clearAll(),
+                                onTap: _clearAllRecentSearches,
                                 child: Text(
                                   'Clear All History',
                                   style: TextStyle(
@@ -513,6 +502,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     Color subtleTextColor,
     Color primaryBlue,
   ) {
+    final imageUrl = product.featuredImage ?? '';
+
     return GestureDetector(
       onTap: () => context.push('/products/${product.id}'),
       child: Container(
@@ -530,19 +521,28 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             // Product Image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: product.featuredImage,
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: isDark ? Colors.grey[800] : Colors.grey[200],
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: isDark ? Colors.grey[800] : Colors.grey[200],
-                  child: Icon(LucideIcons.image, color: subtleTextColor),
-                ),
-              ),
+              child: imageUrl.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: isDark ? Colors.grey[800] : Colors.grey[200],
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 70,
+                        height: 70,
+                        color: isDark ? Colors.grey[800] : Colors.grey[200],
+                        child: Icon(LucideIcons.image, color: subtleTextColor),
+                      ),
+                    )
+                  : Container(
+                      width: 70,
+                      height: 70,
+                      color: isDark ? Colors.grey[800] : Colors.grey[200],
+                      child: Icon(LucideIcons.image, color: subtleTextColor),
+                    ),
             ),
             const SizedBox(width: 12),
             // Product Info
@@ -629,8 +629,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
             ),
             GestureDetector(
-              onTap: () =>
-                  ref.read(recentSearchesProvider.notifier).removeSearch(index),
+              onTap: () => _removeFromRecentSearches(index),
               child: Container(
                 width: 32,
                 height: 32,
@@ -657,7 +656,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       onTap: () {
         final query = tag.replaceAll('#', '');
         _searchController.text = query;
-        ref.read(searchQueryProvider.notifier).state = query;
+        ref.read(searchQueryProvider.notifier).setQuery(query);
         setState(() => _showResults = true);
       },
       child: Container(
