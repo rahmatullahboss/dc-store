@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/app_haptics.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../common/widgets/product/image_carousel.dart';
@@ -1058,6 +1059,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
+                        AppHaptics.mediumImpact();
                         for (var i = 0; i < _quantity; i++) {
                           ref.read(cartProvider.notifier).addToCart(product);
                         }
@@ -1090,6 +1092,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     flex: 2,
                     child: ElevatedButton(
                       onPressed: () {
+                        AppHaptics.heavyImpact();
                         for (var i = 0; i < _quantity; i++) {
                           ref.read(cartProvider.notifier).addToCart(product);
                         }
