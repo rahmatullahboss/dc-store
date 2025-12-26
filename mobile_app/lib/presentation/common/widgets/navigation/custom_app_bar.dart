@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+import 'package:dc_store/core/theme/app_colors.dart';
+import 'package:dc_store/core/theme/app_text_styles.dart';
 
 /// CustomAppBar - App bar with search and cart badge
 ///

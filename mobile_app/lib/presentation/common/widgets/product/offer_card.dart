@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:dc_store/core/theme/app_colors.dart';
 
 /// OfferType - Types of promotional offers
 enum OfferType { bank, special, coupon }

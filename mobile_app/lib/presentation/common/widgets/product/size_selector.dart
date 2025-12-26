@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:dc_store/core/theme/app_colors.dart';
 
 /// SizeSelectorItem - Represents a single size option
 class SizeSelectorItem {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import 'package:dc_store/core/theme/app_colors.dart';
 
 class GradientText extends StatelessWidget {
   final String text;

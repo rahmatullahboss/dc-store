@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
+import 'package:dc_store/core/theme/app_colors.dart';
+import 'package:dc_store/core/theme/app_text_styles.dart';
 
 /// RatingWidget - Displays and/or allows selection of star ratings
 ///
