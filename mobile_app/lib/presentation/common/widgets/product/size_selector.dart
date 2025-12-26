@@ -124,7 +124,7 @@ class SizeSelector extends StatelessWidget {
                 Icon(LucideIcons.alertCircle, size: 14, color: AppColors.error),
                 const SizedBox(width: 4),
                 Text(
-                  'Only ${selectedItem!.stockCount} left in stock',
+                  'Only ${selectedItem?.stockCount} left in stock',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
