@@ -382,7 +382,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   const TextSpan(text: 'Delivering to '),
                   TextSpan(
-                    text: 'New York, 10001',
+                    text: 'Dhaka, Bangladesh',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : const Color(0xFF0F172A),
@@ -696,38 +696,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       '0',
     );
 
-    final flashSaleProducts = [
-      _FlashSaleProduct(
-        name: 'Headphones',
-        price: 59,
-        originalPrice: 99,
-        discount: 40,
-        soldPercent: 80,
-        leftCount: 12,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuBBlMKPBhXJOrFcVwZ1QH0GkgnsETfnR5XsiW7H5uBBNdtC8AcUprcyqnS3Zwwrm3XcArvRykaz_nnXLvDhnP--fZbc34zTqxS78rLM5hjAuECroAyCeeflDO9ESeGk5j-H5UXBx7AHiJ738jplifNk2BWqr9NfmH7WVjqk3zfNiJ9aSWNxOSNuzpVHuyxGcgO1Hd4UtnHXGZLhVhLwlHZatendQ98Fx7Wh-bjmTVWsFTGe7v46IKDtPJZEsCxl_s-dXBaVRsjyXvI',
-      ),
-      _FlashSaleProduct(
-        name: 'Smart Watch',
-        price: 149,
-        originalPrice: 199,
-        discount: 25,
-        soldPercent: 45,
-        leftCount: 45,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuB4OlJXJAculxmrhCPc1eD1RNfEnevfEkT8kDs2UBwm_zTL_G5U44UJrFCa0moXdKAl4v0DqbdokXsZVLphVj7aJ7PnC1IdrU3zDJu29njq-JfS0Qb75zYY518dmelVyQvk3YnrNwR54n_erIcm2lhJakMvBXTbLHfSI4qRtk3RENyAwePwZCxlGaZotLkbc1Y5VfCgXGubyCD22ynUboIZGqrM27rseIonMbL2Scb5Wp1v_k84CF4mZpqc5qE5DprwzXrVzUejNs8',
-      ),
-      _FlashSaleProduct(
-        name: 'Luxury Perfume',
-        price: 85,
-        originalPrice: 100,
-        discount: 15,
-        soldPercent: 60,
-        leftCount: 22,
-        imageUrl:
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuAhMYmkhBngOnymDPSW3YVscbB0Ulw5sPqFyYgkQJiR-Z6MC0hSuJFK5BtUHhUcNH0Fh7-d0v7zn8nwju1DljT4512WkxtW4aZ5WE5t_kKWp6st8r4T2wFHgZNoWBJToEvjYcgwDQStCYSPkaAWU4ELYYIYwra0dCfOtDKs_3DHLXxuB97jOjNkECfxv8PbSTjpirsrYI3kJNRjAKo2rfHMV0GndDXmiDldRxMMuwKMmQwDN8qwelIp1t6mh3_6XZH3SBnP9PxcNfM',
-      ),
-    ];
+    final productsAsync = ref.watch(productsProvider);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -799,21 +768,232 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          // Products
-          SizedBox(
-            height: 235,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: flashSaleProducts.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final product = flashSaleProducts[index];
-                return _buildFlashSaleCard(product, isDark, surfaceColor);
-              },
+          // Products - using real API data
+          productsAsync.when(
+            loading: () => SizedBox(
+              height: 235,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: 3,
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) => const ProductCardSkeleton(),
+              ),
             ),
+            error: (err, stack) => const SizedBox(
+              height: 235,
+              child: Center(child: Text('Unable to load flash sale products')),
+            ),
+            data: (products) {
+              // Filter for products with discounts
+              final discountedProducts = products
+                  .where(
+                    (p) =>
+                        p.compareAtPrice != null && p.compareAtPrice! > p.price,
+                  )
+                  .take(6)
+                  .toList();
+
+              // If no discounted products, use first 6 regular products
+              final displayProducts = discountedProducts.isNotEmpty
+                  ? discountedProducts
+                  : products.take(6).toList();
+
+              if (displayProducts.isEmpty) {
+                return const SizedBox(
+                  height: 235,
+                  child: Center(
+                    child: Text('No flash sale products available'),
+                  ),
+                );
+              }
+
+              return SizedBox(
+                height: 235,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: displayProducts.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final product = displayProducts[index];
+                    return _buildRealFlashSaleCard(
+                      product,
+                      isDark,
+                      surfaceColor,
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRealFlashSaleCard(
+    Product product,
+    bool isDark,
+    Color surfaceColor,
+  ) {
+    final hasDiscount =
+        product.compareAtPrice != null &&
+        product.compareAtPrice! > product.price;
+    final discount = hasDiscount
+        ? ((1 - product.price / product.compareAtPrice!) * 100).round()
+        : 0;
+    // Simulate stock progress (random for visual variety)
+    final soldPercent = 30 + (product.id.hashCode % 60);
+    final leftCount = 5 + (product.id.hashCode % 50);
+
+    return GestureDetector(
+      onTap: () => context.push('/products/${product.id}'),
+      child: Container(
+        width: 140,
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+                ? const Color(0xFF7F1D1D).withValues(alpha: 0.3)
+                : const Color(0xFFFECACA),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: CachedNetworkImage(
+                      imageUrl: product.featuredImage ?? '',
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ),
+                // Discount Badge
+                if (hasDiscount)
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '-$discount%',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            // Info
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        '৳${product.price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFEF4444),
+                        ),
+                      ),
+                      if (hasDiscount) ...[
+                        const SizedBox(width: 4),
+                        Text(
+                          '৳${product.compareAtPrice!.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark
+                                ? const Color(0xFF64748B)
+                                : const Color(0xFF94A3B8),
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Progress bar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: soldPercent / 100,
+                      backgroundColor: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFFEF4444),
+                      ),
+                      minHeight: 6,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$leftCount left',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isDark
+                          ? const Color(0xFF64748B)
+                          : const Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1824,7 +2004,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'New York, 10001',
+                          'Dhaka, Bangladesh',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
