@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { users, orders } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
-// GET - Fetch user profile
+// GET - Fetch user profile with stats
 export async function GET() {
   try {
     const auth = await getAuth();
@@ -18,6 +18,8 @@ export async function GET() {
     }
 
     const db = await getDatabase();
+    
+    // Fetch user profile
     const user = await db.query.users.findFirst({
       where: eq(users.id, session.user.id),
       columns: {
@@ -26,10 +28,53 @@ export async function GET() {
         email: true,
         phone: true,
         defaultAddress: true,
+        createdAt: true,
       },
     });
 
-    return NextResponse.json({ profile: user });
+    // Fetch order statistics
+    const orderStats = await db
+      .select({
+        orderCount: sql<number>`count(*)`,
+        totalSpent: sql<number>`coalesce(sum(${orders.total}), 0)`,
+      })
+      .from(orders)
+      .where(eq(orders.userId, session.user.id));
+
+    // Fetch recent orders (last 5)
+    const recentOrders = await db.query.orders.findMany({
+      where: eq(orders.userId, session.user.id),
+      orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+      limit: 5,
+      columns: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        total: true,
+        items: true,
+        createdAt: true,
+      },
+    });
+
+    const stats = orderStats[0] || { orderCount: 0, totalSpent: 0 };
+
+    return NextResponse.json({ 
+      profile: user,
+      stats: {
+        orderCount: Number(stats.orderCount) || 0,
+        totalSpent: Number(stats.totalSpent) || 0,
+        wishlistCount: 0, // TODO: Implement wishlist table
+        rewardPoints: 0, // TODO: Implement rewards system
+      },
+      recentOrders: recentOrders.map(order => ({
+        id: order.id,
+        orderNumber: order.orderNumber,
+        date: order.createdAt,
+        status: order.status,
+        total: order.total,
+        items: Array.isArray(order.items) ? order.items.length : 0,
+      })),
+    });
   } catch (error) {
     console.error("Error fetching profile:", error);
     return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });

@@ -12,50 +12,41 @@ import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-// Demo orders data
-const demoOrders = [
-  {
-    id: "1",
-    orderNumber: "ORD-2024-001",
-    date: new Date("2024-12-20"),
-    status: "delivered",
-    total: 4999,
-    items: 2,
-  },
-  {
-    id: "2",
-    orderNumber: "ORD-2024-002",
-    date: new Date("2024-12-22"),
-    status: "processing",
-    total: 12999,
-    items: 1,
-  },
-  {
-    id: "3",
-    orderNumber: "ORD-2024-003",
-    date: new Date("2024-12-23"),
-    status: "pending",
-    total: 8499,
-    items: 3,
-  },
-];
-
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
+  confirmed: "bg-blue-100 text-blue-700",
   processing: "bg-blue-100 text-blue-700",
   shipped: "bg-purple-100 text-purple-700",
   delivered: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
+  refunded: "bg-gray-100 text-gray-700",
 };
 
 interface UserProfile {
   name?: string;
   phone?: string;
+  createdAt?: string;
   defaultAddress?: {
     division?: string;
     district?: string;
     address?: string;
   };
+}
+
+interface UserStats {
+  orderCount: number;
+  totalSpent: number;
+  wishlistCount: number;
+  rewardPoints: number;
+}
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  date: string;
+  status: string;
+  total: number;
+  items: number;
 }
 
 export default function ProfilePage() {
@@ -64,7 +55,15 @@ export default function ProfilePage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [profile, setProfile] = useState<UserProfile>({});
+  const [stats, setStats] = useState<UserStats>({
+    orderCount: 0,
+    totalSpent: 0,
+    wishlistCount: 0,
+    rewardPoints: 0,
+  });
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -74,10 +73,15 @@ export default function ProfilePage() {
   // Fetch user profile on mount
   useEffect(() => {
     async function fetchProfile() {
+      setIsLoadingProfile(true);
       try {
         const res = await fetch("/api/user/profile");
         if (res.ok) {
-          const data = await res.json() as { profile?: UserProfile };
+          const data = await res.json() as { 
+            profile?: UserProfile;
+            stats?: UserStats;
+            recentOrders?: Order[];
+          };
           if (data.profile) {
             setProfile(data.profile);
             setFormData({
@@ -86,8 +90,18 @@ export default function ProfilePage() {
               address: data.profile.defaultAddress?.address || "",
             });
           }
+          if (data.stats) {
+            setStats(data.stats);
+          }
+          if (data.recentOrders) {
+            setRecentOrders(data.recentOrders);
+          }
         }
-      } catch {}
+      } catch {
+        console.error("Failed to fetch profile");
+      } finally {
+        setIsLoadingProfile(false);
+      }
     }
     if (session?.user) fetchProfile();
   }, [session?.user]);
@@ -133,6 +147,15 @@ export default function ProfilePage() {
     await signOut();
     router.push("/");
     router.refresh();
+  };
+
+  // Format member since date
+  const getMemberSinceText = () => {
+    if (!profile.createdAt) return "Member";
+    const date = new Date(profile.createdAt);
+    const year = date.getFullYear();
+    const month = date.toLocaleString('default', { month: 'short' });
+    return `Member since ${month} ${year}`;
   };
 
   if (isPending) {
@@ -196,11 +219,11 @@ export default function ProfilePage() {
             </Avatar>
             
             <div className="text-center sm:text-left flex-1">
-              <h1 className="text-2xl sm:text-3xl font-bold">{user.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold">{profile.name || user.name}</h1>
               <p className="text-white/80">{user.email}</p>
               <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
                 <Badge className="bg-white/20 text-white border-0">
-                  Member since 2024
+                  {getMemberSinceText()}
                 </Badge>
               </div>
             </div>
@@ -238,14 +261,22 @@ export default function ProfilePage() {
           <Card className="bg-white/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <Package className="h-8 w-8 mx-auto text-amber-500 mb-2" />
-              <p className="text-2xl font-bold text-gray-800">{demoOrders.length}</p>
+              {isLoadingProfile ? (
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+              ) : (
+                <p className="text-2xl font-bold text-gray-800">{stats.orderCount}</p>
+              )}
               <p className="text-sm text-gray-500">Total Orders</p>
             </CardContent>
           </Card>
           <Card className="bg-white/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <Heart className="h-8 w-8 mx-auto text-rose-500 mb-2" />
-              <p className="text-2xl font-bold text-gray-800">5</p>
+              {isLoadingProfile ? (
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+              ) : (
+                <p className="text-2xl font-bold text-gray-800">{stats.wishlistCount}</p>
+              )}
               <p className="text-sm text-gray-500">Wishlist Items</p>
             </CardContent>
           </Card>
@@ -254,7 +285,13 @@ export default function ProfilePage() {
               <div className="h-8 w-8 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-2">
                 <span className="text-green-600 font-bold">৳</span>
               </div>
-              <p className="text-2xl font-bold text-gray-800">26,497</p>
+              {isLoadingProfile ? (
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+              ) : (
+                <p className="text-2xl font-bold text-gray-800">
+                  {stats.totalSpent.toLocaleString()}
+                </p>
+              )}
               <p className="text-sm text-gray-500">Total Spent</p>
             </CardContent>
           </Card>
@@ -263,7 +300,11 @@ export default function ProfilePage() {
               <div className="h-8 w-8 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-2">
                 <span className="text-purple-600 font-bold">🎁</span>
               </div>
-              <p className="text-2xl font-bold text-gray-800">150</p>
+              {isLoadingProfile ? (
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+              ) : (
+                <p className="text-2xl font-bold text-gray-800">{stats.rewardPoints}</p>
+              )}
               <p className="text-sm text-gray-500">Reward Points</p>
             </CardContent>
           </Card>
@@ -354,27 +395,43 @@ export default function ProfilePage() {
                 </Link>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {demoOrders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-800">{order.orderNumber}</p>
-                        <p className="text-sm text-gray-500">
-                          {order.date.toLocaleDateString()} • {order.items} items
-                        </p>
+                {isLoadingProfile ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+                  </div>
+                ) : recentOrders.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                    <p className="text-gray-500">No orders yet</p>
+                    <Link href="/products">
+                      <Button className="mt-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                        Start Shopping
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentOrders.map((order) => (
+                      <div
+                        key={order.id}
+                        className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
+                      >
+                        <div>
+                          <p className="font-medium text-gray-800">{order.orderNumber}</p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(order.date).toLocaleDateString()} • {order.items} items
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-gray-800">৳{order.total.toLocaleString()}</p>
+                          <Badge className={`${statusColors[order.status] || statusColors.pending} border-0 text-xs`}>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-800">৳{order.total.toLocaleString()}</p>
-                        <Badge className={`${statusColors[order.status]} border-0 text-xs`}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
