@@ -79,24 +79,34 @@ class RouteGuards {
     final path = state.uri.path;
     debugPrint('Router redirect check: $path');
 
-    // Splash screen handling
+    // Splash screen - always allow (it handles navigation internally)
     if (path == AppRoutes.splashPath) {
-      return null; // Allow splash
+      return null;
     }
 
-    // Auth routes - apply guest guard
+    // Onboarding screen - always allow (user is completing onboarding)
+    if (path == AppRoutes.onboardingPath) {
+      return null;
+    }
+
+    // Check onboarding for home route only
+    // If user hasn't completed onboarding and tries to go to home, redirect to onboarding
+    if (path == AppRoutes.homePath && !isOnboardingCompleted) {
+      debugPrint(
+        'Redirect: Onboarding not complete, redirecting to onboarding',
+      );
+      return AppRoutes.onboardingPath;
+    }
+
+    // Auth routes - apply guest guard (redirect logged-in users away from login/register)
     if (_isAuthRoute(path)) {
       return guestGuard(state);
     }
 
-    // Protected routes - apply auth guard
+    // Protected routes - apply auth guard (only for routes that truly require auth)
     if (_isProtectedRoute(path)) {
       return authGuard(state);
     }
-
-    // Check onboarding for first-time users going to home
-    // Skip onboarding check if user explicitly navigates to home
-    // Onboarding is handled by splash screen navigation
 
     return null;
   }
@@ -110,11 +120,10 @@ class RouteGuards {
 
   bool _isProtectedRoute(String path) {
     // Routes that require authentication
+    // Note: Edit profile does NOT require auth - user can view their profile
+    // Only checkout, orders, wishlist require auth
     return path.startsWith('/checkout') ||
         path.startsWith('/orders') ||
-        path == AppRoutes.wishlistPath ||
-        path.startsWith('/profile/edit') ||
-        path.startsWith('/profile/addresses') ||
-        path.startsWith('/profile/change-password');
+        path == AppRoutes.wishlistPath;
   }
 }
