@@ -521,7 +521,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       _buildInputField(
                         label: 'Confirm Password',
                         controller: _confirmPasswordController,
-                        icon: LucideIcons.lockKeyhole,
+                        icon: LucideIcons.lock,
                         placeholder: 'Re-enter password',
                         obscureText: _obscureConfirmPassword,
                         isDark: isDark,
