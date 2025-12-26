@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -33,11 +34,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           .login(_emailController.text.trim(), _passwordController.text);
 
       if (success && mounted) {
+        final l10n = AppLocalizations.of(context)!;
         toastification.show(
           context: context,
           type: ToastificationType.success,
           style: ToastificationStyle.minimal,
-          title: const Text("Welcome!"),
+          title: Text(l10n.welcome),
           autoCloseDuration: const Duration(seconds: 2),
         );
         context.go('/');
@@ -51,12 +53,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         .signInWithGoogle();
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
       if (success) {
         toastification.show(
           context: context,
           type: ToastificationType.success,
           style: ToastificationStyle.minimal,
-          title: const Text("Welcome!"),
+          title: Text(l10n.welcome),
           autoCloseDuration: const Duration(seconds: 2),
         );
         context.go('/');
@@ -79,6 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     // Theme-aware colors using AppColors
     final bgColor = AppColors.adaptive(
@@ -153,7 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       // Title
                       Text(
-                        'Welcome',
+                        l10n.welcome,
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -163,7 +167,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Please enter your details to sign in.',
+                        l10n.loginSubtitle,
                         style: TextStyle(fontSize: 16, color: textSecondary),
                       ),
                       const SizedBox(height: 32),
@@ -214,7 +218,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: textMain,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Email or Phone Number',
+                            hintText: l10n.emailOrPhone,
                             hintStyle: TextStyle(
                               color: AppColors.adaptive(
                                 context,
@@ -244,7 +248,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           ),
                           validator: (v) =>
-                              v!.isEmpty ? "Email is required" : null,
+                              v!.isEmpty ? l10n.emailRequired : null,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -264,7 +268,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: textMain,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Password',
+                            hintText: l10n.password,
                             hintStyle: TextStyle(
                               color: AppColors.adaptive(
                                 context,
@@ -309,9 +313,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               vertical: 16,
                             ),
                           ),
-                          validator: (v) => v!.length < 6
-                              ? "Password must be at least 6 characters"
-                              : null,
+                          validator: (v) =>
+                              v!.length < 6 ? l10n.passwordMinLength : null,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -340,7 +343,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Remember me',
+                                l10n.rememberMe,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -354,7 +357,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               // Navigate to forgot password
                             },
                             child: Text(
-                              'Forgot password?',
+                              l10n.forgotPassword,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -389,9 +392,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     color: Colors.white,
                                   ),
                                 )
-                              : const Text(
-                                  'Sign In',
-                                  style: TextStyle(
+                              : Text(
+                                  l10n.signIn,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -408,7 +411,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             toastification.show(
                               context: context,
                               type: ToastificationType.info,
-                              title: const Text("Biometric login coming soon!"),
+                              title: Text(l10n.biometricComingSoon),
                               autoCloseDuration: const Duration(seconds: 2),
                             );
                           },
@@ -418,7 +421,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             size: 20,
                           ),
                           label: Text(
-                            'Use Face ID / Touch ID',
+                            l10n.useBiometric,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -442,7 +445,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
-                              'Or continue with',
+                              l10n.orContinueWith,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -474,9 +477,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 toastification.show(
                                   context: context,
                                   type: ToastificationType.info,
-                                  title: const Text(
-                                    "Apple Sign-In coming soon!",
-                                  ),
+                                  title: Text(l10n.appleSignInComingSoon),
                                   autoCloseDuration: const Duration(seconds: 2),
                                 );
                               },
@@ -493,9 +494,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 toastification.show(
                                   context: context,
                                   type: ToastificationType.info,
-                                  title: const Text(
-                                    "Facebook Sign-In coming soon!",
-                                  ),
+                                  title: Text(l10n.facebookSignInComingSoon),
                                   autoCloseDuration: const Duration(seconds: 2),
                                 );
                               },
@@ -516,16 +515,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Don't have an account? ",
+                              l10n.noAccount,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: textSecondary,
                               ),
                             ),
+                            const SizedBox(width: 4),
                             GestureDetector(
                               onTap: () => context.push('/register'),
                               child: Text(
-                                'Sign up',
+                                l10n.signUp,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/config/white_label_config.dart';
+import '../../../l10n/app_localizations.dart';
 import 'providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -86,11 +87,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   void _register() async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_agreedToTerms) {
       toastification.show(
         context: context,
         type: ToastificationType.warning,
-        title: const Text("Please agree to the Terms & Privacy Policy"),
+        title: Text(l10n.agreeToTermsWarning),
         autoCloseDuration: const Duration(seconds: 2),
       );
       return;
@@ -101,7 +103,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         toastification.show(
           context: context,
           type: ToastificationType.error,
-          title: const Text("Passwords do not match"),
+          title: Text(l10n.passwordsDoNotMatch),
           autoCloseDuration: const Duration(seconds: 2),
         );
         return;
@@ -120,7 +122,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           context: context,
           type: ToastificationType.success,
           style: ToastificationStyle.minimal,
-          title: const Text("Account created!"),
+          title: Text(l10n.accountCreated),
           description: Text(WhiteLabelConfig.welcomeMessage),
           autoCloseDuration: const Duration(seconds: 2),
         );
@@ -133,6 +135,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     // Theme-aware colors using AppColors
     final backgroundColor = AppColors.getBackground(context);
     final surfaceColor = AppColors.getCard(context);
@@ -182,7 +185,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     children: [
                       // Header
                       Text(
-                        'Create Account',
+                        l10n.createAccount,
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -192,7 +195,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Fill in your details to join the community.',
+                        l10n.createAccountSubtitle,
                         style: TextStyle(fontSize: 16, color: subtextColor),
                         textAlign: TextAlign.center,
                       ),

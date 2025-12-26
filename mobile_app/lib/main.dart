@@ -5,6 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/cache/cache_service.dart';
 import 'core/config/white_label_config.dart';
+import 'l10n/app_localizations.dart';
 import 'navigation/app_router.dart';
 import 'services/storage_service.dart';
 
@@ -45,6 +46,8 @@ class MyApp extends ConsumerWidget {
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
         routerConfig: appRouter.router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         debugShowCheckedModeBanner: false,
       ),
     );
