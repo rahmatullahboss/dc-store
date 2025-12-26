@@ -133,17 +133,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark
-        ? const Color(0xFF101622)
-        : const Color(0xFFF6F6F8);
-    final surfaceColor = isDark ? const Color(0xFF1A2230) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final subtextColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
-    final borderColor = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFE2E8F0);
+    // Theme-aware colors using AppColors
+    final backgroundColor = AppColors.getBackground(context);
+    final surfaceColor = AppColors.getCard(context);
+    final textColor = AppColors.getTextPrimary(context);
+    final subtextColor = AppColors.adaptive(
+      context,
+      AppColors.textSecondary,
+      AppColors.darkTextSecondary,
+    );
+    final borderColor = AppColors.adaptive(
+      context,
+      AppColors.border,
+      AppColors.darkBorder,
+    );
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -212,7 +215,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     : const Color(0xFFE2E8F0),
                                 border: Border.all(
                                   color: isDark
-                                      ? const Color(0xFF334155)
+                                      ? AppColors.darkBorder
                                       : Colors.white,
                                   width: 4,
                                 ),
@@ -478,11 +481,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                             ),
                                             color: index < strength
                                                 ? strengthColor
-                                                : (isDark
-                                                      ? const Color(0xFF334155)
-                                                      : const Color(
-                                                          0xFFE2E8F0,
-                                                        )),
+                                                : AppColors.adaptive(
+                                                    context,
+                                                    AppColors.border,
+                                                    AppColors.darkBorder,
+                                                  ),
                                           ),
                                         ),
                                       );

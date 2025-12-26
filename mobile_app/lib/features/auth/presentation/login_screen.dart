@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
+import '../../../core/theme/app_colors.dart';
 import 'providers/auth_provider.dart';
-
-/// Primary color for the login screen (orange - matches web store)
-const _primaryColor = Color(0xFFF97316);
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -80,13 +78,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
-    final textMain = const Color(0xFF111827);
-    final textSecondary = const Color(0xFF6B7280);
-    final inputBg = const Color(0xFFF3F4F6);
-    final dividerColor = const Color(0xFFE5E7EB);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Theme-aware colors using AppColors
+    final bgColor = AppColors.adaptive(
+      context,
+      const Color(0xFFF9FAFB),
+      AppColors.darkBackground,
+    );
+    final surfaceColor = AppColors.adaptive(
+      context,
+      Colors.white,
+      AppColors.darkCard,
+    );
+    final textMain = AppColors.getTextPrimary(context);
+    final textSecondary = AppColors.adaptive(
+      context,
+      const Color(0xFF6B7280),
+      AppColors.darkTextSecondary,
+    );
+    final inputBg = AppColors.adaptive(
+      context,
+      const Color(0xFFF3F4F6),
+      AppColors.darkInput,
+    );
+    final dividerColor = AppColors.adaptive(
+      context,
+      const Color(0xFFE5E7EB),
+      AppColors.darkBorder,
+    );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: bgColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -94,11 +117,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Container(
               constraints: const BoxConstraints(maxWidth: 400),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: surfaceColor,
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withAlpha(isDark ? 50 : 26),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -117,12 +140,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE0E7FF),
+                          color: AppColors.accent.withAlpha(26),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.lock_outline,
-                          color: _primaryColor,
+                          color: AppColors.accent,
                           size: 28,
                         ),
                       ),
@@ -150,22 +173,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red[50],
+                            color: AppColors.errorLight,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red[200]!),
+                            border: Border.all(
+                              color: AppColors.error.withAlpha(77),
+                            ),
                           ),
                           child: Row(
                             children: [
                               Icon(
                                 Icons.error_outline,
-                                color: Colors.red[700],
+                                color: AppColors.error,
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   authState.error!,
-                                  style: TextStyle(color: Colors.red[700]),
+                                  style: TextStyle(color: AppColors.error),
                                 ),
                               ),
                             ],
@@ -191,12 +216,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           decoration: InputDecoration(
                             hintText: 'Email or Phone Number',
                             hintStyle: TextStyle(
-                              color: const Color(0xFF9CA3AF),
+                              color: AppColors.adaptive(
+                                context,
+                                const Color(0xFF9CA3AF),
+                                AppColors.darkTextHint,
+                              ),
                               fontWeight: FontWeight.w500,
                             ),
                             prefixIcon: Icon(
                               Icons.mail_outline,
-                              color: const Color(0xFF9CA3AF),
+                              color: AppColors.adaptive(
+                                context,
+                                const Color(0xFF9CA3AF),
+                                AppColors.darkTextHint,
+                              ),
                               size: 22,
                             ),
                             border: OutlineInputBorder(
@@ -233,12 +266,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           decoration: InputDecoration(
                             hintText: 'Password',
                             hintStyle: TextStyle(
-                              color: const Color(0xFF9CA3AF),
+                              color: AppColors.adaptive(
+                                context,
+                                const Color(0xFF9CA3AF),
+                                AppColors.darkTextHint,
+                              ),
                               fontWeight: FontWeight.w500,
                             ),
                             prefixIcon: Icon(
                               Icons.key_outlined,
-                              color: const Color(0xFF9CA3AF),
+                              color: AppColors.adaptive(
+                                context,
+                                const Color(0xFF9CA3AF),
+                                AppColors.darkTextHint,
+                              ),
                               size: 22,
                             ),
                             suffixIcon: IconButton(
@@ -246,7 +287,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 _obscurePassword
                                     ? Icons.visibility_off_outlined
                                     : Icons.visibility_outlined,
-                                color: const Color(0xFF9CA3AF),
+                                color: AppColors.adaptive(
+                                  context,
+                                  const Color(0xFF9CA3AF),
+                                  AppColors.darkTextHint,
+                                ),
                                 size: 20,
                               ),
                               onPressed: () => setState(
@@ -287,7 +332,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       _rememberMe = value ?? false;
                                     });
                                   },
-                                  activeColor: _primaryColor,
+                                  activeColor: AppColors.accent,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4),
                                   ),
@@ -299,7 +344,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: const Color(0xFF4B5563),
+                                  color: textSecondary,
                                 ),
                               ),
                             ],
@@ -313,7 +358,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: _primaryColor,
+                                color: AppColors.accent,
                               ),
                             ),
                           ),
@@ -327,7 +372,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: authState.isLoading ? null : _login,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _primaryColor,
+                            backgroundColor: AppColors.accent,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -369,7 +414,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           },
                           icon: Icon(
                             Icons.fingerprint,
-                            color: _primaryColor,
+                            color: AppColors.accent,
                             size: 20,
                           ),
                           label: Text(
@@ -377,7 +422,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: _primaryColor,
+                              color: AppColors.accent,
                             ),
                           ),
                           style: TextButton.styleFrom(
@@ -401,7 +446,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: const Color(0xFF6B7280),
+                                color: textSecondary,
                               ),
                             ),
                           ),
@@ -418,6 +463,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               onTap: () => _signInWithGoogle(),
                               iconUrl: 'https://www.google.com/favicon.ico',
                               fallbackIcon: Icons.g_mobiledata,
+                              isDark: isDark,
+                              dividerColor: dividerColor,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -435,6 +482,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               },
                               iconUrl: null,
                               fallbackIcon: Icons.apple,
+                              isDark: isDark,
+                              dividerColor: dividerColor,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -452,7 +501,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               },
                               iconUrl: null,
                               fallbackIcon: Icons.facebook,
-                              iconColor: const Color(0xFF1877F2),
+                              iconColor: AppColors.info,
+                              isDark: isDark,
+                              dividerColor: dividerColor,
                             ),
                           ),
                         ],
@@ -468,7 +519,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               "Don't have an account? ",
                               style: TextStyle(
                                 fontSize: 14,
-                                color: const Color(0xFF4B5563),
+                                color: textSecondary,
                               ),
                             ),
                             GestureDetector(
@@ -478,7 +529,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: _primaryColor,
+                                  color: AppColors.accent,
                                 ),
                               ),
                             ),
@@ -493,7 +544,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           width: 128,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE5E7EB),
+                            color: dividerColor,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -513,6 +564,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     required VoidCallback onTap,
     required String? iconUrl,
     required IconData fallbackIcon,
+    required bool isDark,
+    required Color dividerColor,
     Color? iconColor,
   }) {
     return GestureDetector(
@@ -520,12 +573,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.adaptive(context, Colors.white, AppColors.darkCard),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
+          border: Border.all(color: dividerColor),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withAlpha(8),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -540,7 +593,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   errorBuilder: (context, error, stackTrace) =>
                       Icon(fallbackIcon, size: 24, color: iconColor),
                 )
-              : Icon(fallbackIcon, size: 24, color: iconColor ?? Colors.black),
+              : Icon(
+                  fallbackIcon,
+                  size: 24,
+                  color: iconColor ?? (isDark ? Colors.white : Colors.black),
+                ),
         ),
       ),
     );
