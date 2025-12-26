@@ -16,3 +16,22 @@ final productDetailsProvider = FutureProvider.family<Product?, String>((
   final repository = ref.watch(productRepositoryProvider);
   return repository.getProductById(id);
 });
+
+/// Current search query - used for debounced search
+final searchQueryProvider = StateProvider<String>((ref) => '');
+
+/// Search results provider - watches query and fetches results
+final searchResultsProvider = FutureProvider<List<Product>>((ref) async {
+  final query = ref.watch(searchQueryProvider);
+  if (query.trim().isEmpty) {
+    return [];
+  }
+
+  final repository = ref.watch(productRepositoryProvider);
+  return repository.searchProducts(query);
+});
+
+/// Loading state for search
+final isSearchingProvider = Provider<bool>((ref) {
+  return ref.watch(searchResultsProvider).isLoading;
+});

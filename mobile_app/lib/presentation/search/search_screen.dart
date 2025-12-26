@@ -1,59 +1,110 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/white_label_config.dart';
+import '../../services/storage_service.dart';
+import '../../features/product/presentation/providers/product_provider.dart';
+import '../../features/product/domain/product_model.dart';
+import '../categories/categories_screen.dart';
 
-class SearchScreen extends StatefulWidget {
+/// Recent searches storage key
+const _recentSearchesKey = 'recent_searches';
+
+/// Provider for recent searches - persisted locally
+final recentSearchesProvider =
+    StateNotifierProvider<RecentSearchesNotifier, List<String>>((ref) {
+      return RecentSearchesNotifier();
+    });
+
+class RecentSearchesNotifier extends StateNotifier<List<String>> {
+  RecentSearchesNotifier() : super([]) {
+    _loadRecentSearches();
+  }
+
+  Future<void> _loadRecentSearches() async {
+    try {
+      final storage = await StorageService.instance;
+      final searches = storage.getString(_recentSearchesKey);
+      if (searches != null && searches.isNotEmpty) {
+        state = searches.split('|||').where((s) => s.isNotEmpty).toList();
+      }
+    } catch (e) {
+      debugPrint('Error loading recent searches: $e');
+    }
+  }
+
+  Future<void> addSearch(String query) async {
+    if (query.trim().isEmpty) return;
+
+    // Remove if exists to avoid duplicates
+    final newList = state.where((s) => s != query).toList();
+    // Add to front
+    newList.insert(0, query);
+    // Keep only last 10
+    if (newList.length > 10) {
+      newList.removeLast();
+    }
+    state = newList;
+
+    // Persist
+    try {
+      final storage = await StorageService.instance;
+      await storage.setString(_recentSearchesKey, state.join('|||'));
+    } catch (e) {
+      debugPrint('Error saving recent searches: $e');
+    }
+  }
+
+  Future<void> removeSearch(int index) async {
+    if (index < 0 || index >= state.length) return;
+    final newList = [...state];
+    newList.removeAt(index);
+    state = newList;
+
+    // Persist
+    try {
+      final storage = await StorageService.instance;
+      await storage.setString(_recentSearchesKey, state.join('|||'));
+    } catch (e) {
+      debugPrint('Error saving recent searches: $e');
+    }
+  }
+
+  Future<void> clearAll() async {
+    state = [];
+    try {
+      final storage = await StorageService.instance;
+      await storage.remove(_recentSearchesKey);
+    } catch (e) {
+      debugPrint('Error clearing recent searches: $e');
+    }
+  }
+}
+
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _searchController = TextEditingController();
   final _focusNode = FocusNode();
+  Timer? _debounceTimer;
+  bool _showResults = false;
 
-  // Recent searches (mock data - in production would be persisted)
-  final List<String> _recentSearches = [
-    'Nike Air Max',
-    'Leather Jacket',
-    'Summer Dress',
-  ];
-
-  // Trending searches
+  // Trending searches (static - could be from analytics in future)
   final List<String> _trendingSearches = [
-    '#RunningShoes',
-    '#SmartWatches',
-    '#Denim',
-    '#WirelessHeadphones',
-    '#SummerSale',
-  ];
-
-  // Popular categories
-  final List<_CategoryItem> _popularCategories = [
-    _CategoryItem(
-      name: 'Women',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuBiVprrbLC3nngjZXbw0zho-TotMkFUa8PN9IKk8pn32nzt2Mb_s0P4WFBi8wwtLV5B2cxPImyCVZ4y5Pv1rKZXgDm53kdWIhf1qrVU8DIDe3i8Lbx8gmMhP_g9SuYwEt8qce5sQcAUOnG7Rplipp28UYI_gJndyMvbLVM1qpVOmG4ar6OnjJJS_TXhDlCx1GgjeFc87i9S_AO8gyk7K3JlRnwwhBuxgLnoFRlzftLRHoALQAGfsi71TEL1EamBcfMoXrlFfKsq6S4',
-    ),
-    _CategoryItem(
-      name: 'Men',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCVMiJKtFXH5w-GAlLf96MDSyho4a1sIgEERV-9FlIopq_kOoNwoTKUiZdmNx6R7jiqkrGGn0JkgbVG7m3jFfFY7uoTIgr3hwnYVy8WCMvp_YUVdS0BWmJmpo1obU6Ua9iApWpDgk0wPmDcR0grbve3DPj-yZHcnMze6aSJz2QpRbtGSWpnqMkb8W4zxeo0093DOhe0Gmq_intO7dsph4Cbc7F3lOQAOJpwV0Y4YzypFxc1wZ_4inesztFVEyJUINbpecOKz55qGTA',
-    ),
-    _CategoryItem(
-      name: 'Electronics',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCID-Lv67PXfACh0i92MpIJrUUqEoGZ6vckSty37vcIp5OCDt_PEE07XW1rTYDkqMDMICfebQdvEQHTXZe5G81qmsSYWHXg-Z7cbjLWCi5BQwa8y5Zfmnel6czrGP-57eHIwOsbk4psA9_wS8T1yNpzP_YOhKQ2sRaSRysnPheDzhrDFwzIETP4y9uvT5EOn860Jt8scjZuFACCWhGwJCj7owG6CiH4i7NJFXRFw8qw5nlKw3uXdv8tVYgJl6dcXwmKg0iFJ98P9Lo',
-    ),
-    _CategoryItem(
-      name: 'Home',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuBru7y_cCQxFE9MV3gegXHbct2qbDAV-vwlOm9o6BCf0kTBFitvXlslv9ZxoGbCZ0mSTdc59wKCdRHK2dEOhJOCBULGKPYQ1QOGlGGi4tdgfenSqEN-M_QUaxhRQeZHqBJSZg7FeTXYOEud6o_8czmmGxzou7HWcrPBGaP2UsZkMsx4ACCeRNhlubMiL9KUV93zpYwpwmWfDHQStAmcH7WUOPj4ZUDBNiifP3-R7c_2qIwfw1b-LBvSXL13G014bWib9t0KDse6p3I',
-    ),
+    '#Electronics',
+    '#Fashion',
+    '#Beauty',
+    '#HomeDecor',
+    '#Sports',
   ];
 
   @override
@@ -63,30 +114,43 @@ class _SearchScreenState extends State<SearchScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+
+    // Listen to text changes for debounced search
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    // Cancel previous timer
+    _debounceTimer?.cancel();
+
+    final query = _searchController.text.trim();
+
+    if (query.isEmpty) {
+      setState(() => _showResults = false);
+      ref.read(searchQueryProvider.notifier).state = '';
+      return;
+    }
+
+    // Debounce 300ms
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      ref.read(searchQueryProvider.notifier).state = query;
+      setState(() => _showResults = true);
+    });
   }
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
 
-  void _removeRecentSearch(int index) {
-    setState(() {
-      _recentSearches.removeAt(index);
-    });
-  }
-
-  void _clearAllHistory() {
-    setState(() {
-      _recentSearches.clear();
-    });
-  }
-
   void _performSearch(String query) {
     if (query.trim().isNotEmpty) {
-      // In production, navigate to search results
+      // Add to recent searches
+      ref.read(recentSearchesProvider.notifier).addSearch(query);
+      // Navigate to products with search
       context.push('/products?search=${Uri.encodeComponent(query)}');
     }
   }
@@ -94,6 +158,10 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final recentSearches = ref.watch(recentSearchesProvider);
+    final searchResults = ref.watch(searchResultsProvider);
+    final isSearching = ref.watch(isSearchingProvider);
+    final categories = ref.watch(categoriesProvider);
 
     // Theme colors
     final primaryBlue = WhiteLabelConfig.accentColor;
@@ -140,7 +208,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           color: textColor,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Search for shoes, brands...',
+                          hintText: 'Search for products...',
                           hintStyle: TextStyle(
                             color: subtleTextColor,
                             fontWeight: FontWeight.w500,
@@ -150,16 +218,27 @@ class _SearchScreenState extends State<SearchScreen> {
                             color: subtleTextColor,
                             size: 20,
                           ),
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              // Voice search functionality
-                            },
-                            child: Icon(
-                              LucideIcons.mic,
-                              color: subtleTextColor,
-                              size: 20,
-                            ),
-                          ),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () {
+                                    _searchController.clear();
+                                    ref
+                                            .read(searchQueryProvider.notifier)
+                                            .state =
+                                        '';
+                                    setState(() => _showResults = false);
+                                  },
+                                  child: Icon(
+                                    LucideIcons.x,
+                                    color: subtleTextColor,
+                                    size: 18,
+                                  ),
+                                )
+                              : Icon(
+                                  LucideIcons.mic,
+                                  color: subtleTextColor,
+                                  size: 20,
+                                ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -188,140 +267,327 @@ class _SearchScreenState extends State<SearchScreen> {
 
             // Main Content
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Recent Searches Section
-                    if (_recentSearches.isNotEmpty) ...[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                        child: Text(
-                          'Recent Searches',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                      ),
-                      ...List.generate(_recentSearches.length, (index) {
-                        return _buildRecentSearchItem(
-                          _recentSearches[index],
-                          index,
-                          isDark,
-                          textColor,
-                          subtleTextColor,
-                          inputBgColor,
-                        );
-                      }),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                        child: GestureDetector(
-                          onTap: _clearAllHistory,
-                          child: Text(
-                            'Clear All History',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: primaryBlue,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 8,
-                        color: dividerColor,
-                        margin: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                    ],
-
-                    // Trending Now Section
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: Row(
+              child: _showResults
+                  ? _buildSearchResults(
+                      searchResults,
+                      isSearching,
+                      isDark,
+                      textColor,
+                      subtleTextColor,
+                      primaryBlue,
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            LucideIcons.trendingUp,
-                            size: 20,
-                            color: primaryBlue,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Trending Now',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                              letterSpacing: -0.3,
+                          // Recent Searches Section
+                          if (recentSearches.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                              child: Text(
+                                'Recent Searches',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                            ),
+                            ...List.generate(recentSearches.length, (index) {
+                              return _buildRecentSearchItem(
+                                recentSearches[index],
+                                index,
+                                isDark,
+                                textColor,
+                                subtleTextColor,
+                                inputBgColor,
+                              );
+                            }),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                              child: GestureDetector(
+                                onTap: () => ref
+                                    .read(recentSearchesProvider.notifier)
+                                    .clearAll(),
+                                child: Text(
+                                  'Clear All History',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: primaryBlue,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: 8,
+                              color: dividerColor,
+                              margin: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                          ],
+
+                          // Trending Now Section
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  LucideIcons.trendingUp,
+                                  size: 20,
+                                  color: primaryBlue,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Trending Now',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: _trendingSearches.map((tag) {
+                                return _buildTrendingChip(
+                                  tag,
+                                  isDark,
+                                  textColor,
+                                  borderColor,
+                                  primaryBlue,
+                                );
+                              }).toList(),
+                            ),
+                          ),
+
+                          Container(
+                            height: 8,
+                            color: dividerColor,
+                            margin: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+
+                          // Popular Categories Section
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                            child: Text(
+                              'Popular Categories',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: categories.when(
+                              data: (cats) => GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 12,
+                                      childAspectRatio: 4 / 3,
+                                    ),
+                                itemCount: cats.take(4).length,
+                                itemBuilder: (context, index) {
+                                  final category = cats[index];
+                                  return _buildCategoryCard(category, index);
+                                },
+                              ),
+                              loading: () => const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(32),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                              error: (e, s) => Center(
+                                child: Text(
+                                  'Failed to load categories',
+                                  style: TextStyle(color: subtleTextColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: _trendingSearches.map((tag) {
-                          return _buildTrendingChip(
-                            tag,
-                            isDark,
-                            textColor,
-                            borderColor,
-                            primaryBlue,
-                          );
-                        }).toList(),
-                      ),
-                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                    Container(
-                      height: 8,
-                      color: dividerColor,
-                      margin: const EdgeInsets.symmetric(vertical: 16),
-                    ),
+  Widget _buildSearchResults(
+    AsyncValue<List<Product>> searchResults,
+    bool isSearching,
+    bool isDark,
+    Color textColor,
+    Color subtleTextColor,
+    Color primaryBlue,
+  ) {
+    return searchResults.when(
+      data: (products) {
+        if (products.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  LucideIcons.searchX,
+                  size: 64,
+                  color: subtleTextColor.withAlpha(128),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No products found',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Try a different search term',
+                  style: TextStyle(color: subtleTextColor),
+                ),
+              ],
+            ),
+          );
+        }
 
-                    // Popular Categories Section
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: Text(
-                        'Popular Categories',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 4 / 3,
-                            ),
-                        itemCount: _popularCategories.length,
-                        itemBuilder: (context, index) {
-                          return _buildCategoryCard(
-                            _popularCategories[index],
-                            index,
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return _buildProductResultItem(
+              product,
+              isDark,
+              textColor,
+              subtleTextColor,
+              primaryBlue,
+            ).animate().fadeIn(delay: (index * 50).ms).slideX(begin: 0.05);
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, s) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(LucideIcons.alertCircle, size: 48, color: Colors.red[400]),
+            const SizedBox(height: 16),
+            Text(
+              'Search failed',
+              style: TextStyle(color: textColor, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => ref.invalidate(searchResultsProvider),
+              child: Text('Retry', style: TextStyle(color: primaryBlue)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductResultItem(
+    Product product,
+    bool isDark,
+    Color textColor,
+    Color subtleTextColor,
+    Color primaryBlue,
+  ) {
+    return GestureDetector(
+      onTap: () => context.push('/products/${product.id}'),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Product Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                imageUrl: product.featuredImage,
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: isDark ? Colors.grey[800] : Colors.grey[200],
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: isDark ? Colors.grey[800] : Colors.grey[200],
+                  child: Icon(LucideIcons.image, color: subtleTextColor),
                 ),
               ),
             ),
+            const SizedBox(width: 12),
+            // Product Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        '\$${product.price.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: primaryBlue,
+                        ),
+                      ),
+                      if (product.compareAtPrice != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '\$${product.compareAtPrice!.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: subtleTextColor,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Icon(LucideIcons.chevronRight, color: subtleTextColor, size: 20),
           ],
         ),
       ),
@@ -337,7 +603,10 @@ class _SearchScreenState extends State<SearchScreen> {
     Color bgColor,
   ) {
     return GestureDetector(
-      onTap: () => _performSearch(query),
+      onTap: () {
+        _searchController.text = query;
+        _performSearch(query);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
@@ -360,7 +629,8 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             GestureDetector(
-              onTap: () => _removeRecentSearch(index),
+              onTap: () =>
+                  ref.read(recentSearchesProvider.notifier).removeSearch(index),
               child: Container(
                 width: 32,
                 height: 32,
@@ -384,7 +654,12 @@ class _SearchScreenState extends State<SearchScreen> {
     Color primaryBlue,
   ) {
     return GestureDetector(
-      onTap: () => _performSearch(tag.replaceAll('#', '')),
+      onTap: () {
+        final query = tag.replaceAll('#', '');
+        _searchController.text = query;
+        ref.read(searchQueryProvider.notifier).state = query;
+        setState(() => _showResults = true);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
@@ -414,12 +689,15 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildCategoryCard(_CategoryItem category, int index) {
+  Widget _buildCategoryCard(dynamic category, int index) {
+    final name = category.name as String;
+    final image = category.image as String?;
+
     return GestureDetector(
           onTap: () {
-            // Navigate to category
             context.push(
-              '/products?category=${Uri.encodeComponent(category.name)}',
+              '/category/${category.id}/products',
+              extra: {'categoryName': name},
             );
           },
           child: Container(
@@ -439,12 +717,29 @@ class _SearchScreenState extends State<SearchScreen> {
                 fit: StackFit.expand,
                 children: [
                   // Image
-                  CachedNetworkImage(
-                    imageUrl: category.imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        Container(color: Colors.grey[300]),
-                  ),
+                  if (image != null)
+                    CachedNetworkImage(
+                      imageUrl: image,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          Container(color: Colors.grey[300]),
+                      errorWidget: (context, url, error) => Container(
+                        color: WhiteLabelConfig.accentColor.withAlpha(51),
+                        child: Icon(
+                          LucideIcons.package,
+                          color: WhiteLabelConfig.accentColor,
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      color: WhiteLabelConfig.accentColor.withAlpha(51),
+                      child: Icon(
+                        LucideIcons.package,
+                        color: WhiteLabelConfig.accentColor,
+                        size: 32,
+                      ),
+                    ),
                   // Gradient overlay
                   Container(
                     decoration: BoxDecoration(
@@ -465,7 +760,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     bottom: 12,
                     left: 12,
                     child: Text(
-                      category.name,
+                      name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -483,11 +778,4 @@ class _SearchScreenState extends State<SearchScreen> {
         .fadeIn(delay: (index * 100).ms)
         .scale(begin: const Offset(0.95, 0.95));
   }
-}
-
-class _CategoryItem {
-  final String name;
-  final String imageUrl;
-
-  _CategoryItem({required this.name, required this.imageUrl});
 }

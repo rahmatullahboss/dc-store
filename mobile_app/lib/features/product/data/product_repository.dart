@@ -36,6 +36,31 @@ class ProductRepository {
     }
   }
 
+  Future<List<Product>> searchProducts(String query) async {
+    if (query.trim().isEmpty) {
+      return [];
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(
+          '${AppConfig.baseUrl}/api/products/search?q=${Uri.encodeComponent(query)}',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List<dynamic> products = data['products'] ?? [];
+        return products.map((json) => Product.fromJson(json)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error searching products: $e');
+    }
+
+    // Return empty list on search failure (don't show dummy data for search)
+    return [];
+  }
+
   Future<List<Product>> _getDummyProducts() async {
     await Future.delayed(const Duration(milliseconds: 300));
     return List.generate(
