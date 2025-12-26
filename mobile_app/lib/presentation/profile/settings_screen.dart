@@ -22,7 +22,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   // Settings state
   String _language = 'English (US)';
   String _currency = 'BDT (৳)';
-  String _country = 'Bangladesh';
+  final String _country = 'Bangladesh';
   AppThemeMode _themeMode = AppThemeMode.light;
   double _textSize = 50;
 
@@ -34,7 +34,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _restockAlerts = true;
 
   // Privacy
-  String _locationServices = 'While Using';
+  final String _locationServices = 'While Using';
   bool _analyticsOptOut = false;
   bool _personalization = true;
 

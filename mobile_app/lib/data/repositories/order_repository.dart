@@ -1,4 +1,5 @@
 /// Order Repository Implementation
+library;
 import '../../core/utils/either.dart';
 import '../../core/errors/failures.dart';
 import '../../core/errors/exceptions.dart';

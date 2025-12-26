@@ -1,5 +1,6 @@
 /// Either Type Utilities for Repository Pattern
 /// Uses dart_either package for functional error handling
+library;
 
 import 'package:dart_either/dart_either.dart';
 import '../errors/failures.dart';

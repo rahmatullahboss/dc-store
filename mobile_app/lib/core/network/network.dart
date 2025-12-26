@@ -1,5 +1,6 @@
 /// Network Layer Barrel File
 /// Export all network-related files
+library;
 
 export 'dio_client.dart';
 export 'api_response.dart';

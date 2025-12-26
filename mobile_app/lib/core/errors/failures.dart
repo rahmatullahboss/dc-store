@@ -1,5 +1,6 @@
 /// Failure classes for domain layer error handling
 /// Uses Either pattern with fpdart or dartz
+library;
 
 abstract class Failure {
   final String message;
@@ -12,26 +13,26 @@ abstract class Failure {
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure([String message = 'Server error'])
-    : super(message, code: 'SERVER');
+  const ServerFailure([super.message = 'Server error'])
+    : super(code: 'SERVER');
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure([String message = 'Network error'])
-    : super(message, code: 'NETWORK');
+  const NetworkFailure([super.message = 'Network error'])
+    : super(code: 'NETWORK');
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure([String message = 'Cache error'])
-    : super(message, code: 'CACHE');
+  const CacheFailure([super.message = 'Cache error'])
+    : super(code: 'CACHE');
 }
 
 class AuthFailure extends Failure {
-  const AuthFailure([String message = 'Authentication failed'])
-    : super(message, code: 'AUTH');
+  const AuthFailure([super.message = 'Authentication failed'])
+    : super(code: 'AUTH');
 }
 
 class ValidationFailure extends Failure {
-  const ValidationFailure([String message = 'Validation failed'])
-    : super(message, code: 'VALIDATION');
+  const ValidationFailure([super.message = 'Validation failed'])
+    : super(code: 'VALIDATION');
 }

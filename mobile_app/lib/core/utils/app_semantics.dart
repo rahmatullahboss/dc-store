@@ -1,6 +1,7 @@
 /// App Semantics Utility
 /// Provides consistent accessibility labels and semantic widgets
 /// for screen reader support.
+library;
 
 import 'package:flutter/material.dart';
 

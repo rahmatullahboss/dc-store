@@ -1,5 +1,6 @@
 /// Auth Repository Interface - Domain Layer
 /// Defines all authentication-related operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/user/user_model.dart';

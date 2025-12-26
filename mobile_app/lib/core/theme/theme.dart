@@ -1,5 +1,6 @@
 /// Design System Barrel File
 /// Export all theme-related files from one place
+library;
 
 export 'app_colors.dart';
 export 'app_text_styles.dart';

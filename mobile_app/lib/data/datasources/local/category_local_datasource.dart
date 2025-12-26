@@ -1,4 +1,5 @@
 /// Category Local Data Source - Hive caching for categories
+library;
 import '../../../core/cache/cache_service.dart';
 import '../../models/category/category_model.dart';
 

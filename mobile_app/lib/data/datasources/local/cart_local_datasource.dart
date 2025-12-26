@@ -1,4 +1,5 @@
 /// Cart Local Data Source - Hive caching for cart (offline support)
+library;
 import '../../../core/cache/cache_service.dart';
 import '../../models/cart/cart_model.dart';
 

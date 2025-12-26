@@ -1,5 +1,6 @@
 /// Category Repository Interface - Domain Layer
 /// Defines all category-related operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/category/category_model.dart';

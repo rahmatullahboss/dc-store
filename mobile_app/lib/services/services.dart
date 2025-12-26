@@ -1,5 +1,6 @@
 /// App Services Barrel File
 /// Export all services from one place
+library;
 
 export 'storage_service.dart';
 export 'auth_service.dart';

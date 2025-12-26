@@ -1,5 +1,6 @@
 /// Custom App Exceptions for Error Handling
 /// Provides structured error handling across the application
+library;
 
 /// Base exception class
 abstract class AppException implements Exception {

@@ -11,6 +11,7 @@ import '../../core/utils/app_haptics.dart';
 import '../../l10n/app_localizations.dart';
 import '../../features/cart/domain/cart_item_model.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
+import '../common/widgets/animated_empty_state.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -355,63 +356,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color textColor,
     Color primaryAccent,
   ) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: primaryAccent.withAlpha(26),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                LucideIcons.shoppingCart,
-                size: 64,
-                color: primaryAccent,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              "Your cart is empty",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "Looks like you haven't added anything to your cart yet",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () => context.go('/'),
-              icon: const Icon(LucideIcons.shoppingBag),
-              label: const Text("Start Shopping"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryAccent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-            ),
-          ],
-        ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
-      ),
-    );
+    return AnimatedEmptyState.cart(onStartShopping: () => context.go('/'));
   }
 
   Widget _buildCartItemCard(

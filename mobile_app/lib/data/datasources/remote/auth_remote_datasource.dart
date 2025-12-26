@@ -1,4 +1,5 @@
 /// Auth Remote Data Source - API calls for authentication
+library;
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/exceptions.dart';

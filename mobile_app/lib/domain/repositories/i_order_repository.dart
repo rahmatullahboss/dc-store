@@ -1,5 +1,6 @@
 /// Order Repository Interface - Domain Layer
 /// Defines all order-related operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/order/order_model.dart';

@@ -1,4 +1,5 @@
 /// User Remote Data Source - API calls for user profile
+library;
 import 'package:dio/dio.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';

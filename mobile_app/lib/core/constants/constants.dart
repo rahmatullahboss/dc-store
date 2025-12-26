@@ -1,5 +1,6 @@
 /// Constants Barrel File
 /// Export all constants from one place
+library;
 
 export 'api_constants.dart';
 export 'app_constants.dart';

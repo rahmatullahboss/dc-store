@@ -1,4 +1,5 @@
 /// Wishlist Local Data Source - Hive caching for wishlist
+library;
 import '../../../core/cache/cache_service.dart';
 import '../../models/wishlist/wishlist_model.dart';
 

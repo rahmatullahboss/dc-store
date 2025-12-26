@@ -1,5 +1,6 @@
 /// Repository Providers - Riverpod providers for all repositories
 /// Central file for dependency injection
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

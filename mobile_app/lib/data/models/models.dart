@@ -1,5 +1,6 @@
 /// Data Models Barrel File
 /// Export all models from one place
+library;
 
 // User Models
 export 'user/user_model.dart';

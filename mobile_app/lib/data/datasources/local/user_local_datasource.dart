@@ -1,4 +1,5 @@
 /// User Local Data Source - Hive caching for user profile
+library;
 import '../../../core/cache/cache_service.dart';
 import '../../models/user/user_model.dart';
 

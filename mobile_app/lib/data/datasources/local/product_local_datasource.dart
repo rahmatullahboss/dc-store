@@ -1,4 +1,5 @@
 /// Product Local Data Source - Hive caching for products
+library;
 import '../../../core/cache/cache_service.dart';
 import '../../models/product/product_model.dart';
 

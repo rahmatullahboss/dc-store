@@ -1,4 +1,5 @@
 /// Core utility functions for the app
+library;
 
 class AppUtils {
   AppUtils._();

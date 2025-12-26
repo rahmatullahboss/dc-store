@@ -1,5 +1,6 @@
 /// Review Repository Interface - Domain Layer
 /// Defines all product review operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/review/review_model.dart';

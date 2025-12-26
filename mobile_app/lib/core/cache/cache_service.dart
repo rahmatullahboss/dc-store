@@ -1,5 +1,6 @@
 /// Cache Service - Centralized caching with Hive
 /// Features: TTL-based expiry, type-safe boxes, cache invalidation
+library;
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';

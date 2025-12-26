@@ -1,5 +1,6 @@
 /// Product Repository Interface - Domain Layer
 /// Defines all product-related operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/product/product_model.dart';

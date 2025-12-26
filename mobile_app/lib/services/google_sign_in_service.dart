@@ -55,10 +55,8 @@ class GoogleSignInService {
       // If lightweight fails, do full authentication
       account ??= await GoogleSignIn.instance.authenticate();
 
-      if (account != null) {
-        debugPrint('Google Sign-In successful: ${account.email}');
-      }
-
+      debugPrint('Google Sign-In successful: ${account.email}');
+    
       return account;
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In error: ${e.code} - ${e.description}');

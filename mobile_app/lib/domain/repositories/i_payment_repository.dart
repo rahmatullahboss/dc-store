@@ -1,5 +1,6 @@
 /// Payment Repository Interface - Domain Layer
 /// Defines all payment method and processing operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/payment/payment_model.dart';

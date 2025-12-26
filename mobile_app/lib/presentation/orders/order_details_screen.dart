@@ -611,44 +611,52 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         // Write Review Button
-                        GestureDetector(
-                          onTap: () {
-                            context.push(
-                              '/write-review?productId=${item.name.hashCode}&orderId=$orderId',
-                            );
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? const Color(0xFF135bec).withAlpha(26)
-                                  : const Color(0xFFEFF6FF),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: const Color(0xFF135bec).withAlpha(51),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(
-                                  LucideIcons.star,
-                                  size: 16,
-                                  color: Color(0xFF135bec),
+                        Builder(
+                          builder: (context) {
+                            // Access primaryBlue from the enclosing scope
+                            final primaryBlue = WhiteLabelConfig.accentColor;
+                            return GestureDetector(
+                              onTap: () {
+                                context.push(
+                                  '/write-review?productId=${item.name.hashCode}&orderId=$orderId',
+                                );
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
                                 ),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Write Review',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF135bec),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? primaryBlue.withAlpha(26)
+                                      : primaryBlue.withAlpha(15),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: primaryBlue.withAlpha(51),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.star,
+                                      size: 16,
+                                      color: primaryBlue,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Write Review',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: primaryBlue,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

@@ -1,5 +1,6 @@
 /// Wishlist Repository Interface - Domain Layer
 /// Defines all wishlist operations
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/wishlist/wishlist_model.dart';

@@ -1,5 +1,6 @@
 /// Sync Queue Service
 /// Handles offline operations by queuing them and syncing when back online.
+library;
 
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

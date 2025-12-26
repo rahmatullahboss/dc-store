@@ -28,8 +28,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _obscureConfirmPassword = true;
   bool _agreedToTerms = false;
   bool _showReferralField = false;
-  String _selectedCountryCode = '+1';
-  String _selectedCountryFlag = '🇺🇸';
+  final String _selectedCountryCode = '+1';
+  final String _selectedCountryFlag = '🇺🇸';
 
   @override
   void dispose() {

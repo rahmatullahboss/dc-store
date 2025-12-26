@@ -1,5 +1,6 @@
 /// Cart Repository Interface - Domain Layer
 /// Defines all shopping cart operations with optimistic updates
+library;
 
 import '../../core/utils/either.dart';
 import '../../data/models/cart/cart_model.dart';

@@ -1,5 +1,6 @@
 /// Product Repository Implementation
 /// Cache-first strategy with offline support
+library;
 
 import '../../core/utils/either.dart';
 import '../../core/errors/failures.dart';
