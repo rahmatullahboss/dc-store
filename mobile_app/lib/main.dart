@@ -16,6 +16,7 @@ import 'features/checkout/presentation/checkout_screen.dart';
 import 'features/checkout/presentation/order_success_screen.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/register_screen.dart';
+import 'presentation/search/search_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -86,6 +87,11 @@ final _router = GoRouter(
       path: '/register',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/search',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const SearchScreen(),
     ),
   ],
 );
