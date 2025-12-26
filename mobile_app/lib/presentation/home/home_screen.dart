@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/config/white_label_config.dart';
+import '../../core/widgets/skeleton_loader.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/product/domain/product_model.dart';
@@ -982,6 +983,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  /// Skeleton loading grid for products
+  Widget _buildProductGridSkeleton() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 0.65,
+      ),
+      itemCount: 4,
+      itemBuilder: (context, index) => const ProductCardSkeleton(),
+    );
+  }
+
   Widget _buildFeaturedProductsSection(bool isDark, Color surfaceColor) {
     final productsAsync = ref.watch(productsProvider);
 
@@ -1015,10 +1032,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 16),
           productsAsync.when(
-            loading: () => const SizedBox(
-              height: 200,
-              child: Center(child: CircularProgressIndicator()),
-            ),
+            loading: () => _buildProductGridSkeleton(),
             error: (err, stack) => SizedBox(
               height: 200,
               child: Center(
