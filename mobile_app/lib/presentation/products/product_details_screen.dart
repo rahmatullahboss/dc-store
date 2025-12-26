@@ -62,11 +62,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     leading: Container(
                       margin: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: cardColor.withOpacity(0.9),
+                        color: cardColor.withAlpha(230),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withAlpha(26),
                             blurRadius: 8,
                           ),
                         ],
@@ -80,11 +80,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       Container(
                         margin: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: cardColor.withOpacity(0.9),
+                          color: cardColor.withAlpha(230),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withAlpha(26),
                               blurRadius: 8,
                             ),
                           ],
@@ -103,11 +103,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       Container(
                         margin: const EdgeInsets.only(right: 8),
                         decoration: BoxDecoration(
-                          color: cardColor.withOpacity(0.9),
+                          color: cardColor.withAlpha(230),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withAlpha(26),
                               blurRadius: 8,
                             ),
                           ],
@@ -143,7 +143,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                 gradient: LinearGradient(
                                   begin: Alignment.bottomCenter,
                                   end: Alignment.topCenter,
-                                  colors: [bgColor, bgColor.withOpacity(0)],
+                                  colors: [bgColor, bgColor.withAlpha(0)],
                                 ),
                               ),
                             ),
@@ -185,7 +185,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.amber.withOpacity(0.1),
+                                  color: Colors.amber.withAlpha(26),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Row(
@@ -272,7 +272,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.green.withOpacity(0.1),
+                                    color: Colors.green.withAlpha(26),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -443,7 +443,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     color: cardColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withAlpha(26),
                         blurRadius: 20,
                         offset: const Offset(0, -4),
                       ),

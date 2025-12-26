@@ -95,14 +95,14 @@ class _ProductCardState extends State<ProductCard>
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isHovered
-                    ? AppColors.primary.withOpacity(0.3)
+                    ? AppColors.primary.withAlpha(77)
                     : AppColors.border,
               ),
               boxShadow: [
                 BoxShadow(
                   color: _isHovered
-                      ? AppColors.primary.withOpacity(0.1)
-                      : Colors.black.withOpacity(0.05),
+                      ? AppColors.primary.withAlpha(26)
+                      : Colors.black.withAlpha(13),
                   blurRadius: _isHovered ? 20 : 10,
                   offset: Offset(0, _isHovered ? 8 : 4),
                 ),
@@ -157,7 +157,7 @@ class _ProductCardState extends State<ProductCard>
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withAlpha(26),
                                   blurRadius: 8,
                                 ),
                               ],
@@ -191,7 +191,7 @@ class _ProductCardState extends State<ProductCard>
                           left: 8,
                           child: AppBadge(
                             label: widget.category!,
-                            backgroundColor: Colors.white.withOpacity(0.9),
+                            backgroundColor: Colors.white.withAlpha(230),
                             foregroundColor: Colors.black87,
                           ),
                         ),
@@ -281,7 +281,7 @@ class _ProductCardState extends State<ProductCard>
                             child: Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withAlpha(26),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(

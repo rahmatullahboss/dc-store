@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../common/widgets/app_badge.dart';
 
 class HotDealsSection extends StatelessWidget {
@@ -123,7 +122,7 @@ class HotDealsSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: deal["bg"] as Color,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black.withOpacity(0.05)),
+                    border: Border.all(color: Colors.black.withAlpha(13)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

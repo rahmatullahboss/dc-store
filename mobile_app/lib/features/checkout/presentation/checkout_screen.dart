@@ -107,7 +107,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withAlpha(13),
                       blurRadius: 10,
                     ),
                   ],
@@ -120,7 +120,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withAlpha(26),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
@@ -164,7 +164,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     const SizedBox(height: 16),
                     // Division Dropdown
                     DropdownButtonFormField<String>(
-                      value: _selectedDivision,
+                      initialValue: _selectedDivision,
                       decoration: _inputDecoration("Division *"),
                       items: BdGeoData.divisions
                           .map(
@@ -182,7 +182,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     const SizedBox(height: 16),
                     // District Dropdown
                     DropdownButtonFormField<String>(
-                      value: _selectedDistrict,
+                      initialValue: _selectedDistrict,
                       decoration: _inputDecoration("District *"),
                       items:
                           (_selectedDivision != null
@@ -230,7 +230,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withAlpha(13),
                       blurRadius: 10,
                     ),
                   ],
@@ -251,7 +251,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       decoration: BoxDecoration(
                         border: Border.all(color: AppColors.primary, width: 2),
                         borderRadius: BorderRadius.circular(12),
-                        color: AppColors.primary.withOpacity(0.05),
+                        color: AppColors.primary.withAlpha(13),
                       ),
                       child: Row(
                         children: [
@@ -299,7 +299,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withAlpha(13),
                       blurRadius: 10,
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/config/app_config.dart';
 import '../domain/product_model.dart';
@@ -17,7 +18,7 @@ class ProductRepository {
         return products.map((json) => Product.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error fetching products: $e');
+      debugPrint('Error fetching products: $e');
     }
 
     // Fallback to dummy data if API fails
@@ -30,7 +31,7 @@ class ProductRepository {
       final products = await getProducts();
       return products.firstWhere((p) => p.id == id || p.slug == id);
     } catch (e) {
-      print('Error fetching product by ID: $e');
+      debugPrint('Error fetching product by ID: $e');
       return null;
     }
   }

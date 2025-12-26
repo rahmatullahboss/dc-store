@@ -108,11 +108,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withAlpha(230),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withAlpha(26),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -267,7 +267,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               'https://www.google.com/favicon.ico',
                               width: 20,
                               height: 20,
-                              errorBuilder: (_, __, ___) =>
+                              errorBuilder: (context, error, stackTrace) =>
                                   const Icon(LucideIcons.globe, size: 20),
                             ),
                             label: const Text("Continue with Google"),

@@ -9,9 +9,6 @@ import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../common/widgets/product_card.dart';
 import '../common/widgets/shimmer_loading.dart';
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
-final sortOptionProvider = StateProvider<String>((ref) => 'default');
-
 class ProductsScreen extends ConsumerStatefulWidget {
   const ProductsScreen({super.key});
 
@@ -21,6 +18,8 @@ class ProductsScreen extends ConsumerStatefulWidget {
 
 class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   final _searchController = TextEditingController();
+  String _searchQuery = '';
+  String _sortOption = 'default';
 
   @override
   void dispose() {
@@ -31,8 +30,6 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final productsAsync = ref.watch(productsProvider);
-    final searchQuery = ref.watch(searchQueryProvider);
-    final sortOption = ref.watch(sortOptionProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.darkBackground : const Color(0xFFF9FAFB);
     final cardColor = isDark ? AppColors.darkCard : Colors.white;
@@ -93,9 +90,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ),
                         child: TextField(
                           controller: _searchController,
-                          onChanged: (value) =>
-                              ref.read(searchQueryProvider.notifier).state =
-                                  value,
+                          onChanged: (value) {
+                            setState(() => _searchQuery = value);
+                          },
                           decoration: InputDecoration(
                             hintText: "Search products...",
                             hintStyle: TextStyle(
@@ -109,7 +106,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                                   ? Colors.grey[400]
                                   : Colors.grey[500],
                             ),
-                            suffixIcon: searchQuery.isNotEmpty
+                            suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
                                     icon: Icon(
                                       LucideIcons.x,
@@ -119,12 +116,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                                     ),
                                     onPressed: () {
                                       _searchController.clear();
-                                      ref
-                                              .read(
-                                                searchQueryProvider.notifier,
-                                              )
-                                              .state =
-                                          '';
+                                      setState(() => _searchQuery = '');
                                     },
                                   )
                                 : null,
@@ -148,9 +140,10 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: PopupMenuButton<String>(
-                        initialValue: sortOption,
-                        onSelected: (value) =>
-                            ref.read(sortOptionProvider.notifier).state = value,
+                        initialValue: _sortOption,
+                        onSelected: (value) {
+                          setState(() => _sortOption = value);
+                        },
                         offset: const Offset(0, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -160,25 +153,25 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                           _buildSortItem(
                             'default',
                             'Default',
-                            sortOption,
+                            _sortOption,
                             textColor,
                           ),
                           _buildSortItem(
                             'low',
                             'Price: Low to High',
-                            sortOption,
+                            _sortOption,
                             textColor,
                           ),
                           _buildSortItem(
                             'high',
                             'Price: High to Low',
-                            sortOption,
+                            _sortOption,
                             textColor,
                           ),
                           _buildSortItem(
                             'name',
                             'Name: A-Z',
-                            sortOption,
+                            _sortOption,
                             textColor,
                           ),
                         ],
@@ -259,12 +252,12 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               var filtered = products
                   .where(
                     (p) => p.name.toLowerCase().contains(
-                      searchQuery.toLowerCase(),
+                      _searchQuery.toLowerCase(),
                     ),
                   )
                   .toList();
 
-              switch (sortOption) {
+              switch (_sortOption) {
                 case 'low':
                   filtered.sort((a, b) => a.price.compareTo(b.price));
                   break;

@@ -85,10 +85,10 @@ class CategoriesSection extends StatelessWidget {
                           width: 64,
                           height: 64,
                           decoration: BoxDecoration(
-                            color: category.color.withOpacity(0.1),
+                            color: category.color.withAlpha(26),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: category.color.withOpacity(0.2),
+                              color: category.color.withAlpha(51),
                               width: 1.5,
                             ),
                           ),

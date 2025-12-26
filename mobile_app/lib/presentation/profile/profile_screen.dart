@@ -43,8 +43,8 @@ class ProfileScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.primary.withOpacity(0.05),
+                      AppColors.primary.withAlpha(26),
+                      AppColors.primary.withAlpha(13),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -140,7 +140,7 @@ class ProfileScreen extends ConsumerWidget {
                   gradient: LinearGradient(
                     colors: [
                       AppColors.primary,
-                      AppColors.primary.withOpacity(0.8),
+                      AppColors.primary.withAlpha(204),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -176,7 +176,7 @@ class ProfileScreen extends ConsumerWidget {
                       Text(
                         user.email,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withAlpha(204),
                           fontSize: 14,
                         ),
                       ),
@@ -315,8 +315,11 @@ class ProfileScreen extends ConsumerWidget {
                       title: "Share App",
                       subtitle: "Share with friends",
                       onTap: () {
-                        Share.share(
-                          'Check out DC Store - the best shopping app! https://dcstore.app',
+                        SharePlus.instance.share(
+                          ShareParams(
+                            text:
+                                'Check out DC Store - the best shopping app! https://dcstore.app',
+                          ),
                         );
                       },
                     ),
@@ -374,7 +377,7 @@ class ProfileScreen extends ConsumerWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withAlpha(26),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -398,7 +401,7 @@ class ProfileScreen extends ConsumerWidget {
                 .read(themeModeProvider.notifier)
                 .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
           },
-          activeColor: AppColors.primary,
+          activeThumbColor: AppColors.primary,
         ),
         onTap: () {
           ref.read(themeModeProvider.notifier).toggleTheme();
@@ -429,7 +432,7 @@ class ProfileScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withAlpha(10),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -448,8 +451,8 @@ class ProfileScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: item.isDestructive
-                        ? Colors.red.withOpacity(0.1)
-                        : AppColors.primary.withOpacity(0.1),
+                        ? Colors.red.withAlpha(26)
+                        : AppColors.primary.withAlpha(26),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -471,13 +474,11 @@ class ProfileScreen extends ConsumerWidget {
                         style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                       )
                     : null,
-                trailing:
-                    item.trailing ??
-                    Icon(
-                      LucideIcons.chevronRight,
-                      size: 18,
-                      color: Colors.grey[400],
-                    ),
+                trailing: Icon(
+                  LucideIcons.chevronRight,
+                  size: 18,
+                  color: Colors.grey[400],
+                ),
                 onTap: item.onTap,
               ),
               if (!isLast)
@@ -558,7 +559,6 @@ class _MenuItem {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final Widget? trailing;
   final VoidCallback onTap;
   final bool isDestructive;
 
@@ -566,7 +566,6 @@ class _MenuItem {
     required this.icon,
     required this.title,
     this.subtitle,
-    this.trailing,
     required this.onTap,
     this.isDestructive = false,
   });

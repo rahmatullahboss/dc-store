@@ -87,7 +87,7 @@ class _PromoBannerState extends State<PromoBanner> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: promo.gradientColors.first.withOpacity(0.4),
+                        color: promo.gradientColors.first.withAlpha(102),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                       ),
@@ -102,7 +102,7 @@ class _PromoBannerState extends State<PromoBanner> {
                         child: Icon(
                           promo.icon,
                           size: 150,
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withAlpha(26),
                         ),
                       ),
                       // Content
@@ -118,7 +118,7 @@ class _PromoBannerState extends State<PromoBanner> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withAlpha(51),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -155,7 +155,7 @@ class _PromoBannerState extends State<PromoBanner> {
                             Text(
                               promo.description,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withAlpha(230),
                                 fontSize: 14,
                               ),
                             ),

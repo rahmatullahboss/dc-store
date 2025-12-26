@@ -38,7 +38,7 @@ class MainLayout extends ConsumerWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withAlpha(15),
               blurRadius: 20,
               offset: const Offset(0, -4),
             ),
@@ -106,7 +106,7 @@ class MainLayout extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: isSelected
             ? BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withAlpha(26),
                 borderRadius: BorderRadius.circular(16),
               )
             : null,
