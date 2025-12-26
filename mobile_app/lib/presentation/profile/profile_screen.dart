@@ -23,103 +23,194 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildGuestView(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF9FAFB);
-    final surfaceColor = isDark ? const Color(0xFF1b2431) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
     const primaryColor = Color(0xFF4F46E5);
+    final bgColor = const Color(0xFFF9FAFB);
+    final textMain = const Color(0xFF111827);
+    final textSecondary = const Color(0xFF6B7280);
 
     return Scaffold(
       backgroundColor: bgColor,
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(28),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withAlpha(26),
-                    shape: BoxShape.circle,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 400),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
-                  child: const Icon(
-                    LucideIcons.user,
-                    size: 56,
-                    color: primaryColor,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  "Welcome, Guest",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  "Sign in to access your orders, wishlist, and personalized experience",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () => context.push('/login'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: textColor,
-                      foregroundColor: surfaceColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Lock Icon
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE0E7FF),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      elevation: 0,
+                      child: const Icon(
+                        Icons.lock_outline,
+                        color: primaryColor,
+                        size: 32,
+                      ),
                     ),
-                    child: const Text(
-                      "Sign In",
+                    const SizedBox(height: 24),
+
+                    // Title
+                    Text(
+                      'Welcome back',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
+                        color: textMain,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Sign in to access your orders, wishlist, and personalized experience.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: textSecondary),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Sign In Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => context.push('/login'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Create Account Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => context.push('/register'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: textMain,
+                          side: BorderSide(color: const Color(0xFFE5E7EB)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text(
+                          'Create Account',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Divider
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Divider(color: const Color(0xFFE5E7EB)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Or continue with',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textSecondary,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(color: const Color(0xFFE5E7EB)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Social Login Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildSocialButton(Icons.g_mobiledata, null),
+                        const SizedBox(width: 16),
+                        _buildSocialButton(Icons.apple, Colors.black),
+                        const SizedBox(width: 16),
+                        _buildSocialButton(
+                          Icons.facebook,
+                          const Color(0xFF1877F2),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Home Indicator
+                    Container(
+                      width: 128,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE5E7EB),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: OutlinedButton(
-                    onPressed: () => context.push('/register'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: textColor,
-                      side: BorderSide(
-                        color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Create Account",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSocialButton(IconData icon, Color? iconColor) {
+    return Container(
+      width: 56,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Icon(icon, size: 24, color: iconColor ?? Colors.black),
     );
   }
 

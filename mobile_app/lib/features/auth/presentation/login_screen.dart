@@ -6,7 +6,6 @@ import 'providers/auth_provider.dart';
 
 /// Primary color for the login screen (indigo theme)
 const _primaryColor = Color(0xFF4F46E5);
-const _primaryHover = Color(0xFF4338CA);
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
