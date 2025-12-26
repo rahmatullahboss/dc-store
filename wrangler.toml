@@ -63,6 +63,7 @@ BETTER_AUTH_URL = "https://store.digitalcare.site"
 # - CLOUDINARY_API_SECRET
 # - NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 # - GROQ_API_KEY
+# - RESEND_API_KEY (for order confirmation emails)
 
 # Assets configuration
 [assets]

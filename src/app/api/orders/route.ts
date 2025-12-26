@@ -4,6 +4,7 @@ import { orders } from "@/db/schema";
 import type { OrderItem, Address } from "@/db/schema";
 import { nanoid } from "nanoid";
 import { headers } from "next/headers";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 // Using default runtime for OpenNext compatibility
 
@@ -76,13 +77,22 @@ export async function POST(request: Request) {
 
     await db.insert(orders).values(newOrder);
 
-    // TODO: Send order confirmation email
-    // Email functionality requires setting up an email service like:
-    // - Resend (https://resend.com)
-    // - SendGrid
-    // - Mailgun
-    // - Cloudflare Email Workers
-    // For now, we'll log order details
+    // Send order confirmation email (non-blocking)
+    if (body.customerEmail) {
+      sendOrderConfirmationEmail({
+        orderNumber,
+        customerName: body.customerName,
+        customerEmail: body.customerEmail,
+        customerPhone: body.customerPhone,
+        items: body.items,
+        subtotal: body.subtotal,
+        shippingCost: body.shippingCost,
+        total: body.total,
+        shippingAddress: body.shippingAddress,
+        paymentMethod: body.paymentMethod || 'cod',
+      }).catch(err => console.error('Failed to send email:', err));
+    }
+
     console.log(`Order created: ${orderNumber} for ${body.customerEmail || body.customerPhone}`);
 
     return NextResponse.json({
