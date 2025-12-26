@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/white_label_config.dart';
+import '../common/widgets/animated_empty_state.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -574,104 +575,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     Color subtleTextColor,
     Color primaryBlue,
   ) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 160,
-                  height: 160,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? primaryBlue.withAlpha(26)
-                        : const Color(0xFFEFF6FF),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    LucideIcons.shoppingBag,
-                    size: 64,
-                    color: primaryBlue.withAlpha(102),
-                  ),
-                ),
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: Colors.orange[400]!.withAlpha(153),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 32,
-                  left: 24,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: primaryBlue.withAlpha(153),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'No orders yet',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Looks like you haven't placed any orders yet. Start shopping to find great deals!",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: subtleTextColor),
-            ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: () => context.go('/'),
-              child: Container(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                decoration: BoxDecoration(
-                  color: primaryBlue,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryBlue.withAlpha(51),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    'Start Shopping',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
-      ),
-    );
+    return AnimatedEmptyState.orders(onShopNow: () => context.go('/'));
   }
 }
 

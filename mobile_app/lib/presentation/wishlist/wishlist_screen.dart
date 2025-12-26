@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../core/config/white_label_config.dart';
+import '../common/widgets/animated_empty_state.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -667,75 +668,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
     Color subtleTextColor,
     Color primaryBlue,
   ) {
-    return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 128,
-                height: 128,
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.grey[100],
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  LucideIcons.heart,
-                  size: 56,
-                  color: isDark ? Colors.grey[600] : Colors.grey[300],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                "Your wishlist is empty",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Save items you love to revisit them later.",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: subtleTextColor),
-              ),
-              const SizedBox(height: 32),
-              GestureDetector(
-                onTap: () => context.go('/'),
-                child: Container(
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  decoration: BoxDecoration(
-                    color: primaryBlue,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryBlue.withAlpha(51),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Browse Products",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
-        ),
-      ),
-    );
+    return AnimatedEmptyState.wishlist(onExplore: () => context.go('/'));
   }
 }
 
