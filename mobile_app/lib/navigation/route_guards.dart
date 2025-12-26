@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/storage_service.dart';
 import '../core/constants/storage_keys.dart';
@@ -18,7 +18,7 @@ class RouteGuards {
 
   /// Check if onboarding is completed
   bool get isOnboardingCompleted {
-    return _storageService.getBool(StorageKeys.onboardingCompleted) ?? false;
+    return _storageService.getBool(StorageKeys.onboardingComplete) ?? false;
   }
 
   /// Get user role
@@ -124,6 +124,3 @@ class RouteGuards {
         path.startsWith('/profile/change-password');
   }
 }
-
-/// BuildContext extension for type safety
-extension BuildContext on Object {}
