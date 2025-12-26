@@ -75,7 +75,7 @@ class AuthController extends Notifier<AuthState> {
             id: account.id,
             email: account.email,
             name: account.displayName ?? account.email.split('@')[0],
-            photoUrl: account.photoUrl,
+            image: account.photoUrl,
           ),
         );
         return true;

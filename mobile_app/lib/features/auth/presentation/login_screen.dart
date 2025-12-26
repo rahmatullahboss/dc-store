@@ -47,6 +47,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  void _signInWithGoogle() async {
+    final success = await ref
+        .read(authControllerProvider.notifier)
+        .signInWithGoogle();
+
+    if (mounted) {
+      if (success) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.minimal,
+          title: const Text("Welcome!"),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+        context.go('/');
+      } else {
+        final error = ref.read(authControllerProvider).error;
+        if (error != null && error != 'Sign-in cancelled') {
+          toastification.show(
+            context: context,
+            type: ToastificationType.error,
+            style: ToastificationStyle.minimal,
+            title: Text(error),
+            autoCloseDuration: const Duration(seconds: 3),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -385,16 +415,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         children: [
                           Expanded(
                             child: _buildSocialButton(
-                              onTap: () {
-                                toastification.show(
-                                  context: context,
-                                  type: ToastificationType.info,
-                                  title: const Text(
-                                    "Google Sign-In coming soon!",
-                                  ),
-                                  autoCloseDuration: const Duration(seconds: 2),
-                                );
-                              },
+                              onTap: () => _signInWithGoogle(),
                               iconUrl: 'https://www.google.com/favicon.ico',
                               fallbackIcon: Icons.g_mobiledata,
                             ),
