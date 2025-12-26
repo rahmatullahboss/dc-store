@@ -382,7 +382,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
             ),
           ),
-          Switch(value: value, onChanged: onChanged, activeColor: _accentColor),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            thumbColor: WidgetStatePropertyAll(value ? _accentColor : null),
+            activeTrackColor: _accentColor.withAlpha(128),
+          ),
         ],
       ),
     );

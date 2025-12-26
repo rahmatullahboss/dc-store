@@ -856,8 +856,8 @@ class ProfileScreen extends ConsumerWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: primaryColor,
             activeTrackColor: primaryColor.withAlpha(128),
+            thumbColor: WidgetStatePropertyAll(value ? primaryColor : null),
           ),
         ],
       ),

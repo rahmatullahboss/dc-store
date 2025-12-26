@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "46787300862-bcl3nmgqhkhk5082ds6to6mspeh8srv1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dcstore.mobile_app",
+            "certificate_hash": "19dfe9e44aa066d044048131e615a82e2d9cd7b6"
+          }
+        },
+        {
           "client_id": "46787300862-ev3ra7q0t5e1jrr1jal8tas61p33v9hr.apps.googleusercontent.com",
           "client_type": 3
         }

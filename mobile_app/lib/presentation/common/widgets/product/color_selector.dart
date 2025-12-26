@@ -125,7 +125,7 @@ class ColorSelector extends StatelessWidget {
                     if (isSelected)
                       Positioned.fill(
                         child: Container(
-                          transform: Matrix4.identity()..scale(1.2),
+                          transform: Matrix4.diagonal3Values(1.2, 1.2, 1.0),
                           transformAlignment: Alignment.center,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,

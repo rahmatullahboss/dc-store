@@ -36,7 +36,9 @@ class ShareService {
     }
     message += '\n\n$link';
 
-    await Share.share(message, subject: 'Check out $productName on DC Store');
+    await SharePlus.instance.share(
+      ShareParams(text: message, title: 'Check out $productName on DC Store'),
+    );
   }
 
   /// Share category
@@ -46,9 +48,11 @@ class ShareService {
   }) async {
     final link = generateCategoryDeepLink(categoryId);
 
-    await Share.share(
-      '🏷️ Explore $categoryName collection on DC Store!\n\n$link',
-      subject: '$categoryName - DC Store',
+    await SharePlus.instance.share(
+      ShareParams(
+        text: '🏷️ Explore $categoryName collection on DC Store!\n\n$link',
+        title: '$categoryName - DC Store',
+      ),
     );
   }
 
@@ -57,9 +61,12 @@ class ShareService {
     required String orderId,
     required String orderNumber,
   }) async {
-    await Share.share(
-      '📦 Order #$orderNumber\nOrder ID: $orderId\n\nI need help with this order.',
-      subject: 'Order #$orderNumber',
+    await SharePlus.instance.share(
+      ShareParams(
+        text:
+            '📦 Order #$orderNumber\nOrder ID: $orderId\n\nI need help with this order.',
+        title: 'Order #$orderNumber',
+      ),
     );
   }
 
@@ -76,16 +83,21 @@ class ShareService {
     }
     message += '\n\n$link';
 
-    await Share.share(message, subject: 'Join DC Store');
+    await SharePlus.instance.share(
+      ShareParams(text: message, title: 'Join DC Store'),
+    );
   }
 
   /// Share app
   Future<void> shareApp() async {
     const link = 'https://dcstore.com/app';
 
-    await Share.share(
-      '📱 Download DC Store - Premium E-commerce App!\n\nShop the best products with great deals.\n\n$link',
-      subject: 'Download DC Store App',
+    await SharePlus.instance.share(
+      ShareParams(
+        text:
+            '📱 Download DC Store - Premium E-commerce App!\n\nShop the best products with great deals.\n\n$link',
+        title: 'Download DC Store App',
+      ),
     );
   }
 
@@ -130,13 +142,15 @@ class ShareService {
   }) async {
     // For now, use generic share
     // TODO: Implement platform-specific sharing if needed
-    await Share.share(content);
+    await SharePlus.instance.share(ShareParams(text: content));
   }
 
   /// Share with file
   Future<void> shareWithFile({required String filePath, String? text}) async {
     try {
-      await Share.shareXFiles([XFile(filePath)], text: text);
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(filePath)], text: text),
+      );
     } catch (e) {
       debugPrint('Error sharing file: $e');
     }

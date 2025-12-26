@@ -625,7 +625,14 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
               Switch.adaptive(
                 value: _postAnonymously,
                 onChanged: (value) => setState(() => _postAnonymously = value),
-                activeColor: Theme.of(context).colorScheme.primary,
+                thumbColor: WidgetStatePropertyAll(
+                  _postAnonymously
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                ),
+                activeTrackColor: Theme.of(
+                  context,
+                ).colorScheme.primary.withAlpha(128),
               ),
             ],
           ),

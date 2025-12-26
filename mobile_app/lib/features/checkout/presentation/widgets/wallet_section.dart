@@ -64,7 +64,7 @@ class WalletSection extends StatelessWidget {
           Switch(
             value: isEnabled,
             onChanged: onToggle,
-            activeColor: primaryBlue,
+            thumbColor: WidgetStatePropertyAll(isEnabled ? primaryBlue : null),
             activeTrackColor: primaryBlue.withAlpha(128),
           ),
         ],
