@@ -541,6 +541,372 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Must contain 8+ chars'**
   String get passwordStrengthHint;
+
+  /// No description provided for @myCart.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cart'**
+  String get myCart;
+
+  /// No description provided for @emptyCartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty'**
+  String get emptyCartTitle;
+
+  /// No description provided for @emptyCartSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks like you haven\'t added anything to your cart yet.'**
+  String get emptyCartSubtitle;
+
+  /// No description provided for @startShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Shopping'**
+  String get startShopping;
+
+  /// No description provided for @couponApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon applied!'**
+  String get couponApplied;
+
+  /// No description provided for @invalidCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid coupon'**
+  String get invalidCoupon;
+
+  /// No description provided for @freeShippingUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 Free shipping unlocked!'**
+  String get freeShippingUnlocked;
+
+  /// No description provided for @savedForLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved for Later'**
+  String get savedForLater;
+
+  /// No description provided for @youMayAlsoLike.
+  ///
+  /// In en, this message translates to:
+  /// **'You May Also Like'**
+  String get youMayAlsoLike;
+
+  /// No description provided for @orderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Summary'**
+  String get orderSummary;
+
+  /// No description provided for @proceedToCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed to Checkout'**
+  String get proceedToCheckout;
+
+  /// No description provided for @tax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get tax;
+
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
+  /// No description provided for @applyCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Coupon'**
+  String get applyCoupon;
+
+  /// No description provided for @removeCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeCoupon;
+
+  /// No description provided for @totalSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Savings'**
+  String get totalSavings;
+
+  /// No description provided for @removeFromCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Cart'**
+  String get removeFromCart;
+
+  /// No description provided for @moveToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Wishlist'**
+  String get moveToWishlist;
+
+  /// No description provided for @itemRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Item removed from cart'**
+  String get itemRemoved;
+
+  /// No description provided for @quantityUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity updated'**
+  String get quantityUpdated;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
+
+  /// No description provided for @selectPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Payment Method'**
+  String get selectPaymentMethod;
+
+  /// No description provided for @savedCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Cards'**
+  String get savedCards;
+
+  /// No description provided for @addNewCard.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add New Card'**
+  String get addNewCard;
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
+  /// No description provided for @walletBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet Balance'**
+  String get walletBalance;
+
+  /// No description provided for @useWalletBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Use wallet balance'**
+  String get useWalletBalance;
+
+  /// No description provided for @billingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Address'**
+  String get billingAddress;
+
+  /// No description provided for @sameAsShipping.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as shipping address'**
+  String get sameAsShipping;
+
+  /// No description provided for @addPromoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Gift Card or Promo Code'**
+  String get addPromoCode;
+
+  /// No description provided for @continueToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Review'**
+  String get continueToReview;
+
+  /// No description provided for @upi.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI'**
+  String get upi;
+
+  /// No description provided for @netBanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Banking'**
+  String get netBanking;
+
+  /// No description provided for @cashOnDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash on Delivery'**
+  String get cashOnDelivery;
+
+  /// No description provided for @orderTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Total'**
+  String get orderTotal;
+
+  /// No description provided for @shippingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipping Address'**
+  String get shippingAddress;
+
+  /// No description provided for @deliveryOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Options'**
+  String get deliveryOptions;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @specifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Specifications'**
+  String get specifications;
+
+  /// No description provided for @reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviews;
+
+  /// No description provided for @addToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Wishlist'**
+  String get addToWishlist;
+
+  /// No description provided for @removeFromWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Wishlist'**
+  String get removeFromWishlist;
+
+  /// No description provided for @addedToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to wishlist'**
+  String get addedToWishlist;
+
+  /// No description provided for @removedFromWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from wishlist'**
+  String get removedFromWishlist;
+
+  /// No description provided for @checkDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Delivery'**
+  String get checkDelivery;
+
+  /// No description provided for @enterPincode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Pincode'**
+  String get enterPincode;
+
+  /// No description provided for @checkAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get checkAvailability;
+
+  /// No description provided for @selectColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Color'**
+  String get selectColor;
+
+  /// No description provided for @selectSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Size'**
+  String get selectSize;
+
+  /// No description provided for @outOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Stock'**
+  String get outOfStock;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {count} left!'**
+  String lowStock(Object count);
+
+  /// No description provided for @inStock.
+  ///
+  /// In en, this message translates to:
+  /// **'In Stock'**
+  String get inStock;
+
+  /// No description provided for @productAddedToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to cart'**
+  String get productAddedToCart;
+
+  /// No description provided for @viewCart.
+  ///
+  /// In en, this message translates to:
+  /// **'View Cart'**
+  String get viewCart;
+
+  /// No description provided for @shareProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareProduct;
+
+  /// No description provided for @seeAllReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'See All Reviews'**
+  String get seeAllReviews;
+
+  /// No description provided for @writeReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a Review'**
+  String get writeReview;
+
+  /// No description provided for @ratingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ratings'**
+  String ratingCount(Object count);
+
+  /// No description provided for @verified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get verified;
+
+  /// No description provided for @offers.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers'**
+  String get offers;
+
+  /// No description provided for @deliveryInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Info'**
+  String get deliveryInfo;
 }
 
 class _AppLocalizationsDelegate

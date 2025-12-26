@@ -232,4 +232,192 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordStrengthHint => 'Must contain 8+ chars';
+
+  @override
+  String get myCart => 'My Cart';
+
+  @override
+  String get emptyCartTitle => 'Your cart is empty';
+
+  @override
+  String get emptyCartSubtitle =>
+      'Looks like you haven\'t added anything to your cart yet.';
+
+  @override
+  String get startShopping => 'Start Shopping';
+
+  @override
+  String get couponApplied => 'Coupon applied!';
+
+  @override
+  String get invalidCoupon => 'Invalid coupon';
+
+  @override
+  String get freeShippingUnlocked => '🎉 Free shipping unlocked!';
+
+  @override
+  String get savedForLater => 'Saved for Later';
+
+  @override
+  String get youMayAlsoLike => 'You May Also Like';
+
+  @override
+  String get orderSummary => 'Order Summary';
+
+  @override
+  String get proceedToCheckout => 'Proceed to Checkout';
+
+  @override
+  String get tax => 'Tax';
+
+  @override
+  String get discount => 'Discount';
+
+  @override
+  String get applyCoupon => 'Apply Coupon';
+
+  @override
+  String get removeCoupon => 'Remove';
+
+  @override
+  String get totalSavings => 'Total Savings';
+
+  @override
+  String get removeFromCart => 'Remove from Cart';
+
+  @override
+  String get moveToWishlist => 'Move to Wishlist';
+
+  @override
+  String get itemRemoved => 'Item removed from cart';
+
+  @override
+  String get quantityUpdated => 'Quantity updated';
+
+  @override
+  String get payment => 'Payment';
+
+  @override
+  String get selectPaymentMethod => 'Select Payment Method';
+
+  @override
+  String get savedCards => 'Saved Cards';
+
+  @override
+  String get addNewCard => '+ Add New Card';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
+  String get walletBalance => 'Wallet Balance';
+
+  @override
+  String get useWalletBalance => 'Use wallet balance';
+
+  @override
+  String get billingAddress => 'Billing Address';
+
+  @override
+  String get sameAsShipping => 'Same as shipping address';
+
+  @override
+  String get addPromoCode => 'Add Gift Card or Promo Code';
+
+  @override
+  String get continueToReview => 'Continue to Review';
+
+  @override
+  String get upi => 'UPI';
+
+  @override
+  String get netBanking => 'Net Banking';
+
+  @override
+  String get cashOnDelivery => 'Cash on Delivery';
+
+  @override
+  String get orderTotal => 'Order Total';
+
+  @override
+  String get shippingAddress => 'Shipping Address';
+
+  @override
+  String get deliveryOptions => 'Delivery Options';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get specifications => 'Specifications';
+
+  @override
+  String get reviews => 'Reviews';
+
+  @override
+  String get addToWishlist => 'Add to Wishlist';
+
+  @override
+  String get removeFromWishlist => 'Remove from Wishlist';
+
+  @override
+  String get addedToWishlist => 'Added to wishlist';
+
+  @override
+  String get removedFromWishlist => 'Removed from wishlist';
+
+  @override
+  String get checkDelivery => 'Check Delivery';
+
+  @override
+  String get enterPincode => 'Enter Pincode';
+
+  @override
+  String get checkAvailability => 'Check';
+
+  @override
+  String get selectColor => 'Select Color';
+
+  @override
+  String get selectSize => 'Select Size';
+
+  @override
+  String get outOfStock => 'Out of Stock';
+
+  @override
+  String lowStock(Object count) {
+    return 'Only $count left!';
+  }
+
+  @override
+  String get inStock => 'In Stock';
+
+  @override
+  String get productAddedToCart => 'Added to cart';
+
+  @override
+  String get viewCart => 'View Cart';
+
+  @override
+  String get shareProduct => 'Share';
+
+  @override
+  String get seeAllReviews => 'See All Reviews';
+
+  @override
+  String get writeReview => 'Write a Review';
+
+  @override
+  String ratingCount(Object count) {
+    return '$count ratings';
+  }
+
+  @override
+  String get verified => 'Verified';
+
+  @override
+  String get offers => 'Offers';
+
+  @override
+  String get deliveryInfo => 'Delivery Info';
 }

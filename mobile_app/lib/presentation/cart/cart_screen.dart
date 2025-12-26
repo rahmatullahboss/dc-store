@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../features/cart/domain/cart_item_model.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 
@@ -61,6 +62,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   }
 
   void _applyCoupon() {
+    final l10n = AppLocalizations.of(context)!;
     final code = _couponController.text.trim().toUpperCase();
     if (code == 'SUMMER20' || code == 'SAVE10') {
       setState(() {
@@ -70,9 +72,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       toastification.show(
         context: context,
         type: ToastificationType.success,
-        title: const Text("Coupon applied!"),
+        title: Text(l10n.couponApplied),
         description: Text(
-          "\$${_discountAmount.toStringAsFixed(0)} discount applied",
+          "\$${_discountAmount.toStringAsFixed(0)} ${l10n.discount.toLowerCase()}",
         ),
         autoCloseDuration: const Duration(seconds: 2),
       );
@@ -80,7 +82,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       toastification.show(
         context: context,
         type: ToastificationType.error,
-        title: const Text("Invalid coupon"),
+        title: Text(l10n.invalidCoupon),
         autoCloseDuration: const Duration(seconds: 2),
       );
     }

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 import '../../cart/presentation/providers/cart_provider.dart';
 import 'widgets/checkout_step_indicator.dart';
@@ -100,13 +101,18 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   icon: Icon(LucideIcons.arrowLeft, color: textColor),
                 ),
                 centerTitle: true,
-                title: Text(
-                  'Checkout',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                title: Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return Text(
+                      l10n.checkout,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                    );
+                  },
                 ),
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(1),
