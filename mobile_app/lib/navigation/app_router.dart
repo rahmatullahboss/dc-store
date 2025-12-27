@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'app_routes.dart';
 import 'app_transitions.dart';
 import 'route_guards.dart';
 import 'navigation_service.dart';
 import '../core/config/white_label_config.dart';
+import '../features/cart/presentation/providers/cart_provider.dart';
 import '../services/storage_service.dart';
 
 // Layout
@@ -606,15 +608,14 @@ class _MainShellScaffold extends StatelessWidget {
   }
 }
 
-class _CartBadge extends StatelessWidget {
+class _CartBadge extends ConsumerWidget {
   final bool selected;
 
   const _CartBadge({required this.selected});
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: Get cart count from CartCubit
-    const cartCount = 0;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartCount = ref.watch(cartItemCountProvider);
 
     return Badge(
       isLabelVisible: cartCount > 0,
