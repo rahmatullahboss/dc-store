@@ -194,10 +194,10 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
             <Button 
               size="lg"
-              className="flex-1 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
+              className="w-full sm:flex-1 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
               asChild
             >
               <Link href="/orders">
@@ -207,7 +207,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
             <Button 
               size="lg"
               variant="outline"
-              className="flex-1 rounded-full"
+              className="w-full sm:flex-1 rounded-full"
               asChild
             >
               <Link href="/">
