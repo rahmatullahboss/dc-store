@@ -106,7 +106,7 @@ export default function AdminProductsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-white">Products</h1>
-        <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
+        <Button asChild className="bg-primary hover:bg-amber-600 text-black">
           <Link href="/admin/products/new">
             <Plus className="h-4 w-4 mr-2" />
             Add Product
@@ -135,7 +135,7 @@ export default function AdminProductsPage() {
           <div className="p-8 text-center">
             <Package className="h-12 w-12 mx-auto text-slate-600 mb-3" />
             <p className="text-slate-400">No products found</p>
-            <Button asChild className="mt-4 bg-amber-500 hover:bg-amber-600 text-black">
+            <Button asChild className="mt-4 bg-primary hover:bg-amber-600 text-black">
               <Link href="/admin/products/new">Add Your First Product</Link>
             </Button>
           </div>

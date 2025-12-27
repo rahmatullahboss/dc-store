@@ -158,7 +158,7 @@ export default function NewProductPage() {
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !formData.name || !formData.price}
-          className="bg-amber-500 hover:bg-amber-600 text-black"
+          className="bg-primary hover:bg-amber-600 text-black"
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />

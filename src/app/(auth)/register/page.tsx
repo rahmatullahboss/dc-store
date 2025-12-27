@@ -89,7 +89,7 @@ function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -100,9 +100,9 @@ function RegisterForm() {
         {/* Left side - Branding (hidden on mobile) */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-rose-500 to-amber-500 p-12 items-center justify-center relative overflow-hidden">
           {/* Decorative circles */}
-          <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
-          <div className="absolute bottom-20 right-10 w-48 h-48 bg-white/10 rounded-full blur-xl" />
-          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+          <div className="absolute top-20 left-10 w-32 h-32 bg-card/10 rounded-full blur-xl" />
+          <div className="absolute bottom-20 right-10 w-48 h-48 bg-card/10 rounded-full blur-xl" />
+          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-card/10 rounded-full blur-xl" />
 
           <div className="relative z-10 text-center text-white">
             <h1 className="text-5xl font-bold mb-4">{siteConfig.name}</h1>
@@ -110,9 +110,9 @@ function RegisterForm() {
               Join us today! Create an account to enjoy exclusive deals, fast checkout, and order tracking.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <span className="bg-white/20 px-4 py-2 rounded-full text-sm">🎁 Welcome Bonus</span>
-              <span className="bg-white/20 px-4 py-2 rounded-full text-sm">🛒 Cart Sync</span>
-              <span className="bg-white/20 px-4 py-2 rounded-full text-sm">📱 Easy Access</span>
+              <span className="bg-card/20 px-4 py-2 rounded-full text-sm">🎁 Welcome Bonus</span>
+              <span className="bg-card/20 px-4 py-2 rounded-full text-sm">🛒 Cart Sync</span>
+              <span className="bg-card/20 px-4 py-2 rounded-full text-sm">📱 Easy Access</span>
             </div>
           </div>
         </div>
@@ -129,15 +129,15 @@ function RegisterForm() {
 
             <div className="text-center space-y-1">
               <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link href="/login" className="font-medium text-amber-600 hover:text-amber-500">
+                <Link href="/login" className="font-medium text-primary hover:text-primary">
                   Sign in
                 </Link>
               </p>
             </div>
 
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur">
+            <Card className="border-0 shadow-xl bg-card/80 backdrop-blur">
               <CardHeader>
                 <CardTitle>Get Started</CardTitle>
                 <CardDescription>Fill in your details to create an account</CardDescription>
@@ -151,11 +151,11 @@ function RegisterForm() {
                   )}
 
                   <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="name" className="text-sm font-medium text-foreground">
                       Full Name
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="name"
                         name="name"
@@ -170,11 +170,11 @@ function RegisterForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="email" className="text-sm font-medium text-foreground">
                       Email address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="email"
                         name="email"
@@ -189,11 +189,11 @@ function RegisterForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="phone" className="text-sm font-medium text-foreground">
                       Phone Number (Optional)
                     </label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="phone"
                         name="phone"
@@ -207,11 +207,11 @@ function RegisterForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="password" className="text-sm font-medium text-foreground">
                       Password
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="password"
                         name="password"
@@ -223,15 +223,15 @@ function RegisterForm() {
                         className="pl-10"
                       />
                     </div>
-                    <p className="text-xs text-gray-500">Must be at least 8 characters</p>
+                    <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
                       Confirm Password
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="confirmPassword"
                         name="confirmPassword"
@@ -247,7 +247,7 @@ function RegisterForm() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white"
+                    className="w-full bg-primary hover:from-amber-600 hover:to-rose-600 text-white"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -266,7 +266,7 @@ function RegisterForm() {
                       <span className="w-full border-t" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                      <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
                     </div>
                   </div>
 
@@ -298,13 +298,13 @@ function RegisterForm() {
                     Continue with Google
                   </Button>
 
-                  <p className="text-xs text-center text-gray-500">
+                  <p className="text-xs text-center text-muted-foreground">
                     By creating an account, you agree to our{" "}
-                    <Link href="/terms" className="text-amber-600 hover:underline">
+                    <Link href="/terms" className="text-primary hover:underline">
                       Terms of Service
                     </Link>{" "}
                     and{" "}
-                    <Link href="/privacy" className="text-amber-600 hover:underline">
+                    <Link href="/privacy" className="text-primary hover:underline">
                       Privacy Policy
                     </Link>
                   </p>
@@ -314,7 +314,7 @@ function RegisterForm() {
 
             {/* Back to Home */}
             <div className="text-center">
-              <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 inline-flex items-center gap-1">
+              <Link href="/" className="text-sm text-muted-foreground hover:text-gray-900 inline-flex items-center gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back to home
               </Link>
@@ -329,17 +329,17 @@ function RegisterForm() {
 // Loading skeleton
 function RegisterSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="max-w-md w-full p-6 space-y-6">
         <div className="text-center space-y-2">
           <div className="h-8 w-64 bg-gray-200 rounded-lg mx-auto animate-pulse" />
-          <div className="h-4 w-48 bg-gray-100 rounded-lg mx-auto animate-pulse" />
+          <div className="h-4 w-48 bg-muted rounded-lg mx-auto animate-pulse" />
         </div>
-        <div className="bg-white rounded-lg border p-6 space-y-4">
+        <div className="bg-card rounded-lg border p-6 space-y-4">
           <div className="h-6 w-32 bg-gray-200 rounded animate-pulse" />
-          <div className="h-10 w-full bg-gray-100 rounded-md animate-pulse" />
-          <div className="h-10 w-full bg-gray-100 rounded-md animate-pulse" />
-          <div className="h-10 w-full bg-gray-100 rounded-md animate-pulse" />
+          <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
+          <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
+          <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
           <div className="h-10 w-full bg-gray-200 rounded-md animate-pulse" />
         </div>
       </div>

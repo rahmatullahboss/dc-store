@@ -37,14 +37,14 @@ const statusColors: Record<string, string> = {
   shipped: "bg-cyan-500/20 text-cyan-400",
   delivered: "bg-green-500/20 text-green-400",
   cancelled: "bg-red-500/20 text-red-400",
-  refunded: "bg-gray-500/20 text-gray-400",
+  refunded: "bg-muted0/20 text-muted-foreground",
 };
 
 const paymentColors: Record<string, string> = {
   pending: "text-yellow-400",
   paid: "text-green-400",
   failed: "text-red-400",
-  refunded: "text-gray-400",
+  refunded: "text-muted-foreground",
 };
 
 export default function AdminOrdersPage() {
@@ -95,7 +95,7 @@ export default function AdminOrdersPage() {
             className={cn(
               "px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
               activeTab === tab.value
-                ? "bg-amber-500 text-black"
+                ? "bg-primary text-black"
                 : "bg-slate-800 text-slate-400 hover:text-white"
             )}
           >

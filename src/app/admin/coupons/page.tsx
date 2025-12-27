@@ -80,7 +80,7 @@ export default function AdminCouponsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Coupons</h1>
-        <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
+        <Button asChild className="bg-primary hover:bg-amber-600 text-black">
           <Link href="/admin/coupons/new">
             <Plus className="h-4 w-4 mr-2" />
             Add Coupon

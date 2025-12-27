@@ -19,7 +19,7 @@ const statusColors: Record<string, string> = {
   shipped: "bg-purple-100 text-purple-700",
   delivered: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
-  refunded: "bg-gray-100 text-gray-700",
+  refunded: "bg-muted text-foreground",
 };
 
 interface UserProfile {
@@ -160,8 +160,8 @@ export default function ProfilePage() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -262,7 +262,7 @@ export default function ProfilePage() {
             <CardContent className="pt-6 text-center">
               <Package className="h-8 w-8 mx-auto text-primary mb-2" />
               {isLoadingProfile ? (
-                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-muted-foreground" />
               ) : (
                 <p className="text-2xl font-bold text-foreground">{stats.orderCount}</p>
               )}
@@ -273,7 +273,7 @@ export default function ProfilePage() {
             <CardContent className="pt-6 text-center">
               <Heart className="h-8 w-8 mx-auto text-primary mb-2" />
               {isLoadingProfile ? (
-                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-muted-foreground" />
               ) : (
                 <p className="text-2xl font-bold text-foreground">{stats.wishlistCount}</p>
               )}
@@ -286,7 +286,7 @@ export default function ProfilePage() {
                 <span className="text-green-600 font-bold">৳</span>
               </div>
               {isLoadingProfile ? (
-                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-muted-foreground" />
               ) : (
                 <p className="text-2xl font-bold text-foreground">
                   {stats.totalSpent.toLocaleString()}
@@ -301,7 +301,7 @@ export default function ProfilePage() {
                 <span className="text-purple-600 font-bold">🎁</span>
               </div>
               {isLoadingProfile ? (
-                <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
+                <Loader2 className="h-6 w-6 mx-auto animate-spin text-muted-foreground" />
               ) : (
                 <p className="text-2xl font-bold text-foreground">{stats.rewardPoints}</p>
               )}
@@ -331,13 +331,13 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                     <Mail className="h-4 w-4" /> Email
                   </label>
                   <Input value={user.email || ""} disabled className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                     <Phone className="h-4 w-4" /> Phone
                   </label>
                   <Input 
@@ -349,7 +349,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 flex items-center gap-1">
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                     <MapPin className="h-4 w-4" /> Address
                   </label>
                   <Input 

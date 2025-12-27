@@ -12,11 +12,11 @@ import type { Order, OrderItem } from "@/db/schema";
 const statusConfig: Record<string, { label: string; icon: typeof Package; color: string }> = {
   pending: { label: "Order Placed", icon: Package, color: "text-blue-500" },
   confirmed: { label: "Confirmed", icon: CheckCircle, color: "text-green-500" },
-  processing: { label: "Processing", icon: Clock, color: "text-amber-500" },
+  processing: { label: "Processing", icon: Clock, color: "text-primary" },
   shipped: { label: "Shipped", icon: Truck, color: "text-purple-500" },
   delivered: { label: "Delivered", icon: CheckCircle, color: "text-green-600" },
   cancelled: { label: "Cancelled", icon: Package, color: "text-red-500" },
-  refunded: { label: "Refunded", icon: Package, color: "text-gray-500" },
+  refunded: { label: "Refunded", icon: Package, color: "text-muted-foreground" },
 };
 
 // Timeline status order
@@ -70,7 +70,7 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -80,21 +80,21 @@ export default function TrackOrderPage() {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-rose-500 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
             <Truck className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Track Your Order</h1>
-          <p className="text-gray-500 max-w-md mx-auto">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Track Your Order</h1>
+          <p className="text-muted-foreground max-w-md mx-auto">
             Enter your order number to track the status of your delivery
           </p>
         </div>
 
         {/* Search Form */}
-        <Card className="max-w-xl mx-auto mb-8 bg-white/80 backdrop-blur">
+        <Card className="max-w-xl mx-auto mb-8 bg-card/80 backdrop-blur">
           <CardContent className="pt-6">
             <form onSubmit={handleSearch} className="flex gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Enter order number (e.g., ORD-2024-001)"
                   value={orderNumber}
@@ -104,7 +104,7 @@ export default function TrackOrderPage() {
               </div>
               <Button
                 type="submit"
-                className="bg-gradient-to-r from-amber-500 to-rose-500 text-white"
+                className="bg-primary text-white"
                 disabled={isSearching}
               >
                 {isSearching ? (
@@ -124,7 +124,7 @@ export default function TrackOrderPage() {
         {foundOrder && (
           <div className="max-w-4xl mx-auto space-y-6">
             {/* Order Status */}
-            <Card className="bg-white/80 backdrop-blur">
+            <Card className="bg-card/80 backdrop-blur">
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
@@ -153,11 +153,11 @@ export default function TrackOrderPage() {
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center ${
                               step.completed
-                                ? "bg-gradient-to-r from-amber-500 to-rose-500"
+                                ? "bg-primary"
                                 : "bg-gray-200"
                             }`}
                           >
-                            <Icon className={`w-5 h-5 ${step.completed ? "text-white" : "text-gray-400"}`} />
+                            <Icon className={`w-5 h-5 ${step.completed ? "text-white" : "text-muted-foreground"}`} />
                           </div>
                           {/* Line */}
                           {!isLast && (
@@ -171,15 +171,15 @@ export default function TrackOrderPage() {
 
                         {/* Content */}
                         <div className="flex-1 pb-4">
-                          <p className={`font-medium ${step.completed ? "text-gray-800" : "text-gray-400"}`}>
+                          <p className={`font-medium ${step.completed ? "text-foreground" : "text-muted-foreground"}`}>
                             {config.label}
                           </p>
                           {step.completed && step.date ? (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                               {new Date(step.date).toLocaleDateString()}
                             </p>
                           ) : (
-                            <p className="text-sm text-gray-400">Pending</p>
+                            <p className="text-sm text-muted-foreground">Pending</p>
                           )}
                         </div>
                       </div>
@@ -192,10 +192,10 @@ export default function TrackOrderPage() {
             {/* Order Summary & Shipping */}
             <div className="grid md:grid-cols-2 gap-6">
               {/* Items */}
-              <Card className="bg-white/80 backdrop-blur">
+              <Card className="bg-card/80 backdrop-blur">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Package className="h-5 w-5 text-amber-500" />
+                    <Package className="h-5 w-5 text-primary" />
                     Order Items
                   </CardTitle>
                 </CardHeader>
@@ -203,7 +203,7 @@ export default function TrackOrderPage() {
                   <div className="space-y-3">
                     {(foundOrder.items as OrderItem[])?.map((item, index) => (
                       <div key={index} className="flex justify-between text-sm">
-                        <span className="text-gray-600">
+                        <span className="text-muted-foreground">
                           {item.name} × {item.quantity}
                         </span>
                         <span className="font-medium">৳{item.price.toLocaleString()}</span>
@@ -211,11 +211,11 @@ export default function TrackOrderPage() {
                     ))}
                     <div className="border-t pt-3 mt-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Subtotal</span>
+                        <span className="text-muted-foreground">Subtotal</span>
                         <span>৳{foundOrder.subtotal.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Shipping</span>
+                        <span className="text-muted-foreground">Shipping</span>
                         <span>৳{foundOrder.shippingCost?.toLocaleString() || 0}</span>
                       </div>
                       {foundOrder.discount && foundOrder.discount > 0 && (
@@ -234,16 +234,16 @@ export default function TrackOrderPage() {
               </Card>
 
               {/* Shipping Address */}
-              <Card className="bg-white/80 backdrop-blur">
+              <Card className="bg-card/80 backdrop-blur">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-amber-500" />
+                    <MapPin className="h-5 w-5 text-primary" />
                     Shipping Address
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <p className="font-medium text-gray-800">{foundOrder.customerName}</p>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground">{foundOrder.customerName}</p>
                     {foundOrder.shippingAddress && (
                       <>
                         <p>{(foundOrder.shippingAddress as { address?: string }).address}</p>
@@ -265,7 +265,7 @@ export default function TrackOrderPage() {
                 </Button>
               </Link>
               <Link href="/products">
-                <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white gap-2">
+                <Button className="bg-primary text-white gap-2">
                   Continue Shopping
                 </Button>
               </Link>

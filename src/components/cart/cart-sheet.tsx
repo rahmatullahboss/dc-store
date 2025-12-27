@@ -116,7 +116,7 @@ export function CartSheet() {
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <p className="font-semibold text-amber-600">
+                        <p className="font-semibold text-primary">
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
@@ -126,10 +126,10 @@ export function CartSheet() {
               </ul>
             </div>
 
-            <div className="space-y-4 p-4 border-t bg-gray-50/50">
+            <div className="space-y-4 p-4 border-t bg-muted/50">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Subtotal</span>
-                <span className="text-amber-600">{formatPrice(subtotal)}</span>
+                <span className="text-primary">{formatPrice(subtotal)}</span>
               </div>
               <p className="text-sm text-muted-foreground text-center">
                 Shipping and taxes calculated at checkout

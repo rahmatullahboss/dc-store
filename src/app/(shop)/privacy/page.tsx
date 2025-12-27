@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -26,20 +26,20 @@ export default function PrivacyPage() {
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-amber-600 mb-4"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-4"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-lg text-white">
+            <div className="p-2 bg-primary rounded-lg text-white">
               <Shield className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Privacy Policy</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Privacy Policy</h1>
           </div>
-          <p className="text-gray-500">Last updated: December 24, 2024</p>
+          <p className="text-muted-foreground">Last updated: December 24, 2024</p>
         </div>
 
-        <Card className="bg-white/80 backdrop-blur">
+        <Card className="bg-card/80 backdrop-blur">
           <CardContent className="p-6 sm:p-10 prose prose-gray max-w-none">
             <h2>1. Information We Collect</h2>
             <p>

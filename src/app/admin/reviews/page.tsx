@@ -87,7 +87,7 @@ export default function AdminReviewsPage() {
             className={cn(
               "px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors",
               filter === tab
-                ? "bg-amber-500 text-black"
+                ? "bg-primary text-black"
                 : "bg-slate-800 text-slate-400 hover:text-white"
             )}
           >

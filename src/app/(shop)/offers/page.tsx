@@ -101,14 +101,14 @@ export default function OffersPage() {
   const promoBanners = demoOffers.filter((o) => o.type === "promo_banner");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 rounded-2xl p-8 md:p-12 mb-8 text-white relative overflow-hidden">
+        <div className="bg-primary rounded-2xl p-8 md:p-12 mb-8 text-white relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-card/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-card/10 rounded-full blur-3xl" />
           </div>
           
           <div className="relative z-10">
@@ -117,16 +117,16 @@ export default function OffersPage() {
               Discover amazing discounts on your favorite products. Limited time offers you don&apos;t want to miss!
             </p>
             <div className="flex flex-wrap gap-2">
-              <Badge className="bg-white/20 text-white border-0 text-sm px-4 py-1">
+              <Badge className="bg-card/20 text-white border-0 text-sm px-4 py-1">
                 ⚡ Flash Sales
               </Badge>
-              <Badge className="bg-white/20 text-white border-0 text-sm px-4 py-1">
+              <Badge className="bg-card/20 text-white border-0 text-sm px-4 py-1">
                 🎁 BOGO Deals
               </Badge>
-              <Badge className="bg-white/20 text-white border-0 text-sm px-4 py-1">
+              <Badge className="bg-card/20 text-white border-0 text-sm px-4 py-1">
                 📦 Bundle Savings
               </Badge>
-              <Badge className="bg-white/20 text-white border-0 text-sm px-4 py-1">
+              <Badge className="bg-card/20 text-white border-0 text-sm px-4 py-1">
                 🚚 Free Shipping
               </Badge>
             </div>
@@ -141,8 +141,8 @@ export default function OffersPage() {
                 <Zap className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">⚡ Flash Sales</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-xl font-bold text-foreground">⚡ Flash Sales</h2>
+                <p className="text-sm text-muted-foreground">
                   Limited time offers - grab them before they&apos;re gone!
                 </p>
               </div>
@@ -164,8 +164,8 @@ export default function OffersPage() {
                 <Gift className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">🎁 Buy & Get Free</h2>
-                <p className="text-sm text-gray-500">Buy more, save more with our BOGO deals</p>
+                <h2 className="text-xl font-bold text-foreground">🎁 Buy & Get Free</h2>
+                <p className="text-sm text-muted-foreground">Buy more, save more with our BOGO deals</p>
               </div>
             </div>
 
@@ -185,8 +185,8 @@ export default function OffersPage() {
                 <Tag className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">🏷️ Category Sales</h2>
-                <p className="text-sm text-gray-500">Entire categories on discount!</p>
+                <h2 className="text-xl font-bold text-foreground">🏷️ Category Sales</h2>
+                <p className="text-sm text-muted-foreground">Entire categories on discount!</p>
               </div>
             </div>
 
@@ -206,8 +206,8 @@ export default function OffersPage() {
                 <Package className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">📦 Bundle Deals</h2>
-                <p className="text-sm text-gray-500">Buy together and save big!</p>
+                <h2 className="text-xl font-bold text-foreground">📦 Bundle Deals</h2>
+                <p className="text-sm text-muted-foreground">Buy together and save big!</p>
               </div>
             </div>
 
@@ -223,12 +223,12 @@ export default function OffersPage() {
         {freeShipping.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-amber-500 rounded-lg text-white">
+              <div className="p-2 bg-primary rounded-lg text-white">
                 <Truck className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">🚚 Free Shipping</h2>
-                <p className="text-sm text-gray-500">No delivery charges on these offers</p>
+                <h2 className="text-xl font-bold text-foreground">🚚 Free Shipping</h2>
+                <p className="text-sm text-muted-foreground">No delivery charges on these offers</p>
               </div>
             </div>
 
@@ -248,8 +248,8 @@ export default function OffersPage() {
                 <Percent className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">🎯 Special Promotions</h2>
-                <p className="text-sm text-gray-500">Exclusive deals and promo codes</p>
+                <h2 className="text-xl font-bold text-foreground">🎯 Special Promotions</h2>
+                <p className="text-sm text-muted-foreground">Exclusive deals and promo codes</p>
               </div>
             </div>
 
@@ -263,14 +263,14 @@ export default function OffersPage() {
 
         {/* No offers fallback */}
         {demoOffers.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Gift className="w-10 h-10 text-gray-400" />
+          <div className="text-center py-16 bg-card rounded-xl shadow-sm">
+            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Gift className="w-10 h-10 text-muted-foreground" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">No Active Offers</h2>
-            <p className="text-gray-500 mb-6">Check back soon for amazing deals!</p>
+            <h2 className="text-xl font-semibold text-foreground mb-2">No Active Offers</h2>
+            <p className="text-muted-foreground mb-6">Check back soon for amazing deals!</p>
             <Link href="/products">
-              <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+              <Button className="bg-primary text-white">
                 Browse Products
               </Button>
             </Link>
@@ -282,7 +282,7 @@ export default function OffersPage() {
           <Link href="/products">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full px-8 gap-2"
+              className="bg-primary hover:from-amber-600 hover:to-rose-600 text-white rounded-full px-8 gap-2"
             >
               View All Products
               <ArrowRight className="w-4 h-4" />

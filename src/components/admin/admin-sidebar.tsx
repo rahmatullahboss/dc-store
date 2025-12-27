@@ -91,7 +91,7 @@ export function AdminSidebar({ isCollapsed, onToggle }: AdminSidebarProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors",
                   isActive
-                    ? "bg-amber-500/20 text-amber-400"
+                    ? "bg-primary/20 text-amber-400"
                     : "text-slate-400 hover:text-white hover:bg-slate-800",
                   isCollapsed && "justify-center"
                 )}

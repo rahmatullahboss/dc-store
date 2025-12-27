@@ -147,7 +147,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -158,7 +158,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Back Button */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-amber-600 mb-6"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Blog
         </Link>
@@ -176,18 +176,18 @@ export default async function BlogPostPage({ params }: PageProps) {
                 priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <Badge className="absolute top-4 left-4 bg-white/90 text-gray-700">
+              <Badge className="absolute top-4 left-4 bg-card/90 text-foreground">
                 {post.category}
               </Badge>
             </div>
 
             {/* Article Header */}
             <header className="mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 {post.title}
               </h1>
               
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
                 <div className="flex items-center gap-2">
                   <Image
                     src={post.authorImage}
@@ -217,15 +217,15 @@ export default async function BlogPostPage({ params }: PageProps) {
             </header>
 
             {/* Article Content */}
-            <Card className="bg-white/80 backdrop-blur mb-8">
+            <Card className="bg-card/80 backdrop-blur mb-8">
               <CardContent className="p-6 sm:p-10 prose prose-gray max-w-none">
                 <div dangerouslySetInnerHTML={{ __html: post.content.replace(/\n## /g, '<h2>').replace(/\n\n/g, '</p><p>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') }} />
               </CardContent>
             </Card>
 
             {/* Share Buttons */}
-            <div className="flex items-center gap-4 p-6 bg-white/80 backdrop-blur rounded-xl">
-              <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <div className="flex items-center gap-4 p-6 bg-card/80 backdrop-blur rounded-xl">
+              <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <Share2 className="w-4 h-4" /> Share this article:
               </span>
               <Button variant="outline" size="sm" className="gap-2">
@@ -240,7 +240,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Sidebar */}
           <aside className="space-y-6">
             {/* Author Card */}
-            <Card className="bg-white/80 backdrop-blur">
+            <Card className="bg-card/80 backdrop-blur">
               <CardContent className="p-6 text-center">
                 <Image
                   src={post.authorImage}
@@ -249,8 +249,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                   height={80}
                   className="rounded-full mx-auto mb-4"
                 />
-                <h3 className="font-bold text-gray-800">{post.author}</h3>
-                <p className="text-sm text-gray-500 mb-4">Content Writer</p>
+                <h3 className="font-bold text-foreground">{post.author}</h3>
+                <p className="text-sm text-muted-foreground mb-4">Content Writer</p>
                 <Button variant="outline" size="sm" className="w-full">
                   View All Posts
                 </Button>
@@ -258,9 +258,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             </Card>
 
             {/* Related Posts */}
-            <Card className="bg-white/80 backdrop-blur">
+            <Card className="bg-card/80 backdrop-blur">
               <CardContent className="p-6">
-                <h3 className="font-bold text-gray-800 mb-4">Related Posts</h3>
+                <h3 className="font-bold text-foreground mb-4">Related Posts</h3>
                 <div className="space-y-4">
                   {relatedPosts.map((relatedPost) => (
                     <Link
@@ -276,7 +276,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                           className="object-cover"
                         />
                       </div>
-                      <h4 className="text-sm font-medium text-gray-700 group-hover:text-amber-600 transition-colors line-clamp-2">
+                      <h4 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
                         {relatedPost.title}
                       </h4>
                     </Link>
@@ -293,9 +293,9 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="w-full px-4 py-2 rounded-lg text-gray-800 text-sm mb-3"
+                  className="w-full px-4 py-2 rounded-lg text-foreground text-sm mb-3"
                 />
-                <Button className="w-full bg-white text-amber-600 hover:bg-gray-100">
+                <Button className="w-full bg-card text-primary hover:bg-muted">
                   Subscribe
                 </Button>
               </CardContent>

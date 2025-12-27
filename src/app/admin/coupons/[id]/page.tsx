@@ -135,7 +135,7 @@ export default function EditCouponPage({ params }: { params: Promise<{ id: strin
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -169,7 +169,7 @@ export default function EditCouponPage({ params }: { params: Promise<{ id: strin
           <Button
             onClick={handleSubmit}
             disabled={isSaving || !formData.code || !formData.discountValue}
-            className="bg-amber-500 hover:bg-amber-600 text-black"
+            className="bg-primary hover:bg-amber-600 text-black"
           >
             {isSaving ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />

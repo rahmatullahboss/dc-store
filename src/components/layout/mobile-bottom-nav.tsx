@@ -24,7 +24,7 @@ export function MobileBottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-lg md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border shadow-lg md:hidden">
       <div className="flex items-center justify-around h-16 px-2 max-w-lg mx-auto">
         {navItems.map((item) => {
           const isActive =
@@ -40,7 +40,7 @@ export function MobileBottomNav() {
                 "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all duration-200 relative",
                 isActive
                   ? "text-primary"
-                  : "text-gray-500 hover:text-gray-700 active:scale-95"
+                  : "text-muted-foreground hover:text-foreground active:scale-95"
               )}
             >
               <div className="relative">

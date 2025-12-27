@@ -146,7 +146,7 @@ export default function AdminSettingsPage() {
         <Button
           onClick={handleSave}
           disabled={isSaving}
-          className="bg-amber-500 hover:bg-amber-600 text-black"
+          className="bg-primary hover:bg-amber-600 text-black"
         >
           {isSaving ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />

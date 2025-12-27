@@ -17,7 +17,7 @@ const statusConfig = {
   shipped: { label: "Shipped", color: "bg-indigo-100 text-indigo-800", icon: Truck },
   delivered: { label: "Delivered", color: "bg-green-100 text-green-800", icon: CheckCircle },
   cancelled: { label: "Cancelled", color: "bg-red-100 text-red-800", icon: XCircle },
-  refunded: { label: "Refunded", color: "bg-gray-100 text-gray-800", icon: XCircle },
+  refunded: { label: "Refunded", color: "bg-muted text-foreground", icon: XCircle },
 };
 
 interface OrderItem {
@@ -79,8 +79,8 @@ export default function MyOrdersPage() {
 
   if (isSessionLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -90,15 +90,15 @@ export default function MyOrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
               My Orders
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Track and manage your orders
             </p>
           </div>
@@ -121,8 +121,8 @@ export default function MyOrdersPage() {
               variant={activeFilter === tab ? "default" : "outline"}
               className={`cursor-pointer whitespace-nowrap px-4 py-2 transition-all ${
                 activeFilter === tab
-                  ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0"
-                  : "hover:bg-gray-100"
+                  ? "bg-primary text-white border-0"
+                  : "hover:bg-muted"
               }`}
               onClick={() => setActiveFilter(tab)}
             >
@@ -138,20 +138,20 @@ export default function MyOrdersPage() {
 
         {/* Loading State */}
         {isLoading ? (
-          <div className="bg-white rounded-2xl p-12 shadow-lg border border-gray-100 text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-amber-500 mx-auto mb-4" />
-            <p className="text-gray-600">Loading your orders...</p>
+          <div className="bg-card rounded-2xl p-12 shadow-lg border border-border text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading your orders...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
           /* Empty State */
-          <div className="bg-white rounded-2xl p-12 shadow-lg border border-gray-100 text-center">
+          <div className="bg-card rounded-2xl p-12 shadow-lg border border-border text-center">
             <div className="p-6 bg-gradient-to-br from-amber-100 to-rose-100 rounded-full inline-block mb-6">
-              <ShoppingBag className="h-12 w-12 text-amber-600" />
+              <ShoppingBag className="h-12 w-12 text-primary" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">
+            <h2 className="text-xl font-bold text-foreground mb-2">
               {activeFilter === "All" ? "No orders yet" : `No ${activeFilter.toLowerCase()} orders`}
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               {activeFilter === "All" 
                 ? "Start shopping to see your orders here"
                 : `You don't have any orders with "${activeFilter}" status`
@@ -159,7 +159,7 @@ export default function MyOrdersPage() {
             </p>
             {activeFilter === "All" ? (
               <Button 
-                className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
+                className="bg-primary hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
                 asChild
               >
                 <Link href="/products">
@@ -187,11 +187,11 @@ export default function MyOrdersPage() {
               return (
                 <div
                   key={order.id}
-                  className="bg-white rounded-2xl p-4 md:p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
+                  className="bg-card rounded-2xl p-4 md:p-6 shadow-lg border border-border hover:shadow-xl transition-shadow"
                 >
                   <div className="flex flex-col md:flex-row gap-4">
                     {/* Order Image Preview */}
-                    <div className="relative h-20 w-20 md:h-24 md:w-24 flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden">
+                    <div className="relative h-20 w-20 md:h-24 md:w-24 flex-shrink-0 rounded-xl bg-muted overflow-hidden">
                       {firstItem?.image ? (
                         <Image
                           src={firstItem.image}
@@ -200,7 +200,7 @@ export default function MyOrdersPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-gray-400">
+                        <div className="flex h-full items-center justify-center text-muted-foreground">
                           <Package className="h-8 w-8" />
                         </div>
                       )}
@@ -215,10 +215,10 @@ export default function MyOrdersPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
                         <div>
-                          <h3 className="font-bold text-gray-800">
+                          <h3 className="font-bold text-foreground">
                             Order #{order.orderNumber}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-muted-foreground">
                             {new Date(order.createdAt).toLocaleDateString("en-US", {
                               year: "numeric",
                               month: "short",
@@ -232,22 +232,22 @@ export default function MyOrdersPage() {
                         </Badge>
                       </div>
 
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
                         <span>
-                          <strong className="text-gray-800">{itemCount}</strong> items
+                          <strong className="text-foreground">{itemCount}</strong> items
                         </span>
                         <span>
-                          Total: <strong className="text-amber-600">{formatPrice(order.total)}</strong>
+                          Total: <strong className="text-primary">{formatPrice(order.total)}</strong>
                         </span>
                         <span>
-                          Payment: <strong className="text-gray-800">
+                          Payment: <strong className="text-foreground">
                             {order.paymentMethod === "cod" ? "Cash on Delivery" : order.paymentMethod}
                           </strong>
                         </span>
                       </div>
 
                       {/* Items Preview */}
-                      <div className="text-sm text-gray-600 line-clamp-1">
+                      <div className="text-sm text-muted-foreground line-clamp-1">
                         {order.items?.map((item, i) => (
                           <span key={i}>
                             {item.name} x{item.quantity}
@@ -268,7 +268,7 @@ export default function MyOrdersPage() {
                       {order.status === "shipped" && (
                         <Button 
                           size="sm" 
-                          className="gap-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0"
+                          className="gap-2 bg-primary text-white border-0"
                           asChild
                         >
                           <Link href={`/track-order?order=${order.orderNumber}`}>
@@ -295,15 +295,15 @@ export default function MyOrdersPage() {
 
         {/* Order Count Summary */}
         {orders.length > 0 && (
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-6 text-center text-sm text-muted-foreground">
             Showing {filteredOrders.length} of {orders.length} orders
           </div>
         )}
 
         {/* Help Section */}
         <div className="mt-12 bg-gradient-to-r from-amber-50 to-rose-50 rounded-2xl p-6 md:p-8">
-          <h2 className="text-lg font-bold text-gray-800 mb-2">Need Help?</h2>
-          <p className="text-gray-600 mb-4">
+          <h2 className="text-lg font-bold text-foreground mb-2">Need Help?</h2>
+          <p className="text-muted-foreground mb-4">
             Have questions about your order? We&apos;re here to help!
           </p>
           <div className="flex flex-wrap gap-3">

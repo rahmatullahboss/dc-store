@@ -108,7 +108,7 @@ export default function AdminChatPage() {
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <MessageSquare className="h-6 w-6 text-amber-500" />
+          <MessageSquare className="h-6 w-6 text-primary" />
           Customer Chats
         </h1>
         <span className="text-sm text-slate-400">
@@ -233,7 +233,7 @@ export default function AdminChatPage() {
                         </span>
                       )}
                       {selectedConversation.userId && (
-                        <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded text-[10px]">
+                        <span className="px-1.5 py-0.5 bg-primary/20 text-amber-400 rounded text-[10px]">
                           Registered
                         </span>
                       )}

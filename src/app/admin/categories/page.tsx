@@ -116,7 +116,7 @@ export default function AdminCategoriesPage() {
         <h1 className="text-2xl font-bold text-white">Categories</h1>
         <Button
           onClick={() => setIsAdding(true)}
-          className="bg-amber-500 hover:bg-amber-600 text-black"
+          className="bg-primary hover:bg-amber-600 text-black"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Category
@@ -133,7 +133,7 @@ export default function AdminCategoriesPage() {
             className="bg-slate-800 border-slate-700 text-white"
             autoFocus
           />
-          <Button type="submit" className="bg-amber-500 hover:bg-amber-600 text-black">
+          <Button type="submit" className="bg-primary hover:bg-amber-600 text-black">
             Add
           </Button>
           <Button
@@ -181,7 +181,7 @@ export default function AdminCategoriesPage() {
                         className="bg-slate-700 border-slate-600 text-white"
                         autoFocus
                       />
-                      <Button type="submit" size="sm" className="bg-amber-500 text-black">
+                      <Button type="submit" size="sm" className="bg-primary text-black">
                         Save
                       </Button>
                       <Button

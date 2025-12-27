@@ -121,7 +121,7 @@ export default function FAQPage() {
   })).filter((category) => category.questions.length > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -131,13 +131,13 @@ export default function FAQPage() {
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-rose-500 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
             <HelpCircle className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
             Frequently Asked Questions
           </h1>
-          <p className="text-gray-500 max-w-lg mx-auto">
+          <p className="text-muted-foreground max-w-lg mx-auto">
             Find answers to common questions about orders, shipping, returns, and more.
           </p>
         </div>
@@ -145,12 +145,12 @@ export default function FAQPage() {
         {/* Search */}
         <div className="mb-10">
           <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               placeholder="Search for answers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 py-6 text-lg rounded-xl bg-white shadow-lg border-0"
+              className="pl-12 py-6 text-lg rounded-xl bg-card shadow-lg border-0"
             />
           </div>
         </div>
@@ -160,14 +160,14 @@ export default function FAQPage() {
           {filteredCategories.map((category) => {
             const IconComponent = category.icon;
             return (
-              <Card key={category.id} className="bg-white/80 backdrop-blur border-0 shadow-lg overflow-hidden">
+              <Card key={category.id} className="bg-card/80 backdrop-blur border-0 shadow-lg overflow-hidden">
                 {/* Category Header */}
                 <div className="bg-gradient-to-r from-amber-50 to-rose-50 px-6 py-4 border-b">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-lg text-white">
+                    <div className="p-2 bg-primary rounded-lg text-white">
                       <IconComponent className="w-5 h-5" />
                     </div>
-                    <h2 className="text-lg font-bold text-gray-800">{category.name}</h2>
+                    <h2 className="text-lg font-bold text-foreground">{category.name}</h2>
                   </div>
                 </div>
 
@@ -179,18 +179,18 @@ export default function FAQPage() {
                       <div key={index} className="border-b last:border-b-0">
                         <button
                           onClick={() => toggleItem(category.id, index)}
-                          className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                          className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-muted transition-colors"
                         >
-                          <span className="font-medium text-gray-700 pr-4">{item.question}</span>
+                          <span className="font-medium text-foreground pr-4">{item.question}</span>
                           <ChevronDown
-                            className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform ${
+                            className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform ${
                               isOpen ? "rotate-180" : ""
                             }`}
                           />
                         </button>
                         {isOpen && (
                           <div className="px-6 pb-4">
-                            <p className="text-gray-600 leading-relaxed">{item.answer}</p>
+                            <p className="text-muted-foreground leading-relaxed">{item.answer}</p>
                           </div>
                         )}
                       </div>
@@ -205,13 +205,13 @@ export default function FAQPage() {
         {/* No Results */}
         {filteredCategories.length === 0 && searchQuery && (
           <div className="text-center py-12">
-            <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No results found for &quot;{searchQuery}&quot;</p>
+            <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">No results found for &quot;{searchQuery}&quot;</p>
           </div>
         )}
 
         {/* Contact CTA */}
-        <Card className="mt-12 bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 text-white border-0">
+        <Card className="mt-12 bg-primary text-white border-0">
           <CardContent className="p-8 text-center">
             <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-80" />
             <h3 className="text-2xl font-bold mb-2">Still have questions?</h3>
@@ -219,7 +219,7 @@ export default function FAQPage() {
               Our support team is available 24/7 to help you with any questions.
             </p>
             <Link href="/contact">
-              <Button size="lg" className="bg-white text-amber-600 hover:bg-gray-100">
+              <Button size="lg" className="bg-card text-primary hover:bg-muted">
                 Contact Support
               </Button>
             </Link>

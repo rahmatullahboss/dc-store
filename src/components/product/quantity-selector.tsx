@@ -37,12 +37,12 @@ export function QuantitySelector({
         size="icon"
         onClick={decrease}
         disabled={quantity <= min}
-        className="h-10 w-10 rounded-full border-2 border-gray-200 hover:border-amber-400 hover:bg-amber-50 transition-all"
+        className="h-10 w-10 rounded-full border-2 border-border hover:border-amber-400 hover:bg-amber-50 transition-all"
       >
         <Minus className="h-4 w-4" />
       </Button>
       
-      <span className="w-12 text-center text-lg font-bold text-gray-800">
+      <span className="w-12 text-center text-lg font-bold text-foreground">
         {quantity}
       </span>
       
@@ -51,7 +51,7 @@ export function QuantitySelector({
         size="icon"
         onClick={increase}
         disabled={quantity >= max}
-        className="h-10 w-10 rounded-full border-2 border-gray-200 hover:border-amber-400 hover:bg-amber-50 transition-all"
+        className="h-10 w-10 rounded-full border-2 border-border hover:border-amber-400 hover:bg-amber-50 transition-all"
       >
         <Plus className="h-4 w-4" />
       </Button>

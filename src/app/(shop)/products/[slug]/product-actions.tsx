@@ -55,7 +55,7 @@ export function ProductActions({ product }: ProductActionsProps) {
     <div className="mt-6 sm:mt-8 space-y-4">
       {/* Quantity Selector */}
       <div className="flex items-center gap-4">
-        <span className="text-sm font-medium text-gray-600">Quantity:</span>
+        <span className="text-sm font-medium text-muted-foreground">Quantity:</span>
         <QuantitySelector
           quantity={quantity}
           onQuantityChange={setQuantity}
@@ -69,7 +69,7 @@ export function ProductActions({ product }: ProductActionsProps) {
           size="lg"
           onClick={handleAddToCart}
           disabled={isAdding}
-          className="gap-2 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
+          className="gap-2 bg-primary hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
         >
           {isAdding ? (
             <>
@@ -93,7 +93,7 @@ export function ProductActions({ product }: ProductActionsProps) {
           size="lg"
           variant="outline"
           onClick={handleBuyNow}
-          className="gap-2 border-2 border-amber-400 text-amber-600 hover:bg-amber-50 rounded-full"
+          className="gap-2 border-2 border-amber-400 text-primary hover:bg-amber-50 rounded-full"
         >
           <ShoppingBag className="h-5 w-5" />
           Buy Now

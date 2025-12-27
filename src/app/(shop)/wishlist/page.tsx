@@ -106,10 +106,10 @@ export default function WishlistPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-amber-500 mx-auto mb-4" />
-          <p className="text-gray-500">Loading your wishlist...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your wishlist...</p>
         </div>
       </div>
     );
@@ -117,22 +117,22 @@ export default function WishlistPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
-          <Card className="max-w-md mx-auto text-center bg-white/80 backdrop-blur">
+          <Card className="max-w-md mx-auto text-center bg-card/80 backdrop-blur">
             <CardContent className="pt-12 pb-8">
               <div className="w-24 h-24 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-6">
                 <Heart className="w-12 h-12 text-rose-400" />
               </div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">{error}</h2>
-              <p className="text-gray-500 mb-6">
+              <h2 className="text-xl font-bold text-foreground mb-2">{error}</h2>
+              <p className="text-muted-foreground mb-6">
                 {error.includes("log in") 
                   ? "Sign in to save and view your favorite items."
                   : "Please try refreshing the page."}
               </p>
               {error.includes("log in") ? (
                 <Link href="/login">
-                  <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white gap-2">
+                  <Button className="bg-primary text-white gap-2">
                     Sign In
                     <ArrowRight className="w-4 h-4" />
                   </Button>
@@ -151,7 +151,7 @@ export default function WishlistPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -165,26 +165,26 @@ export default function WishlistPage() {
             <div className="p-2 bg-gradient-to-r from-rose-500 to-pink-500 rounded-lg text-white">
               <Heart className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">My Wishlist</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">My Wishlist</h1>
           </div>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             {wishlistItems.length} {wishlistItems.length === 1 ? "item" : "items"} saved
           </p>
         </div>
 
         {wishlistItems.length === 0 ? (
           /* Empty State */
-          <Card className="max-w-md mx-auto text-center bg-white/80 backdrop-blur">
+          <Card className="max-w-md mx-auto text-center bg-card/80 backdrop-blur">
             <CardContent className="pt-12 pb-8">
               <div className="w-24 h-24 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-6">
                 <Heart className="w-12 h-12 text-rose-400" />
               </div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">Your wishlist is empty</h2>
-              <p className="text-gray-500 mb-6">
+              <h2 className="text-xl font-bold text-foreground mb-2">Your wishlist is empty</h2>
+              <p className="text-muted-foreground mb-6">
                 Start adding products you love to your wishlist!
               </p>
               <Link href="/products">
-                <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white gap-2">
+                <Button className="bg-primary text-white gap-2">
                   Start Shopping
                   <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -205,7 +205,7 @@ export default function WishlistPage() {
               return (
                 <Card
                   key={item.id}
-                  className="group overflow-hidden bg-white/80 backdrop-blur hover:shadow-xl transition-all duration-300"
+                  className="group overflow-hidden bg-card/80 backdrop-blur hover:shadow-xl transition-all duration-300"
                 >
                   {/* Product Image */}
                   <Link href={`/products/${product.slug}`}>
@@ -218,8 +218,8 @@ export default function WishlistPage() {
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                          <ShoppingCart className="w-12 h-12 text-gray-300" />
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
+                          <ShoppingCart className="w-12 h-12 text-muted-foreground" />
                         </div>
                       )}
                       
@@ -232,7 +232,7 @@ export default function WishlistPage() {
 
                       {/* Out of Stock Badge */}
                       {!product.inStock && (
-                        <Badge className="absolute top-3 left-3 bg-gray-500 text-white border-0">
+                        <Badge className="absolute top-3 left-3 bg-muted0 text-white border-0">
                           Out of Stock
                         </Badge>
                       )}
@@ -241,7 +241,7 @@ export default function WishlistPage() {
                       <Button
                         size="icon"
                         variant="secondary"
-                        className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/90 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-3 right-3 h-8 w-8 rounded-full bg-card/90 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.preventDefault();
                           handleRemove(item.productId);
@@ -260,18 +260,18 @@ export default function WishlistPage() {
                   {/* Product Info */}
                   <CardContent className="p-4">
                     <Link href={`/products/${product.slug}`}>
-                      <h3 className="font-semibold text-gray-800 line-clamp-2 hover:text-amber-600 transition-colors">
+                      <h3 className="font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors">
                         {product.name}
                       </h3>
                     </Link>
 
                     {/* Price */}
                     <div className="mt-3 flex items-baseline gap-2">
-                      <span className="text-lg font-bold text-gray-800">
+                      <span className="text-lg font-bold text-foreground">
                         ৳{product.price.toLocaleString()}
                       </span>
                       {product.compareAtPrice && (
-                        <span className="text-sm text-gray-400 line-through">
+                        <span className="text-sm text-muted-foreground line-through">
                           ৳{product.compareAtPrice.toLocaleString()}
                         </span>
                       )}
@@ -279,7 +279,7 @@ export default function WishlistPage() {
 
                     {/* Add to Cart Button */}
                     <Button
-                      className="w-full mt-4 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white gap-2"
+                      className="w-full mt-4 bg-primary hover:from-amber-600 hover:to-rose-600 text-white gap-2"
                       onClick={() => handleAddToCart(item)}
                       disabled={addingId === item.productId || !product.inStock}
                     >
@@ -311,7 +311,7 @@ export default function WishlistPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="gap-2 rounded-full border-2 border-amber-400 text-amber-600 hover:bg-amber-50"
+                className="gap-2 rounded-full border-2 border-amber-400 text-primary hover:bg-amber-50"
               >
                 Continue Shopping
                 <ArrowRight className="w-4 h-4" />

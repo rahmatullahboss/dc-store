@@ -33,7 +33,7 @@ const statusConfig = {
   shipped: { label: "Shipped", color: "bg-indigo-100 text-indigo-800", icon: Truck },
   delivered: { label: "Delivered", color: "bg-green-100 text-green-800", icon: CheckCircle },
   cancelled: { label: "Cancelled", color: "bg-red-100 text-red-800", icon: XCircle },
-  refunded: { label: "Refunded", color: "bg-gray-100 text-gray-800", icon: XCircle },
+  refunded: { label: "Refunded", color: "bg-muted text-foreground", icon: XCircle },
 };
 
 interface OrderItem {
@@ -105,21 +105,21 @@ export default function OrderDetailsPage() {
 
   if (isSessionLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16 text-center">
-          <Package className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          <Package className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             {error || "Order not found"}
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
           The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
           </p>
           <Button asChild>
@@ -134,7 +134,7 @@ export default function OrderDetailsPage() {
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -144,10 +144,10 @@ export default function OrderDetailsPage() {
             </Link>
           </Button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-foreground">
               Order #{order.orderNumber}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Placed on {new Date(order.createdAt).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -167,7 +167,7 @@ export default function OrderDetailsPage() {
             <Card className="shadow-lg border-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Package className="h-5 w-5 text-amber-500" />
+                  <Package className="h-5 w-5 text-primary" />
                   Order Items ({order.items?.length || 0})
                 </CardTitle>
               </CardHeader>
@@ -175,7 +175,7 @@ export default function OrderDetailsPage() {
                 <div className="space-y-4">
                   {order.items?.map((item, index) => (
                     <div key={index} className="flex gap-4">
-                      <div className="relative h-20 w-20 flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden">
+                      <div className="relative h-20 w-20 flex-shrink-0 rounded-xl bg-muted overflow-hidden">
                         {item.image ? (
                           <Image
                             src={item.image}
@@ -184,17 +184,17 @@ export default function OrderDetailsPage() {
                             className="object-cover"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center text-gray-400">
+                          <div className="flex h-full items-center justify-center text-muted-foreground">
                             <Package className="h-8 w-8" />
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-800 line-clamp-2">
+                        <h4 className="font-medium text-foreground line-clamp-2">
                           {item.name}
                         </h4>
-                        <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                        <p className="font-bold text-amber-600">
+                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                        <p className="font-bold text-primary">
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
@@ -208,26 +208,26 @@ export default function OrderDetailsPage() {
             <Card className="shadow-lg border-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-amber-500" />
+                  <MapPin className="h-5 w-5 text-primary" />
                   Shipping Address
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {order.shippingAddress && (
                   <div className="space-y-2">
-                    <p className="font-medium text-gray-800">{order.shippingAddress.name}</p>
-                    <p className="text-gray-600 flex items-center gap-2">
+                    <p className="font-medium text-foreground">{order.shippingAddress.name}</p>
+                    <p className="text-muted-foreground flex items-center gap-2">
                       <Phone className="h-4 w-4" />
                       {order.shippingAddress.phone}
                     </p>
-                    <p className="text-gray-600">
+                    <p className="text-muted-foreground">
                       {order.shippingAddress.address}
                     </p>
-                    <p className="text-gray-600">
+                    <p className="text-muted-foreground">
                       {order.shippingAddress.city}
                       {order.shippingAddress.state && `, ${order.shippingAddress.state}`}
                     </p>
-                    <p className="text-gray-600">{order.shippingAddress.country}</p>
+                    <p className="text-muted-foreground">{order.shippingAddress.country}</p>
                   </div>
                 )}
               </CardContent>
@@ -238,7 +238,7 @@ export default function OrderDetailsPage() {
               <Card className="shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5 text-amber-500" />
+                    <Truck className="h-5 w-5 text-primary" />
                     Shipping Progress
                   </CardTitle>
                 </CardHeader>
@@ -274,14 +274,14 @@ export default function OrderDetailsPage() {
                                 <div className="flex flex-col items-center">
                                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                                     isCompleted 
-                                      ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white" 
-                                      : "bg-gray-100 text-gray-400"
+                                      ? "bg-primary text-white" 
+                                      : "bg-muted text-muted-foreground"
                                   } ${isCurrent ? "ring-4 ring-amber-200" : ""}`}>
                                     <StageIcon className="h-5 w-5" />
                                   </div>
                                   {!isLast && (
                                     <div className={`w-0.5 h-12 ${
-                                      index < currentIndex ? "bg-amber-500" : "bg-gray-200"
+                                      index < currentIndex ? "bg-primary" : "bg-gray-200"
                                     }`} />
                                   )}
                                 </div>
@@ -290,7 +290,7 @@ export default function OrderDetailsPage() {
                                 <div className="flex-1 pb-8">
                                   <div className="flex items-center justify-between">
                                     <h4 className={`font-semibold ${
-                                      isCompleted ? "text-gray-800" : "text-gray-400"
+                                      isCompleted ? "text-foreground" : "text-muted-foreground"
                                     }`}>
                                       {stage.label}
                                       {isCurrent && (
@@ -300,7 +300,7 @@ export default function OrderDetailsPage() {
                                       )}
                                     </h4>
                                     {isCompleted && (
-                                      <span className="text-xs text-gray-500">
+                                      <span className="text-xs text-muted-foreground">
                                         {index === currentIndex 
                                           ? new Date(order.createdAt).toLocaleDateString()
                                           : stageDate.toLocaleDateString()
@@ -309,7 +309,7 @@ export default function OrderDetailsPage() {
                                     )}
                                   </div>
                                   <p className={`text-sm ${
-                                    isCompleted ? "text-gray-600" : "text-gray-400"
+                                    isCompleted ? "text-muted-foreground" : "text-muted-foreground"
                                   }`}>
                                     {stage.description}
                                   </p>
@@ -351,11 +351,11 @@ export default function OrderDetailsPage() {
                 <CardTitle>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
                   <span>{formatPrice(order.subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-muted-foreground">
                   <span>Shipping</span>
                   <span className={order.shippingCost === 0 ? "text-green-600 font-medium" : ""}>
                     {order.shippingCost === 0 ? "FREE" : formatPrice(order.shippingCost)}
@@ -364,7 +364,7 @@ export default function OrderDetailsPage() {
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-amber-600">{formatPrice(order.total)}</span>
+                  <span className="text-primary">{formatPrice(order.total)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -372,20 +372,20 @@ export default function OrderDetailsPage() {
             <Card className="shadow-lg border-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-amber-500" />
+                  <CreditCard className="h-5 w-5 text-primary" />
                   Payment
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Method</span>
+                    <span className="text-muted-foreground">Method</span>
                     <span className="font-medium">
                       {order.paymentMethod === "cod" ? "Cash on Delivery" : order.paymentMethod}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Status</span>
+                    <span className="text-muted-foreground">Status</span>
                     <Badge variant={order.paymentStatus === "paid" ? "default" : "secondary"}>
                       {order.paymentStatus}
                     </Badge>
@@ -397,7 +397,7 @@ export default function OrderDetailsPage() {
             {/* Actions */}
             <div className="space-y-3">
               {order.status === "shipped" && (
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white" asChild>
+                <Button className="w-full bg-primary text-white" asChild>
                   <Link href={`/track-order?order=${order.orderNumber}`}>
                     <Truck className="h-4 w-4 mr-2" />
                     Track Order

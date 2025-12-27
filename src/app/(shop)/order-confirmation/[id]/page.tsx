@@ -31,7 +31,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
   estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100 relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Confetti Background Effect */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 w-4 h-4 bg-amber-400 rounded-full opacity-60 animate-bounce" style={{ animationDelay: "0.1s" }} />
@@ -49,24 +49,24 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
               <CheckCircle2 className="h-12 w-12 text-white" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              <span className="bg-gradient-to-r from-amber-500 to-rose-500 bg-clip-text text-transparent">
+              <span className="bg-primary bg-clip-text text-transparent">
                 Thank You!
               </span>
             </h1>
-            <p className="text-gray-600 text-lg">
+            <p className="text-muted-foreground text-lg">
               Your order has been placed successfully
             </p>
           </div>
 
           {/* Order Number */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 mb-6">
+          <div className="bg-card rounded-2xl p-6 shadow-lg border border-border mb-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-600">Order Number</span>
-              <span className="text-lg font-bold text-gray-800">#{order.orderNumber}</span>
+              <span className="text-muted-foreground">Order Number</span>
+              <span className="text-lg font-bold text-foreground">#{order.orderNumber}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Order Date</span>
-              <span className="font-medium text-gray-800">
+              <span className="text-muted-foreground">Order Date</span>
+              <span className="font-medium text-foreground">
                 {new Date(order.createdAt!).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
@@ -77,18 +77,18 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
           </div>
 
           {/* Order Items */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 mb-6">
+          <div className="bg-card rounded-2xl p-6 shadow-lg border border-border mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-lg text-white">
+              <div className="p-2 bg-primary rounded-lg text-white">
                 <Package className="h-5 w-5" />
               </div>
-              <h2 className="text-lg font-bold text-gray-800">Order Summary</h2>
+              <h2 className="text-lg font-bold text-foreground">Order Summary</h2>
             </div>
 
             <div className="space-y-4 mb-6">
               {order.items?.map((item, index) => (
                 <div key={index} className="flex gap-3">
-                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                     {item.image ? (
                       <Image
                         src={item.image}
@@ -97,17 +97,17 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
                         className="object-cover"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-gray-400">
+                      <div className="flex h-full items-center justify-center text-muted-foreground">
                         <Package className="h-6 w-6" />
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-gray-800 line-clamp-1">
+                    <h4 className="text-sm font-medium text-foreground line-clamp-1">
                       {item.name}
                     </h4>
-                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                    <p className="text-sm font-bold text-amber-600">
+                    <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                    <p className="text-sm font-bold text-primary">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
@@ -116,59 +116,59 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
             </div>
 
             <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
                 <span>{formatPrice(order.subtotal)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-muted-foreground">
                 <span>Shipping</span>
                 <span>{order.shippingCost === 0 ? "FREE" : formatPrice(order.shippingCost || 0)}</span>
               </div>
-              <div className="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t">
+              <div className="flex justify-between text-lg font-bold text-foreground pt-2 border-t">
                 <span>Total</span>
-                <span className="text-amber-600">{formatPrice(order.total)}</span>
+                <span className="text-primary">{formatPrice(order.total)}</span>
               </div>
             </div>
           </div>
 
           {/* Shipping & Payment Info */}
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
                   <MapPin className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-gray-800">Shipping Address</h3>
+                <h3 className="font-bold text-foreground">Shipping Address</h3>
               </div>
-              <div className="text-gray-600 text-sm space-y-1">
-                <p className="font-medium text-gray-800">{order.customerName}</p>
+              <div className="text-muted-foreground text-sm space-y-1">
+                <p className="font-medium text-foreground">{order.customerName}</p>
                 <p>{order.shippingAddress?.address}</p>
                 <p>{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
                 <p>{order.customerPhone}</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-green-100 rounded-lg text-green-600">
                   <CreditCard className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-gray-800">Payment</h3>
+                <h3 className="font-bold text-foreground">Payment</h3>
               </div>
-              <div className="text-gray-600 text-sm space-y-2">
+              <div className="text-muted-foreground text-sm space-y-2">
                 {order.paymentMethod === "stripe" ? (
                   <>
                     <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium">
                       💳 Credit Card
                     </div>
-                    <p className="text-gray-500">Paid via Stripe</p>
+                    <p className="text-muted-foreground">Paid via Stripe</p>
                   </>
                 ) : (
                   <>
                     <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium">
                       💵 Cash on Delivery
                     </div>
-                    <p className="text-gray-500">Pay when you receive</p>
+                    <p className="text-muted-foreground">Pay when you receive</p>
                   </>
                 )}
               </div>
@@ -178,17 +178,17 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
           {/* Estimated Delivery */}
           <div className="bg-gradient-to-r from-amber-50 to-rose-50 rounded-2xl p-6 border border-amber-100 mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <Truck className="h-6 w-6 text-amber-600" />
-              <h3 className="font-bold text-gray-800">Estimated Delivery</h3>
+              <Truck className="h-6 w-6 text-primary" />
+              <h3 className="font-bold text-foreground">Estimated Delivery</h3>
             </div>
-            <p className="text-lg font-bold text-amber-600">
+            <p className="text-lg font-bold text-primary">
               {estimatedDelivery.toLocaleDateString("en-US", {
                 weekday: "long",
                 month: "long",
                 day: "numeric",
               })}
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               We&apos;ll send you updates about your order status
             </p>
           </div>
@@ -197,7 +197,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
           <div className="flex flex-col sm:flex-row gap-4 w-full">
             <Button 
               size="lg"
-              className="w-full sm:flex-1 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
+              className="w-full sm:flex-1 bg-primary hover:from-amber-600 hover:to-rose-600 text-white rounded-full"
               asChild
             >
               <Link href="/orders">
@@ -218,7 +218,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
           </div>
 
           {/* Email Notice */}
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-muted-foreground mt-6">
             📧 A confirmation email has been sent to your email address
           </p>
         </div>

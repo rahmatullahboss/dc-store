@@ -107,10 +107,10 @@ function ChatProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="block bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden group"
+      className="block bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden group"
     >
       <div className="flex gap-3 p-2">
-        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
@@ -119,18 +119,18 @@ function ChatProductCard({ product }: { product: Product }) {
               className="object-cover group-hover:scale-105 transition-transform"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
               <ShoppingCart className="w-6 h-6" />
             </div>
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-gray-900 text-sm line-clamp-1 group-hover:text-amber-600 transition-colors">
+          <h4 className="font-medium text-gray-900 text-sm line-clamp-1 group-hover:text-primary transition-colors">
             {product.name}
           </h4>
-          <p className="text-xs text-gray-500 mt-0.5">{product.category}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{product.category}</p>
           <div className="flex items-center justify-between mt-1">
-            <span className="font-bold text-amber-600">
+            <span className="font-bold text-primary">
               {formatPrice(product.price)}
             </span>
             <span
@@ -146,7 +146,7 @@ function ChatProductCard({ product }: { product: Product }) {
           </div>
         </div>
         <div className="flex items-center">
-          <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-amber-500 transition-colors" />
+          <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors" />
         </div>
       </div>
     </Link>
@@ -460,11 +460,11 @@ export function ChatBot() {
             : "opacity-0 translate-y-4 pointer-events-none"
         )}
       >
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col max-h-[70vh]">
+        <div className="bg-card rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[70vh]">
           {/* Header */}
           <div className="bg-gradient-to-r from-amber-500 to-rose-500 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-card/20 flex items-center justify-center">
                 <Bot className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -478,7 +478,7 @@ export function ChatBot() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full bg-card/20 hover:bg-card/30 flex items-center justify-center transition-colors"
               aria-label="Close chat"
             >
               <X className="w-4 h-4 text-white" />
@@ -489,9 +489,9 @@ export function ChatBot() {
           {(!guestInfo || !guestInfo.phone) && (
             <form
               onSubmit={handleGuestInfoSubmit}
-              className="p-4 border-b border-gray-100"
+              className="p-4 border-b border-border"
             >
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-sm text-muted-foreground mb-3">
                 {userId 
                   ? "Chat শুরু করতে আপনার ফোন নম্বর দিন:"
                   : "আসসালামু আলাইকুম! Chat শুরু করতে আপনার তথ্য দিন:"}
@@ -503,7 +503,7 @@ export function ChatBot() {
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
                     placeholder="আপনার নাম"
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-amber-400 text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:border-amber-400 text-sm"
                     required
                   />
                 )}
@@ -512,7 +512,7 @@ export function ChatBot() {
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
                   placeholder="ফোন নম্বর (01...)"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-amber-400 text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:border-amber-400 text-sm"
                   required
                 />
                 <button
@@ -531,12 +531,12 @@ export function ChatBot() {
               {historyMessages.length === 0 && messages.length === 0 && (
                 <div className="text-center py-6">
                   <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-r from-amber-100 to-rose-100 flex items-center justify-center">
-                    <Bot className="w-7 h-7 text-amber-600" />
+                    <Bot className="w-7 h-7 text-primary" />
                   </div>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     আসসালামু আলাইকুম, {guestInfo.name}! 👋
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="text-muted-foreground text-xs mt-1">
                     কিভাবে সাহায্য করতে পারি?
                   </p>
                 </div>
@@ -561,7 +561,7 @@ export function ChatBot() {
                       "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
                       msg.role === "user"
                         ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-br-md"
-                        : "bg-gray-100 text-gray-800 rounded-bl-md"
+                        : "bg-muted text-foreground rounded-bl-md"
                     )}
                   >
                     <div className="space-y-2">
@@ -585,7 +585,7 @@ export function ChatBot() {
                   </div>
                   {msg.role === "user" && (
                     <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                      <User className="w-4 h-4 text-gray-600" />
+                      <User className="w-4 h-4 text-muted-foreground" />
                     </div>
                   )}
                 </div>
@@ -609,14 +609,14 @@ export function ChatBot() {
                       "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
                       message.role === "user"
                         ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-br-md"
-                        : "bg-gray-100 text-gray-800 rounded-bl-md"
+                        : "bg-muted text-foreground rounded-bl-md"
                     )}
                   >
                     {renderMessageContent(message)}
                   </div>
                   {message.role === "user" && (
                     <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                      <User className="w-4 h-4 text-gray-600" />
+                      <User className="w-4 h-4 text-muted-foreground" />
                     </div>
                   )}
                 </div>
@@ -627,8 +627,8 @@ export function ChatBot() {
                   <div className="w-7 h-7 rounded-full bg-gradient-to-r from-amber-400 to-rose-400 flex items-center justify-center flex-shrink-0">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
-                  <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                  <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                   </div>
                 </div>
               )}
@@ -691,7 +691,7 @@ export function ChatBot() {
                 className={cn(
                   "w-full py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-2",
                   showHumanOptions
-                    ? "bg-gray-100 text-gray-600"
+                    ? "bg-muted text-muted-foreground"
                     : "bg-blue-50 text-blue-600 hover:bg-blue-100"
                 )}
               >
@@ -705,7 +705,7 @@ export function ChatBot() {
           {guestInfo && guestInfo.phone && (
             <form
               onSubmit={handleSubmit}
-              className="p-4 border-t border-gray-100"
+              className="p-4 border-t border-border"
             >
               <div className="flex gap-2">
                 <input
@@ -714,7 +714,7 @@ export function ChatBot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="আপনার বার্তা লিখুন..."
-                  className="flex-1 px-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 text-sm"
+                  className="flex-1 px-4 py-2 rounded-full border border-border focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 text-sm"
                   disabled={status !== "ready"}
                 />
                 <button
@@ -724,7 +724,7 @@ export function ChatBot() {
                     "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                     input.trim() && status === "ready"
                       ? "bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white"
-                      : "bg-gray-100 text-gray-400"
+                      : "bg-muted text-muted-foreground"
                   )}
                 >
                   <Send className="w-4 h-4" />

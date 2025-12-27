@@ -43,7 +43,7 @@ const statusColors: Record<string, string> = {
   shipped: "bg-cyan-500/20 text-cyan-400",
   delivered: "bg-green-500/20 text-green-400",
   cancelled: "bg-red-500/20 text-red-400",
-  refunded: "bg-gray-500/20 text-gray-400",
+  refunded: "bg-muted0/20 text-muted-foreground",
 };
 
 export default function AdminDashboard() {
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
         <div className="flex gap-2">
-          <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
+          <Button asChild className="bg-primary hover:bg-amber-600 text-black">
             <Link href="/admin/products/new">
               <Plus className="h-4 w-4 mr-2" />
               Add Product

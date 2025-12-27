@@ -90,7 +90,7 @@ export default function AdminLayout({
                 <button className="flex items-center gap-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={session.user.image || undefined} />
-                    <AvatarFallback className="bg-amber-500 text-white text-xs">
+                    <AvatarFallback className="bg-primary text-white text-xs">
                       {session.user.name?.charAt(0).toUpperCase() || "A"}
                     </AvatarFallback>
                   </Avatar>

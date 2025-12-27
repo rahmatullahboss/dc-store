@@ -26,7 +26,7 @@ const offerTypeConfig = {
   category_sale: { icon: Tag, label: "Category Sale", color: "bg-blue-500", bgColor: "bg-blue-50" },
   buy_x_get_y: { icon: Gift, label: "Buy X Get Y", color: "bg-purple-500", bgColor: "bg-purple-50" },
   bundle: { icon: Package, label: "Bundle Deal", color: "bg-green-500", bgColor: "bg-green-50" },
-  free_shipping: { icon: Truck, label: "Free Shipping", color: "bg-amber-500", bgColor: "bg-amber-50" },
+  free_shipping: { icon: Truck, label: "Free Shipping", color: "bg-primary", bgColor: "bg-amber-50" },
   promo_banner: { icon: Percent, label: "Promotion", color: "bg-pink-500", bgColor: "bg-pink-50" },
 };
 
@@ -40,7 +40,7 @@ export function OfferCard({ offer }: OfferCardProps) {
 
   return (
     <div
-      className={`rounded-xl p-3 sm:p-5 ${typeConfig.bgColor} border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]`}
+      className={`rounded-xl p-3 sm:p-5 ${typeConfig.bgColor} border border-border hover:shadow-lg transition-all duration-300 hover:scale-[1.02]`}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-2 sm:mb-3">
@@ -48,7 +48,7 @@ export function OfferCard({ offer }: OfferCardProps) {
           <div className={`p-1 sm:p-1.5 rounded-lg ${typeConfig.color} text-white`}>
             <TypeIcon className="w-3 h-3 sm:w-4 sm:h-4" />
           </div>
-          <span className="text-[10px] sm:text-xs font-medium text-gray-600">{typeConfig.label}</span>
+          <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">{typeConfig.label}</span>
         </div>
         {offer.badge && (
           <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white text-[10px] sm:text-xs border-0 shadow-sm px-1.5 py-0.5 sm:px-2 sm:py-1">
@@ -58,9 +58,9 @@ export function OfferCard({ offer }: OfferCardProps) {
       </div>
 
       {/* Title & Description */}
-      <h3 className="font-bold text-gray-800 mb-0.5 sm:mb-1 text-sm sm:text-lg line-clamp-1">{offer.name}</h3>
+      <h3 className="font-bold text-foreground mb-0.5 sm:mb-1 text-sm sm:text-lg line-clamp-1">{offer.name}</h3>
       {offer.description && (
-        <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-4 line-clamp-1 sm:line-clamp-2">{offer.description}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4 line-clamp-1 sm:line-clamp-2">{offer.description}</p>
       )}
 
       {/* Discount Display */}
@@ -69,7 +69,7 @@ export function OfferCard({ offer }: OfferCardProps) {
           <div>
             <span className="text-lg sm:text-2xl font-bold text-green-600">FREE SHIPPING</span>
             {offer.minOrderValue && offer.minOrderValue > 0 && (
-              <p className="text-[10px] sm:text-sm text-gray-600">On orders above ৳{offer.minOrderValue}</p>
+              <p className="text-[10px] sm:text-sm text-muted-foreground">On orders above ৳{offer.minOrderValue}</p>
             )}
           </div>
         ) : offer.type === "buy_x_get_y" ? (
@@ -89,7 +89,7 @@ export function OfferCard({ offer }: OfferCardProps) {
               </span>
             )}
             {offer.category && (
-              <p className="text-[10px] sm:text-sm text-gray-600">On all {offer.category} items</p>
+              <p className="text-[10px] sm:text-sm text-muted-foreground">On all {offer.category} items</p>
             )}
           </div>
         ) : null}
@@ -97,10 +97,10 @@ export function OfferCard({ offer }: OfferCardProps) {
 
       {/* Footer: Countdown + Shop Link */}
       <div className="flex items-center justify-between gap-2">
-        <CountdownTimer endDate={offer.endDate} className="text-amber-600 text-[10px] sm:text-sm" />
+        <CountdownTimer endDate={offer.endDate} className="text-primary text-[10px] sm:text-sm" />
         <Link
           href="/products"
-          className="text-xs sm:text-sm font-medium flex items-center gap-0.5 sm:gap-1 text-amber-600 hover:text-amber-700 transition-colors whitespace-nowrap"
+          className="text-xs sm:text-sm font-medium flex items-center gap-0.5 sm:gap-1 text-primary hover:text-amber-700 transition-colors whitespace-nowrap"
         >
           Shop <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
         </Link>

@@ -128,7 +128,7 @@ function StripePaymentForm({
           {error}
         </div>
       )}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Shield className="h-4 w-4" />
         <span>Secured by Stripe</span>
       </div>
@@ -290,19 +290,19 @@ export default function CheckoutPage() {
   // Empty cart redirect
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
           <div className="flex flex-col items-center justify-center gap-6 text-center">
             <div className="p-6 bg-gradient-to-br from-amber-100 to-rose-100 rounded-full">
-              <ShoppingCart className="h-16 w-16 text-amber-600" />
+              <ShoppingCart className="h-16 w-16 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">Your cart is empty</h1>
-            <p className="text-gray-600 max-w-md">
+            <h1 className="text-2xl font-bold text-foreground">Your cart is empty</h1>
+            <p className="text-muted-foreground max-w-md">
               Add some products to your cart before checkout.
             </p>
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full px-8"
+              className="bg-primary hover:from-amber-600 hover:to-rose-600 text-white rounded-full px-8"
               asChild
             >
               <Link href="/products">
@@ -418,7 +418,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -428,34 +428,34 @@ export default function CheckoutPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
               Checkout
             </h1>
-            <p className="text-gray-600">Complete your order</p>
+            <p className="text-muted-foreground">Complete your order</p>
           </div>
         </div>
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
               <Check className="h-4 w-4" />
             </div>
-            <span className="text-sm font-medium text-gray-800 hidden sm:block">Cart</span>
+            <span className="text-sm font-medium text-foreground hidden sm:block">Cart</span>
           </div>
-          <div className="w-8 md:w-16 h-0.5 bg-amber-500" />
+          <div className="w-8 md:w-16 h-0.5 bg-primary" />
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
               2
             </div>
-            <span className="text-sm font-medium text-gray-800 hidden sm:block">Shipping</span>
+            <span className="text-sm font-medium text-foreground hidden sm:block">Shipping</span>
           </div>
           <div className="w-8 md:w-16 h-0.5 bg-gray-300" />
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-full bg-gray-300 text-muted-foreground flex items-center justify-center text-sm font-bold">
               3
             </div>
-            <span className="text-sm font-medium text-gray-500 hidden sm:block">Done</span>
+            <span className="text-sm font-medium text-muted-foreground hidden sm:block">Done</span>
           </div>
         </div>
 
@@ -464,12 +464,12 @@ export default function CheckoutPage() {
             {/* Shipping Form */}
             <div className="lg:col-span-2 space-y-6">
               {/* Contact Information */}
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-lg text-white">
+                  <div className="p-2 bg-primary rounded-lg text-white">
                     <MapPin className="h-5 w-5" />
                   </div>
-                  <h2 className="text-lg font-bold text-gray-800">Shipping Information</h2>
+                  <h2 className="text-lg font-bold text-foreground">Shipping Information</h2>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -574,12 +574,12 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Method */}
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+              <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-gradient-to-r from-amber-500 to-rose-500 rounded-lg text-white">
+                  <div className="p-2 bg-primary rounded-lg text-white">
                     <CreditCard className="h-5 w-5" />
                   </div>
-                  <h2 className="text-lg font-bold text-gray-800">Payment Method</h2>
+                  <h2 className="text-lg font-bold text-foreground">Payment Method</h2>
                 </div>
 
                 <div className="space-y-4">
@@ -590,22 +590,22 @@ export default function CheckoutPage() {
                     className={`w-full p-4 border-2 rounded-xl flex items-center gap-4 transition-all ${
                       paymentMethod === "cod"
                         ? "border-amber-500 bg-amber-50"
-                        : "border-gray-200 hover:border-gray-300"
+                        : "border-border hover:border-gray-300"
                     }`}
                   >
                     <div className={`p-3 rounded-full ${
                       paymentMethod === "cod"
-                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-primary text-white"
+                        : "bg-muted text-muted-foreground"
                     }`}>
                       <Banknote className="h-6 w-6" />
                     </div>
                     <div className="flex-1 text-left">
-                      <h3 className="font-bold text-gray-800">Cash on Delivery</h3>
-                      <p className="text-sm text-gray-600">Pay when you receive your order</p>
+                      <h3 className="font-bold text-foreground">Cash on Delivery</h3>
+                      <p className="text-sm text-muted-foreground">Pay when you receive your order</p>
                     </div>
                     {paymentMethod === "cod" && (
-                      <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                         <Check className="h-4 w-4 text-white" />
                       </div>
                     )}
@@ -618,22 +618,22 @@ export default function CheckoutPage() {
                     className={`w-full p-4 border-2 rounded-xl flex items-center gap-4 transition-all ${
                       paymentMethod === "stripe"
                         ? "border-amber-500 bg-amber-50"
-                        : "border-gray-200 hover:border-gray-300"
+                        : "border-border hover:border-gray-300"
                     }`}
                   >
                     <div className={`p-3 rounded-full ${
                       paymentMethod === "stripe"
-                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-primary text-white"
+                        : "bg-muted text-muted-foreground"
                     }`}>
                       <CreditCard className="h-6 w-6" />
                     </div>
                     <div className="flex-1 text-left">
-                      <h3 className="font-bold text-gray-800">Credit/Debit Card</h3>
-                      <p className="text-sm text-gray-600">Pay securely with Stripe</p>
+                      <h3 className="font-bold text-foreground">Credit/Debit Card</h3>
+                      <p className="text-sm text-muted-foreground">Pay securely with Stripe</p>
                     </div>
                     {paymentMethod === "stripe" && (
-                      <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                         <Check className="h-4 w-4 text-white" />
                       </div>
                     )}
@@ -641,10 +641,10 @@ export default function CheckoutPage() {
 
                   {/* Stripe Elements */}
                   {paymentMethod === "stripe" && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-xl">
+                    <div className="mt-4 p-4 bg-muted rounded-xl">
                       {stripeLoading ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
                       ) : clientSecret ? (
                         <Elements
@@ -691,8 +691,8 @@ export default function CheckoutPage() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 sticky top-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-6">Order Summary</h2>
+              <div className="bg-card rounded-2xl p-6 shadow-lg border border-border sticky top-4">
+                <h2 className="text-xl font-bold text-foreground mb-6">Order Summary</h2>
 
                 {/* Items */}
                 <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
@@ -701,7 +701,7 @@ export default function CheckoutPage() {
                       key={`${item.productId}-${item.variantId || ""}`}
                       className="flex gap-3"
                     >
-                      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                         {item.image ? (
                           <Image
                             src={item.image}
@@ -710,19 +710,19 @@ export default function CheckoutPage() {
                             className="object-cover"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center text-gray-400">
+                          <div className="flex h-full items-center justify-center text-muted-foreground">
                             <ShoppingCart className="h-6 w-6" />
                           </div>
                         )}
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-xs rounded-full flex items-center justify-center font-bold">
                           {item.quantity}
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-800 line-clamp-2">
+                        <h4 className="text-sm font-medium text-foreground line-clamp-2">
                           {item.name}
                         </h4>
-                        <p className="text-sm text-amber-600 font-bold">
+                        <p className="text-sm text-primary font-bold">
                           {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
@@ -732,20 +732,20 @@ export default function CheckoutPage() {
 
                 {/* Price Breakdown */}
                 <div className="space-y-3 mb-6 pt-4 border-t">
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-muted-foreground">
                     <span>Subtotal</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-muted-foreground">
                     <span>Shipping</span>
                     <span className={shippingCost === 0 ? "text-green-600 font-medium" : ""}>
                       {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
                     </span>
                   </div>
                   <div className="border-t pt-3">
-                    <div className="flex justify-between text-lg font-bold text-gray-800">
+                    <div className="flex justify-between text-lg font-bold text-foreground">
                       <span>Total</span>
-                      <span className="text-amber-600">{formatPrice(total)}</span>
+                      <span className="text-primary">{formatPrice(total)}</span>
                     </div>
                   </div>
                 </div>
@@ -754,7 +754,7 @@ export default function CheckoutPage() {
                 <Button 
                   type="submit"
                   size="lg" 
-                  className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full text-lg py-6"
+                  className="w-full bg-primary hover:from-amber-600 hover:to-rose-600 text-white rounded-full text-lg py-6"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -770,7 +770,7 @@ export default function CheckoutPage() {
                 </Button>
 
                 {/* Trust Badges */}
-                <div className="flex items-center justify-center gap-4 mt-6 text-gray-500">
+                <div className="flex items-center justify-center gap-4 mt-6 text-muted-foreground">
                   <div className="flex items-center gap-1 text-xs">
                     <Shield className="h-4 w-4" />
                     <span>Secure</span>

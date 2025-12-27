@@ -34,7 +34,7 @@ function ForgotPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -49,9 +49,9 @@ function ForgotPasswordForm() {
           </Link>
         </div>
 
-        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur">
+        <Card className="border-0 shadow-xl bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-rose-500 rounded-full flex items-center justify-center mb-4">
+            <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
               {isSuccess ? (
                 <CheckCircle className="w-8 h-8 text-white" />
               ) : (
@@ -73,17 +73,17 @@ function ForgotPasswordForm() {
                     If an account exists for {email}, you will receive a password reset link shortly.
                   </AlertDescription>
                 </Alert>
-                <p className="text-sm text-gray-500 text-center">
+                <p className="text-sm text-muted-foreground text-center">
                   Didn&apos;t receive the email? Check your spam folder or{" "}
                   <button
                     onClick={() => setIsSuccess(false)}
-                    className="text-amber-600 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     try again
                   </button>
                 </p>
                 <Link href="/login" className="block">
-                  <Button className="w-full bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                  <Button className="w-full bg-primary text-white">
                     Back to Login
                   </Button>
                 </Link>
@@ -97,11 +97,11 @@ function ForgotPasswordForm() {
                 )}
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  <label htmlFor="email" className="text-sm font-medium text-foreground">
                     Email address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
@@ -116,7 +116,7 @@ function ForgotPasswordForm() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white"
+                  className="w-full bg-primary hover:from-amber-600 hover:to-rose-600 text-white"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -135,7 +135,7 @@ function ForgotPasswordForm() {
 
         {/* Back to Login */}
         <div className="text-center mt-6">
-          <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 inline-flex items-center gap-1">
+          <Link href="/login" className="text-sm text-muted-foreground hover:text-gray-900 inline-flex items-center gap-1">
             <ArrowLeft className="h-4 w-4" />
             Back to login
           </Link>
@@ -147,7 +147,7 @@ function ForgotPasswordForm() {
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
       <ForgotPasswordForm />
     </Suspense>
   );

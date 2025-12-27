@@ -91,7 +91,7 @@ export default async function ProductDetailPage({
   ];
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 text-gray-900">
+    <div className="relative min-h-screen bg-background text-gray-900">
       {/* Background decorations */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -102,10 +102,10 @@ export default async function ProductDetailPage({
       <main className="relative z-10 pb-20 md:pb-0">
         <div className="container mx-auto px-3 py-6 sm:px-6 lg:py-16 lg:px-8">
           {/* Breadcrumb */}
-          <div className="mb-6 flex items-center gap-3 text-sm text-gray-500">
+          <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground">
             <Link
               href="/products"
-              className="inline-flex items-center gap-1 rounded-full bg-white/80 px-4 py-2 shadow-sm ring-1 ring-amber-200 transition hover:text-amber-600 hover:ring-amber-300"
+              className="inline-flex items-center gap-1 rounded-full bg-card/80 px-4 py-2 shadow-sm ring-1 ring-amber-200 transition hover:text-primary hover:ring-amber-300"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Products
@@ -122,7 +122,7 @@ export default async function ProductDetailPage({
             {/* Left: Product Images */}
             <div className="space-y-6">
               {/* Main Image */}
-              <div className="group relative overflow-hidden rounded-2xl sm:rounded-[2.75rem] border border-white/60 bg-white shadow-xl shadow-amber-100/80">
+              <div className="group relative overflow-hidden rounded-2xl sm:rounded-[2.75rem] border border-white/60 bg-card shadow-xl shadow-amber-100/80">
                 <div className="relative aspect-square">
                   {product.featuredImage ? (
                     <Image
@@ -134,7 +134,7 @@ export default async function ProductDetailPage({
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                      <ShoppingCart className="h-24 w-24 text-gray-300" />
+                      <ShoppingCart className="h-24 w-24 text-muted-foreground" />
                     </div>
                   )}
 
@@ -167,7 +167,7 @@ export default async function ProductDetailPage({
                       className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 transition ${
                         idx === 0
                           ? "border-amber-400 ring-2 ring-amber-200"
-                          : "border-gray-200 hover:border-amber-300"
+                          : "border-border hover:border-amber-300"
                       }`}
                     >
                       <Image
@@ -182,14 +182,14 @@ export default async function ProductDetailPage({
               )}
 
               {/* Highlights Section */}
-              <div className="grid gap-3 rounded-xl sm:rounded-[2rem] border border-white/60 bg-white/70 p-4 sm:p-6 backdrop-blur">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-amber-500">
+              <div className="grid gap-3 rounded-xl sm:rounded-[2rem] border border-white/60 bg-card/70 p-4 sm:p-6 backdrop-blur">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary">
                   Highlights
                 </p>
-                <p className="text-lg leading-relaxed text-gray-600 whitespace-pre-line">
+                <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line">
                   {product.shortDescription}
                 </p>
-                <div className="flex flex-wrap gap-3 text-sm text-gray-500">
+                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
                   <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-amber-700">
                     ⭐ Rated {averageRating.toFixed(1)} / 5
                   </span>
@@ -204,7 +204,7 @@ export default async function ProductDetailPage({
             <aside className="space-y-6">
               <div className="sticky top-28 space-y-6">
                 {/* Main Info Card */}
-                <div className="rounded-xl sm:rounded-[2.75rem] border border-white/60 bg-white/80 p-4 sm:p-8 shadow-2xl shadow-amber-100/70 backdrop-blur">
+                <div className="rounded-xl sm:rounded-[2.75rem] border border-white/60 bg-card/80 p-4 sm:p-8 shadow-2xl shadow-amber-100/70 backdrop-blur">
                   {/* Title & Badge */}
                   <div className="flex items-start justify-between gap-4">
                     <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900 lg:text-4xl">
@@ -212,14 +212,14 @@ export default async function ProductDetailPage({
                     </h1>
                     <Badge
                       variant="secondary"
-                      className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-600"
+                      className="rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary"
                     >
                       {product.quantity && product.quantity > 0 ? "In Stock" : "Out of Stock"}
                     </Badge>
                   </div>
 
                   {/* Rating & Category */}
-                  <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                  <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <div className="flex">
                         {Array.from({ length: Math.floor(averageRating) }).map((_, i) => (
@@ -239,14 +239,14 @@ export default async function ProductDetailPage({
                   {/* Price Section */}
                   <div className="mt-6 flex items-end justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-amber-500">
+                      <p className="text-xs uppercase tracking-[0.3em] text-primary">
                         {discountPercentage > 0 ? "Special Offer Price" : "Starting from"}
                       </p>
                       <p className="text-3xl sm:text-4xl font-bold text-gray-900 lg:text-5xl">
                         ৳ {product.price.toLocaleString()}
                       </p>
                       {product.compareAtPrice && (
-                        <p className="text-lg text-gray-500 line-through mt-1">
+                        <p className="text-lg text-muted-foreground line-through mt-1">
                           ৳ {product.compareAtPrice.toLocaleString()}
                         </p>
                       )}
@@ -266,14 +266,14 @@ export default async function ProductDetailPage({
                     {highlightCards.map(({ icon: Icon, title, subtitle }) => (
                       <div
                         key={title}
-                        className="flex items-start gap-4 rounded-2xl border border-amber-100/60 bg-amber-50/40 p-4 text-sm text-gray-600 shadow-sm"
+                        className="flex items-start gap-4 rounded-2xl border border-amber-100/60 bg-amber-50/40 p-4 text-sm text-muted-foreground shadow-sm"
                       >
-                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-amber-500 shadow-inner">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-card text-primary shadow-inner">
                           <Icon className="h-5 w-5" />
                         </span>
                         <div>
-                          <p className="font-semibold text-gray-800">{title}</p>
-                          <p className="text-xs text-gray-500">{subtitle}</p>
+                          <p className="font-semibold text-foreground">{title}</p>
+                          <p className="text-xs text-muted-foreground">{subtitle}</p>
                         </div>
                       </div>
                     ))}
@@ -281,8 +281,8 @@ export default async function ProductDetailPage({
                 </div>
 
                 {/* Help Section */}
-                <div className="rounded-[2rem] border border-white/60 bg-white/70 p-6 text-sm text-gray-600 backdrop-blur">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-500">
+                <div className="rounded-[2rem] border border-white/60 bg-card/70 p-6 text-sm text-muted-foreground backdrop-blur">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
                     Need help?
                   </p>
                   <p className="mt-2 leading-relaxed">
@@ -295,30 +295,30 @@ export default async function ProductDetailPage({
           </div>
 
           {/* Tabs Section */}
-          <section className="mt-8 sm:mt-16 rounded-xl sm:rounded-[2.75rem] border border-white/60 bg-white/80 p-4 sm:p-8 shadow-xl backdrop-blur">
+          <section className="mt-8 sm:mt-16 rounded-xl sm:rounded-[2.75rem] border border-white/60 bg-card/80 p-4 sm:p-8 shadow-xl backdrop-blur">
             <Tabs defaultValue="description" className="w-full">
               <TabsList className="inline-flex rounded-full bg-amber-100/60 p-1 text-sm">
                 <TabsTrigger
                   value="description"
-                  className="rounded-full px-6 py-2 font-semibold text-gray-600 data-[state=active]:bg-white data-[state=active]:text-amber-600 data-[state=active]:shadow"
+                  className="rounded-full px-6 py-2 font-semibold text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow"
                 >
                   Description
                 </TabsTrigger>
                 <TabsTrigger
                   value="reviews"
-                  className="rounded-full px-6 py-2 font-semibold text-gray-600 data-[state=active]:bg-white data-[state=active]:text-amber-600 data-[state=active]:shadow"
+                  className="rounded-full px-6 py-2 font-semibold text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow"
                 >
                   Reviews ({reviewCount})
                 </TabsTrigger>
                 <TabsTrigger
                   value="shipping"
-                  className="rounded-full px-6 py-2 font-semibold text-gray-600 data-[state=active]:bg-white data-[state=active]:text-amber-600 data-[state=active]:shadow"
+                  className="rounded-full px-6 py-2 font-semibold text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow"
                 >
                   Shipping
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="description" className="mt-8 text-lg leading-relaxed text-gray-600">
+              <TabsContent value="description" className="mt-8 text-lg leading-relaxed text-muted-foreground">
                 <div className="prose max-w-none whitespace-pre-line">
                   {product.description}
                 </div>
@@ -330,12 +330,12 @@ export default async function ProductDetailPage({
                     reviews.map((review) => (
                       <div
                         key={review.id}
-                        className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+                        className="rounded-2xl border border-border bg-card p-6 shadow-sm"
                       >
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-gray-800">
+                              <span className="font-semibold text-foreground">
                                 {review.user?.name || "Anonymous"}
                               </span>
                               {review.isVerified && (
@@ -357,20 +357,20 @@ export default async function ProductDetailPage({
                               ))}
                             </div>
                           </div>
-                          <span className="text-sm text-gray-400">
+                          <span className="text-sm text-muted-foreground">
                             {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ""}
                           </span>
                         </div>
                         {review.title && (
-                          <h4 className="mt-3 font-semibold text-gray-800">
+                          <h4 className="mt-3 font-semibold text-foreground">
                             {review.title}
                           </h4>
                         )}
-                        <p className="mt-2 text-gray-600">{review.content}</p>
+                        <p className="mt-2 text-muted-foreground">{review.content}</p>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-muted-foreground">
                       No reviews yet. Be the first to review this product!
                     </div>
                   )}
@@ -378,9 +378,9 @@ export default async function ProductDetailPage({
               </TabsContent>
 
               <TabsContent value="shipping" className="mt-8">
-                <div className="space-y-6 text-gray-600">
+                <div className="space-y-6 text-muted-foreground">
                   <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-6">
-                    <h4 className="font-semibold text-gray-800 mb-2">
+                    <h4 className="font-semibold text-foreground mb-2">
                       📦 Delivery Information
                     </h4>
                     <ul className="space-y-2 text-sm">
@@ -389,8 +389,8 @@ export default async function ProductDetailPage({
                       <li>• Free shipping on orders over ৳2000</li>
                     </ul>
                   </div>
-                  <div className="rounded-2xl border border-gray-100 bg-white p-6">
-                    <h4 className="font-semibold text-gray-800 mb-2">
+                  <div className="rounded-2xl border border-border bg-card p-6">
+                    <h4 className="font-semibold text-foreground mb-2">
                       🔄 Return Policy
                     </h4>
                     <p className="text-sm">
@@ -406,7 +406,7 @@ export default async function ProductDetailPage({
           {/* Related Products */}
           {relatedProducts.length > 0 && (
             <section className="mt-16">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              <h2 className="text-2xl font-bold text-foreground mb-6">
                 Related Products
               </h2>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -414,7 +414,7 @@ export default async function ProductDetailPage({
                   <Link
                     key={relatedProduct.id}
                     href={`/products/${relatedProduct.slug}`}
-                    className="group rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-md hover:shadow-lg transition-all"
+                    className="group rounded-2xl border border-border bg-card overflow-hidden shadow-md hover:shadow-lg transition-all"
                   >
                     <div className="relative aspect-square">
                       {relatedProduct.featuredImage && (
@@ -427,10 +427,10 @@ export default async function ProductDetailPage({
                       )}
                     </div>
                     <div className="p-3">
-                      <h3 className="font-semibold text-gray-800 line-clamp-1">
+                      <h3 className="font-semibold text-foreground line-clamp-1">
                         {relatedProduct.name}
                       </h3>
-                      <p className="text-lg font-bold text-amber-600">
+                      <p className="text-lg font-bold text-primary">
                         ৳ {relatedProduct.price.toLocaleString()}
                       </p>
                     </div>

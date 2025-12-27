@@ -43,7 +43,7 @@ const nonEligibleItems = [
 
 export default function ReturnsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -55,17 +55,17 @@ export default function ReturnsPage() {
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-amber-600 mb-4"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-4"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-amber-500 to-rose-500 rounded-xl text-white">
+            <div className="p-3 bg-primary rounded-xl text-white">
               <RefreshCcw className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Returns & Shipping</h1>
-              <p className="text-gray-500">Everything you need to know about returns and delivery</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Returns & Shipping</h1>
+              <p className="text-muted-foreground">Everything you need to know about returns and delivery</p>
             </div>
           </div>
         </div>
@@ -74,14 +74,14 @@ export default function ReturnsPage() {
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-8 w-1 bg-gradient-to-b from-amber-400 to-rose-400 rounded-full" />
-            <h2 className="text-xl font-bold text-gray-800">Return Policy</h2>
+            <h2 className="text-xl font-bold text-foreground">Return Policy</h2>
           </div>
 
-          <Card className="bg-white/80 backdrop-blur mb-6">
+          <Card className="bg-card/80 backdrop-blur mb-6">
             <CardContent className="p-6">
               <div className="bg-gradient-to-r from-amber-50 to-rose-50 rounded-xl p-6 mb-6">
-                <p className="text-2xl font-bold text-gray-800 mb-2">7-Day Easy Returns</p>
-                <p className="text-gray-600">
+                <p className="text-2xl font-bold text-foreground mb-2">7-Day Easy Returns</p>
+                <p className="text-muted-foreground">
                   Not satisfied with your purchase? Return it within 7 days for a full refund. No questions asked!
                 </p>
               </div>
@@ -89,12 +89,12 @@ export default function ReturnsPage() {
               {/* Return Steps */}
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {returnSteps.map((step, index) => (
-                  <div key={index} className="text-center p-4 rounded-xl bg-gray-50">
+                  <div key={index} className="text-center p-4 rounded-xl bg-muted">
                     <div className="w-12 h-12 mx-auto bg-gradient-to-r from-amber-100 to-rose-100 rounded-full flex items-center justify-center mb-3">
-                      <step.icon className="w-6 h-6 text-amber-600" />
+                      <step.icon className="w-6 h-6 text-primary" />
                     </div>
-                    <p className="font-semibold text-gray-800 text-sm mb-1">{step.title}</p>
-                    <p className="text-xs text-gray-500">{step.description}</p>
+                    <p className="font-semibold text-foreground text-sm mb-1">{step.title}</p>
+                    <p className="text-xs text-muted-foreground">{step.description}</p>
                   </div>
                 ))}
               </div>
@@ -102,24 +102,24 @@ export default function ReturnsPage() {
               {/* Eligibility */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-500" /> Eligible for Return
                   </h3>
                   <ul className="space-y-2">
                     {eligibleItems.map((item, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                      <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
                         <span className="text-green-500 mt-1">✓</span> {item}
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                     <RefreshCcw className="w-5 h-5 text-red-500" /> Not Eligible
                   </h3>
                   <ul className="space-y-2">
                     {nonEligibleItems.map((item, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                      <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
                         <span className="text-red-500 mt-1">✗</span> {item}
                       </li>
                     ))}
@@ -134,10 +134,10 @@ export default function ReturnsPage() {
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-8 w-1 bg-gradient-to-b from-blue-400 to-purple-400 rounded-full" />
-            <h2 className="text-xl font-bold text-gray-800">Shipping Information</h2>
+            <h2 className="text-xl font-bold text-foreground">Shipping Information</h2>
           </div>
 
-          <Card className="bg-white/80 backdrop-blur">
+          <Card className="bg-card/80 backdrop-blur">
             <CardContent className="p-6">
               {/* Free Shipping Banner */}
               <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-6 mb-6">
@@ -155,24 +155,24 @@ export default function ReturnsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                      <th className="text-left py-3 px-4 font-semibold text-foreground">
                         <MapPin className="w-4 h-4 inline mr-2" />Delivery Zone
                       </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                      <th className="text-left py-3 px-4 font-semibold text-foreground">
                         <Clock className="w-4 h-4 inline mr-2" />Delivery Time
                       </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                      <th className="text-left py-3 px-4 font-semibold text-foreground">
                         <CreditCard className="w-4 h-4 inline mr-2" />Shipping Cost
                       </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Free Above</th>
+                      <th className="text-left py-3 px-4 font-semibold text-foreground">Free Above</th>
                     </tr>
                   </thead>
                   <tbody>
                     {shippingZones.map((zone, index) => (
-                      <tr key={index} className="border-b last:border-b-0 hover:bg-gray-50">
-                        <td className="py-4 px-4 font-medium text-gray-800">{zone.zone}</td>
-                        <td className="py-4 px-4 text-gray-600">{zone.delivery}</td>
-                        <td className="py-4 px-4 text-gray-600">{zone.cost}</td>
+                      <tr key={index} className="border-b last:border-b-0 hover:bg-muted">
+                        <td className="py-4 px-4 font-medium text-foreground">{zone.zone}</td>
+                        <td className="py-4 px-4 text-muted-foreground">{zone.delivery}</td>
+                        <td className="py-4 px-4 text-muted-foreground">{zone.cost}</td>
                         <td className="py-4 px-4">
                           <span className="text-green-600 font-medium">{zone.freeAbove}</span>
                         </td>
@@ -195,13 +195,13 @@ export default function ReturnsPage() {
 
         {/* CTA */}
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Have more questions?</p>
+          <p className="text-muted-foreground mb-4">Have more questions?</p>
           <div className="flex justify-center gap-4">
             <Link href="/faq">
               <Button variant="outline">View FAQ</Button>
             </Link>
             <Link href="/contact">
-              <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+              <Button className="bg-primary text-white">
                 Contact Support
               </Button>
             </Link>

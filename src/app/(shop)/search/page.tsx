@@ -98,17 +98,17 @@ function SearchContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-amber-500 mx-auto mb-4" />
-          <p className="text-gray-500">Loading products...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading products...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
         <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
@@ -118,16 +118,16 @@ function SearchContent() {
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="mb-8">
           <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               placeholder="Search for products..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="pl-12 pr-24 py-6 text-lg rounded-xl bg-white shadow-lg border-0"
+              className="pl-12 pr-24 py-6 text-lg rounded-xl bg-card shadow-lg border-0"
             />
             <Button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-amber-500 to-rose-500 text-white"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white"
             >
               Search
             </Button>
@@ -137,15 +137,15 @@ function SearchContent() {
         <div className="flex gap-8">
           {/* Filters Sidebar - Desktop */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <Card className="bg-white/80 backdrop-blur sticky top-24">
+            <Card className="bg-card/80 backdrop-blur sticky top-24">
               <CardContent className="p-6">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4" /> Filters
                 </h3>
 
                 {/* Price Range */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Price Range</h4>
+                  <h4 className="text-sm font-medium text-foreground mb-3">Price Range</h4>
                   <Slider
                     value={priceRange}
                     onValueChange={setPriceRange}
@@ -153,7 +153,7 @@ function SearchContent() {
                     step={500}
                     className="mb-2"
                   />
-                  <div className="flex justify-between text-sm text-gray-500">
+                  <div className="flex justify-between text-sm text-muted-foreground">
                     <span>৳{priceRange[0]}</span>
                     <span>৳{priceRange[1]}</span>
                   </div>
@@ -161,7 +161,7 @@ function SearchContent() {
 
                 {/* Categories */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Categories</h4>
+                  <h4 className="text-sm font-medium text-foreground mb-3">Categories</h4>
                   <div className="space-y-2">
                     {categories.map((category) => (
                       <label key={category} className="flex items-center gap-2 cursor-pointer">
@@ -169,7 +169,7 @@ function SearchContent() {
                           checked={selectedCategories.includes(category)}
                           onCheckedChange={() => toggleCategory(category)}
                         />
-                        <span className="text-sm text-gray-600">{category}</span>
+                        <span className="text-sm text-muted-foreground">{category}</span>
                       </label>
                     ))}
                   </div>
@@ -197,7 +197,7 @@ function SearchContent() {
           <div className="flex-1">
             {/* Results Header */}
             <div className="flex items-center justify-between mb-6">
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 {filteredProducts.length} result{filteredProducts.length !== 1 ? "s" : ""}
                 {query && <span> for &quot;{query}&quot;</span>}
               </p>
@@ -205,7 +205,7 @@ function SearchContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="text-sm border rounded-lg px-3 py-2 bg-white"
+                  className="text-sm border rounded-lg px-3 py-2 bg-card"
                 >
                   <option value="relevance">Relevance</option>
                   <option value="price-low">Price: Low to High</option>
@@ -230,7 +230,7 @@ function SearchContent() {
                     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
                     : 0;
                   return (
-                    <Card key={product.id} className="group overflow-hidden bg-white/80 backdrop-blur hover:shadow-xl transition-all">
+                    <Card key={product.id} className="group overflow-hidden bg-card/80 backdrop-blur hover:shadow-xl transition-all">
                       <Link href={`/products/${product.slug}`}>
                         <div className="relative aspect-square overflow-hidden">
                           {product.featuredImage ? (
@@ -241,7 +241,7 @@ function SearchContent() {
                               className="object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full bg-gray-100" />
+                            <div className="w-full h-full bg-muted" />
                           )}
                           {discount > 0 && (
                             <Badge className="absolute top-2 left-2 bg-red-500 text-white border-0">
@@ -252,21 +252,21 @@ function SearchContent() {
                       </Link>
                       <CardContent className="p-3">
                         <Link href={`/products/${product.slug}`}>
-                          <h3 className="font-semibold text-gray-800 line-clamp-2 hover:text-amber-600 transition-colors text-sm">
+                          <h3 className="font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors text-sm">
                             {product.name}
                           </h3>
                         </Link>
                         <div className="mt-2 flex items-baseline gap-2">
-                          <span className="font-bold text-gray-800">৳{product.price.toLocaleString()}</span>
+                          <span className="font-bold text-foreground">৳{product.price.toLocaleString()}</span>
                           {product.compareAtPrice && (
-                            <span className="text-sm text-gray-400 line-through">
+                            <span className="text-sm text-muted-foreground line-through">
                               ৳{product.compareAtPrice.toLocaleString()}
                             </span>
                           )}
                         </div>
                         <Button
                           size="sm"
-                          className="w-full mt-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white gap-1"
+                          className="w-full mt-3 bg-primary text-white gap-1"
                           onClick={() => handleAddToCart(product)}
                         >
                           <ShoppingCart className="w-4 h-4" /> Add to Cart
@@ -278,11 +278,11 @@ function SearchContent() {
               </div>
             ) : (
               <div className="text-center py-16">
-                <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-800 mb-2">No products found</h3>
-                <p className="text-gray-500 mb-6">Try adjusting your search or filters</p>
+                <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-foreground mb-2">No products found</h3>
+                <p className="text-muted-foreground mb-6">Try adjusting your search or filters</p>
                 <Link href="/products">
-                  <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                  <Button className="bg-primary text-white">
                     Browse All Products
                   </Button>
                 </Link>
@@ -297,7 +297,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
       <SearchContent />
     </Suspense>
   );

@@ -86,7 +86,7 @@ export default function BlogPage() {
   const regularPosts = blogPosts.filter((post) => !post.featured);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -96,11 +96,11 @@ export default function BlogPage() {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-500 to-rose-500 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
             <BookOpen className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">Our Blog</h1>
-          <p className="text-gray-500 max-w-lg mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">Our Blog</h1>
+          <p className="text-muted-foreground max-w-lg mx-auto">
             Insights, tips, and stories about shopping, technology, fashion, and more.
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function BlogPage() {
               key={category}
               variant={category === "All" ? "default" : "outline"}
               size="sm"
-              className={category === "All" ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white" : ""}
+              className={category === "All" ? "bg-primary text-white" : ""}
             >
               {category}
             </Button>
@@ -121,7 +121,7 @@ export default function BlogPage() {
 
         {/* Featured Post */}
         {featuredPost && (
-          <Card className="mb-12 overflow-hidden bg-white/80 backdrop-blur hover:shadow-xl transition-shadow">
+          <Card className="mb-12 overflow-hidden bg-card/80 backdrop-blur hover:shadow-xl transition-shadow">
             <div className="grid md:grid-cols-2 gap-0">
               <div className="relative h-64 md:h-auto">
                 <Image
@@ -130,17 +130,17 @@ export default function BlogPage() {
                   fill
                   className="object-cover"
                 />
-                <Badge className="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0">
+                <Badge className="absolute top-4 left-4 bg-primary text-white border-0">
                   Featured
                 </Badge>
               </div>
               <CardContent className="p-6 md:p-8 flex flex-col justify-center">
                 <Badge variant="outline" className="w-fit mb-3">{featuredPost.category}</Badge>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 hover:text-amber-600 transition-colors">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 hover:text-primary transition-colors">
                   <Link href={`/blog/${featuredPost.slug}`}>{featuredPost.title}</Link>
                 </h2>
-                <p className="text-gray-600 mb-4 line-clamp-3">{featuredPost.excerpt}</p>
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                <p className="text-muted-foreground mb-4 line-clamp-3">{featuredPost.excerpt}</p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" /> {featuredPost.author}
                   </span>
@@ -152,7 +152,7 @@ export default function BlogPage() {
                   </span>
                 </div>
                 <Link href={`/blog/${featuredPost.slug}`}>
-                  <Button className="gap-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white w-fit">
+                  <Button className="gap-2 bg-primary text-white w-fit">
                     Read More <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
@@ -164,7 +164,7 @@ export default function BlogPage() {
         {/* Blog Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {regularPosts.map((post) => (
-            <Card key={post.id} className="overflow-hidden bg-white/80 backdrop-blur hover:shadow-xl transition-all group">
+            <Card key={post.id} className="overflow-hidden bg-card/80 backdrop-blur hover:shadow-xl transition-all group">
               <div className="relative h-48 overflow-hidden">
                 <Image
                   src={post.image}
@@ -172,16 +172,16 @@ export default function BlogPage() {
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <Badge className="absolute top-3 left-3 bg-white/90 text-gray-700">
+                <Badge className="absolute top-3 left-3 bg-card/90 text-foreground">
                   {post.category}
                 </Badge>
               </div>
               <CardContent className="p-5">
-                <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                <h3 className="font-bold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                   <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                 </h3>
-                <p className="text-sm text-gray-600 mb-4 line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{post.excerpt}</p>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" /> {post.date.toLocaleDateString()}
                   </span>
@@ -195,7 +195,7 @@ export default function BlogPage() {
         </div>
 
         {/* Newsletter CTA */}
-        <Card className="mt-12 bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 text-white border-0">
+        <Card className="mt-12 bg-primary text-white border-0">
           <CardContent className="p-8 text-center">
             <h3 className="text-2xl font-bold mb-2">Subscribe to Our Newsletter</h3>
             <p className="text-white/80 mb-6 max-w-md mx-auto">
@@ -205,9 +205,9 @@ export default function BlogPage() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="flex-1 px-4 py-2 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-white/50"
               />
-              <Button className="bg-white text-amber-600 hover:bg-gray-100">
+              <Button className="bg-card text-primary hover:bg-muted">
                 Subscribe
               </Button>
             </div>

@@ -90,7 +90,7 @@ export default function CartPage() {
                 className="bg-card rounded-2xl p-4 md:p-6 shadow-lg border border-border flex gap-4"
               >
                 {/* Product Image */}
-                <div className="relative h-24 w-24 md:h-32 md:w-32 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                <div className="relative h-24 w-24 md:h-32 md:w-32 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
                   {item.image ? (
                     <Image
                       src={item.image}
@@ -99,7 +99,7 @@ export default function CartPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-gray-400">
+                    <div className="flex h-full items-center justify-center text-muted-foreground">
                       <ShoppingCart className="h-8 w-8" />
                     </div>
                   )}
@@ -114,7 +114,7 @@ export default function CartPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-gray-400 hover:text-red-500 flex-shrink-0"
+                      className="h-8 w-8 text-muted-foreground hover:text-red-500 flex-shrink-0"
                       onClick={() => removeItem(item.productId, item.variantId)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -131,7 +131,7 @@ export default function CartPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-full hover:bg-white"
+                        className="h-8 w-8 rounded-full hover:bg-card"
                         onClick={() =>
                           updateQuantity(
                             item.productId,
@@ -148,7 +148,7 @@ export default function CartPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-full hover:bg-white"
+                        className="h-8 w-8 rounded-full hover:bg-card"
                         onClick={() =>
                           updateQuantity(
                             item.productId,
@@ -208,12 +208,12 @@ export default function CartPage() {
 
               {/* Coupon Code */}
               <div className="mb-6">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-foreground mb-2 block">
                   Discount Code
                 </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Enter coupon code"
                       value={couponCode}

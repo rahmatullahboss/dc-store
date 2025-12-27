@@ -43,7 +43,7 @@ export function HeroSection() {
           <div className="flex flex-wrap gap-3 sm:gap-4 mt-2 sm:mt-4">
             <Button
               asChild
-              className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-primary text-black font-bold hover:bg-white hover:scale-105 transition-all duration-200 shadow-[0_0_20px_rgba(244,140,37,0.4)]"
+              className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-primary text-black font-bold hover:bg-card hover:scale-105 transition-all duration-200 shadow-[0_0_20px_rgba(244,140,37,0.4)]"
             >
               <Link href="/products">
                 Shop Now
@@ -53,7 +53,7 @@ export function HeroSection() {
             <Button
               asChild
               variant="outline"
-              className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-white/10 backdrop-blur-md border-white/20 text-white font-bold hover:bg-white/20 transition-all"
+              className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-card/10 backdrop-blur-md border-white/20 text-white font-bold hover:bg-card/20 transition-all"
             >
               <Link href="/categories">Browse Categories</Link>
             </Button>
@@ -77,7 +77,7 @@ export function HeroSection() {
             </div>
             <Button
               size="icon"
-              className="size-8 rounded-full bg-white text-black hover:bg-primary"
+              className="size-8 rounded-full bg-card text-black hover:bg-primary"
               asChild
             >
               <Link href="/products">
