@@ -88,110 +88,216 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Stack(
-        children: [
-          // Decorative Background Elements
-          Positioned(
-            left: -80,
-            top: -80,
-            child: Container(
-              height: 384,
-              width: 384,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: primaryColor.withValues(alpha: isDark ? 0.1 : 0.05),
-              ),
-            ),
-          ),
-          Positioned(
-            right: -80,
-            bottom: -80,
-            child: Container(
-              height: 384,
-              width: 384,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: primaryColor.withValues(alpha: isDark ? 0.05 : 0.1),
-              ),
-            ),
-          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Calculate responsive sizes based on screen dimensions
+          final screenWidth = constraints.maxWidth;
+          final screenHeight = constraints.maxHeight;
+          final isLargeScreen = screenWidth > 600;
 
-          // Blur effect overlay
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.topLeft,
-                  radius: 1.5,
-                  colors: [
-                    primaryColor.withValues(alpha: 0.03),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Responsive circle sizes for background decorations
+          final circleSize = isLargeScreen
+              ? screenWidth * 0.4
+              : screenWidth * 0.8;
+          final circleSizeClamped = circleSize.clamp(300.0, 600.0);
 
-          // Main Content
-          SafeArea(
-            child: Column(
-              children: [
-                // Top Spacer
-                const Spacer(),
+          // Responsive logo size
+          final logoOuterSize = isLargeScreen ? 180.0 : 140.0;
+          final logoInnerSize = isLargeScreen ? 144.0 : 112.0;
+          final logoIconSize = isLargeScreen ? 72.0 : 56.0;
 
-                // Centered Content
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Logo Container with Glow
-                      _buildLogoSection(primaryColor, isDark),
+          // Responsive text sizes
+          final titleSize = isLargeScreen ? 52.0 : 40.0;
+          final subtitleSize = isLargeScreen ? 16.0 : 14.0;
 
-                      const SizedBox(height: 32),
-
-                      // App Name & Slogan
-                      _buildAppNameSection(textColor, subtextColor),
-
-                      const SizedBox(height: 32),
-
-                      // Status Indicator
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: _status == SplashStatus.loading
-                            ? _buildLoadingState(primaryColor, isDark)
-                            : _buildErrorState(isDark),
-                      ),
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              // Full screen gradient background
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      backgroundColor,
+                      isDark
+                          ? primaryColor.withValues(alpha: 0.05)
+                          : primaryColor.withValues(alpha: 0.02),
+                      backgroundColor,
                     ],
                   ),
                 ),
+              ),
 
-                // Bottom Spacer with Version
-                const Spacer(),
-
-                // Version Info
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: Text(
-                    'Version 1.0.0 (Build 204)',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isDark
-                          ? const Color(0xFF475569)
-                          : const Color(0xFF94A3B8),
+              // Decorative Background Elements - Top Left
+              Positioned(
+                left: -circleSizeClamped * 0.2,
+                top: -circleSizeClamped * 0.2,
+                child: Container(
+                  height: circleSizeClamped,
+                  width: circleSizeClamped,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        primaryColor.withValues(alpha: isDark ? 0.15 : 0.08),
+                        primaryColor.withValues(alpha: isDark ? 0.05 : 0.02),
+                        Colors.transparent,
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ],
+              ),
+
+              // Decorative Background Elements - Bottom Right
+              Positioned(
+                right: -circleSizeClamped * 0.2,
+                bottom: -circleSizeClamped * 0.2,
+                child: Container(
+                  height: circleSizeClamped,
+                  width: circleSizeClamped,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        primaryColor.withValues(alpha: isDark ? 0.08 : 0.12),
+                        primaryColor.withValues(alpha: isDark ? 0.02 : 0.04),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Center accent circle
+              if (isLargeScreen)
+                Positioned(
+                  left: screenWidth * 0.5 - circleSizeClamped * 0.3,
+                  top: screenHeight * 0.5 - circleSizeClamped * 0.3,
+                  child: Container(
+                    height: circleSizeClamped * 0.6,
+                    width: circleSizeClamped * 0.6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          primaryColor.withValues(alpha: 0.03),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+              // Blur effect overlay - fills entire screen
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.topLeft,
+                      radius: 2.0,
+                      colors: [
+                        primaryColor.withValues(alpha: 0.05),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Main Content - centered and responsive
+              SafeArea(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: isLargeScreen ? 500 : double.infinity,
+                    ),
+                    child: Column(
+                      children: [
+                        // Top Spacer
+                        const Spacer(flex: 2),
+
+                        // Centered Content
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isLargeScreen ? 48 : 24,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Logo Container with Glow
+                              _buildResponsiveLogoSection(
+                                primaryColor,
+                                isDark,
+                                logoOuterSize,
+                                logoInnerSize,
+                                logoIconSize,
+                              ),
+
+                              SizedBox(height: isLargeScreen ? 48 : 32),
+
+                              // App Name & Slogan
+                              _buildResponsiveAppNameSection(
+                                textColor,
+                                subtextColor,
+                                titleSize,
+                                subtitleSize,
+                              ),
+
+                              SizedBox(height: isLargeScreen ? 48 : 32),
+
+                              // Status Indicator
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                child: _status == SplashStatus.loading
+                                    ? _buildLoadingState(primaryColor, isDark)
+                                    : _buildErrorState(isDark),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Bottom Spacer with Version
+                        const Spacer(flex: 2),
+
+                        // Version Info
+                        Padding(
+                          padding: EdgeInsets.only(
+                            bottom: isLargeScreen ? 48 : 32,
+                          ),
+                          child: Text(
+                            'Version 1.0.0 (Build 204)',
+                            style: TextStyle(
+                              fontSize: isLargeScreen ? 14 : 12,
+                              fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? const Color(0xFF475569)
+                                  : const Color(0xFF94A3B8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildLogoSection(Color primaryColor, bool isDark) {
+  Widget _buildResponsiveLogoSection(
+    Color primaryColor,
+    bool isDark,
+    double outerSize,
+    double innerSize,
+    double iconSize,
+  ) {
     return AnimatedBuilder(
       animation: _pulseController,
       builder: (context, child) {
@@ -203,10 +309,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             children: [
               // Outer Glow
               Container(
-                height: 140,
-                width: 140,
+                height: outerSize,
+                width: outerSize,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(outerSize * 0.2),
                   color: primaryColor.withValues(alpha: isDark ? 0.3 : 0.2),
                   boxShadow: [
                     BoxShadow(
@@ -220,10 +326,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
               // Logo Box
               Container(
-                height: 112,
-                width: 112,
+                height: innerSize,
+                width: innerSize,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(innerSize * 0.21),
                   color: primaryColor,
                   boxShadow: [
                     BoxShadow(
@@ -237,10 +343,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     width: 1,
                   ),
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.shopping_bag_rounded,
-                    size: 56,
+                    size: iconSize,
                     color: Colors.white,
                   ),
                 ),
@@ -252,13 +358,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
   }
 
-  Widget _buildAppNameSection(Color textColor, Color subtextColor) {
+  Widget _buildResponsiveAppNameSection(
+    Color textColor,
+    Color subtextColor,
+    double titleSize,
+    double subtitleSize,
+  ) {
     return Column(
       children: [
         Text(
           WhiteLabelConfig.appName,
           style: TextStyle(
-            fontSize: 40,
+            fontSize: titleSize,
             fontWeight: FontWeight.w800,
             color: textColor,
             letterSpacing: -1,
@@ -269,7 +380,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         Text(
           'Handcrafted experiences, delivered to perfection',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: subtitleSize,
             fontWeight: FontWeight.w500,
             color: subtextColor,
           ),
