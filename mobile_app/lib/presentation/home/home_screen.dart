@@ -10,6 +10,7 @@ import '../../core/widgets/skeleton_loader.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/product/domain/product_model.dart';
+import '../../services/voice_search_service.dart';
 
 /// Primary/accent color for the app (orange - matches web store)
 final _primaryColor = WhiteLabelConfig.accentColor;
@@ -30,6 +31,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     minutes: 14,
     seconds: 55,
   );
+
+  // Voice search
+  final VoiceSearchService _voiceSearchService = VoiceSearchService();
+  bool _isListening = false;
+  String _voiceSearchText = '';
 
   @override
   void initState() {
@@ -62,6 +68,146 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _startBannerAutoScroll();
       }
     });
+  }
+
+  void _showVoiceSearch(BuildContext context, bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Handle bar
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey[600] : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Title
+                  Text(
+                    _isListening ? 'Listening...' : 'Tap to speak',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Voice text result
+                  if (_voiceSearchText.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.grey[800] : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _voiceSearchText,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  const SizedBox(height: 24),
+
+                  // Mic button
+                  GestureDetector(
+                    onTap: () async {
+                      if (_isListening) {
+                        await _voiceSearchService.stopListening();
+                        setModalState(() => _isListening = false);
+                        setState(() {});
+
+                        // Navigate to search with the text
+                        if (_voiceSearchText.isNotEmpty && mounted) {
+                          Navigator.pop(context);
+                          context.push(
+                            '/products?search=${Uri.encodeComponent(_voiceSearchText)}',
+                          );
+                        }
+                      } else {
+                        setModalState(() {
+                          _isListening = true;
+                          _voiceSearchText = '';
+                        });
+                        setState(() {});
+
+                        await _voiceSearchService.startListening(
+                          onResult: (text) {
+                            setModalState(() => _voiceSearchText = text);
+                            setState(() => _voiceSearchText = text);
+                          },
+                          onFinalResult: (finalText) {
+                            setModalState(() => _isListening = false);
+                            setState(() => _isListening = false);
+
+                            // Auto navigate after final result
+                            if (finalText.isNotEmpty && mounted) {
+                              Navigator.pop(context);
+                              context.push(
+                                '/products?search=${Uri.encodeComponent(finalText)}',
+                              );
+                            }
+                          },
+                        );
+                      }
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _isListening ? Colors.red : _primaryColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (_isListening ? Colors.red : _primaryColor)
+                                .withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        _isListening ? Icons.stop : Icons.mic,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  Text(
+                    _isListening ? 'Tap to stop' : 'Search by voice',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -285,48 +431,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  child: GestureDetector(
-                    onTap: () => context.push('/search'),
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : const Color(0xFFE2E8F0).withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 16),
-                          Icon(
-                            Icons.search,
-                            color: isDark
-                                ? const Color(0xFF64748B)
-                                : const Color(0xFF94A3B8),
-                            size: 22,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Search for products...',
-                              style: TextStyle(
-                                color: isDark
-                                    ? const Color(0xFF64748B)
-                                    : const Color(0xFF64748B),
-                                fontSize: 14,
-                              ),
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : const Color(0xFFE2E8F0).withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        // Search icon + text - tappable for search
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => context.push('/search'),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.search,
+                                  color: isDark
+                                      ? const Color(0xFF64748B)
+                                      : const Color(0xFF94A3B8),
+                                  size: 22,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Search for products...',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? const Color(0xFF64748B)
+                                          : const Color(0xFF64748B),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Icon(
-                            Icons.mic_none_outlined,
-                            color: isDark
-                                ? const Color(0xFF64748B)
-                                : const Color(0xFF94A3B8),
-                            size: 22,
+                        ),
+                        // Mic button - voice search
+                        GestureDetector(
+                          onTap: () => _showVoiceSearch(context, isDark),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Icon(
+                              Icons.mic_none_outlined,
+                              color: isDark
+                                  ? const Color(0xFF64748B)
+                                  : const Color(0xFF94A3B8),
+                              size: 22,
+                            ),
                           ),
-                          const SizedBox(width: 16),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -1076,7 +1235,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           productsAsync.when(
             loading: () => _buildProductGridSkeleton(),
             error: (err, stack) => SizedBox(
