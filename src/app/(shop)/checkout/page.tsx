@@ -191,6 +191,12 @@ export default function CheckoutPage() {
                 }
               }
               
+              // Debug: Log the parsed address
+              console.log("Profile address data:", {
+                raw: data.profile.defaultAddress,
+                parsed: parsedAddress,
+              });
+              
               setFormData(prev => ({
                 ...prev,
                 name: prev.name || data.profile.name || "",
@@ -275,9 +281,10 @@ export default function CheckoutPage() {
     );
   }
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof FormData, value: string, clearDistrict = true) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === "division") {
+    // Only clear district when user manually changes division (not during profile load)
+    if (field === "division" && clearDistrict) {
       setFormData(prev => ({ ...prev, district: "" }));
     }
   };
