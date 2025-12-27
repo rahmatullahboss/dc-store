@@ -8,6 +8,7 @@ import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/config/app_config.dart';
 import '../../core/config/white_label_config.dart';
+import '../../services/share_service.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
@@ -990,12 +991,9 @@ class OrderDetailsScreen extends StatelessWidget {
 
   // Helper methods for order actions
   void _shareOrder(BuildContext context, _OrderDetails order) {
-    toastification.show(
-      context: context,
-      type: ToastificationType.info,
-      title: const Text('Sharing order details...'),
-      description: Text('Order #${order.id}'),
-      autoCloseDuration: const Duration(seconds: 2),
+    ShareService.instance.shareOrder(
+      orderId: order.id,
+      orderNumber: order.id.split('-').first.toUpperCase(),
     );
   }
 

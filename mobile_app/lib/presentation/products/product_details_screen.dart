@@ -9,6 +9,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_haptics.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
+import '../../services/share_service.dart';
 import '../common/widgets/product/image_carousel.dart';
 import '../common/widgets/product/color_selector.dart';
 import '../common/widgets/product/size_selector.dart';
@@ -59,14 +60,19 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     super.dispose();
   }
 
-  void _shareProduct() {
-    toastification.show(
-      context: context,
-      type: ToastificationType.info,
-      title: const Text('Sharing product...'),
-      description: const Text('Share feature coming soon!'),
-      autoCloseDuration: const Duration(seconds: 2),
-    );
+  void _shareProduct() async {
+    // Get product details from the provider
+    final productAsync = ref.read(productDetailsProvider(widget.id));
+    productAsync.whenData((product) {
+      if (product == null) return;
+      ShareService.instance.shareProduct(
+        productId: product.id,
+        productName: product.name,
+        productImage: product.featuredImage,
+        price: product.price,
+        description: product.description,
+      );
+    });
   }
 
   @override
