@@ -232,6 +232,116 @@ export default function OrderDetailsPage() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Shipping Progress Tracker */}
+            {order.status !== "cancelled" && order.status !== "refunded" && (
+              <Card className="shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5 text-amber-500" />
+                    Shipping Progress
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {(() => {
+                    const stages = [
+                      { key: "pending", label: "Order Placed", icon: Clock, description: "We received your order" },
+                      { key: "confirmed", label: "Confirmed", icon: CheckCircle, description: "Order confirmed by seller" },
+                      { key: "processing", label: "Processing", icon: Package, description: "Preparing your order" },
+                      { key: "shipped", label: "Shipped", icon: Truck, description: "On the way to you" },
+                      { key: "delivered", label: "Delivered", icon: CheckCircle, description: "Successfully delivered" },
+                    ];
+                    
+                    const currentIndex = stages.findIndex(s => s.key === order.status);
+                    const orderDate = new Date(order.createdAt);
+                    
+                    return (
+                      <div className="space-y-4">
+                        {stages.map((stage, index) => {
+                          const StageIcon = stage.icon;
+                          const isCompleted = index <= currentIndex;
+                          const isCurrent = index === currentIndex;
+                          const isLast = index === stages.length - 1;
+                          
+                          // Estimate date for each stage
+                          const stageDate = new Date(orderDate);
+                          stageDate.setDate(stageDate.getDate() + index);
+                          
+                          return (
+                            <div key={stage.key} className="relative">
+                              <div className="flex items-start gap-4">
+                                {/* Timeline connector */}
+                                <div className="flex flex-col items-center">
+                                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                    isCompleted 
+                                      ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white" 
+                                      : "bg-gray-100 text-gray-400"
+                                  } ${isCurrent ? "ring-4 ring-amber-200" : ""}`}>
+                                    <StageIcon className="h-5 w-5" />
+                                  </div>
+                                  {!isLast && (
+                                    <div className={`w-0.5 h-12 ${
+                                      index < currentIndex ? "bg-amber-500" : "bg-gray-200"
+                                    }`} />
+                                  )}
+                                </div>
+                                
+                                {/* Stage info */}
+                                <div className="flex-1 pb-8">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className={`font-semibold ${
+                                      isCompleted ? "text-gray-800" : "text-gray-400"
+                                    }`}>
+                                      {stage.label}
+                                      {isCurrent && (
+                                        <Badge className="ml-2 bg-amber-100 text-amber-700 text-xs">
+                                          Current
+                                        </Badge>
+                                      )}
+                                    </h4>
+                                    {isCompleted && (
+                                      <span className="text-xs text-gray-500">
+                                        {index === currentIndex 
+                                          ? new Date(order.createdAt).toLocaleDateString()
+                                          : stageDate.toLocaleDateString()
+                                        }
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className={`text-sm ${
+                                    isCompleted ? "text-gray-600" : "text-gray-400"
+                                  }`}>
+                                    {stage.description}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        
+                        {/* Estimated Delivery */}
+                        {order.status !== "delivered" && (
+                          <div className="mt-4 p-4 bg-amber-50 rounded-xl">
+                            <p className="text-sm text-amber-800">
+                              <strong>Estimated Delivery:</strong>{" "}
+                              {(() => {
+                                const deliveryDate = new Date(orderDate);
+                                deliveryDate.setDate(deliveryDate.getDate() + 5); // 5 days estimate
+                                return deliveryDate.toLocaleDateString("en-US", {
+                                  weekday: "long",
+                                  month: "long",
+                                  day: "numeric"
+                                });
+                              })()}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Order Summary Sidebar */}
