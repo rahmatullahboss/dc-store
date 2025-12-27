@@ -5,7 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/cache/cache_service.dart';
 import 'core/config/white_label_config.dart';
-import 'core/widgets/app_error_boundary.dart';
+// import 'core/widgets/app_error_boundary.dart'; // Temporarily disabled
 import 'l10n/app_localizations.dart';
 import 'navigation/app_router.dart';
 import 'services/storage_service.dart';
@@ -40,18 +40,17 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
 
-    return AppErrorBoundary(
-      child: ToastificationWrapper(
-        child: MaterialApp.router(
-          title: WhiteLabelConfig.appName,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          routerConfig: appRouter.router,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          debugShowCheckedModeBanner: false,
-        ),
+    // AppErrorBoundary temporarily disabled - causing framework errors
+    return ToastificationWrapper(
+      child: MaterialApp.router(
+        title: WhiteLabelConfig.appName,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        routerConfig: appRouter.router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
