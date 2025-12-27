@@ -5,12 +5,14 @@ import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
-// Lazy Stripe initialization
+// Lazy Stripe initialization with fetch for Cloudflare Workers compatibility
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error("STRIPE_SECRET_KEY is not configured");
   }
-  return new Stripe(process.env.STRIPE_SECRET_KEY);
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    httpClient: Stripe.createFetchHttpClient(),
+  });
 }
 
 export async function POST(request: Request) {
