@@ -480,11 +480,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
         return Row(
           children: [
             _buildOutlinedButton(
-              'Details',
+              'Review',
               isDark,
               textColor,
               borderColor,
-              () {},
+              () => context.push('/write-review?orderId=${order.id}'),
             ),
             const SizedBox(width: 8),
             _buildPrimaryButton('Reorder', primaryBlue, () {}),

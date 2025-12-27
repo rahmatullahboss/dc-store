@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,20 +10,21 @@ import 'dart:io';
 import 'package:dc_store/core/theme/app_colors.dart';
 import 'package:dc_store/core/theme/app_text_styles.dart';
 import 'package:dc_store/core/theme/app_border_radius.dart';
+import 'package:dc_store/core/network/dio_client.dart';
 
 /// Write Review Screen - Allows users to submit product reviews
 /// Matches the modern design in the provided HTML mockup
-class WriteReviewScreen extends StatefulWidget {
+class WriteReviewScreen extends ConsumerStatefulWidget {
   final String? productId;
   final String? orderId;
 
   const WriteReviewScreen({super.key, this.productId, this.orderId});
 
   @override
-  State<WriteReviewScreen> createState() => _WriteReviewScreenState();
+  ConsumerState<WriteReviewScreen> createState() => _WriteReviewScreenState();
 }
 
-class _WriteReviewScreenState extends State<WriteReviewScreen> {
+class _WriteReviewScreenState extends ConsumerState<WriteReviewScreen> {
   // Form controllers
   final _titleController = TextEditingController();
   final _reviewController = TextEditingController();
@@ -36,10 +38,11 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
 
   // Other states
   bool _postAnonymously = false;
+  bool _isSubmitting = false;
   final List<File> _selectedImages = [];
   final ImagePicker _imagePicker = ImagePicker();
 
-  // Mock product data - in real app, this would come from API
+  // Mock product data - in real app, this would come from API based on productId/orderId
   final _mockProduct = const _ProductInfo(
     id: '1',
     name: 'Nike Air Max 270 React - Special Edition',
@@ -94,18 +97,59 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
     });
   }
 
-  void _submitReview() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // TODO: Implement actual review submission
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Review submitted successfully!'),
-          backgroundColor: AppColors.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: AppBorderRadius.smRadius),
-        ),
+  Future<void> _submitReview() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final dioClient = ref.read(dioClientProvider);
+
+      final response = await dioClient.post<Map<String, dynamic>>(
+        '/api/reviews',
+        data: {
+          'productId': widget.productId ?? _mockProduct.id,
+          'orderId': widget.orderId,
+          'rating': _overallRating,
+          'qualityRating': _qualityRating,
+          'valueRating': _valueRating,
+          'deliveryRating': _deliveryRating,
+          'title': _titleController.text.trim(),
+          'content': _reviewController.text.trim(),
+          'isAnonymous': _postAnonymously,
+          // Note: Image upload would need multipart form data in real implementation
+        },
       );
-      context.pop();
+
+      if (response.isSuccess && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Thank you for your review! 🎉'),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: AppBorderRadius.smRadius,
+            ),
+          ),
+        );
+        context.pop();
+      } else {
+        throw Exception(response.errorMessage);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to submit review: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
@@ -694,7 +738,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _submitReview,
+            onPressed: _isSubmitting ? null : _submitReview,
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
               foregroundColor: Colors.white,
@@ -704,20 +748,29 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
               ),
               elevation: 0,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Submit Review',
-                  style: AppTextStyles.buttonMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            child: _isSubmitting
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Submit Review',
+                        style: AppTextStyles.buttonMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(LucideIcons.arrowRight, size: 18),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(LucideIcons.arrowRight, size: 18),
-              ],
-            ),
           ),
         ),
       ),
