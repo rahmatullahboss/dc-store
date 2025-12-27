@@ -19,11 +19,21 @@ export default function AdminSettingsPage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement settings save API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert("Settings saved successfully!");
+      const response = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+      
+      if (response.ok) {
+        alert("Settings saved successfully!");
+      } else {
+        const data = await response.json() as { error?: string };
+        alert(data.error || "Failed to save settings");
+      }
     } catch (error) {
       console.error("Failed to save settings:", error);
+      alert("Failed to save settings");
     } finally {
       setIsSaving(false);
     }
