@@ -23,11 +23,12 @@ export const siteConfig = {
   },
 
   // Theme Colors (CSS custom properties)
+  // These should match globals.css - can be overridden via environment variables
   theme: {
-    primaryColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#0F172A",
-    accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#3B82F6",
-    backgroundColor: process.env.NEXT_PUBLIC_BG_COLOR || "#FFFFFF",
-    textColor: process.env.NEXT_PUBLIC_TEXT_COLOR || "#0F172A",
+    primaryColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#f48c25",
+    accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#f48c25",
+    backgroundColor: process.env.NEXT_PUBLIC_BG_COLOR || "#f8f7f5",
+    textColor: process.env.NEXT_PUBLIC_TEXT_COLOR || "#181411",
   },
 
   // Currency Settings
