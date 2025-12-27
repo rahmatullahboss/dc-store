@@ -1395,7 +1395,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         for (var i = 0; i < _quantity; i++) {
                           ref.read(cartProvider.notifier).addToCart(product);
                         }
-                        context.push('/cart');
+                        // Use context.go for shell route tab navigation
+                        context.go('/cart');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.info,
