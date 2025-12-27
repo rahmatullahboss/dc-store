@@ -250,12 +250,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // Banner Carousel
                   _buildBannerCarousel(isDark),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   // Categories Section
                   _buildCategoriesSection(isDark),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   // Flash Sale Section - Hidden for now
                   // _buildFlashSaleSection(isDark, surfaceColor),
@@ -773,7 +773,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         SizedBox(
           height: 90,
           child: ListView.separated(
