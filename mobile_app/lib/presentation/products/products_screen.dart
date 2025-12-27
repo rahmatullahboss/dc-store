@@ -46,22 +46,27 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
             pinned: true,
             backgroundColor: cardColor,
             expandedHeight: 140,
+            collapsedHeight: 60,
+            leading: IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: Icon(LucideIcons.arrowLeft, color: textColor),
+            ),
+            title: Text(
+              "All Products",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
             flexibleSpace: FlexibleSpaceBar(
               background: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  padding: const EdgeInsets.fromLTRB(56, 8, 16, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "All Products",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 40), // Space for collapsed title
                       Text(
                         "Find the best products for you",
                         style: TextStyle(
