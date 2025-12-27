@@ -1,4 +1,5 @@
 import type { OrderItem, Address } from '@/db/schema';
+import { getEnv } from '@/lib/cloudflare';
 
 // Email configuration - use Resend API directly via fetch for Cloudflare Workers compatibility
 // The Resend SDK doesn't work well in Workers, but direct API calls do
@@ -12,7 +13,17 @@ interface ResendEmailOptions {
 }
 
 async function sendViaResendAPI(options: ResendEmailOptions): Promise<{ success: boolean; id?: string; error?: string }> {
-  const apiKey = process.env.RESEND_API_KEY;
+  // Get API key from Cloudflare bindings (secrets set via wrangler secret put)
+  let apiKey: string | undefined;
+  
+  try {
+    const env = await getEnv();
+    // Access RESEND_API_KEY from Cloudflare secrets
+    apiKey = (env as unknown as { RESEND_API_KEY?: string }).RESEND_API_KEY;
+  } catch {
+    // Fallback to process.env for local development
+    apiKey = process.env.RESEND_API_KEY;
+  }
   
   console.log('sendViaResendAPI called with:', {
     to: options.to,
