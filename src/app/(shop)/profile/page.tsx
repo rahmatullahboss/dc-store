@@ -169,7 +169,7 @@ export default function ProfilePage() {
   if (!session?.user) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-16">
+        <div className="relative z-10 container mx-auto px-4 py-16">
           <Card className="max-w-md mx-auto text-center">
             <CardContent className="pt-6">
               <User className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
@@ -197,7 +197,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Background decorations */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10 dark:hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 dark:hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
         <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
       </div>

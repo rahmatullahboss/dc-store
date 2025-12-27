@@ -23,7 +23,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Background decorations */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10 dark:hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 dark:hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
         <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
       </div>
@@ -35,7 +35,7 @@ export default async function HomePage() {
       <CategoryChips />
 
       {/* New Arrivals Grid */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-10 py-8 sm:py-12">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-8 sm:py-12">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div className="flex items-center gap-3">

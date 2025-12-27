@@ -118,7 +118,7 @@ export default function WishlistPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-16">
+        <div className="relative z-10 container mx-auto px-4 py-16">
           <Card className="max-w-md mx-auto text-center bg-card/80 backdrop-blur">
             <CardContent className="pt-12 pb-8">
               <div className="w-24 h-24 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-6">
@@ -153,7 +153,7 @@ export default function WishlistPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Background decorations */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10 dark:hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 dark:hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
         <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
       </div>
