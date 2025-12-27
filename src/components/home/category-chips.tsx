@@ -21,7 +21,7 @@ const categories = [
 
 export function CategoryChips() {
   return (
-    <section className="max-w-7xl mx-auto px-4 lg:px-10 py-4">
+    <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-4">
       <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
         {categories.map((category) => (
           <Link

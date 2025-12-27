@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function PromoBanner() {
   return (
-    <section className="max-w-7xl mx-auto px-4 lg:px-10 py-8">
+    <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-8">
       <div className="relative overflow-hidden rounded-2xl bg-primary">
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[400px] lg:min-h-[500px]">
           {/* Text Content */}

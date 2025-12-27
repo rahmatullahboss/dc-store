@@ -44,7 +44,7 @@ export function TrendingSection() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 lg:px-10 py-12 mb-8 lg:mb-12">
+    <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-12 mb-8 lg:mb-12">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">

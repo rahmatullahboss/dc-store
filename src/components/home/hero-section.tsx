@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full max-w-7xl mx-auto px-4 lg:px-10 py-6 lg:py-8">
+    <section className="relative z-10 w-full max-w-7xl mx-auto px-4 lg:px-10 py-6 lg:py-8">
       <div className="relative overflow-hidden rounded-2xl min-h-[450px] sm:min-h-[550px] lg:min-h-[650px] flex items-center">
         {/* Background Image with Gradient Overlay */}
         <div
