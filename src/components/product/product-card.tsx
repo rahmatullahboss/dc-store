@@ -28,7 +28,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   return (
     <Card
-      className="group relative overflow-hidden rounded-xl sm:rounded-3xl border border-gray-200/60 sm:border-2 bg-white shadow-md sm:shadow-xl transition-all duration-300 sm:duration-700 ease-out hover:shadow-lg sm:hover:scale-[1.02] sm:hover:shadow-2xl sm:hover:shadow-amber-500/20 sm:hover:border-amber-300/60 gap-0 p-0"
+      className="group relative overflow-hidden rounded-xl sm:rounded-3xl border border-border bg-card shadow-md sm:shadow-xl transition-all duration-300 sm:duration-700 ease-out hover:shadow-lg sm:hover:scale-[1.02] sm:hover:shadow-2xl sm:hover:shadow-primary/20 sm:hover:border-primary/60 gap-0 p-0"
       style={{ animationDelay: `${index * 100}ms` }}
     >
       <div className="relative z-10 h-full flex flex-col">
@@ -45,8 +45,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 priority={index < 2}
               />
             ) : (
-              <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                <ShoppingCart className="h-12 w-12 text-gray-300" />
+              <div className="flex h-full items-center justify-center bg-muted">
+                <ShoppingCart className="h-12 w-12 text-muted-foreground" />
               </div>
             )}
 
@@ -67,7 +67,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               <div className="absolute top-2 right-2 sm:top-4 sm:right-4">
                 <Badge
                   variant="secondary"
-                  className="bg-white/90 text-gray-700 border border-gray-200/60 shadow text-[10px] sm:text-xs font-medium px-1.5 py-0.5 sm:px-3 sm:py-1"
+                  className="bg-background/90 text-foreground border border-border shadow text-[10px] sm:text-xs font-medium px-1.5 py-0.5 sm:px-3 sm:py-1"
                 >
                   {product.categoryId}
                 </Badge>
@@ -77,7 +77,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             {/* Featured Badge */}
             {product.isFeatured && (
               <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-10">
-                <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-0 shadow-md text-[10px] sm:text-xs font-medium px-1.5 py-0.5 sm:px-2 sm:py-1">
+                <Badge className="bg-primary text-primary-foreground border-0 shadow-md text-[10px] sm:text-xs font-medium px-1.5 py-0.5 sm:px-2 sm:py-1">
                   ⭐ Featured
                 </Badge>
               </div>
@@ -86,10 +86,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
           {/* Card Header - Title & Description */}
           <CardHeader className="p-1.5 sm:p-3 space-y-0.5 sm:space-y-2">
-            <CardTitle className="text-sm sm:text-lg font-semibold sm:font-bold text-gray-800 leading-tight line-clamp-2">
+            <CardTitle className="text-sm sm:text-lg font-semibold sm:font-bold text-foreground leading-tight line-clamp-2">
               {product.name}
             </CardTitle>
-            <CardDescription className="hidden sm:block text-gray-600 text-sm leading-relaxed line-clamp-2">
+            <CardDescription className="hidden sm:block text-muted-foreground text-sm leading-relaxed line-clamp-2">
               {product.shortDescription || product.description}
             </CardDescription>
           </CardHeader>

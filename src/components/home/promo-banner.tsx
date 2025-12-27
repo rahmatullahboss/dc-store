@@ -11,21 +11,21 @@ export function PromoBanner() {
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[400px] lg:min-h-[500px]">
           {/* Text Content */}
           <div className="lg:col-span-5 p-8 lg:p-16 flex flex-col justify-center relative z-20">
-            <span className="text-black font-bold text-sm sm:text-lg mb-4 tracking-widest uppercase">
+            <span className="text-primary-foreground font-bold text-sm sm:text-lg mb-4 tracking-widest uppercase">
               Limited Offer
             </span>
-            <h2 className="text-black text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.9] mb-4 sm:mb-6">
+            <h2 className="text-primary-foreground text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.9] mb-4 sm:mb-6">
               SPECIAL
               <br />
-              <span className="text-white">DEALS</span>
+              <span className="text-background">DEALS</span>
             </h2>
-            <p className="text-black/80 text-base sm:text-xl font-medium mb-6 sm:mb-8 max-w-sm">
+            <p className="text-primary-foreground/80 text-base sm:text-xl font-medium mb-6 sm:mb-8 max-w-sm">
               Get amazing discounts on our premium collection. Limited time
               offers you can&apos;t miss.
             </p>
             <Button
               asChild
-              className="w-fit bg-black text-white px-6 sm:px-8 py-3 sm:py-4 h-auto rounded-lg font-bold text-base sm:text-lg hover:bg-gray-900 transition-colors"
+              className="w-fit bg-background text-foreground px-6 sm:px-8 py-3 sm:py-4 h-auto rounded-lg font-bold text-base sm:text-lg hover:bg-background/90 transition-colors"
             >
               <Link href="/offers" className="flex items-center gap-2">
                 Shop Sale

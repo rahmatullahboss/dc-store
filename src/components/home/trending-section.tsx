@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,18 @@ const trendingProducts = [
 ];
 
 export function TrendingSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = 340; // Card width + gap
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <section className="max-w-7xl mx-auto px-4 lg:px-10 py-12 mb-8 lg:mb-12">
       {/* Header */}
@@ -42,12 +55,14 @@ export function TrendingSection() {
             size="icon"
             variant="outline"
             className="size-10 rounded-full"
+            onClick={() => scroll("left")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <Button
             size="icon"
             className="size-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => scroll("right")}
           >
             <ArrowRight className="h-4 w-4" />
           </Button>
@@ -55,7 +70,10 @@ export function TrendingSection() {
       </div>
 
       {/* Horizontal Scroll Cards */}
-      <div className="flex gap-4 sm:gap-6 overflow-x-auto hide-scrollbar pb-4 snap-x">
+      <div
+        ref={scrollRef}
+        className="flex gap-4 sm:gap-6 overflow-x-auto hide-scrollbar pb-4 snap-x"
+      >
         {trendingProducts.map((product) => (
           <div
             key={product.id}
@@ -88,7 +106,7 @@ export function TrendingSection() {
                   className="size-8 rounded-full bg-foreground text-background hover:bg-primary hover:text-primary-foreground"
                   asChild
                 >
-                  <Link href={`/products`}>
+                  <Link href="/products">
                     <Plus className="h-4 w-4" />
                   </Link>
                 </Button>

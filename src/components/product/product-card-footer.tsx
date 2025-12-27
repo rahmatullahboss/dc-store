@@ -22,15 +22,15 @@ export function ProductCardFooter({
   const displayPrice = hasDiscount ? discountedPrice : product.price;
 
   return (
-    <CardFooter className="flex flex-col gap-2 border-t border-gray-100 bg-white p-2.5 sm:p-4 rounded-b-xl sm:rounded-b-3xl mt-auto">
+    <CardFooter className="flex flex-col gap-2 border-t border-border bg-card p-2.5 sm:p-4 rounded-b-xl sm:rounded-b-3xl mt-auto">
       {/* First row: Price + Add button */}
       <div className="flex items-center justify-between w-full">
         <div className="flex flex-col">
-          <span className="text-lg sm:text-xl font-bold text-gray-900">
+          <span className="text-lg sm:text-xl font-bold text-foreground">
             {formatPrice(displayPrice)}
           </span>
           {hasDiscount && (
-            <span className="text-xs sm:text-sm text-gray-500 line-through">
+            <span className="text-xs sm:text-sm text-muted-foreground line-through">
               {formatPrice(originalPrice)}
             </span>
           )}
@@ -43,7 +43,7 @@ export function ProductCardFooter({
             image: product.featuredImage || undefined,
           }}
           compact
-          className="!h-9 !px-3 sm:!px-4 !py-1.5 !rounded-full !border-2 !border-amber-500 !bg-amber-50 hover:!bg-amber-500 !text-amber-600 hover:!text-white transition-all !font-medium !text-xs sm:!text-sm"
+          className="!h-9 !px-3 sm:!px-4 !py-1.5 !rounded-full !border-2 !border-primary !bg-primary/10 hover:!bg-primary !text-primary hover:!text-primary-foreground transition-all !font-medium !text-xs sm:!text-sm"
         />
       </div>
       {/* Second row: Full width Order button */}
