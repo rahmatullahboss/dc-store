@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../core/config/app_config.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../core/constants/support_config.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
@@ -693,7 +696,7 @@ class ProfileScreen extends ConsumerWidget {
                   iconColor: isDark ? Colors.grey[400]! : Colors.grey[600]!,
                   title: 'Language',
                   trailing: 'English (US)',
-                  onTap: () => _showComingSoonToast(context),
+                  onTap: () => _showLanguageSelector(context, isDark),
                   textColor: textColor,
                   subtleColor: subtleColor,
                   isDark: isDark,
@@ -706,8 +709,8 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
                   iconColor: isDark ? Colors.grey[400]! : Colors.grey[600]!,
                   title: 'Currency',
-                  trailing: 'USD (\$)',
-                  onTap: () => _showComingSoonToast(context),
+                  trailing: 'BDT (৳)',
+                  onTap: () => _showCurrencySelector(context, isDark),
                   textColor: textColor,
                   subtleColor: subtleColor,
                   isDark: isDark,
@@ -950,6 +953,136 @@ class ProfileScreen extends ConsumerWidget {
         context,
         result.fallbackAction ?? result.errorMessage ?? 'Could not open email',
       );
+    }
+  }
+
+  void _showLanguageSelector(BuildContext context, bool isDark) {
+    final languages = [
+      {'code': 'en', 'name': 'English (US)', 'flag': '🇺🇸'},
+      {'code': 'bn', 'name': 'বাংলা (Bengali)', 'flag': '🇧🇩'},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select Language',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...languages.map(
+              (lang) => ListTile(
+                leading: Text(
+                  lang['flag']!,
+                  style: const TextStyle(fontSize: 24),
+                ),
+                title: Text(
+                  lang['name']!,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _savePreference('language', lang['code']!, context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCurrencySelector(BuildContext context, bool isDark) {
+    final currencies = [
+      {'code': 'BDT', 'name': 'Bangladeshi Taka (৳)', 'symbol': '৳'},
+      {'code': 'USD', 'name': 'US Dollar (\$)', 'symbol': '\$'},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select Currency',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...currencies.map(
+              (currency) => ListTile(
+                leading: Text(
+                  currency['symbol']!,
+                  style: const TextStyle(fontSize: 24),
+                ),
+                title: Text(
+                  currency['name']!,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _savePreference('currency', currency['code']!, context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _savePreference(
+    String key,
+    String value,
+    BuildContext context,
+  ) async {
+    try {
+      final url = Uri.parse('${AppConfig.baseUrl}/api/user/preferences');
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({key: value}),
+      );
+
+      if (context.mounted) {
+        if (response.statusCode == 200) {
+          final capitalizedKey = key[0].toUpperCase() + key.substring(1);
+          _showSnackBar(context, '$capitalizedKey updated to $value');
+        } else {
+          _showSnackBar(context, 'Failed to update preference');
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showSnackBar(context, 'Could not save preference');
+      }
     }
   }
 

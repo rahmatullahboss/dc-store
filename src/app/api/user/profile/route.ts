@@ -28,6 +28,7 @@ export async function GET() {
         email: true,
         phone: true,
         defaultAddress: true,
+        preferences: true,
         createdAt: true,
       },
     });
@@ -109,6 +110,10 @@ export async function PATCH(request: Request) {
         district?: string;
         address?: string;
       };
+      preferences?: {
+        language?: string;
+        currency?: string;
+      };
     };
 
     const db = await getDatabase();
@@ -127,6 +132,10 @@ export async function PATCH(request: Request) {
 
     if (body.defaultAddress) {
       updateData.defaultAddress = body.defaultAddress;
+    }
+
+    if (body.preferences) {
+      updateData.preferences = body.preferences;
     }
 
     await db

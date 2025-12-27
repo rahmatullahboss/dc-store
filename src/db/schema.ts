@@ -18,6 +18,10 @@ export const users = sqliteTable("users", {
     district?: string;
     address?: string;
   }>(),
+  preferences: text("preferences", { mode: "json" }).$type<{
+    language?: string; // e.g., "en", "bn"
+    currency?: string; // e.g., "BDT", "USD"
+  }>(),
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
     () => new Date()
   ),
