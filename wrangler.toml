@@ -54,6 +54,7 @@ NEXT_PUBLIC_APP_URL = "https://store.digitalcare.site"
 NEXT_PUBLIC_APP_NAME = "DC Store"
 NEXT_PUBLIC_BRAND_NAME = "DC Store"
 BETTER_AUTH_URL = "https://store.digitalcare.site"
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = "pk_test_51SirHkR4YQ09KMxr9eovrawaHmpnjgfwBgoI1sRiHf0wT1ciZ7SBFGcUUQpzKx86vRl3nFQC0Tdl4ll4TnjUru1X00f3JFVCZj"
 
 # Secrets (set via: npx wrangler secret put SECRET_NAME)
 # - BETTER_AUTH_SECRET
@@ -64,6 +65,7 @@ BETTER_AUTH_URL = "https://store.digitalcare.site"
 # - NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 # - GROQ_API_KEY
 # - RESEND_API_KEY (for order confirmation emails)
+# - STRIPE_SECRET_KEY ✅ (already set)
 
 # Assets configuration
 [assets]
