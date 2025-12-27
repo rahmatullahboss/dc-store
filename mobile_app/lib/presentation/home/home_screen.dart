@@ -1235,7 +1235,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          // No gap - title and grid are close together
           productsAsync.when(
             loading: () => _buildProductGridSkeleton(),
             error: (err, stack) => SizedBox(
