@@ -1581,7 +1581,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          // No gap
           productsAsync.when(
             loading: () => SizedBox(
               height: 160,
@@ -1828,7 +1828,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          // No gap
           productsAsync.when(
             loading: () => _buildProductGridSkeleton(),
             error: (err, stack) => SizedBox(
