@@ -4,6 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
 
+// Make this page fully static - no ISR, no KV writes
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: `Privacy Policy | ${siteConfig.name}`,
   description: `Learn about how ${siteConfig.name} collects, uses, and protects your personal information.`,

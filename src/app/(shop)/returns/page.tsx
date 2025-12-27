@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
 
+// Make this page fully static - no ISR, no KV writes
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: `Returns & Shipping | ${siteConfig.name}`,
   description: "Learn about our return policy, shipping options, and delivery information.",

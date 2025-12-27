@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
 
+// Make this page fully static - no ISR, no KV writes
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: `Blog | ${siteConfig.name}`,
   description: "Read our latest articles about shopping tips, product guides, and industry news.",

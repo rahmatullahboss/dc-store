@@ -4,6 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";
 
+// Make this page fully static - no ISR, no KV writes
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: `Terms of Service | ${siteConfig.name}`,
   description: `Read the terms of service for ${siteConfig.name}. These terms govern your use of our website and services.`,
