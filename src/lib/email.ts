@@ -1,22 +1,47 @@
-import { Resend } from 'resend';
 import type { OrderItem, Address } from '@/db/schema';
 
-// Lazy Resend initialization for Cloudflare Workers compatibility
-// Environment variables aren't available at module load time in Workers
-let resendClient: Resend | null = null;
+// Email configuration - use Resend API directly via fetch for Cloudflare Workers compatibility
+// The Resend SDK doesn't work well in Workers, but direct API calls do
+const FROM_EMAIL = 'DC Store <noreply@digitalcare.site>';
 
-function getResend(): Resend | null {
-  if (resendClient) return resendClient;
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('Resend API key not configured');
-    return null;
-  }
-  resendClient = new Resend(process.env.RESEND_API_KEY);
-  return resendClient;
+interface ResendEmailOptions {
+  from: string;
+  to: string[];
+  subject: string;
+  html: string;
 }
 
-// Email configuration
-const FROM_EMAIL = 'DC Store <noreply@digitalcare.site>';
+async function sendViaResendAPI(options: ResendEmailOptions): Promise<{ success: boolean; id?: string; error?: string }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(options),
+    });
+
+    const data = await response.json() as { id?: string; message?: string };
+    
+    if (response.ok) {
+      console.log('Email sent via Resend:', data.id);
+      return { success: true, id: data.id };
+    }
+    
+    console.error('Resend API error:', data);
+    return { success: false, error: data.message || 'Failed to send email' };
+  } catch (error) {
+    console.error('Resend fetch error:', error);
+    return { success: false, error: String(error) };
+  }
+}
 
 interface OrderEmailData {
   orderNumber: string;
@@ -161,36 +186,23 @@ function generateOrderConfirmationHTML(data: OrderEmailData): string {
  * Send order confirmation email
  */
 export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<{ success: boolean; error?: string }> {
-  const resend = getResend();
-  if (!resend) {
-    console.warn('Resend API key not configured. Skipping email send.');
-    return { success: false, error: 'Email service not configured' };
-  }
-
   if (!data.customerEmail) {
     console.warn('No customer email provided. Skipping email send.');
     return { success: false, error: 'No customer email' };
   }
 
-  try {
-    const { data: emailData, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [data.customerEmail],
-      subject: `Order Confirmed - ${data.orderNumber} | DC Store`,
-      html: generateOrderConfirmationHTML(data),
-    });
+  const result = await sendViaResendAPI({
+    from: FROM_EMAIL,
+    to: [data.customerEmail],
+    subject: `Order Confirmed - ${data.orderNumber} | DC Store`,
+    html: generateOrderConfirmationHTML(data),
+  });
 
-    if (error) {
-      console.error('Resend error:', error);
-      return { success: false, error: error.message };
-    }
-
-    console.log(`Order confirmation email sent: ${emailData?.id}`);
-    return { success: true };
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return { success: false, error: String(error) };
+  if (result.success) {
+    console.log(`Order confirmation email sent: ${result.id}`);
   }
+
+  return result;
 }
 
 /**
@@ -202,9 +214,8 @@ export async function sendOrderStatusEmail(
   orderNumber: string,
   status: string
 ): Promise<{ success: boolean; error?: string }> {
-  const resend = getResend();
-  if (!resend || !customerEmail) {
-    return { success: false, error: 'Email service not available or no email' };
+  if (!customerEmail) {
+    return { success: false, error: 'No customer email provided' };
   }
 
   const statusMessages: Record<string, { title: string; message: string; color: string }> = {
@@ -241,44 +252,37 @@ export async function sendOrderStatusEmail(
     color: '#6b7280',
   };
 
-  try {
-    const { error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [customerEmail],
-      subject: `${statusInfo.title} - ${orderNumber} | DC Store`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <body style="margin: 0; padding: 20px; font-family: 'Segoe UI', sans-serif; background: #f5f5f5;">
-          <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <div style="background: ${statusInfo.color}; padding: 30px; text-align: center;">
-              <h1 style="color: white; margin: 0;">${statusInfo.title}</h1>
-            </div>
-            <div style="padding: 30px;">
-              <p style="color: #333; font-size: 16px;">Hi ${customerName},</p>
-              <p style="color: #666; font-size: 16px;">${statusInfo.message}</p>
-              <div style="background: #f9fafb; border-radius: 12px; padding: 15px; margin: 20px 0; text-align: center;">
-                <p style="margin: 0; color: #666; font-size: 14px;">Order Number</p>
-                <p style="margin: 5px 0 0; color: #333; font-size: 18px; font-weight: bold;">${orderNumber}</p>
-              </div>
-              <div style="text-align: center;">
-                <a href="https://store.digitalcare.site/track-order" 
-                   style="display: inline-block; background: ${statusInfo.color}; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold;">
-                  Track Order
-                </a>
-              </div>
-            </div>
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <body style="margin: 0; padding: 20px; font-family: 'Segoe UI', sans-serif; background: #f5f5f5;">
+      <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background: ${statusInfo.color}; padding: 30px; text-align: center;">
+          <h1 style="color: white; margin: 0;">${statusInfo.title}</h1>
+        </div>
+        <div style="padding: 30px;">
+          <p style="color: #333; font-size: 16px;">Hi ${customerName},</p>
+          <p style="color: #666; font-size: 16px;">${statusInfo.message}</p>
+          <div style="background: #f9fafb; border-radius: 12px; padding: 15px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0; color: #666; font-size: 14px;">Order Number</p>
+            <p style="margin: 5px 0 0; color: #333; font-size: 18px; font-weight: bold;">${orderNumber}</p>
           </div>
-        </body>
-        </html>
-      `,
-    });
+          <div style="text-align: center;">
+            <a href="https://store.digitalcare.site/track-order" 
+               style="display: inline-block; background: ${statusInfo.color}; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold;">
+              Track Order
+            </a>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 
-    if (error) {
-      return { success: false, error: error.message };
-    }
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: String(error) };
-  }
+  return sendViaResendAPI({
+    from: FROM_EMAIL,
+    to: [customerEmail],
+    subject: `${statusInfo.title} - ${orderNumber} | DC Store`,
+    html,
+  });
 }
