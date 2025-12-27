@@ -49,7 +49,10 @@ export function ProductCardFooter({
       {/* Second row: Full width Order button */}
       <div className="w-full">
         <OrderNowButton
-          productSlug={product.slug}
+          productId={product.id}
+          productName={product.name}
+          productPrice={displayPrice}
+          productImage={product.featuredImage || undefined}
           compact
           wrapperClassName="w-full"
           className="!h-9 !w-full !text-xs sm:!text-sm"

@@ -4,26 +4,50 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { useCart } from "@/lib/cart-context";
 
 interface OrderNowButtonProps {
-  productSlug: string;
+  productId: string;
+  productName: string;
+  productPrice: number;
+  productImage?: string;
   className?: string;
   wrapperClassName?: string;
   compact?: boolean;
 }
 
 export function OrderNowButton({
-  productSlug,
+  productId,
+  productName,
+  productPrice,
+  productImage,
   className = "",
   wrapperClassName = "",
   compact,
 }: OrderNowButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { addItem, items } = useCart();
 
   const handleOrder = () => {
     setLoading(true);
-    router.push(`/products/${productSlug}`);
+    
+    // Check if item already in cart
+    const existingItem = items.find(item => item.productId === productId);
+    
+    if (!existingItem) {
+      // Add item to cart first
+      addItem({
+        productId,
+        name: productName,
+        price: productPrice,
+        quantity: 1,
+        image: productImage,
+      });
+    }
+    
+    // Navigate to checkout
+    router.push("/checkout");
   };
 
   return (
@@ -45,3 +69,4 @@ export function OrderNowButton({
     </div>
   );
 }
+
