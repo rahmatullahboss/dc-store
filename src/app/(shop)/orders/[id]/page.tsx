@@ -16,7 +16,8 @@ import {
   Mail,
   Loader2,
   CreditCard,
-  RefreshCw
+  RefreshCw,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -299,6 +300,14 @@ export default function OrderDetailsPage() {
                   Reorder
                 </Button>
               )}
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => window.open(`/api/user/orders/${order.id}/invoice`, '_blank')}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Download Invoice
+              </Button>
               <Button 
                 variant="outline" 
                 className="w-full"

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { users, orders } from "@/db/schema";
+import { users, orders, wishlist } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 
@@ -41,6 +41,14 @@ export async function GET() {
       .from(orders)
       .where(eq(orders.userId, session.user.id));
 
+    // Fetch wishlist count
+    const wishlistStats = await db
+      .select({
+        count: sql<number>`count(*)`,
+      })
+      .from(wishlist)
+      .where(eq(wishlist.userId, session.user.id));
+
     // Fetch recent orders (last 5)
     const recentOrders = await db.query.orders.findMany({
       where: eq(orders.userId, session.user.id),
@@ -57,13 +65,14 @@ export async function GET() {
     });
 
     const stats = orderStats[0] || { orderCount: 0, totalSpent: 0 };
+    const wishlistCount = wishlistStats[0]?.count || 0;
 
     return NextResponse.json({ 
       profile: user,
       stats: {
         orderCount: Number(stats.orderCount) || 0,
         totalSpent: Number(stats.totalSpent) || 0,
-        wishlistCount: 0, // TODO: Implement wishlist table
+        wishlistCount: Number(wishlistCount) || 0,
         rewardPoints: 0, // TODO: Implement rewards system
       },
       recentOrders: recentOrders.map(order => ({

@@ -254,6 +254,19 @@ export const reviews = sqliteTable("reviews", {
   ),
 });
 
+export const wishlist = sqliteTable("wishlist", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  productId: text("product_id")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
 export const settings = sqliteTable("settings", {
   id: text("id").primaryKey(),
   key: text("key").notNull().unique(),
@@ -395,6 +408,17 @@ export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
   }),
 }));
 
+export const wishlistRelations = relations(wishlist, ({ one }) => ({
+  user: one(users, {
+    fields: [wishlist.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [wishlist.productId],
+    references: [products.id],
+  }),
+}));
+
 // ===========================================
 // Types
 // ===========================================
@@ -412,6 +436,8 @@ export type Coupon = typeof coupons.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
 export type ChatConversation = typeof chatConversations.$inferSelect;
 export type ChatMessage = typeof chatMessages.$inferSelect;
+export type Wishlist = typeof wishlist.$inferSelect;
+export type NewWishlist = typeof wishlist.$inferInsert;
 
 export interface CartItem {
   productId: string;

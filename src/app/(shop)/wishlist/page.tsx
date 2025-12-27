@@ -1,124 +1,154 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, ShoppingCart, Trash2, ArrowRight, Loader2 } from "lucide-react";
+import { Heart, ShoppingCart, Trash2, ArrowRight, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/lib/cart-context";
-import type { Product } from "@/db/schema";
+import { toast } from "sonner";
 
-// Demo wishlist data
-const demoWishlistItems: Product[] = [
-  {
-    id: "1",
-    name: "Premium Wireless Headphones Pro Max",
-    slug: "premium-wireless-headphones",
-    description: "Crystal-clear audio with noise cancellation",
-    shortDescription: "Crystal-clear audio, 40hr battery",
-    price: 4999,
-    compareAtPrice: 7999,
-    costPrice: 2500,
-    sku: "WH-001",
-    barcode: null,
-    quantity: 50,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.3,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "2",
-    name: "Smart Watch Series X Ultra",
-    slug: "smart-watch-series-x",
-    description: "Stay connected with health monitoring",
-    shortDescription: "Health tracking, GPS, 7-day battery",
-    price: 12999,
-    compareAtPrice: 15999,
-    costPrice: 8000,
-    sku: "SW-001",
-    barcode: null,
-    quantity: 30,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Electronics",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: true,
-    weight: 0.1,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "4",
-    name: "Running Sneakers Pro Max",
-    slug: "running-sneakers-pro",
-    description: "Lightweight performance shoes",
-    shortDescription: "Lightweight, maximum comfort",
-    price: 6999,
-    compareAtPrice: 9999,
-    costPrice: 3500,
-    sku: "RS-001",
-    barcode: null,
-    quantity: 45,
-    lowStockThreshold: 5,
-    trackQuantity: true,
-    categoryId: "Sports",
-    images: [],
-    featuredImage: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
-    isActive: true,
-    isFeatured: false,
-    weight: 0.5,
-    weightUnit: "kg",
-    metaTitle: null,
-    metaDescription: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+interface WishlistProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  compareAtPrice: number | null;
+  featuredImage: string | null;
+  images: string[];
+  quantity: number | null;
+  isActive: boolean;
+  inStock: boolean;
+}
+
+interface WishlistItem {
+  id: string;
+  productId: string;
+  createdAt: string;
+  product: WishlistProduct;
+}
 
 export default function WishlistPage() {
-  const [wishlistItems, setWishlistItems] = useState(demoWishlistItems);
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [addingId, setAddingId] = useState<string | null>(null);
   const { addItem } = useCart();
 
-  const handleRemove = (productId: string) => {
+  const fetchWishlist = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch("/api/user/wishlist");
+      
+      if (response.status === 401) {
+        setError("Please log in to view your wishlist");
+        setWishlistItems([]);
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch wishlist");
+      }
+      
+      const data = await response.json() as { items?: WishlistItem[]; count?: number };
+      setWishlistItems(data.items || []);
+    } catch (err) {
+      setError("Failed to load wishlist. Please try again.");
+      console.error("Wishlist fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchWishlist();
+  }, [fetchWishlist]);
+
+  const handleRemove = async (productId: string) => {
     setRemovingId(productId);
-    setTimeout(() => {
-      setWishlistItems((prev) => prev.filter((item) => item.id !== productId));
+    try {
+      const response = await fetch(`/api/user/wishlist/${productId}`, {
+        method: "DELETE",
+      });
+      
+      if (response.ok) {
+        setWishlistItems((prev) => prev.filter((item) => item.productId !== productId));
+        toast.success("Removed from wishlist");
+      } else {
+        toast.error("Failed to remove item");
+      }
+    } catch (err) {
+      console.error("Remove error:", err);
+      toast.error("Failed to remove item");
+    } finally {
       setRemovingId(null);
-    }, 300);
+    }
   };
 
-  const handleAddToCart = (product: Product) => {
-    setAddingId(product.id);
+  const handleAddToCart = (item: WishlistItem) => {
+    setAddingId(item.productId);
     addItem({
-      productId: product.id,
-      name: product.name,
-      price: product.price,
+      productId: item.productId,
+      name: item.product.name,
+      price: item.product.price,
       quantity: 1,
-      image: product.featuredImage || undefined,
+      image: item.product.featuredImage || undefined,
     });
+    toast.success("Added to cart");
     setTimeout(() => {
       setAddingId(null);
     }, 1000);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-amber-500 mx-auto mb-4" />
+          <p className="text-gray-500">Loading your wishlist...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+        <div className="container mx-auto px-4 py-16">
+          <Card className="max-w-md mx-auto text-center bg-white/80 backdrop-blur">
+            <CardContent className="pt-12 pb-8">
+              <div className="w-24 h-24 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-6">
+                <Heart className="w-12 h-12 text-rose-400" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800 mb-2">{error}</h2>
+              <p className="text-gray-500 mb-6">
+                {error.includes("log in") 
+                  ? "Sign in to save and view your favorite items."
+                  : "Please try refreshing the page."}
+              </p>
+              {error.includes("log in") ? (
+                <Link href="/login">
+                  <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white gap-2">
+                    Sign In
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Button onClick={fetchWishlist} className="gap-2">
+                  <RefreshCcw className="w-4 h-4" />
+                  Try Again
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
@@ -164,7 +194,8 @@ export default function WishlistPage() {
         ) : (
           /* Wishlist Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {wishlistItems.map((product) => {
+            {wishlistItems.map((item) => {
+              const product = item.product;
               const discountPercentage = product.compareAtPrice
                 ? Math.round(
                     ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100
@@ -173,7 +204,7 @@ export default function WishlistPage() {
 
               return (
                 <Card
-                  key={product.id}
+                  key={item.id}
                   className="group overflow-hidden bg-white/80 backdrop-blur hover:shadow-xl transition-all duration-300"
                 >
                   {/* Product Image */}
@@ -199,6 +230,13 @@ export default function WishlistPage() {
                         </Badge>
                       )}
 
+                      {/* Out of Stock Badge */}
+                      {!product.inStock && (
+                        <Badge className="absolute top-3 left-3 bg-gray-500 text-white border-0">
+                          Out of Stock
+                        </Badge>
+                      )}
+
                       {/* Remove Button */}
                       <Button
                         size="icon"
@@ -206,11 +244,11 @@ export default function WishlistPage() {
                         className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/90 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleRemove(product.id);
+                          handleRemove(item.productId);
                         }}
-                        disabled={removingId === product.id}
+                        disabled={removingId === item.productId}
                       >
-                        {removingId === product.id ? (
+                        {removingId === item.productId ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           <Trash2 className="h-4 w-4 text-red-500" />
@@ -226,10 +264,6 @@ export default function WishlistPage() {
                         {product.name}
                       </h3>
                     </Link>
-                    
-                    {product.categoryId && (
-                      <p className="text-sm text-gray-500 mt-1">{product.categoryId}</p>
-                    )}
 
                     {/* Price */}
                     <div className="mt-3 flex items-baseline gap-2">
@@ -246,14 +280,16 @@ export default function WishlistPage() {
                     {/* Add to Cart Button */}
                     <Button
                       className="w-full mt-4 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white gap-2"
-                      onClick={() => handleAddToCart(product)}
-                      disabled={addingId === product.id}
+                      onClick={() => handleAddToCart(item)}
+                      disabled={addingId === item.productId || !product.inStock}
                     >
-                      {addingId === product.id ? (
+                      {addingId === item.productId ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
                           Adding...
                         </>
+                      ) : !product.inStock ? (
+                        "Out of Stock"
                       ) : (
                         <>
                           <ShoppingCart className="h-4 w-4" />
