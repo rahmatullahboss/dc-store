@@ -37,8 +37,8 @@ function ForgotPasswordForm() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
-        <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
+        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl dark:opacity-0" />
+        <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl dark:opacity-0" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
