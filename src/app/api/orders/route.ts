@@ -84,19 +84,29 @@ export async function POST(request: Request) {
     await db.insert(orders).values(newOrder);
 
     // Send order confirmation email (non-blocking)
+    console.log(`[Email] Attempting to send confirmation for order ${orderNumber} to ${body.customerEmail || 'NO EMAIL'}`);
+    
     if (body.customerEmail) {
-      sendOrderConfirmationEmail({
-        orderNumber,
-        customerName: body.customerName,
-        customerEmail: body.customerEmail,
-        customerPhone: body.customerPhone,
-        items: body.items,
-        subtotal: body.subtotal,
-        shippingCost: body.shippingCost,
-        total: body.total,
-        shippingAddress: body.shippingAddress,
-        paymentMethod: body.paymentMethod || 'cod',
-      }).catch(err => console.error('Failed to send email:', err));
+      try {
+        console.log('[Email] Calling sendOrderConfirmationEmail...');
+        const emailResult = await sendOrderConfirmationEmail({
+          orderNumber,
+          customerName: body.customerName,
+          customerEmail: body.customerEmail,
+          customerPhone: body.customerPhone,
+          items: body.items,
+          subtotal: body.subtotal,
+          shippingCost: body.shippingCost,
+          total: body.total,
+          shippingAddress: body.shippingAddress,
+          paymentMethod: body.paymentMethod || 'cod',
+        });
+        console.log('[Email] sendOrderConfirmationEmail result:', emailResult);
+      } catch (err) {
+        console.error('[Email] Failed to send email:', err);
+      }
+    } else {
+      console.log('[Email] No customer email provided, skipping email');
     }
 
     console.log(`Order created: ${orderNumber} for ${body.customerEmail || body.customerPhone}`);
