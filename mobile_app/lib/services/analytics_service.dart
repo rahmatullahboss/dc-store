@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 /// AnalyticsService - Handles analytics and event tracking
-/// Firebase Analytics placeholder - add firebase_analytics package when ready
+/// Uses Firebase Analytics package
 class AnalyticsService {
   static AnalyticsService? _instance;
+  static FirebaseAnalytics? _analytics;
 
   AnalyticsService._();
 
@@ -12,11 +14,23 @@ class AnalyticsService {
     return _instance!;
   }
 
+  /// Get analytics instance for navigation observer
+  FirebaseAnalytics? get analytics => _analytics;
+
+  /// Get navigation observer for route tracking
+  FirebaseAnalyticsObserver? get observer => _analytics != null
+      ? FirebaseAnalyticsObserver(analytics: _analytics!)
+      : null;
+
   /// Initialize analytics
   Future<void> initialize() async {
-    // TODO: Initialize Firebase Analytics
-    // await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
-    debugPrint('AnalyticsService initialized');
+    try {
+      _analytics = FirebaseAnalytics.instance;
+      await _analytics!.setAnalyticsCollectionEnabled(true);
+      debugPrint('AnalyticsService initialized');
+    } catch (e) {
+      debugPrint('Error initializing analytics: $e');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -29,11 +43,14 @@ class AnalyticsService {
     String? screenClass,
   }) async {
     debugPrint('Screen View: $screenName');
-    // TODO: Implement with Firebase Analytics
-    // await FirebaseAnalytics.instance.logScreenView(
-    //   screenName: screenName,
-    //   screenClass: screenClass,
-    // );
+    try {
+      await _analytics?.logScreenView(
+        screenName: screenName,
+        screenClass: screenClass,
+      );
+    } catch (e) {
+      debugPrint('Error logging screen view: $e');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -46,11 +63,11 @@ class AnalyticsService {
     Map<String, Object>? parameters,
   }) async {
     debugPrint('Event: $name, params: $parameters');
-    // TODO: Implement with Firebase Analytics
-    // await FirebaseAnalytics.instance.logEvent(
-    //   name: name,
-    //   parameters: parameters,
-    // );
+    try {
+      await _analytics?.logEvent(name: name, parameters: parameters);
+    } catch (e) {
+      debugPrint('Error logging event: $e');
+    }
   }
 
   /// Log product view
@@ -202,8 +219,11 @@ class AnalyticsService {
   /// Set user ID
   Future<void> setUserId(String? userId) async {
     debugPrint('Set User ID: $userId');
-    // TODO: Implement with Firebase Analytics
-    // await FirebaseAnalytics.instance.setUserId(id: userId);
+    try {
+      await _analytics?.setUserId(id: userId);
+    } catch (e) {
+      debugPrint('Error setting user ID: $e');
+    }
   }
 
   /// Set user property
@@ -212,11 +232,11 @@ class AnalyticsService {
     required String? value,
   }) async {
     debugPrint('Set User Property: $name = $value');
-    // TODO: Implement with Firebase Analytics
-    // await FirebaseAnalytics.instance.setUserProperty(
-    //   name: name,
-    //   value: value,
-    // );
+    try {
+      await _analytics?.setUserProperty(name: name, value: value);
+    } catch (e) {
+      debugPrint('Error setting user property: $e');
+    }
   }
 
   /// Set user subscription status
@@ -261,8 +281,11 @@ class AnalyticsService {
 
   /// Reset analytics data
   Future<void> resetAnalyticsData() async {
-    // TODO: Implement with Firebase Analytics
-    // await FirebaseAnalytics.instance.resetAnalyticsData();
-    debugPrint('Analytics data reset');
+    try {
+      await _analytics?.resetAnalyticsData();
+      debugPrint('Analytics data reset');
+    } catch (e) {
+      debugPrint('Error resetting analytics: $e');
+    }
   }
 }

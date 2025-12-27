@@ -64,7 +64,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
         context.go('/');
       } else {
-        final error = ref.read(authControllerProvider).error;
+        final error = ref.read(authControllerProvider).value?.error;
         if (error != null && error != 'Sign-in cancelled') {
           toastification.show(
             context: context,
@@ -80,7 +80,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
+    final authStateAsync = ref.watch(authControllerProvider);
+    final authState = authStateAsync.value;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
@@ -173,7 +174,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 32),
 
                       // Error Message
-                      if (authState.error != null) ...[
+                      if (authState?.error != null) ...[
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -193,7 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  authState.error!,
+                                  authState!.error!,
                                   style: TextStyle(color: AppColors.error),
                                 ),
                               ),
@@ -373,7 +374,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: authState.isLoading ? null : _login,
+                          onPressed: (authState?.isLoading ?? false)
+                              ? null
+                              : _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.accent,
                             foregroundColor: Colors.white,
@@ -383,7 +386,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                             elevation: 0,
                           ),
-                          child: authState.isLoading
+                          child: (authState?.isLoading ?? false)
                               ? const SizedBox(
                                   width: 20,
                                   height: 20,

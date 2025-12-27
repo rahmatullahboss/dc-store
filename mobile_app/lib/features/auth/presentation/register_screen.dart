@@ -148,7 +148,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         );
         context.go('/');
       } else {
-        final error = ref.read(authControllerProvider).error;
+        final error = ref.read(authControllerProvider).value?.error;
         if (error != null && error != 'Sign-in cancelled') {
           toastification.show(
             context: context,
@@ -174,7 +174,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
+    final authStateAsync = ref.watch(authControllerProvider);
+    final authState = authStateAsync.value;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
     // Theme-aware colors using AppColors
@@ -312,7 +313,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       const SizedBox(height: 32),
 
                       // Error Message
-                      if (authState.error != null) ...[
+                      if (authState?.error != null) ...[
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -332,7 +333,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  authState.error!,
+                                  authState!.error!,
                                   style: const TextStyle(color: Colors.red),
                                 ),
                               ),
@@ -690,7 +691,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: authState.isLoading ? null : _register,
+                          onPressed: (authState?.isLoading ?? false)
+                              ? null
+                              : _register,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
@@ -702,7 +705,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               alpha: 0.3,
                             ),
                           ),
-                          child: authState.isLoading
+                          child: (authState?.isLoading ?? false)
                               ? const SizedBox(
                                   width: 24,
                                   height: 24,

@@ -19,9 +19,10 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authControllerProvider);
+    final authStateAsync = ref.watch(authControllerProvider);
+    final authState = authStateAsync.value;
 
-    if (!authState.isAuthenticated) {
+    if (authState == null || !authState.isAuthenticated) {
       return _buildGuestView(context);
     }
 

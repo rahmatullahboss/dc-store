@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:local_auth/local_auth.dart';
 import '../core/constants/api_constants.dart';
 import '../core/constants/storage_keys.dart';
 import '../core/network/dio_client.dart';
@@ -225,19 +226,48 @@ class AuthService {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // BIOMETRIC AUTH (Placeholder - requires local_auth package)
+  // BIOMETRIC AUTH (using local_auth package)
   // ═══════════════════════════════════════════════════════════════
 
   /// Check if biometric is available
   Future<bool> isBiometricAvailable() async {
-    // TODO: Implement with local_auth package
-    return false;
+    try {
+      final LocalAuthentication localAuth = LocalAuthentication();
+      final canAuthenticateWithBiometrics = await localAuth.canCheckBiometrics;
+      final canAuthenticate =
+          canAuthenticateWithBiometrics || await localAuth.isDeviceSupported();
+      return canAuthenticate;
+    } catch (e) {
+      debugPrint('Error checking biometric availability: $e');
+      return false;
+    }
+  }
+
+  /// Get available biometric types
+  Future<List<BiometricType>> getAvailableBiometrics() async {
+    try {
+      final LocalAuthentication localAuth = LocalAuthentication();
+      return await localAuth.getAvailableBiometrics();
+    } catch (e) {
+      debugPrint('Error getting available biometrics: $e');
+      return [];
+    }
   }
 
   /// Authenticate with biometrics
-  Future<bool> authenticateWithBiometrics() async {
-    // TODO: Implement with local_auth package
-    return false;
+  Future<bool> authenticateWithBiometrics({
+    String reason = 'Please authenticate to continue',
+  }) async {
+    try {
+      final LocalAuthentication localAuth = LocalAuthentication();
+      final authenticated = await localAuth.authenticate(
+        localizedReason: reason,
+      );
+      return authenticated;
+    } catch (e) {
+      debugPrint('Error during biometric authentication: $e');
+      return false;
+    }
   }
 
   /// Enable biometric login

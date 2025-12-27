@@ -127,10 +127,12 @@ class NotificationService {
     // Add to stream
     _notificationController.add(
       NotificationModel(
-        id: message.messageId ?? '',
+        id:
+            message.messageId ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         title: notification?.title ?? 'Notification',
-        message: notification?.body ?? '',
-        type: NotificationType.push,
+        body: notification?.body ?? '',
+        type: 'push',
         createdAt: DateTime.now(),
         data: message.data,
       ),

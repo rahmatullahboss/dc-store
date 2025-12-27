@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
+import '../../features/auth/presentation/providers/auth_provider.dart';
 
 /// Primary accent color
 const _accentColor = Color(0xFF4F46E5);
@@ -1204,10 +1205,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // TODO: Implement actual sign out
-              context.go('/login');
+              // Sign out using auth provider
+              await ref.read(authControllerProvider.notifier).logout();
+              if (mounted) {
+                context.go('/login');
+              }
             },
             child: Text('Sign Out', style: TextStyle(color: Colors.red[500])),
           ),
