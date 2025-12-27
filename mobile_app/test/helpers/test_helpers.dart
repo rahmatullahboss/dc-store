@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dc_store/core/network/api_response.dart';
 
 /// Pumps a widget wrapped with necessary providers and Material components
@@ -11,27 +11,15 @@ extension WidgetTesterExtension on WidgetTester {
     await pumpAndSettle();
   }
 
-  /// Pump a widget with MaterialApp and BLoC providers
-  Future<void> pumpAppWithBloc<B extends BlocBase<S>, S>(
-    Widget widget,
-    B bloc,
-  ) async {
-    await pumpWidget(
-      MaterialApp(
-        home: BlocProvider<B>.value(value: bloc, child: widget),
-      ),
-    );
-    await pumpAndSettle();
-  }
-
-  /// Pump a widget with multiple BLoC providers
+  /// Pump a widget with Riverpod ProviderScope
   Future<void> pumpAppWithProviders(
-    Widget widget,
-    List<BlocProvider> providers,
-  ) async {
+    Widget widget, {
+    List<ProviderOrFamily>? overrides,
+  }) async {
     await pumpWidget(
-      MaterialApp(
-        home: MultiBlocProvider(providers: providers, child: widget),
+      ProviderScope(
+        overrides: overrides?.cast<Override>() ?? [],
+        child: MaterialApp(home: widget),
       ),
     );
     await pumpAndSettle();
@@ -40,6 +28,12 @@ extension WidgetTesterExtension on WidgetTester {
   /// Pump with scaffold
   Future<void> pumpScaffold(Widget widget) async {
     await pumpWidget(MaterialApp(home: Scaffold(body: widget)));
+    await pumpAndSettle();
+  }
+
+  /// Pump with ProviderScope - simple version
+  Future<void> pumpRiverpod(Widget widget) async {
+    await pumpWidget(ProviderScope(child: MaterialApp(home: widget)));
     await pumpAndSettle();
   }
 }

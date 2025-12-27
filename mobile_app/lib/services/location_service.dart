@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../core/config/white_label_config.dart';
 
 /// LocationService - Handles location and geocoding
-/// Placeholder - requires geolocator and geocoding packages
+/// Uses geolocator, geocoding, and url_launcher packages
 class LocationService {
   static LocationService? _instance;
+  StreamSubscription<Position>? _positionStreamSubscription;
 
   LocationService._();
 
@@ -16,8 +21,31 @@ class LocationService {
 
   /// Initialize location service
   Future<void> initialize() async {
-    // TODO: Initialize location service
     debugPrint('LocationService initialized');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PERMISSIONS
+  // ═══════════════════════════════════════════════════════════════
+
+  /// Request location permission
+  Future<bool> requestPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        debugPrint('Location permissions are denied');
+        return false;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      debugPrint('Location permissions are permanently denied');
+      return false;
+    }
+
+    return true;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -26,25 +54,32 @@ class LocationService {
 
   /// Check if location services are enabled
   Future<bool> isLocationServiceEnabled() async {
-    // TODO: Implement with geolocator package
-    // return await Geolocator.isLocationServiceEnabled();
-    return true;
+    return await Geolocator.isLocationServiceEnabled();
   }
 
   /// Get current location
   Future<LocationData?> getCurrentLocation() async {
     try {
-      // TODO: Implement with geolocator package
-      // final position = await Geolocator.getCurrentPosition(
-      //   desiredAccuracy: LocationAccuracy.high,
-      // );
-      // return LocationData(
-      //   latitude: position.latitude,
-      //   longitude: position.longitude,
-      // );
+      final hasPermission = await requestPermission();
+      if (!hasPermission) {
+        debugPrint('Location permission not granted');
+        return null;
+      }
 
-      // Mock location (Dhaka)
-      return const LocationData(latitude: 23.8103, longitude: 90.4125);
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 10),
+        ),
+      );
+
+      return LocationData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracy: position.accuracy,
+        altitude: position.altitude,
+        timestamp: position.timestamp,
+      );
     } catch (e) {
       debugPrint('Error getting location: $e');
       return null;
@@ -54,9 +89,16 @@ class LocationService {
   /// Get last known location
   Future<LocationData?> getLastKnownLocation() async {
     try {
-      // TODO: Implement with geolocator package
-      // final position = await Geolocator.getLastKnownPosition();
-      return null;
+      final position = await Geolocator.getLastKnownPosition();
+      if (position == null) return null;
+
+      return LocationData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracy: position.accuracy,
+        altitude: position.altitude,
+        timestamp: position.timestamp,
+      );
     } catch (e) {
       debugPrint('Error getting last known location: $e');
       return null;
@@ -64,10 +106,27 @@ class LocationService {
   }
 
   /// Stream location updates
-  Stream<LocationData> getLocationStream() async* {
-    // TODO: Implement with geolocator package
-    // Return mock location for now
-    yield const LocationData(latitude: 23.8103, longitude: 90.4125);
+  Stream<LocationData> getLocationStream() {
+    return Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // Update every 10 meters
+      ),
+    ).map(
+      (position) => LocationData(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracy: position.accuracy,
+        altitude: position.altitude,
+        timestamp: position.timestamp,
+      ),
+    );
+  }
+
+  /// Stop listening to location updates
+  void stopLocationStream() {
+    _positionStreamSubscription?.cancel();
+    _positionStreamSubscription = null;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -80,45 +139,53 @@ class LocationService {
     double longitude,
   ) async {
     try {
-      // TODO: Implement with geocoding package
-      // final placemarks = await placemarkFromCoordinates(latitude, longitude);
-      // if (placemarks.isNotEmpty) {
-      //   final place = placemarks.first;
-      //   return AddressInfo(
-      //     street: place.street,
-      //     city: place.locality,
-      //     state: place.administrativeArea,
-      //     country: place.country,
-      //     postalCode: place.postalCode,
-      //   );
-      // }
-
-      // Mock address
-      return const AddressInfo(
-        street: 'Gulshan Avenue',
-        city: 'Dhaka',
-        state: 'Dhaka Division',
-        country: 'Bangladesh',
-        postalCode: '1212',
-      );
+      final placemarks = await placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        return AddressInfo(
+          street: place.street,
+          city: place.locality,
+          state: place.administrativeArea,
+          country: place.country,
+          postalCode: place.postalCode,
+          formattedAddress: _formatPlacemark(place),
+        );
+      }
+      return null;
     } catch (e) {
       debugPrint('Error getting address: $e');
       return null;
     }
   }
 
+  String _formatPlacemark(Placemark place) {
+    final parts = <String>[];
+    if (place.street != null && place.street!.isNotEmpty) {
+      parts.add(place.street!);
+    }
+    if (place.locality != null && place.locality!.isNotEmpty) {
+      parts.add(place.locality!);
+    }
+    if (place.administrativeArea != null &&
+        place.administrativeArea!.isNotEmpty) {
+      parts.add(place.administrativeArea!);
+    }
+    if (place.postalCode != null && place.postalCode!.isNotEmpty) {
+      parts.add(place.postalCode!);
+    }
+    return parts.join(', ');
+  }
+
   /// Get coordinates from address (forward geocoding)
   Future<LocationData?> getCoordinatesFromAddress(String address) async {
     try {
-      // TODO: Implement with geocoding package
-      // final locations = await locationFromAddress(address);
-      // if (locations.isNotEmpty) {
-      //   return LocationData(
-      //     latitude: locations.first.latitude,
-      //     longitude: locations.first.longitude,
-      //   );
-      // }
-
+      final locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return LocationData(
+          latitude: locations.first.latitude,
+          longitude: locations.first.longitude,
+        );
+      }
       return null;
     } catch (e) {
       debugPrint('Error geocoding address: $e');
@@ -228,19 +295,54 @@ class LocationService {
 
   /// Open in maps app
   Future<void> openInMaps(double latitude, double longitude) async {
-    // TODO: Implement with url_launcher
-    // final url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-    // await launchUrl(Uri.parse(url));
-    debugPrint('Opening maps: $latitude, $longitude');
+    final url = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+    );
+
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Could not launch maps');
+      }
+    } catch (e) {
+      debugPrint('Error opening maps: $e');
+    }
   }
 
   /// Get directions
   Future<void> openDirections({
     required double destinationLat,
     required double destinationLng,
+    double? originLat,
+    double? originLng,
   }) async {
-    // TODO: Implement with url_launcher
-    debugPrint('Opening directions to: $destinationLat, $destinationLng');
+    // Try to get current location for origin if not provided
+    String origin = '';
+    if (originLat != null && originLng != null) {
+      origin = '$originLat,$originLng';
+    } else {
+      final currentLocation = await getCurrentLocation();
+      if (currentLocation != null) {
+        origin = '${currentLocation.latitude},${currentLocation.longitude}';
+      }
+    }
+
+    final baseUrl = 'https://www.google.com/maps/dir/?api=1';
+    final destination = 'destination=$destinationLat,$destinationLng';
+    final originParam = origin.isNotEmpty ? '&origin=$origin' : '';
+
+    final url = Uri.parse('$baseUrl&$destination$originParam');
+
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Could not launch maps for directions');
+      }
+    } catch (e) {
+      debugPrint('Error opening directions: $e');
+    }
   }
 }
 

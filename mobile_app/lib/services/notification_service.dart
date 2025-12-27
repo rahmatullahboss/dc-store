@@ -1,13 +1,23 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz_data;
 import '../data/models/common/common_models.dart';
+
+/// Background message handler - must be top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint('Handling a background message: ${message.messageId}');
+}
 
 /// NotificationService - Handles push and local notifications
 class NotificationService {
   static NotificationService? _instance;
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
+  static FirebaseMessaging? _firebaseMessaging;
 
   // Stream controller for notification events
   static final StreamController<NotificationModel> _notificationController =
@@ -31,8 +41,12 @@ class NotificationService {
   /// Initialize notification service
   Future<void> initialize() async {
     await _initializeLocalNotifications();
-    // TODO: Initialize FCM when package is added
-    // await _initializeFCM();
+    await _initializeFCM();
+    _initializeTimezone();
+  }
+
+  void _initializeTimezone() {
+    tz_data.initializeTimeZones();
   }
 
   Future<void> _initializeLocalNotifications() async {
@@ -56,10 +70,83 @@ class NotificationService {
     );
   }
 
+  Future<void> _initializeFCM() async {
+    try {
+      _firebaseMessaging = FirebaseMessaging.instance;
+
+      // Request permission for iOS
+      final settings = await _firebaseMessaging!.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      debugPrint('FCM Permission status: ${settings.authorizationStatus}');
+
+      // Set up message handlers
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
+
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+
+      // Handle when app is opened from notification
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
+
+      // Check for initial message (app opened from terminated state)
+      final initialMessage = await _firebaseMessaging!.getInitialMessage();
+      if (initialMessage != null) {
+        _handleMessageOpenedApp(initialMessage);
+      }
+
+      debugPrint('FCM initialized successfully');
+    } catch (e) {
+      debugPrint('Error initializing FCM: $e');
+    }
+  }
+
+  void _handleForegroundMessage(RemoteMessage message) {
+    debugPrint('Received foreground message: ${message.messageId}');
+
+    // Show local notification for foreground messages
+    final notification = message.notification;
+    if (notification != null) {
+      showNotification(
+        id: message.hashCode,
+        title: notification.title ?? 'New Notification',
+        body: notification.body ?? '',
+        payload: message.data['action'] ?? '',
+      );
+    }
+
+    // Add to stream
+    _notificationController.add(
+      NotificationModel(
+        id: message.messageId ?? '',
+        title: notification?.title ?? 'Notification',
+        message: notification?.body ?? '',
+        type: NotificationType.push,
+        createdAt: DateTime.now(),
+        data: message.data,
+      ),
+    );
+  }
+
+  void _handleMessageOpenedApp(RemoteMessage message) {
+    debugPrint('App opened from notification: ${message.messageId}');
+    handleDeepLink(message.data['action'] as String?);
+  }
+
   void _onNotificationTap(NotificationResponse response) {
     debugPrint('Notification tapped: ${response.payload}');
     // Handle notification tap - navigate to appropriate screen
     // Parse payload and use deep linking
+    handleDeepLink(response.payload);
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -136,8 +223,36 @@ class NotificationService {
     required DateTime scheduledTime,
     String? payload,
   }) async {
-    // TODO: Implement scheduled notifications with timezone
-    debugPrint('Schedule notification for: $scheduledTime');
+    final androidDetails = const AndroidNotificationDetails(
+      'scheduled_channel',
+      'Scheduled Notifications',
+      channelDescription: 'Scheduled notification channel',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _localNotifications.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledTime, tz.local),
+      details,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: payload,
+    );
+
+    debugPrint('Notification scheduled for: $scheduledTime');
   }
 
   /// Cancel notification
@@ -151,28 +266,37 @@ class NotificationService {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // FCM (Firebase Cloud Messaging) - Placeholder
+  // FCM (Firebase Cloud Messaging)
   // ═══════════════════════════════════════════════════════════════
 
   /// Get FCM token
   Future<String?> getFCMToken() async {
-    // TODO: Implement with firebase_messaging package
-    // return await FirebaseMessaging.instance.getToken();
-    return null;
+    try {
+      return await _firebaseMessaging?.getToken();
+    } catch (e) {
+      debugPrint('Error getting FCM token: $e');
+      return null;
+    }
   }
 
   /// Subscribe to topic
   Future<void> subscribeToTopic(String topic) async {
-    // TODO: Implement with firebase_messaging package
-    // await FirebaseMessaging.instance.subscribeToTopic(topic);
-    debugPrint('Subscribe to topic: $topic');
+    try {
+      await _firebaseMessaging?.subscribeToTopic(topic);
+      debugPrint('Subscribed to topic: $topic');
+    } catch (e) {
+      debugPrint('Error subscribing to topic: $e');
+    }
   }
 
   /// Unsubscribe from topic
   Future<void> unsubscribeFromTopic(String topic) async {
-    // TODO: Implement with firebase_messaging package
-    // await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
-    debugPrint('Unsubscribe from topic: $topic');
+    try {
+      await _firebaseMessaging?.unsubscribeFromTopic(topic);
+      debugPrint('Unsubscribed from topic: $topic');
+    } catch (e) {
+      debugPrint('Error unsubscribing from topic: $e');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════
