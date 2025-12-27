@@ -79,11 +79,9 @@ interface FormData {
 // Stripe Payment Form Component
 function StripePaymentForm({ 
   onSuccess, 
-  isProcessing, 
   setIsProcessing 
 }: { 
   onSuccess: () => void;
-  isProcessing: boolean;
   setIsProcessing: (v: boolean) => void;
 }) {
   const stripe = useStripe();
@@ -210,8 +208,8 @@ export default function CheckoutPage() {
           currency: "bdt",
         }),
       })
-        .then((res) => res.json())
-        .then((data: { clientSecret?: string }) => {
+        .then((res) => res.json() as Promise<{ clientSecret?: string }>)
+        .then((data) => {
           if (data.clientSecret) {
             setClientSecret(data.clientSecret);
           }
@@ -592,9 +590,8 @@ export default function CheckoutPage() {
                             },
                           }}
                         >
-                          <StripePaymentForm
+                        <StripePaymentForm
                             onSuccess={() => {}}
-                            isProcessing={isLoading}
                             setIsProcessing={setIsLoading}
                           />
                         </Elements>

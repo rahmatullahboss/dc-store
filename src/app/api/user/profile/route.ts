@@ -118,6 +118,15 @@ export async function PATCH(request: Request) {
 
     const db = await getDatabase();
     
+    // First, fetch existing user data to merge with new data
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.id, session.user.id),
+      columns: {
+        defaultAddress: true,
+        preferences: true,
+      },
+    });
+    
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
@@ -130,12 +139,22 @@ export async function PATCH(request: Request) {
       updateData.phone = body.phone;
     }
 
+    // Merge defaultAddress with existing data
     if (body.defaultAddress) {
-      updateData.defaultAddress = body.defaultAddress;
+      const existingAddress = existingUser?.defaultAddress as Record<string, string> | null;
+      updateData.defaultAddress = JSON.stringify({
+        ...existingAddress,
+        ...body.defaultAddress,
+      });
     }
 
+    // Merge preferences with existing data
     if (body.preferences) {
-      updateData.preferences = body.preferences;
+      const existingPrefs = existingUser?.preferences as Record<string, string> | null;
+      updateData.preferences = JSON.stringify({
+        ...existingPrefs,
+        ...body.preferences,
+      });
     }
 
     await db
