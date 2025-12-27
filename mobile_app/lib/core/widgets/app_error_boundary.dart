@@ -21,9 +21,14 @@ class _AppErrorBoundaryState extends State<AppErrorBoundary> {
     super.initState();
     // Override Flutter's error handling
     FlutterError.onError = (details) {
-      setState(() {
-        _hasError = true;
-        _errorDetails = details;
+      // Defer setState to avoid calling during build phase
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _hasError = true;
+            _errorDetails = details;
+          });
+        }
       });
       // Still log to console for debugging
       FlutterError.presentError(details);
