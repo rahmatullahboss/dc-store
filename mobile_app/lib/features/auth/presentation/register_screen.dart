@@ -132,13 +132,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   void _signInWithGoogle() async {
-    toastification.show(
-      context: context,
-      type: ToastificationType.info,
-      title: const Text('Signing in with Google...'),
-      autoCloseDuration: const Duration(seconds: 2),
-    );
-    // TODO: Integrate with GoogleSignInService when ready
+    final success = await ref
+        .read(authControllerProvider.notifier)
+        .signInWithGoogle();
+
+    if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
+      if (success) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.minimal,
+          title: Text(l10n.welcome),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+        context.go('/');
+      } else {
+        final error = ref.read(authControllerProvider).error;
+        if (error != null && error != 'Sign-in cancelled') {
+          toastification.show(
+            context: context,
+            type: ToastificationType.error,
+            style: ToastificationStyle.minimal,
+            title: Text(error),
+            autoCloseDuration: const Duration(seconds: 3),
+          );
+        }
+      }
+    }
   }
 
   void _signInWithApple() {
