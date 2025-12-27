@@ -83,23 +83,23 @@
 
 .dark {
   --background: #181411;
-  --foreground: rgba(255, 255, 255, 0.95);
+  --foreground: rgba(255, 255, 255, 0.92);
   --card: #1f1a15;
-  --card-foreground: rgba(255, 255, 255, 0.9);
+  --card-foreground: rgba(255, 255, 255, 0.88);
   --popover: #1f1a15;
-  --popover-foreground: rgba(255, 255, 255, 0.9);
-  --primary: #f48c25;
+  --popover-foreground: rgba(255, 255, 255, 0.88);
+  --primary: rgba(244, 140, 37, 0.85);
   --primary-foreground: #000000;
-  --secondary: rgba(39, 33, 27, 0.8);
-  --secondary-foreground: rgba(255, 255, 255, 0.85);
-  --muted: rgba(39, 33, 27, 0.6);
-  --muted-foreground: rgba(186, 171, 156, 0.8);
-  --accent: rgba(39, 33, 27, 0.7);
-  --accent-foreground: rgba(255, 255, 255, 0.85);
+  --secondary: rgba(39, 33, 27, 0.7);
+  --secondary-foreground: rgba(255, 255, 255, 0.8);
+  --muted: rgba(39, 33, 27, 0.5);
+  --muted-foreground: rgba(186, 171, 156, 0.7);
+  --accent: rgba(39, 33, 27, 0.6);
+  --accent-foreground: rgba(255, 255, 255, 0.8);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: rgba(57, 48, 40, 0.6);
-  --input: rgba(57, 48, 40, 0.5);
-  --ring: #f48c25;
+  --border: rgba(57, 48, 40, 0.5);
+  --input: rgba(57, 48, 40, 0.4);
+  --ring: rgba(244, 140, 37, 0.7);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);

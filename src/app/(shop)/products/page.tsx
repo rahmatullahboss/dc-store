@@ -44,14 +44,14 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const categories = [{ id: "All", name: "All" }, ...categoryIds];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             {searchQuery ? `Search: "${params.search}"` : "All Products"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             {searchQuery 
               ? `Found ${filteredProducts.length} products matching your search`
               : "Discover our curated collection of premium products"
@@ -60,16 +60,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
 
         {/* Search & Filters Bar */}
-        <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-100 mb-6 sm:mb-8">
+        <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-border mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
             {/* Search */}
             <form action="/products" method="GET" className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 name="search"
                 placeholder="Search products..."
                 defaultValue={params.search || ""}
-                className="pl-10 bg-gray-50 border-0"
+                className="pl-10 bg-muted border-0"
               />
             </form>
 
@@ -85,8 +85,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     variant={isActive ? "default" : "outline"}
                     className={`cursor-pointer whitespace-nowrap px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm ${
                       isActive
-                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0 hover:from-amber-600 hover:to-rose-600"
-                        : "hover:bg-gray-100"
+                        ? "bg-primary text-primary-foreground border-0 hover:bg-primary/90"
+                        : "hover:bg-muted"
                     }`}
                   >
                     {category.name}
@@ -111,12 +111,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </div>
 
           {/* Active Filters */}
-          <div className="flex items-center gap-2 mt-4 pt-4 border-t">
-            <span className="text-sm text-gray-500">
+          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border">
+            <span className="text-sm text-muted-foreground">
               Showing {filteredProducts.length} products
             </span>
             <div className="flex-1" />
-            <select className="text-sm border rounded-lg px-3 py-2 bg-white">
+            <select className="text-sm border border-border rounded-lg px-3 py-2 bg-card text-foreground">
               <option>Best Selling</option>
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>
@@ -134,13 +134,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-r from-amber-100 to-rose-100 rounded-full flex items-center justify-center mb-4">
-              <ShoppingBag className="w-8 h-8 text-amber-600" />
+            <div className="w-16 h-16 mx-auto bg-primary/20 rounded-full flex items-center justify-center mb-4">
+              <ShoppingBag className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">
+            <h2 className="text-xl font-bold text-foreground mb-2">
               No Products Yet
             </h2>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               Products will appear here once they&apos;re added to the store.
             </p>
           </div>
@@ -152,12 +152,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <Button variant="outline" disabled>
               Previous
             </Button>
-            <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white border-0">
+            <Button className="bg-primary text-primary-foreground border-0">
               1
             </Button>
             <Button variant="outline">2</Button>
             <Button variant="outline">3</Button>
-            <span className="px-2 text-gray-500">...</span>
+            <span className="px-2 text-muted-foreground">...</span>
             <Button variant="outline">10</Button>
             <Button variant="outline">
               Next
@@ -166,20 +166,20 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         )}
 
         {/* Newsletter Section */}
-        <div className="mt-16 bg-gradient-to-r from-amber-500 to-rose-500 rounded-3xl p-8 md:p-12 text-center text-white">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+        <div className="mt-16 bg-primary rounded-3xl p-8 md:p-12 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary-foreground">
             Get 10% Off Your First Order!
           </h2>
-          <p className="text-white/90 mb-6 max-w-xl mx-auto">
+          <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
             Subscribe to our newsletter and get exclusive offers, new arrivals, 
             and special discounts delivered to your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <Input
               placeholder="Enter your email"
-              className="bg-white/20 border-white/30 text-white placeholder:text-white/70 flex-1"
+              className="bg-background/20 border-background/30 text-primary-foreground placeholder:text-primary-foreground/70 flex-1"
             />
-            <Button className="bg-white text-amber-600 hover:bg-white/90 font-semibold">
+            <Button className="bg-background text-foreground hover:bg-background/90 font-semibold">
               Subscribe
             </Button>
           </div>

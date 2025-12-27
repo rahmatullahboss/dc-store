@@ -168,16 +168,16 @@ export default function ProfilePage() {
 
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
           <Card className="max-w-md mx-auto text-center">
             <CardContent className="pt-6">
-              <User className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-              <h2 className="text-xl font-bold text-gray-800 mb-2">Please Sign In</h2>
-              <p className="text-gray-500 mb-6">You need to be logged in to view your profile.</p>
+              <User className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+              <h2 className="text-xl font-bold text-foreground mb-2">Please Sign In</h2>
+              <p className="text-muted-foreground mb-6">You need to be logged in to view your profile.</p>
               <div className="flex gap-3 justify-center">
                 <Link href="/login">
-                  <Button className="bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                  <Button className="bg-primary text-primary-foreground">
                     Sign In
                   </Button>
                 </Link>
@@ -195,7 +195,7 @@ export default function ProfilePage() {
   const user = session.user;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50">
+    <div className="min-h-screen bg-background">
       {/* Background decorations */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
@@ -204,25 +204,25 @@ export default function ProfilePage() {
 
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
+        <div className="bg-primary rounded-2xl p-8 mb-8 text-primary-foreground relative overflow-hidden">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-background/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-background/10 rounded-full blur-3xl" />
           </div>
           
           <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6">
             <Avatar className="h-24 w-24 border-4 border-white/30">
               <AvatarImage src={user.image || undefined} alt={user.name} />
-              <AvatarFallback className="text-2xl bg-white/20 text-white">
+              <AvatarFallback className="text-2xl bg-background/20 text-primary-foreground">
                 {user.name?.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             
             <div className="text-center sm:text-left flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold">{profile.name || user.name}</h1>
-              <p className="text-white/80">{user.email}</p>
+              <p className="text-primary-foreground/80">{user.email}</p>
               <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-                <Badge className="bg-white/20 text-white border-0">
+                <Badge className="bg-background/20 text-primary-foreground border-0">
                   {getMemberSinceText()}
                 </Badge>
               </div>
@@ -258,29 +258,29 @@ export default function ProfilePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white/80 backdrop-blur">
+          <Card className="bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
-              <Package className="h-8 w-8 mx-auto text-amber-500 mb-2" />
+              <Package className="h-8 w-8 mx-auto text-primary mb-2" />
               {isLoadingProfile ? (
                 <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
               ) : (
-                <p className="text-2xl font-bold text-gray-800">{stats.orderCount}</p>
+                <p className="text-2xl font-bold text-foreground">{stats.orderCount}</p>
               )}
-              <p className="text-sm text-gray-500">Total Orders</p>
+              <p className="text-sm text-muted-foreground">Total Orders</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur">
+          <Card className="bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
-              <Heart className="h-8 w-8 mx-auto text-rose-500 mb-2" />
+              <Heart className="h-8 w-8 mx-auto text-primary mb-2" />
               {isLoadingProfile ? (
                 <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
               ) : (
-                <p className="text-2xl font-bold text-gray-800">{stats.wishlistCount}</p>
+                <p className="text-2xl font-bold text-foreground">{stats.wishlistCount}</p>
               )}
-              <p className="text-sm text-gray-500">Wishlist Items</p>
+              <p className="text-sm text-muted-foreground">Wishlist Items</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur">
+          <Card className="bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <div className="h-8 w-8 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-2">
                 <span className="text-green-600 font-bold">৳</span>
@@ -288,14 +288,14 @@ export default function ProfilePage() {
               {isLoadingProfile ? (
                 <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
               ) : (
-                <p className="text-2xl font-bold text-gray-800">
+                <p className="text-2xl font-bold text-foreground">
                   {stats.totalSpent.toLocaleString()}
                 </p>
               )}
-              <p className="text-sm text-gray-500">Total Spent</p>
+              <p className="text-sm text-muted-foreground">Total Spent</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur">
+          <Card className="bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <div className="h-8 w-8 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-2">
                 <span className="text-purple-600 font-bold">🎁</span>
@@ -303,9 +303,9 @@ export default function ProfilePage() {
               {isLoadingProfile ? (
                 <Loader2 className="h-6 w-6 mx-auto animate-spin text-gray-400" />
               ) : (
-                <p className="text-2xl font-bold text-gray-800">{stats.rewardPoints}</p>
+                <p className="text-2xl font-bold text-foreground">{stats.rewardPoints}</p>
               )}
-              <p className="text-sm text-gray-500">Reward Points</p>
+              <p className="text-sm text-muted-foreground">Reward Points</p>
             </CardContent>
           </Card>
         </div>
@@ -313,16 +313,16 @@ export default function ProfilePage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Personal Information */}
           <div className="lg:col-span-1">
-            <Card className="bg-white/80 backdrop-blur">
+            <Card className="bg-card/80 backdrop-blur">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-amber-500" />
+                  <User className="h-5 w-5 text-primary" />
                   Personal Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">Full Name</label>
+                  <label className="text-sm font-medium text-muted-foreground">Full Name</label>
                   <Input 
                     value={isEditing ? formData.name : (profile.name || user.name || "")}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -362,7 +362,7 @@ export default function ProfilePage() {
                 </div>
                 {isEditing ? (
                   <Button 
-                    className="w-full mt-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white"
+                    className="w-full mt-4 bg-primary text-primary-foreground"
                     onClick={handleSave}
                     disabled={isSaving}
                   >
@@ -381,11 +381,11 @@ export default function ProfilePage() {
 
           {/* Recent Orders */}
           <div className="lg:col-span-2">
-            <Card className="bg-white/80 backdrop-blur">
+            <Card className="bg-card/80 backdrop-blur">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5 text-amber-500" />
+                    <Package className="h-5 w-5 text-primary" />
                     Recent Orders
                   </CardTitle>
                   <CardDescription>Your latest order history</CardDescription>
@@ -397,14 +397,14 @@ export default function ProfilePage() {
               <CardContent>
                 {isLoadingProfile ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
                 ) : recentOrders.length === 0 ? (
                   <div className="text-center py-8">
-                    <Package className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                    <p className="text-gray-500">No orders yet</p>
+                    <Package className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                    <p className="text-muted-foreground">No orders yet</p>
                     <Link href="/products">
-                      <Button className="mt-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                      <Button className="mt-4 bg-primary text-primary-foreground">
                         Start Shopping
                       </Button>
                     </Link>
@@ -414,16 +414,16 @@ export default function ProfilePage() {
                     {recentOrders.map((order) => (
                       <div
                         key={order.id}
-                        className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
+                        className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted transition-colors"
                       >
                         <div>
-                          <p className="font-medium text-gray-800">{order.orderNumber}</p>
-                          <p className="text-sm text-gray-500">
+                          <p className="font-medium text-foreground">{order.orderNumber}</p>
+                          <p className="text-sm text-muted-foreground">
                             {new Date(order.date).toLocaleDateString()} • {order.items} items
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-gray-800">৳{order.total.toLocaleString()}</p>
+                          <p className="font-bold text-foreground">৳{order.total.toLocaleString()}</p>
                           <Badge className={`${statusColors[order.status] || statusColors.pending} border-0 text-xs`}>
                             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                           </Badge>

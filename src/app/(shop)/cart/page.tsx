@@ -34,22 +34,22 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
           <div className="flex flex-col items-center justify-center gap-6 text-center">
-            <div className="p-6 bg-gradient-to-br from-amber-100 to-rose-100 rounded-full">
-              <ShoppingCart className="h-16 w-16 text-amber-600" />
+            <div className="p-6 bg-primary/20 rounded-full">
+              <ShoppingCart className="h-16 w-16 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-foreground">
               Your cart is empty
             </h1>
-            <p className="text-gray-600 max-w-md">
+            <p className="text-muted-foreground max-w-md">
               Looks like you haven&apos;t added anything to your cart yet.
               Explore our products and find something you&apos;ll love!
             </p>
             <Button
               size="lg"
-              className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full px-8"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8"
               asChild
             >
               <Link href="/products">
@@ -64,7 +64,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-stone-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -74,10 +74,10 @@ export default function CartPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
               Shopping Cart
             </h1>
-            <p className="text-gray-600">{itemCount} items in your cart</p>
+            <p className="text-muted-foreground">{itemCount} items in your cart</p>
           </div>
         </div>
 
@@ -87,7 +87,7 @@ export default function CartPage() {
             {items.map((item) => (
               <div
                 key={`${item.productId}-${item.variantId || ""}`}
-                className="bg-white rounded-2xl p-4 md:p-6 shadow-lg border border-gray-100 flex gap-4"
+                className="bg-card rounded-2xl p-4 md:p-6 shadow-lg border border-border flex gap-4"
               >
                 {/* Product Image */}
                 <div className="relative h-24 w-24 md:h-32 md:w-32 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
@@ -108,7 +108,7 @@ export default function CartPage() {
                 {/* Product Info */}
                 <div className="flex-1 flex flex-col">
                   <div className="flex justify-between gap-2">
-                    <h3 className="font-semibold text-gray-800 line-clamp-2 text-sm md:text-base">
+                    <h3 className="font-semibold text-foreground line-clamp-2 text-sm md:text-base">
                       {item.name}
                     </h3>
                     <Button
@@ -121,13 +121,13 @@ export default function CartPage() {
                     </Button>
                   </div>
 
-                  <p className="text-amber-600 font-bold text-lg mt-1">
+                  <p className="text-primary font-bold text-lg mt-1">
                     {formatPrice(item.price)}
                   </p>
 
                   <div className="flex items-center justify-between mt-auto pt-3">
                     {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 bg-gray-100 rounded-full p-1">
+                    <div className="flex items-center gap-2 bg-muted rounded-full p-1">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -162,7 +162,7 @@ export default function CartPage() {
                     </div>
 
                     {/* Item Total */}
-                    <p className="font-bold text-gray-800">
+                    <p className="font-bold text-foreground">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
@@ -173,24 +173,24 @@ export default function CartPage() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 sticky top-4">
-              <h2 className="text-xl font-bold text-gray-800 mb-6">
+            <div className="bg-card rounded-2xl p-6 shadow-lg border border-border sticky top-4">
+              <h2 className="text-xl font-bold text-foreground mb-6">
                 Order Summary
               </h2>
 
               {/* Free Shipping Progress */}
               {subtotal < siteConfig.shipping.freeShippingThreshold && (
-                <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-rose-50 rounded-xl">
-                  <p className="text-sm text-gray-700 mb-2">
+                <div className="mb-6 p-4 bg-primary/10 rounded-xl">
+                  <p className="text-sm text-foreground mb-2">
                     Add{" "}
-                    <span className="font-bold text-amber-600">
+                    <span className="font-bold text-primary">
                       {formatPrice(amountToFreeShipping)}
                     </span>{" "}
                     more for free shipping!
                   </p>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-amber-500 to-rose-500 rounded-full transition-all duration-500"
+                      className="h-full bg-primary rounded-full transition-all duration-500"
                       style={{ width: `${freeShippingProgress}%` }}
                     />
                   </div>
@@ -227,11 +227,11 @@ export default function CartPage() {
 
               {/* Price Breakdown */}
               <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-muted-foreground">
                   <span>Shipping</span>
                   <span
                     className={
@@ -241,10 +241,10 @@ export default function CartPage() {
                     {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
                   </span>
                 </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between text-lg font-bold text-gray-800">
+                <div className="border-t border-border pt-3">
+                  <div className="flex justify-between text-lg font-bold text-foreground">
                     <span>Total</span>
-                    <span className="text-amber-600">{formatPrice(total)}</span>
+                    <span className="text-primary">{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>
@@ -252,7 +252,7 @@ export default function CartPage() {
               {/* Checkout Button */}
               <Button
                 size="lg"
-                className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full text-lg py-6"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-lg py-6"
                 asChild
               >
                 <Link href="/checkout">Proceed to Checkout</Link>
