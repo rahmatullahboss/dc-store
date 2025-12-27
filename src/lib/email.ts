@@ -1,13 +1,22 @@
 import { Resend } from 'resend';
 import type { OrderItem, Address } from '@/db/schema';
 
-// Initialize Resend client
-const resend = process.env.RESEND_API_KEY 
-  ? new Resend(process.env.RESEND_API_KEY) 
-  : null;
+// Lazy Resend initialization for Cloudflare Workers compatibility
+// Environment variables aren't available at module load time in Workers
+let resendClient: Resend | null = null;
+
+function getResend(): Resend | null {
+  if (resendClient) return resendClient;
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('Resend API key not configured');
+    return null;
+  }
+  resendClient = new Resend(process.env.RESEND_API_KEY);
+  return resendClient;
+}
 
 // Email configuration
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'DC Store <noreply@digitalcare.site>';
+const FROM_EMAIL = 'DC Store <noreply@digitalcare.site>';
 
 interface OrderEmailData {
   orderNumber: string;
@@ -152,6 +161,7 @@ function generateOrderConfirmationHTML(data: OrderEmailData): string {
  * Send order confirmation email
  */
 export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<{ success: boolean; error?: string }> {
+  const resend = getResend();
   if (!resend) {
     console.warn('Resend API key not configured. Skipping email send.');
     return { success: false, error: 'Email service not configured' };
@@ -192,6 +202,7 @@ export async function sendOrderStatusEmail(
   orderNumber: string,
   status: string
 ): Promise<{ success: boolean; error?: string }> {
+  const resend = getResend();
   if (!resend || !customerEmail) {
     return { success: false, error: 'Email service not available or no email' };
   }
