@@ -35,6 +35,12 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-background">
+        {/* Background decorations */}
+        <div className="pointer-events-none fixed inset-0 overflow-hidden dark:hidden">
+          <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
+          <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
+        </div>
+
         <div className="container mx-auto px-4 py-16">
           <div className="flex flex-col items-center justify-center gap-6 text-center">
             <div className="p-6 bg-primary/20 rounded-full">
@@ -65,6 +71,12 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Background decorations */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden dark:hidden">
+        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
+        <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

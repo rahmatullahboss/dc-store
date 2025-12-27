@@ -22,6 +22,12 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* Background decorations */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden dark:hidden">
+        <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
+        <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
+      </div>
+
       {/* Hero Section */}
       <HeroSection />
 
