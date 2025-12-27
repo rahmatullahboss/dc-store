@@ -456,9 +456,9 @@ export default function CheckoutPage() {
             </div>
             <span className="text-sm font-medium text-foreground hidden sm:block">Shipping</span>
           </div>
-          <div className="w-8 md:w-16 h-0.5 bg-gray-300" />
+          <div className="w-8 md:w-16 h-0.5 bg-muted" />
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gray-300 text-muted-foreground flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center text-sm font-bold">
               3
             </div>
             <span className="text-sm font-medium text-muted-foreground hidden sm:block">Done</span>
@@ -596,7 +596,7 @@ export default function CheckoutPage() {
                     className={`w-full p-4 border-2 rounded-xl flex items-center gap-4 transition-all ${
                       paymentMethod === "cod"
                         ? "border-amber-500 bg-amber-50"
-                        : "border-border hover:border-gray-300"
+                        : "border-border hover:border-muted-foreground"
                     }`}
                   >
                     <div className={`p-3 rounded-full ${
@@ -624,7 +624,7 @@ export default function CheckoutPage() {
                     className={`w-full p-4 border-2 rounded-xl flex items-center gap-4 transition-all ${
                       paymentMethod === "stripe"
                         ? "border-amber-500 bg-amber-50"
-                        : "border-border hover:border-gray-300"
+                        : "border-border hover:border-muted-foreground"
                     }`}
                   >
                     <div className={`p-3 rounded-full ${

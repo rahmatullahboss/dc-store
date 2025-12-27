@@ -128,7 +128,7 @@ function RegisterForm() {
             </div>
 
             <div className="text-center space-y-1">
-              <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+              <h2 className="text-2xl font-bold text-foreground">Create your account</h2>
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
                 <Link href="/login" className="font-medium text-primary hover:text-primary">
@@ -314,7 +314,7 @@ function RegisterForm() {
 
             {/* Back to Home */}
             <div className="text-center">
-              <Link href="/" className="text-sm text-muted-foreground hover:text-gray-900 inline-flex items-center gap-1">
+              <Link href="/" className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back to home
               </Link>
@@ -332,15 +332,15 @@ function RegisterSkeleton() {
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="max-w-md w-full p-6 space-y-6">
         <div className="text-center space-y-2">
-          <div className="h-8 w-64 bg-gray-200 rounded-lg mx-auto animate-pulse" />
+          <div className="h-8 w-64 bg-muted rounded-lg mx-auto animate-pulse" />
           <div className="h-4 w-48 bg-muted rounded-lg mx-auto animate-pulse" />
         </div>
         <div className="bg-card rounded-lg border p-6 space-y-4">
-          <div className="h-6 w-32 bg-gray-200 rounded animate-pulse" />
+          <div className="h-6 w-32 bg-muted rounded animate-pulse" />
           <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
           <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
           <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
-          <div className="h-10 w-full bg-gray-200 rounded-md animate-pulse" />
+          <div className="h-10 w-full bg-muted rounded-md animate-pulse" />
         </div>
       </div>
     </div>

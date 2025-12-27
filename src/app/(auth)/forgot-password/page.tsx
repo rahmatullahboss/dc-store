@@ -135,7 +135,7 @@ function ForgotPasswordForm() {
 
         {/* Back to Login */}
         <div className="text-center mt-6">
-          <Link href="/login" className="text-sm text-muted-foreground hover:text-gray-900 inline-flex items-center gap-1">
+          <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
             <ArrowLeft className="h-4 w-4" />
             Back to login
           </Link>

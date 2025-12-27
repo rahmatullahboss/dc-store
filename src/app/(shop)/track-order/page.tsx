@@ -154,7 +154,7 @@ export default function TrackOrderPage() {
                             className={`w-10 h-10 rounded-full flex items-center justify-center ${
                               step.completed
                                 ? "bg-primary"
-                                : "bg-gray-200"
+                                : "bg-muted"
                             }`}
                           >
                             <Icon className={`w-5 h-5 ${step.completed ? "text-white" : "text-muted-foreground"}`} />
@@ -163,7 +163,7 @@ export default function TrackOrderPage() {
                           {!isLast && (
                             <div
                               className={`absolute left-1/2 top-10 w-0.5 h-full -translate-x-1/2 ${
-                                step.completed ? "bg-amber-400" : "bg-gray-200"
+                                step.completed ? "bg-amber-400" : "bg-muted"
                               }`}
                             />
                           )}

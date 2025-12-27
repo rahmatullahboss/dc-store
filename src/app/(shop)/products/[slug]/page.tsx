@@ -91,9 +91,9 @@ export default async function ProductDetailPage({
   ];
 
   return (
-    <div className="relative min-h-screen bg-background text-gray-900">
+    <div className="relative min-h-screen bg-background text-foreground">
       {/* Background decorations */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />
         <div className="absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-rose-200/60 blur-3xl" />
         <div className="absolute top-1/3 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-200/40 blur-3xl" />
@@ -111,7 +111,7 @@ export default async function ProductDetailPage({
               Back to Products
             </Link>
             {product.categoryId && (
-              <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-rose-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
+              <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-rose-100 dark:from-amber-900/50 dark:to-rose-900/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">
                 {product.categoryId}
               </span>
             )}
@@ -133,7 +133,7 @@ export default async function ProductDetailPage({
                       priority
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/80">
                       <ShoppingCart className="h-24 w-24 text-muted-foreground" />
                     </div>
                   )}
@@ -190,10 +190,10 @@ export default async function ProductDetailPage({
                   {product.shortDescription}
                 </p>
                 <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-amber-700">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 dark:bg-amber-900/50 px-3 py-1 text-amber-700 dark:text-amber-300">
                     ⭐ Rated {averageRating.toFixed(1)} / 5
                   </span>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-rose-100 px-3 py-1 text-rose-700">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-rose-100 dark:bg-rose-900/50 px-3 py-1 text-rose-700 dark:text-rose-300">
                     {reviewCount} verified reviews
                   </span>
                 </div>
@@ -207,7 +207,7 @@ export default async function ProductDetailPage({
                 <div className="rounded-xl sm:rounded-[2.75rem] border border-white/60 bg-card/80 p-4 sm:p-8 shadow-2xl shadow-amber-100/70 backdrop-blur">
                   {/* Title & Badge */}
                   <div className="flex items-start justify-between gap-4">
-                    <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900 lg:text-4xl">
+                    <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-foreground lg:text-4xl">
                       {product.name}
                     </h1>
                     <Badge
@@ -231,7 +231,7 @@ export default async function ProductDetailPage({
                       </div>
                       <span>{reviewCount} Reviews</span>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 font-medium text-amber-700">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/50 px-2 py-1 font-medium text-amber-700 dark:text-amber-300">
                       {product.categoryId || "Featured"}
                     </span>
                   </div>
@@ -242,7 +242,7 @@ export default async function ProductDetailPage({
                       <p className="text-xs uppercase tracking-[0.3em] text-primary">
                         {discountPercentage > 0 ? "Special Offer Price" : "Starting from"}
                       </p>
-                      <p className="text-3xl sm:text-4xl font-bold text-gray-900 lg:text-5xl">
+                      <p className="text-3xl sm:text-4xl font-bold text-foreground lg:text-5xl">
                         ৳ {product.price.toLocaleString()}
                       </p>
                       {product.compareAtPrice && (
@@ -266,7 +266,7 @@ export default async function ProductDetailPage({
                     {highlightCards.map(({ icon: Icon, title, subtitle }) => (
                       <div
                         key={title}
-                        className="flex items-start gap-4 rounded-2xl border border-amber-100/60 bg-amber-50/40 p-4 text-sm text-muted-foreground shadow-sm"
+                        className="flex items-start gap-4 rounded-2xl border border-amber-100/60 dark:border-amber-900/30 bg-amber-50/40 dark:bg-amber-900/20 p-4 text-sm text-muted-foreground shadow-sm"
                       >
                         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-card text-primary shadow-inner">
                           <Icon className="h-5 w-5" />
@@ -351,7 +351,7 @@ export default async function ProductDetailPage({
                                   className={`h-4 w-4 ${
                                     i < review.rating
                                       ? "fill-amber-400 text-amber-400"
-                                      : "text-gray-200"
+                                      : "text-muted"
                                   }`}
                                 />
                               ))}
@@ -379,7 +379,7 @@ export default async function ProductDetailPage({
 
               <TabsContent value="shipping" className="mt-8">
                 <div className="space-y-6 text-muted-foreground">
-                  <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-6">
+                  <div className="rounded-2xl border border-amber-100 dark:border-amber-900/30 bg-amber-50/50 dark:bg-amber-900/20 p-6">
                     <h4 className="font-semibold text-foreground mb-2">
                       📦 Delivery Information
                     </h4>

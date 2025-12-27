@@ -125,7 +125,7 @@ function ChatProductCard({ product }: { product: Product }) {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-gray-900 text-sm line-clamp-1 group-hover:text-primary transition-colors">
+          <h4 className="font-medium text-foreground text-sm line-clamp-1 group-hover:text-primary transition-colors">
             {product.name}
           </h4>
           <p className="text-xs text-muted-foreground mt-0.5">{product.category}</p>
@@ -146,7 +146,7 @@ function ChatProductCard({ product }: { product: Product }) {
           </div>
         </div>
         <div className="flex items-center">
-          <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors" />
+          <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
       </div>
     </Link>
@@ -584,7 +584,7 @@ export function ChatBot() {
                     </div>
                   </div>
                   {msg.role === "user" && (
-                    <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                        <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
                       <User className="w-4 h-4 text-muted-foreground" />
                     </div>
                   )}
@@ -615,7 +615,7 @@ export function ChatBot() {
                     {renderMessageContent(message)}
                   </div>
                   {message.role === "user" && (
-                    <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                        <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
                       <User className="w-4 h-4 text-muted-foreground" />
                     </div>
                   )}

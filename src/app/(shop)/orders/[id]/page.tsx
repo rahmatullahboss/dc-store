@@ -281,7 +281,7 @@ export default function OrderDetailsPage() {
                                   </div>
                                   {!isLast && (
                                     <div className={`w-0.5 h-12 ${
-                                      index < currentIndex ? "bg-primary" : "bg-gray-200"
+                                      index < currentIndex ? "bg-primary" : "bg-muted"
                                     }`} />
                                   )}
                                 </div>
