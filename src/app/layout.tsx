@@ -5,6 +5,7 @@ import { siteConfig } from "@/lib/config";
 import { CartProvider } from "@/lib/cart-context";
 import { Toaster } from "@/components/ui/sonner";
 import { LayoutWrapper } from "@/components/layout/layout-wrapper";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -55,10 +56,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
-        <CartProvider>
-          <LayoutWrapper>{children}</LayoutWrapper>
-          <Toaster position="bottom-right" richColors />
-        </CartProvider>
+        <ThemeProvider>
+          <CartProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+            <Toaster position="bottom-right" richColors />
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

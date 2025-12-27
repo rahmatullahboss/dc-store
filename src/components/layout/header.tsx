@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, Search, ShoppingCart, User, X, LogOut } from "lucide-react";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -143,6 +144,9 @@ export function Header() {
               <span className="sr-only">Search</span>
             </Button>
           )}
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* User - Session Aware */}
           {isPending ? (
