@@ -529,6 +529,7 @@ export default function CheckoutPage() {
                   <div>
                     <Label htmlFor="district">District *</Label>
                     <Select
+                      key={`district-${formData.division}`}
                       value={formData.district}
                       onValueChange={(value) => handleInputChange("district", value)}
                       disabled={!formData.division}
