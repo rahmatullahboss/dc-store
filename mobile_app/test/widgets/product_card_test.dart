@@ -222,8 +222,6 @@ void main() {
     testWidgets('wishlist toggle callback is called when tapped', (
       tester,
     ) async {
-      bool wishlistToggled = false;
-
       await mockNetworkImagesFor(() async {
         await tester.pumpWidget(
           MaterialApp(
@@ -235,7 +233,7 @@ void main() {
                   id: 'test_product',
                   name: 'Test Product',
                   price: 1000.0,
-                  onWishlistToggle: () => wishlistToggled = true,
+                  onWishlistToggle: () {},
                 ),
               ),
             ),
@@ -260,8 +258,6 @@ void main() {
     // ═══════════════════════════════════════════════════════════════
 
     testWidgets('add to cart callback is called when tapped', (tester) async {
-      bool addToCartCalled = false;
-
       await mockNetworkImagesFor(() async {
         await tester.pumpWidget(
           MaterialApp(
@@ -273,7 +269,7 @@ void main() {
                   id: 'test_product',
                   name: 'Test Product',
                   price: 1000.0,
-                  onAddToCart: () => addToCartCalled = true,
+                  onAddToCart: () {},
                 ),
               ),
             ),

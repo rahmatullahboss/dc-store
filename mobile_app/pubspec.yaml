@@ -47,6 +47,7 @@ dependencies:
   # ===== Notifications & Feedback =====
   toastification: ^3.0.3
   flutter_local_notifications: ^19.0.0
+  timezone: ^0.10.0
 
   # ===== Utilities =====
   share_plus: ^12.0.1

@@ -12,13 +12,14 @@ extension WidgetTesterExtension on WidgetTester {
   }
 
   /// Pump a widget with Riverpod ProviderScope
+  /// Pass overrides as created by provider.overrideWith(...) or provider.overrideWithValue(...)
   Future<void> pumpAppWithProviders(
     Widget widget, {
-    List<ProviderOrFamily>? overrides,
+    List<dynamic>? overrides,
   }) async {
     await pumpWidget(
       ProviderScope(
-        overrides: overrides?.cast<Override>() ?? [],
+        overrides: overrides?.cast() ?? [],
         child: MaterialApp(home: widget),
       ),
     );
