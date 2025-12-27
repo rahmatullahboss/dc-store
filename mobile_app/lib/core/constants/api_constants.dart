@@ -104,9 +104,9 @@ class ApiConstants {
   // WISHLIST ENDPOINTS
   // ═══════════════════════════════════════════════════════════════
 
-  static const String wishlist = '/api/wishlist';
-  static const String addToWishlist = '/api/wishlist/add';
-  static const String removeFromWishlist = '/api/wishlist/remove';
+  static const String wishlist = '/api/user/wishlist';
+  static String removeFromWishlistById(String productId) =>
+      '/api/user/wishlist/$productId';
 
   // ═══════════════════════════════════════════════════════════════
   // USER ENDPOINTS
