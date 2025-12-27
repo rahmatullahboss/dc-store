@@ -500,15 +500,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               onPressed:
                   _selectedCardId != null || _selectedPaymentMethod != null
                   ? () {
-                      // Navigate to review step
+                      // Navigate to order review/confirmation
                       toastification.show(
                         context: context,
                         type: ToastificationType.success,
                         title: const Text('Proceeding to Review'),
                         autoCloseDuration: const Duration(seconds: 2),
                       );
-                      // TODO: Navigate to review screen
-                      // context.push('/checkout/review');
+
+                      // Navigate to order confirmation screen
+                      context.push('/order-confirmation');
                     }
                   : null,
               style: ElevatedButton.styleFrom(

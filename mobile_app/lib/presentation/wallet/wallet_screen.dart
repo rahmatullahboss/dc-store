@@ -291,7 +291,11 @@ class _WalletScreenState extends State<WalletScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.add, size: 16, color: WhiteLabelConfig.accentColor),
+                          Icon(
+                            Icons.add,
+                            size: 16,
+                            color: WhiteLabelConfig.accentColor,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             'Add Money',
@@ -344,7 +348,11 @@ class _WalletScreenState extends State<WalletScreen> {
                         : const Color(0xFFEEF2FF),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(action.icon, color: WhiteLabelConfig.accentColor, size: 24),
+                  child: Icon(
+                    action.icon,
+                    color: WhiteLabelConfig.accentColor,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -1016,7 +1024,8 @@ class _WalletScreenState extends State<WalletScreen> {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? (isDark
-                                        ? WhiteLabelConfig.accentColor.withValues(alpha: 0.15)
+                                        ? WhiteLabelConfig.accentColor
+                                              .withValues(alpha: 0.15)
                                         : const Color(0xFFEEF2FF))
                                   : (isDark
                                         ? Colors.white.withValues(alpha: 0.05)
@@ -1025,7 +1034,8 @@ class _WalletScreenState extends State<WalletScreen> {
                               border: Border.all(
                                 color: isSelected
                                     ? (isDark
-                                          ? WhiteLabelConfig.accentColor.withValues(alpha: 0.3)
+                                          ? WhiteLabelConfig.accentColor
+                                                .withValues(alpha: 0.3)
                                           : const Color(0xFFC7D2FE))
                                     : (isDark
                                           ? Colors.white.withValues(alpha: 0.1)
@@ -1175,8 +1185,39 @@ class _WalletScreenState extends State<WalletScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      // Close sheet and show success
                       Navigator.pop(context);
-                      // TODO: Implement add money logic
+
+                      // Show success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
+                            children: [
+                              const Icon(
+                                Icons.check_circle,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                '\$${_addMoneyAmount.toInt()} added to your wallet!',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          backgroundColor: const Color(0xFF16A34A),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+
+                      // Note: In production, this would call an API to process payment
+                      // and update the wallet balance. The UI would refresh via provider.
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: WhiteLabelConfig.accentColor,
