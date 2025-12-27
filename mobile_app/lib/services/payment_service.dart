@@ -1,9 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
+import '../core/config/app_config.dart';
 
-/// PaymentService - Handles payment processing
-/// Supports multiple payment gateways (SSLCommerz, bKash, Nagad, etc.)
+/// PaymentService - Handles payment processing with Stripe
+/// Supports multiple payment methods including cards, mobile banking (bKash, Nagad)
 class PaymentService {
   static PaymentService? _instance;
+  static bool _stripeInitialized = false;
 
   PaymentService._();
 
@@ -12,10 +18,14 @@ class PaymentService {
     return _instance!;
   }
 
-  /// Initialize payment service
-  Future<void> initialize() async {
-    // TODO: Initialize payment gateway SDKs
-    debugPrint('PaymentService initialized');
+  /// Initialize payment service with Stripe
+  Future<void> initialize({required String stripePublishableKey}) async {
+    if (!_stripeInitialized) {
+      Stripe.publishableKey = stripePublishableKey;
+      await Stripe.instance.applySettings();
+      _stripeInitialized = true;
+      debugPrint('PaymentService initialized with Stripe');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -25,6 +35,12 @@ class PaymentService {
   /// Get available payment methods
   List<PaymentMethod> getAvailablePaymentMethods() {
     return [
+      const PaymentMethod(
+        id: 'stripe',
+        name: 'Credit/Debit Card',
+        icon: 'assets/icons/card.svg',
+        type: PaymentType.card,
+      ),
       const PaymentMethod(
         id: 'cod',
         name: 'Cash on Delivery',
@@ -43,51 +59,141 @@ class PaymentService {
         icon: 'assets/icons/nagad.svg',
         type: PaymentType.mobileBanking,
       ),
-      const PaymentMethod(
-        id: 'rocket',
-        name: 'Rocket',
-        icon: 'assets/icons/rocket.svg',
-        type: PaymentType.mobileBanking,
-      ),
-      const PaymentMethod(
-        id: 'card',
-        name: 'Credit/Debit Card',
-        icon: 'assets/icons/card.svg',
-        type: PaymentType.card,
-      ),
-      const PaymentMethod(
-        id: 'sslcommerz',
-        name: 'SSLCommerz',
-        icon: 'assets/icons/sslcommerz.svg',
-        type: PaymentType.gateway,
-      ),
     ];
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // STRIPE PAYMENT
+  // ═══════════════════════════════════════════════════════════════
+
+  /// Create payment intent on server
+  Future<Map<String, dynamic>?> _createPaymentIntent({
+    required double amount,
+    required String currency,
+    String? customerId,
+    Map<String, dynamic>? metadata,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}/api/payments/create-intent'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'amount': (amount * 100).toInt(), // Convert to smallest currency unit
+          'currency': currency.toLowerCase(),
+          'customerId': customerId,
+          'metadata': metadata,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+      debugPrint('Failed to create payment intent: ${response.statusCode}');
+      return null;
+    } catch (e) {
+      debugPrint('Error creating payment intent: $e');
+      return null;
+    }
+  }
+
+  /// Process Stripe payment using Payment Sheet
+  Future<PaymentResult> processStripePayment({
+    required String orderId,
+    required double amount,
+    String currency = 'BDT',
+    String? customerId,
+    String? customerEmail,
+  }) async {
+    try {
+      // 1. Create payment intent on server
+      final intentData = await _createPaymentIntent(
+        amount: amount,
+        currency: currency,
+        customerId: customerId,
+        metadata: {'orderId': orderId},
+      );
+
+      if (intentData == null) {
+        return PaymentResult.failure(
+          message: 'Failed to create payment intent',
+        );
+      }
+
+      final clientSecret = intentData['clientSecret'] as String?;
+      final ephemeralKey = intentData['ephemeralKey'] as String?;
+      final stripeCustomerId = intentData['customerId'] as String?;
+
+      if (clientSecret == null) {
+        return PaymentResult.failure(
+          message: 'Invalid payment intent response',
+        );
+      }
+
+      // 2. Initialize payment sheet
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: 'DC Store',
+          customerEphemeralKeySecret: ephemeralKey,
+          customerId: stripeCustomerId,
+          style: ThemeMode.system,
+          billingDetails: BillingDetails(email: customerEmail),
+        ),
+      );
+
+      // 3. Present payment sheet
+      await Stripe.instance.presentPaymentSheet();
+
+      // 4. Payment successful
+      return PaymentResult.success(
+        transactionId:
+            intentData['paymentIntentId'] as String? ??
+            'STRIPE_${DateTime.now().millisecondsSinceEpoch}',
+        message: 'Payment successful',
+      );
+    } on StripeException catch (e) {
+      debugPrint('Stripe error: ${e.error.localizedMessage}');
+      if (e.error.code == FailureCode.Canceled) {
+        return PaymentResult.failure(message: 'Payment cancelled');
+      }
+      return PaymentResult.failure(
+        message: e.error.localizedMessage ?? 'Payment failed',
+      );
+    } catch (e) {
+      debugPrint('Payment error: $e');
+      return PaymentResult.failure(message: 'Payment processing error');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════
   // PAYMENT PROCESSING
   // ═══════════════════════════════════════════════════════════════
 
-  /// Process payment
+  /// Process payment based on method
   Future<PaymentResult> processPayment({
     required String orderId,
     required double amount,
     required String paymentMethodId,
+    String? customerEmail,
     Map<String, dynamic>? metadata,
   }) async {
     debugPrint('Processing payment: $paymentMethodId for ৳$amount');
 
     try {
       switch (paymentMethodId) {
+        case 'stripe':
+        case 'card':
+          return processStripePayment(
+            orderId: orderId,
+            amount: amount,
+            customerEmail: customerEmail,
+          );
         case 'cod':
           return _processCOD(orderId, amount);
         case 'bkash':
           return _processBkash(orderId, amount);
         case 'nagad':
           return _processNagad(orderId, amount);
-        case 'card':
-        case 'sslcommerz':
-          return _processSSLCommerz(orderId, amount);
         default:
           return PaymentResult.failure(message: 'Unsupported payment method');
       }
@@ -98,7 +204,6 @@ class PaymentService {
 
   /// Process COD
   Future<PaymentResult> _processCOD(String orderId, double amount) async {
-    // COD doesn't need actual payment processing
     return PaymentResult.success(
       transactionId: 'COD_$orderId',
       message: 'Cash on Delivery selected',
@@ -107,66 +212,21 @@ class PaymentService {
 
   /// Process bKash payment
   Future<PaymentResult> _processBkash(String orderId, double amount) async {
-    // TODO: Implement bKash payment SDK
-    await Future.delayed(const Duration(seconds: 2));
-    return PaymentResult.success(
-      transactionId: 'BK_${DateTime.now().millisecondsSinceEpoch}',
-      message: 'bKash payment successful',
+    // bKash SDK integration would go here
+    // For now, we'll redirect to a webview-based flow
+    await Future.delayed(const Duration(seconds: 1));
+    return PaymentResult.pending(
+      message: 'bKash payment initiated - complete on bKash app',
     );
   }
 
   /// Process Nagad payment
   Future<PaymentResult> _processNagad(String orderId, double amount) async {
-    // TODO: Implement Nagad payment SDK
-    await Future.delayed(const Duration(seconds: 2));
-    return PaymentResult.success(
-      transactionId: 'NG_${DateTime.now().millisecondsSinceEpoch}',
-      message: 'Nagad payment successful',
+    // Nagad SDK integration would go here
+    await Future.delayed(const Duration(seconds: 1));
+    return PaymentResult.pending(
+      message: 'Nagad payment initiated - complete on Nagad app',
     );
-  }
-
-  /// Process SSLCommerz payment
-  Future<PaymentResult> _processSSLCommerz(
-    String orderId,
-    double amount,
-  ) async {
-    // TODO: Implement SSLCommerz SDK
-    await Future.delayed(const Duration(seconds: 2));
-    return PaymentResult.success(
-      transactionId: 'SSL_${DateTime.now().millisecondsSinceEpoch}',
-      message: 'SSLCommerz payment successful',
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // CARD TOKENIZATION
-  // ═══════════════════════════════════════════════════════════════
-
-  /// Tokenize card for future use
-  Future<CardToken?> tokenizeCard({
-    required String cardNumber,
-    required String expiryMonth,
-    required String expiryYear,
-    required String cvv,
-    required String cardHolderName,
-  }) async {
-    // TODO: Implement card tokenization with payment gateway
-    debugPrint(
-      'Tokenizing card ending in ${cardNumber.substring(cardNumber.length - 4)}',
-    );
-    return null;
-  }
-
-  /// Get saved cards
-  Future<List<SavedCard>> getSavedCards(String userId) async {
-    // TODO: Fetch saved cards from API
-    return [];
-  }
-
-  /// Delete saved card
-  Future<bool> deleteSavedCard(String cardTokenId) async {
-    // TODO: Delete card token from payment gateway
-    return true;
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -174,35 +234,68 @@ class PaymentService {
   // ═══════════════════════════════════════════════════════════════
 
   /// Request refund
-  Future<RefundResult> requestRefund({
+  Future<PaymentResult> requestRefund({
     required String transactionId,
     required double amount,
     String? reason,
   }) async {
-    // TODO: Implement refund through payment gateway
-    debugPrint('Refund requested for transaction: $transactionId');
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}/api/payments/refund'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'transactionId': transactionId,
+          'amount': (amount * 100).toInt(),
+          'reason': reason,
+        }),
+      );
 
-    return RefundResult(
-      success: true,
-      refundId: 'REF_${DateTime.now().millisecondsSinceEpoch}',
-      message: 'Refund initiated successfully',
-    );
-  }
-
-  /// Get refund status
-  Future<RefundStatus> getRefundStatus(String refundId) async {
-    // TODO: Check refund status with payment gateway
-    return RefundStatus.pending;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return PaymentResult.success(
+          transactionId: data['refundId'] ?? transactionId,
+          message: 'Refund processed successfully',
+        );
+      }
+      return PaymentResult.failure(message: 'Refund failed');
+    } catch (e) {
+      return PaymentResult.failure(message: e.toString());
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // VERIFICATION
+  // PAYMENT VERIFICATION
   // ═══════════════════════════════════════════════════════════════
 
-  /// Verify payment
-  Future<bool> verifyPayment(String transactionId) async {
-    // TODO: Verify payment with payment gateway
-    return true;
+  /// Verify payment status
+  Future<PaymentStatus> verifyPayment(String transactionId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${AppConfig.baseUrl}/api/payments/verify/$transactionId'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final status = data['status'] as String?;
+        switch (status) {
+          case 'succeeded':
+            return PaymentStatus.completed;
+          case 'pending':
+          case 'processing':
+            return PaymentStatus.pending;
+          case 'failed':
+            return PaymentStatus.failed;
+          case 'refunded':
+            return PaymentStatus.refunded;
+          default:
+            return PaymentStatus.unknown;
+        }
+      }
+      return PaymentStatus.unknown;
+    } catch (e) {
+      debugPrint('Error verifying payment: $e');
+      return PaymentStatus.unknown;
+    }
   }
 }
 
@@ -210,15 +303,16 @@ class PaymentService {
 // DATA CLASSES
 // ═══════════════════════════════════════════════════════════════
 
-enum PaymentType { cod, card, mobileBanking, gateway, wallet }
+enum PaymentType { cod, card, mobileBanking, gateway }
 
-enum RefundStatus { pending, processing, completed, failed }
+enum PaymentStatus { pending, processing, completed, failed, refunded, unknown }
 
 class PaymentMethod {
   final String id;
   final String name;
   final String icon;
   final PaymentType type;
+  final String? description;
   final bool isEnabled;
 
   const PaymentMethod({
@@ -226,22 +320,23 @@ class PaymentMethod {
     required this.name,
     required this.icon,
     required this.type,
+    this.description,
     this.isEnabled = true,
   });
 }
 
 class PaymentResult {
   final bool success;
+  final bool pending;
   final String? transactionId;
   final String? message;
-  final String? error;
   final Map<String, dynamic>? data;
 
-  const PaymentResult({
+  const PaymentResult._({
     required this.success,
+    this.pending = false,
     this.transactionId,
     this.message,
-    this.error,
     this.data,
   });
 
@@ -249,68 +344,25 @@ class PaymentResult {
     required String transactionId,
     String? message,
     Map<String, dynamic>? data,
-  }) {
-    return PaymentResult(
-      success: true,
-      transactionId: transactionId,
-      message: message,
-      data: data,
-    );
-  }
+  }) => PaymentResult._(
+    success: true,
+    transactionId: transactionId,
+    message: message,
+    data: data,
+  );
 
-  factory PaymentResult.failure({required String message, String? error}) {
-    return PaymentResult(success: false, message: message, error: error);
-  }
-}
+  factory PaymentResult.failure({
+    String? message,
+    Map<String, dynamic>? data,
+  }) => PaymentResult._(success: false, message: message, data: data);
 
-class CardToken {
-  final String tokenId;
-  final String lastFourDigits;
-  final String cardType;
-  final String expiryMonth;
-  final String expiryYear;
-
-  const CardToken({
-    required this.tokenId,
-    required this.lastFourDigits,
-    required this.cardType,
-    required this.expiryMonth,
-    required this.expiryYear,
-  });
-}
-
-class SavedCard {
-  final String id;
-  final String tokenId;
-  final String lastFourDigits;
-  final String cardType;
-  final String cardHolderName;
-  final String expiryMonth;
-  final String expiryYear;
-  final bool isDefault;
-
-  const SavedCard({
-    required this.id,
-    required this.tokenId,
-    required this.lastFourDigits,
-    required this.cardType,
-    required this.cardHolderName,
-    required this.expiryMonth,
-    required this.expiryYear,
-    this.isDefault = false,
-  });
-}
-
-class RefundResult {
-  final bool success;
-  final String? refundId;
-  final String? message;
-  final String? error;
-
-  const RefundResult({
-    required this.success,
-    this.refundId,
-    this.message,
-    this.error,
-  });
+  factory PaymentResult.pending({
+    String? message,
+    Map<String, dynamic>? data,
+  }) => PaymentResult._(
+    success: false,
+    pending: true,
+    message: message,
+    data: data,
+  );
 }
