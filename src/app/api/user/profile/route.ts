@@ -156,22 +156,53 @@ export async function PATCH(request: Request) {
       updateData.phone = body.phone;
     }
 
-    // Merge defaultAddress with existing data
+    // Helper to safely parse JSON fields
+    const safeParseJson = (value: unknown): Record<string, string> | null => {
+      if (!value) return null;
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value);
+          // Check if it's a valid object (not a corrupted char-indexed object)
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            // Verify it has real property names (not just numeric indexes)
+            const keys = Object.keys(parsed);
+            if (keys.length === 0 || (keys[0] && isNaN(Number(keys[0])))) {
+              return parsed;
+            }
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      }
+      if (typeof value === 'object' && value !== null) {
+        // Verify it's a real object, not corrupted
+        const keys = Object.keys(value);
+        if (keys.length === 0 || (keys[0] && isNaN(Number(keys[0])))) {
+          return value as Record<string, string>;
+        }
+      }
+      return null;
+    };
+
+    // Merge defaultAddress with existing data (only if existing is valid)
     if (body.defaultAddress) {
-      const existingAddress = existingUser?.defaultAddress as Record<string, string> | null;
-      updateData.defaultAddress = JSON.stringify({
-        ...existingAddress,
+      const existingAddress = safeParseJson(existingUser?.defaultAddress);
+      const newAddress = {
+        ...(existingAddress || {}),
         ...body.defaultAddress,
-      });
+      };
+      updateData.defaultAddress = JSON.stringify(newAddress);
     }
 
-    // Merge preferences with existing data
+    // Merge preferences with existing data (only if existing is valid)
     if (body.preferences) {
-      const existingPrefs = existingUser?.preferences as Record<string, string> | null;
-      updateData.preferences = JSON.stringify({
-        ...existingPrefs,
+      const existingPrefs = safeParseJson(existingUser?.preferences);
+      const newPrefs = {
+        ...(existingPrefs || {}),
         ...body.preferences,
-      });
+      };
+      updateData.preferences = JSON.stringify(newPrefs);
     }
 
     await db
