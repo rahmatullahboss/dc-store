@@ -188,21 +188,21 @@ export async function PATCH(request: Request) {
     // Merge defaultAddress with existing data (only if existing is valid)
     if (body.defaultAddress) {
       const existingAddress = safeParseJson(existingUser?.defaultAddress);
-      const newAddress = {
+      // Don't JSON.stringify - Drizzle's text({ mode: 'json' }) handles this automatically
+      updateData.defaultAddress = {
         ...(existingAddress || {}),
         ...body.defaultAddress,
       };
-      updateData.defaultAddress = JSON.stringify(newAddress);
     }
 
     // Merge preferences with existing data (only if existing is valid)
     if (body.preferences) {
       const existingPrefs = safeParseJson(existingUser?.preferences);
-      const newPrefs = {
+      // Don't JSON.stringify - Drizzle's text({ mode: 'json' }) handles this automatically
+      updateData.preferences = {
         ...(existingPrefs || {}),
         ...body.preferences,
       };
-      updateData.preferences = JSON.stringify(newPrefs);
     }
 
     await db
