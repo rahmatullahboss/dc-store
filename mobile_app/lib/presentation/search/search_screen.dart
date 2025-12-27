@@ -242,7 +242,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(width: 12),
                   // Cancel Button
                   GestureDetector(
-                    onTap: () => context.pop(),
+                    onTap: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/');
+                      }
+                    },
                     child: Text(
                       'Cancel',
                       style: TextStyle(
