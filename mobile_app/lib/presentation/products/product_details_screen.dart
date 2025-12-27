@@ -271,6 +271,57 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     );
   }
 
+  /// Categories that need size/color selectors
+  bool _categoryNeedsVariants(String? categoryId) {
+    if (categoryId == null) return false;
+
+    final variantCategories = [
+      'clothing',
+      'clothes',
+      'shoes',
+      'footwear',
+      'fashion',
+      'apparel',
+      'sneakers',
+      'activewear',
+      'sportswear',
+      't-shirts',
+      'shirts',
+      'pants',
+      'dresses',
+      'jackets',
+    ];
+
+    final lowerCategory = categoryId.toLowerCase();
+    return variantCategories.any((cat) => lowerCategory.contains(cat));
+  }
+
+  /// Quantity-only section for products without variants
+  Widget _buildQuantityOnlySection(bool isDark, Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Text(
+            'Quantity',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(width: 16),
+          QuantitySelector(
+            value: _quantity,
+            min: 1,
+            max: 10,
+            onChanged: (value) => setState(() => _quantity = value),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 300.ms);
+  }
+
   Widget _buildSizeColumn(
     String text,
     Color textColor, {
@@ -360,10 +411,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     ),
                   ),
 
-                  // Variants Section
-                  SliverToBoxAdapter(
-                    child: _buildVariantsSection(isDark, textColor),
-                  ),
+                  // Variants Section (only for applicable categories)
+                  if (_categoryNeedsVariants(product.categoryId))
+                    SliverToBoxAdapter(
+                      child: _buildVariantsSection(isDark, textColor),
+                    )
+                  else
+                    // Just show quantity selector for non-variant products
+                    SliverToBoxAdapter(
+                      child: _buildQuantityOnlySection(isDark, textColor),
+                    ),
 
                   // Offers Section
                   SliverToBoxAdapter(
