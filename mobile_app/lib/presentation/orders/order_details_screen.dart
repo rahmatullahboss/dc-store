@@ -5,6 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../core/config/app_config.dart';
 import '../../core/config/white_label_config.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -997,14 +999,36 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  void _showInvoice(BuildContext context, _OrderDetails order) {
-    toastification.show(
-      context: context,
-      type: ToastificationType.info,
-      title: const Text('Invoice'),
-      description: const Text('Invoice download coming soon!'),
-      autoCloseDuration: const Duration(seconds: 2),
-    );
+  void _showInvoice(BuildContext context, _OrderDetails order) async {
+    final invoiceUrl =
+        '${AppConfig.baseUrl}/api/user/orders/${order.id}/invoice';
+    final uri = Uri.parse(invoiceUrl);
+
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          toastification.show(
+            context: context,
+            type: ToastificationType.error,
+            title: const Text('Error'),
+            description: const Text('Could not open invoice'),
+            autoCloseDuration: const Duration(seconds: 2),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          title: const Text('Error'),
+          description: Text('Failed to open invoice: $e'),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+      }
+    }
   }
 
   void _trackShipment(BuildContext context, _OrderDetails order) {
