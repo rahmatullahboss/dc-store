@@ -177,24 +177,58 @@ export default function CheckoutPage() {
               } 
             };
             if (data.profile) {
-              // Parse defaultAddress - it might be a string if stored incorrectly
+              // Robust parsing for defaultAddress - handle multiple levels of JSON encoding
               let parsedAddress: { division?: string; district?: string; address?: string; } | null = null;
-              if (data.profile.defaultAddress) {
-                if (typeof data.profile.defaultAddress === 'string') {
-                  try {
-                    parsedAddress = JSON.parse(data.profile.defaultAddress);
-                  } catch {
-                    console.error("Failed to parse defaultAddress string");
+              
+              const parseAddress = (input: unknown): { division?: string; district?: string; address?: string; } | null => {
+                if (!input) return null;
+                
+                // If it's already an object with expected properties
+                if (typeof input === 'object' && input !== null && !Array.isArray(input)) {
+                  const obj = input as Record<string, unknown>;
+                  // Check if it has valid address properties (not char-indexed corruption)
+                  if (obj.division || obj.district || obj.address) {
+                    return obj as { division?: string; district?: string; address?: string; };
                   }
-                } else {
-                  parsedAddress = data.profile.defaultAddress;
+                  // Check for char-indexed corruption (keys are "0", "1", "2"...)
+                  const keys = Object.keys(obj);
+                  if (keys.length > 0 && !isNaN(Number(keys[0]))) {
+                    return null; // Corrupted data
+                  }
                 }
-              }
+                
+                // If it's a string, try to parse it (may need multiple attempts for double-encoding)
+                if (typeof input === 'string') {
+                  let current = input;
+                  for (let i = 0; i < 3; i++) { // Try up to 3 parse attempts
+                    try {
+                      const parsed = JSON.parse(current);
+                      if (typeof parsed === 'string') {
+                        current = parsed; // Double-encoded, try again
+                        continue;
+                      }
+                      if (typeof parsed === 'object' && parsed !== null) {
+                        // Check if it has valid properties
+                        if (parsed.division || parsed.district || parsed.address) {
+                          return parsed;
+                        }
+                      }
+                    } catch {
+                      break; // Not valid JSON
+                    }
+                  }
+                }
+                
+                return null;
+              };
+              
+              parsedAddress = parseAddress(data.profile.defaultAddress);
               
               // Debug: Log the parsed address
               console.log("Profile address data:", {
                 raw: data.profile.defaultAddress,
                 parsed: parsedAddress,
+                district: parsedAddress?.district,
               });
               
               setFormData(prev => ({
