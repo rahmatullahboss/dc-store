@@ -2,7 +2,7 @@ import type { OrderItem, Address } from '@/db/schema';
 
 // Email configuration - use Resend API directly via fetch for Cloudflare Workers compatibility
 // The Resend SDK doesn't work well in Workers, but direct API calls do
-const FROM_EMAIL = 'DC Store <noreply@digitalcare.site>';
+const FROM_EMAIL = 'DC Store <onboarding@resend.dev>';
 
 interface ResendEmailOptions {
   from: string;
