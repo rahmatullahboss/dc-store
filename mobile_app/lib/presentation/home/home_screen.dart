@@ -108,12 +108,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // Categories Section
                   _buildCategoriesSection(isDark),
 
-                  const SizedBox(height: 8),
-
-                  // Flash Sale Section
-                  _buildFlashSaleSection(isDark, surfaceColor),
-
                   const SizedBox(height: 24),
+
+                  // Flash Sale Section - Hidden for now
+                  // _buildFlashSaleSection(isDark, surfaceColor),
+                  // const SizedBox(height: 24),
 
                   // Featured Products
                   _buildFeaturedProductsSection(isDark, surfaceColor),
@@ -123,11 +122,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // New Arrivals
                   _buildNewArrivalsSection(isDark, surfaceColor),
 
-                  const SizedBox(height: 24),
-
-                  // Popular Brands
-                  _buildPopularBrandsSection(isDark, surfaceColor),
-
+                  // Popular Brands - Hidden for now
+                  // const SizedBox(height: 24),
+                  // _buildPopularBrandsSection(isDark, surfaceColor),
                   const SizedBox(height: 24),
 
                   // Recommended For You
@@ -633,49 +630,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             separatorBuilder: (context, index) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               final category = categories[index];
-              return SizedBox(
-                width: 70,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isDark
-                            ? const Color(0xFF1E293B)
-                            : const Color(0xFFF1F5F9),
-                        border: Border.all(
+              return GestureDetector(
+                onTap: () {
+                  if (category.name == 'More') {
+                    context.push('/categories');
+                  } else {
+                    // Navigate to products filtered by category
+                    context.push(
+                      '/products?category=${category.name.toLowerCase()}',
+                    );
+                  }
+                },
+                child: SizedBox(
+                  width: 70,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
                           color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                              ? const Color(0xFF1E293B)
+                              : const Color(0xFFF1F5F9),
+                          border: Border.all(
+                            color: isDark
+                                ? const Color(0xFF334155)
+                                : const Color(0xFFE2E8F0),
                           ),
-                        ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          category.icon,
+                          color: _primaryColor,
+                          size: 28,
+                        ),
                       ),
-                      child: Icon(
-                        category.icon,
-                        color: _primaryColor,
-                        size: 28,
+                      const SizedBox(height: 8),
+                      Text(
+                        category.name,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: isDark
+                              ? const Color(0xFFCBD5E1)
+                              : const Color(0xFF334155),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      category.name,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: isDark
-                            ? const Color(0xFFCBD5E1)
-                            : const Color(0xFF334155),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -1338,16 +1347,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: _primaryColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.add_shopping_cart,
-                            color: Colors.white,
-                            size: 20,
+                        GestureDetector(
+                          onTap: () {
+                            // Add to cart
+                            ref.read(cartProvider.notifier).addToCart(product);
+                            // Show confirmation
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${product.name} added to cart'),
+                                duration: const Duration(seconds: 2),
+                                action: SnackBarAction(
+                                  label: 'View Cart',
+                                  onPressed: () => context.go('/cart'),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: _primaryColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.add_shopping_cart,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
