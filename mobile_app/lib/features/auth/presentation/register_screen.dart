@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../../core/theme/app_colors.dart';
@@ -30,6 +32,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _showReferralField = false;
   final String _selectedCountryCode = '+1';
   final String _selectedCountryFlag = '🇺🇸';
+
+  // Avatar image
+  File? _avatarImage;
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void dispose() {
@@ -172,6 +178,92 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
+  Future<void> _pickAvatar() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Choose Profile Photo',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(LucideIcons.camera),
+                title: const Text('Take a photo'),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.image),
+                title: const Text('Choose from gallery'),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+              if (_avatarImage != null)
+                ListTile(
+                  leading: const Icon(LucideIcons.trash2, color: Colors.red),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    setState(() => _avatarImage = null);
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source != null) {
+      try {
+        final XFile? image = await _imagePicker.pickImage(
+          source: source,
+          maxWidth: 500,
+          maxHeight: 500,
+          imageQuality: 85,
+        );
+
+        if (image != null) {
+          setState(() => _avatarImage = File(image.path));
+        }
+      } catch (e) {
+        if (mounted) {
+          toastification.show(
+            context: context,
+            type: ToastificationType.error,
+            title: Text('Failed to pick image: $e'),
+            autoCloseDuration: const Duration(seconds: 2),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authStateAsync = ref.watch(authControllerProvider);
@@ -245,9 +337,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // Avatar Upload
                       GestureDetector(
-                        onTap: () {
-                          // TODO: Implement image picker
-                        },
+                        onTap: _pickAvatar,
                         child: Stack(
                           children: [
                             Container(
@@ -272,10 +362,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   ),
                                 ],
                               ),
-                              child: Icon(
-                                LucideIcons.user,
-                                size: 48,
-                                color: subtextColor,
+                              child: ClipOval(
+                                child: _avatarImage != null
+                                    ? Image.file(
+                                        _avatarImage!,
+                                        fit: BoxFit.cover,
+                                        width: 112,
+                                        height: 112,
+                                      )
+                                    : Icon(
+                                        LucideIcons.user,
+                                        size: 48,
+                                        color: subtextColor,
+                                      ),
                               ),
                             ),
                             Positioned(

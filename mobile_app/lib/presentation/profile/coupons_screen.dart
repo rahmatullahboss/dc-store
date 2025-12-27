@@ -188,15 +188,43 @@ class _CouponsScreenState extends State<CouponsScreen>
   }
 
   void _applyCoupon(Coupon coupon) {
-    // TODO: Implement apply coupon logic
+    // Return the coupon code to the previous screen (e.g., checkout)
+    Navigator.of(context).pop(coupon.code);
+
+    // Show success feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Applied coupon: ${coupon.code}'),
+        content: Row(
+          children: [
+            const Icon(LucideIcons.checkCircle, color: Colors.green, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Coupon "${coupon.code}" applied!',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    coupon.title,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF16A34A),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 3),
       ),
     );
-    Navigator.of(context).pop();
   }
 
   @override

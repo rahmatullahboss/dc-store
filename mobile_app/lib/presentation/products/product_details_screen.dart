@@ -75,6 +75,221 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     });
   }
 
+  void _showSizeGuide(BuildContext context, bool isDark, Color textColor) {
+    final subtleColor = isDark ? Colors.grey[400] : Colors.grey[600];
+    final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
+    final cardColor = isDark ? AppColors.darkCard : Colors.white;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Title
+              Text(
+                'Size Guide',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Use this chart to find your perfect size',
+                style: TextStyle(fontSize: 14, color: subtleColor),
+              ),
+              const SizedBox(height: 24),
+
+              // Size Chart Table
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: borderColor),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    // Header
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.grey[800] : Colors.grey[100],
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(11),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildSizeColumn('US', textColor, flex: 1),
+                          _buildSizeColumn('UK', textColor, flex: 1),
+                          _buildSizeColumn('EU', textColor, flex: 1),
+                          _buildSizeColumn('CM', textColor, flex: 1),
+                        ],
+                      ),
+                    ),
+                    // Size rows
+                    ...const [
+                      ['7', '6', '40', '25'],
+                      ['8', '7', '41', '26'],
+                      ['9', '8', '42', '27'],
+                      ['10', '9', '43', '28'],
+                      ['11', '10', '44', '29'],
+                      ['12', '11', '45', '30'],
+                    ].asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final row = entry.value;
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: index % 2 == 0
+                              ? Colors.transparent
+                              : (isDark ? Colors.grey[850] : Colors.grey[50]),
+                          border: Border(top: BorderSide(color: borderColor)),
+                        ),
+                        child: Row(
+                          children: [
+                            _buildSizeColumn(
+                              row[0],
+                              textColor,
+                              flex: 1,
+                              isHeader: false,
+                            ),
+                            _buildSizeColumn(
+                              row[1],
+                              textColor,
+                              flex: 1,
+                              isHeader: false,
+                            ),
+                            _buildSizeColumn(
+                              row[2],
+                              textColor,
+                              flex: 1,
+                              isHeader: false,
+                            ),
+                            _buildSizeColumn(
+                              row[3],
+                              textColor,
+                              flex: 1,
+                              isHeader: false,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Measurement Tips
+              Text(
+                'How to Measure',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...[
+                '1. Place your foot on a piece of paper',
+                '2. Mark the heel and longest toe',
+                '3. Measure the distance in cm',
+                '4. Compare with the size chart above',
+              ].map(
+                (tip) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        LucideIcons.check,
+                        size: 16,
+                        color: AppColors.success,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(tip, style: TextStyle(color: subtleColor)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Close button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Got it!',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSizeColumn(
+    String text,
+    Color textColor, {
+    int flex = 1,
+    bool isHeader = true,
+  }) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: isHeader ? FontWeight.w600 : FontWeight.normal,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final productAsync = ref.watch(productDetailsProvider(widget.id));
@@ -422,9 +637,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             sizes: _sizes,
             selectedId: _selectedSizeId,
             onSelected: (item) => setState(() => _selectedSizeId = item.id),
-            onSizeGuide: () {
-              // TODO: Show size guide bottom sheet
-            },
+            onSizeGuide: () => _showSizeGuide(context, isDark, textColor),
           ),
 
           const SizedBox(height: 24),
