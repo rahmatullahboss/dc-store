@@ -13,12 +13,22 @@ interface ResendEmailOptions {
 
 async function sendViaResendAPI(options: ResendEmailOptions): Promise<{ success: boolean; id?: string; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
+  
+  console.log('sendViaResendAPI called with:', {
+    to: options.to,
+    subject: options.subject,
+    from: options.from,
+    hasApiKey: !!apiKey,
+    apiKeyLength: apiKey?.length || 0,
+  });
+  
   if (!apiKey) {
-    console.warn('RESEND_API_KEY not configured');
+    console.error('RESEND_API_KEY not configured - cannot send email');
     return { success: false, error: 'Email service not configured' };
   }
 
   try {
+    console.log('Making request to Resend API...');
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -28,15 +38,21 @@ async function sendViaResendAPI(options: ResendEmailOptions): Promise<{ success:
       body: JSON.stringify(options),
     });
 
-    const data = await response.json() as { id?: string; message?: string };
+    const data = await response.json() as { id?: string; message?: string; statusCode?: number };
+    
+    console.log('Resend API response:', {
+      status: response.status,
+      ok: response.ok,
+      data,
+    });
     
     if (response.ok) {
-      console.log('Email sent via Resend:', data.id);
+      console.log('Email sent successfully via Resend:', data.id);
       return { success: true, id: data.id };
     }
     
-    console.error('Resend API error:', data);
-    return { success: false, error: data.message || 'Failed to send email' };
+    console.error('Resend API error response:', data);
+    return { success: false, error: data.message || `HTTP ${response.status}` };
   } catch (error) {
     console.error('Resend fetch error:', error);
     return { success: false, error: String(error) };
