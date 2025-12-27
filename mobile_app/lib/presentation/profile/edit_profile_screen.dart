@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../core/network/dio_client.dart';
 
 /// Edit Profile Screen
 /// Features: Profile picture editing, personal details form,
@@ -20,20 +24,41 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late TextEditingController _altPhoneController;
 
   // Gender selection
-  String _selectedGender = 'Female';
+  String _selectedGender = 'Male';
 
-  // Mock data - in real app, this would come from user state
-  final String _email = 'jane.cooper@example.com';
-  final String _phone = '+1 (555) 123-4567';
+  // Profile image
+  File? _selectedImage;
+  String? _profileImageUrl;
+
+  // Loading state
+  bool _isSaving = false;
+
+  // User data from auth
+  String _email = '';
+  final String _phone = '';
   final bool _emailVerified = true;
   final bool _phoneVerified = true;
 
   @override
   void initState() {
     super.initState();
-    _fullNameController = TextEditingController(text: 'Jane Cooper');
-    _dobController = TextEditingController(text: 'Jan 12, 1990');
+    _fullNameController = TextEditingController();
+    _dobController = TextEditingController();
     _altPhoneController = TextEditingController();
+
+    // Load user data after build
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadUserData());
+  }
+
+  void _loadUserData() {
+    final user = ref.read(currentUserProvider);
+    if (user != null) {
+      setState(() {
+        _fullNameController.text = user.name ?? '';
+        _email = user.email;
+        _profileImageUrl = user.image;
+      });
+    }
   }
 
   @override
@@ -47,6 +72,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final user = ref.watch(currentUserProvider);
 
     // Theme colors matching the mockup
     final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF6F6F8);
@@ -56,7 +82,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final borderColor = isDark
         ? Colors.grey[800]!.withValues(alpha: 0.5)
         : const Color(0xFFE5E7EB);
-    const primaryColor = Color(0xFF135BEC);
+    const primaryColor = Color(0xFFF97316); // Using accent color
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -72,7 +98,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               child: Column(
                 children: [
                   // Profile Picture Section
-                  _buildProfilePicture(isDark, surfaceColor, primaryColor),
+                  _buildProfilePicture(
+                    isDark,
+                    surfaceColor,
+                    primaryColor,
+                    user,
+                  ),
 
                   // Form Sections
                   Padding(
@@ -188,7 +219,30 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     bool isDark,
     Color surfaceColor,
     Color primaryColor,
+    dynamic user,
   ) {
+    // Determine what to show - selected image, profile URL, or initials
+    Widget imageContent;
+
+    if (_selectedImage != null) {
+      imageContent = Image.file(
+        _selectedImage!,
+        fit: BoxFit.cover,
+        width: 112,
+        height: 112,
+      );
+    } else if (_profileImageUrl != null && _profileImageUrl!.isNotEmpty) {
+      imageContent = Image.network(
+        _profileImageUrl!,
+        fit: BoxFit.cover,
+        width: 112,
+        height: 112,
+        errorBuilder: (_, __, ___) => _buildInitials(user, primaryColor),
+      );
+    } else {
+      imageContent = _buildInitials(user, primaryColor);
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32),
       child: Stack(
@@ -211,21 +265,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
               ],
             ),
-            child: ClipOval(
-              child: Container(
-                color: primaryColor.withValues(alpha: 0.1),
-                child: Center(
-                  child: Text(
-                    'J',
-                    style: TextStyle(
-                      fontSize: 44,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            child: ClipOval(child: imageContent),
           ),
 
           // Camera Button
@@ -262,6 +302,27 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInitials(dynamic user, Color primaryColor) {
+    final name = _fullNameController.text.isNotEmpty
+        ? _fullNameController.text
+        : (user?.name ?? 'U');
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+
+    return Container(
+      color: primaryColor.withValues(alpha: 0.1),
+      child: Center(
+        child: Text(
+          initial,
+          style: TextStyle(
+            fontSize: 44,
+            fontWeight: FontWeight.bold,
+            color: primaryColor,
+          ),
+        ),
       ),
     );
   }
@@ -397,7 +458,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               // Email (Read-only, Verified)
               _buildReadOnlyField(
                 label: 'Email Address',
-                value: _email,
+                value: _email.isNotEmpty ? _email : 'Not set',
                 isVerified: _emailVerified,
                 isDark: isDark,
                 textColor: textColor,
@@ -410,7 +471,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               // Phone (Verified, Changeable)
               _buildVerifiedPhoneField(
                 label: 'Phone Number',
-                value: _phone,
+                value: _phone.isNotEmpty ? _phone : 'Not set',
                 isVerified: _phoneVerified,
                 isDark: isDark,
                 textColor: textColor,
@@ -426,7 +487,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 label: 'Alt. Phone',
                 labelSuffix: '(Optional)',
                 controller: _altPhoneController,
-                placeholder: '+1 (000) 000-0000',
+                placeholder: '+880 1XXX-XXXXXX',
                 isDark: isDark,
                 textColor: textColor,
                 subtleColor: subtleColor,
@@ -687,7 +748,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         color: subtleColor,
                       ),
                     ),
-                    if (isVerified) ...[
+                    if (isVerified && value != 'Not set') ...[
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -770,7 +831,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _handleSaveChanges,
+                onPressed: _isSaving ? null : _handleSaveChanges,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
@@ -781,10 +842,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   elevation: 4,
                   shadowColor: primaryColor.withValues(alpha: 0.3),
                 ),
-                child: const Text(
-                  'Save Changes',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                child: _isSaving
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Save Changes',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
           ),
@@ -794,11 +867,89 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   // Action handlers
-  void _handleChangePhoto() {
-    // TODO: Implement photo picker
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Photo picker coming soon')));
+  void _handleChangePhoto() async {
+    final picker = ImagePicker();
+
+    // Show options bottom sheet
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Change Profile Photo',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(LucideIcons.camera),
+                title: const Text('Take a photo'),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.image),
+                title: const Text('Choose from gallery'),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+              if (_selectedImage != null || _profileImageUrl != null)
+                ListTile(
+                  leading: const Icon(LucideIcons.trash2, color: Colors.red),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedImage = null;
+                      _profileImageUrl = null;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source != null) {
+      try {
+        final XFile? image = await picker.pickImage(
+          source: source,
+          maxWidth: 500,
+          maxHeight: 500,
+          imageQuality: 85,
+        );
+
+        if (image != null) {
+          setState(() {
+            _selectedImage = File(image.path);
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
+        }
+      }
+    }
   }
 
   void _handleDatePicker() async {
@@ -835,20 +986,89 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   void _handleChangePhone() {
-    // TODO: Implement phone change flow
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Phone change flow coming soon')),
+    // Show phone change dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Change Phone Number'),
+        content: const Text(
+          'Phone number change requires verification. '
+          'A verification code will be sent to your new number.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Phone verification coming soon')),
+              );
+            },
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
     );
   }
 
-  void _handleSaveChanges() {
-    // TODO: Implement save logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Profile updated successfully!'),
-        backgroundColor: Color(0xFF22C55E),
-      ),
-    );
-    context.pop();
+  void _handleSaveChanges() async {
+    if (_fullNameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your name'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    try {
+      // Call API to update profile
+      final dioClient = ref.read(dioClientProvider);
+
+      final response = await dioClient.patch<Map<String, dynamic>>(
+        '/api/user/profile',
+        data: {
+          'name': _fullNameController.text.trim(),
+          if (_selectedGender.isNotEmpty) 'gender': _selectedGender,
+          if (_dobController.text.isNotEmpty)
+            'dateOfBirth': _dobController.text,
+          if (_altPhoneController.text.isNotEmpty)
+            'phone': _altPhoneController.text,
+        },
+      );
+
+      if (response.isSuccess) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully!'),
+              backgroundColor: Color(0xFF22C55E),
+            ),
+          );
+          context.pop();
+        }
+      } else {
+        throw Exception(response.errorMessage);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../features/cart/presentation/providers/cart_provider.dart';
 
 /// Main Shell Scaffold with Bottom Navigation
 /// Used as the shell route for main app tabs
-class MainScaffold extends StatelessWidget {
+class MainScaffold extends ConsumerWidget {
   final Widget child;
   final int currentIndex;
 
@@ -13,9 +16,13 @@ class MainScaffold extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    // Get real cart count from provider
+    final cartItems = ref.watch(cartProvider);
+    final cartCount = cartItems.length;
 
     return Scaffold(
       body: child,
@@ -38,28 +45,28 @@ class MainScaffold extends StatelessWidget {
             elevation: 0,
             height: 65,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            destinations: const [
-              NavigationDestination(
+            destinations: [
+              const NavigationDestination(
                 icon: Icon(Icons.home_outlined),
                 selectedIcon: Icon(Icons.home),
                 label: 'Home',
               ),
-              NavigationDestination(
+              const NavigationDestination(
                 icon: Icon(Icons.category_outlined),
                 selectedIcon: Icon(Icons.category),
                 label: 'Categories',
               ),
-              NavigationDestination(
+              const NavigationDestination(
                 icon: Icon(Icons.search_outlined),
                 selectedIcon: Icon(Icons.search),
                 label: 'Search',
               ),
               NavigationDestination(
-                icon: _CartIcon(),
-                selectedIcon: _CartIcon(selected: true),
+                icon: _CartIcon(count: cartCount),
+                selectedIcon: _CartIcon(count: cartCount, selected: true),
                 label: 'Cart',
               ),
-              NavigationDestination(
+              const NavigationDestination(
                 icon: Icon(Icons.person_outline),
                 selectedIcon: Icon(Icons.person),
                 label: 'Profile',
@@ -74,33 +81,25 @@ class MainScaffold extends StatelessWidget {
   void _onItemTapped(BuildContext context, int index) {
     final locations = ['/home', '/categories', '/search', '/cart', '/profile'];
 
-    // Use go to switch tabs (replaces current location)
-    // This ensures proper tab switching behavior
     if (index != currentIndex) {
-      // Import go_router and use context.go
-      // For now, we'll use Navigator as fallback
-      Navigator.of(
-        context,
-      ).pushNamedAndRemoveUntil(locations[index], (route) => false);
+      context.go(locations[index]);
     }
   }
 }
 
-/// Cart icon with badge
+/// Cart icon with real-time badge from cart provider
 class _CartIcon extends StatelessWidget {
+  final int count;
   final bool selected;
 
-  const _CartIcon({this.selected = false});
+  const _CartIcon({required this.count, this.selected = false});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Get actual cart count from CartCubit
-    const cartCount = 0;
-
     return Badge(
-      isLabelVisible: cartCount > 0,
+      isLabelVisible: count > 0,
       label: Text(
-        cartCount.toString(),
+        count > 99 ? '99+' : count.toString(),
         style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
       ),
       child: Icon(
