@@ -145,6 +145,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "stripe">("cod");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
@@ -172,18 +173,32 @@ export default function CheckoutPage() {
                 name: string; 
                 email: string; 
                 phone?: string; 
-                defaultAddress?: { division?: string; district?: string; address?: string; } 
+                defaultAddress?: { division?: string; district?: string; address?: string; } | string;
               } 
             };
             if (data.profile) {
+              // Parse defaultAddress - it might be a string if stored incorrectly
+              let parsedAddress: { division?: string; district?: string; address?: string; } | null = null;
+              if (data.profile.defaultAddress) {
+                if (typeof data.profile.defaultAddress === 'string') {
+                  try {
+                    parsedAddress = JSON.parse(data.profile.defaultAddress);
+                  } catch {
+                    console.error("Failed to parse defaultAddress string");
+                  }
+                } else {
+                  parsedAddress = data.profile.defaultAddress;
+                }
+              }
+              
               setFormData(prev => ({
                 ...prev,
                 name: prev.name || data.profile.name || "",
                 email: prev.email || data.profile.email || "",
                 phone: prev.phone || data.profile.phone || "",
-                division: prev.division || data.profile.defaultAddress?.division || "",
-                district: prev.district || data.profile.defaultAddress?.district || "",
-                address: prev.address || data.profile.defaultAddress?.address || "",
+                division: prev.division || parsedAddress?.division || "",
+                district: prev.district || parsedAddress?.district || "",
+                address: prev.address || parsedAddress?.address || "",
               }));
             }
           }
@@ -200,6 +215,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (paymentMethod === "stripe" && !clientSecret && items.length > 0) {
       setStripeLoading(true);
+      setStripeError(null);
       fetch("/api/payments/create-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -208,13 +224,25 @@ export default function CheckoutPage() {
           currency: "bdt",
         }),
       })
-        .then((res) => res.json() as Promise<{ clientSecret?: string }>)
+        .then(async (res) => {
+          const data = await res.json() as { clientSecret?: string; error?: string };
+          if (!res.ok || data.error) {
+            throw new Error(data.error || "Failed to initialize payment");
+          }
+          return data;
+        })
         .then((data) => {
           if (data.clientSecret) {
             setClientSecret(data.clientSecret);
+          } else {
+            throw new Error("No client secret received from payment provider");
           }
         })
-        .catch(console.error)
+        .catch((err: Error) => {
+          console.error("Payment intent error:", err);
+          setStripeError(err.message || "Failed to load payment. Please try again.");
+          toast.error(err.message || "Failed to load payment. Please try again.");
+        })
         .finally(() => setStripeLoading(false));
     }
   }, [paymentMethod, clientSecret, total, items.length]);
@@ -596,9 +624,22 @@ export default function CheckoutPage() {
                           />
                         </Elements>
                       ) : (
-                        <p className="text-gray-500 text-center py-4">
-                          Unable to load payment form. Please try again.
-                        </p>
+                        <div className="text-center py-4 space-y-3">
+                          <p className="text-red-600">
+                            {stripeError || "Unable to load payment form. Please try again."}
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setStripeError(null);
+                              setClientSecret(null);
+                            }}
+                          >
+                            Retry
+                          </Button>
+                        </div>
                       )}
                     </div>
                   )}

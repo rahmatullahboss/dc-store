@@ -68,8 +68,25 @@ export async function GET() {
     const stats = orderStats[0] || { orderCount: 0, totalSpent: 0 };
     const wishlistCount = wishlistStats[0]?.count || 0;
 
+    // Helper to safely parse JSON fields that might be strings
+    const safeParseJson = (value: unknown): unknown => {
+      if (typeof value === 'string') {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return value;
+        }
+      }
+      return value;
+    };
+
     return NextResponse.json({ 
-      profile: user,
+      profile: user ? {
+        ...user,
+        // Ensure JSON fields are properly parsed objects
+        defaultAddress: safeParseJson(user.defaultAddress),
+        preferences: safeParseJson(user.preferences),
+      } : null,
       stats: {
         orderCount: Number(stats.orderCount) || 0,
         totalSpent: Number(stats.totalSpent) || 0,
