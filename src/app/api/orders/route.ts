@@ -19,6 +19,7 @@ interface CreateOrderRequest {
   shippingAddress: Address;
   notes?: string | null;
   paymentMethod: string;
+  paymentStatus?: string;
 }
 
 export async function POST(request: Request) {
@@ -52,13 +53,18 @@ export async function POST(request: Request) {
     const orderNumber = `DC${Date.now().toString().slice(-8)}${Math.random().toString(36).slice(-4).toUpperCase()}`;
     const orderId = nanoid();
 
+    // Determine payment status and order status
+    const paymentStatus = body.paymentStatus || "pending";
+    // For paid orders (Stripe), set status to confirmed; for COD, set to pending
+    const orderStatus = paymentStatus === "paid" ? "confirmed" : "pending";
+
     // Create order with userId
     const newOrder = {
       id: orderId,
       orderNumber,
       userId, // Link order to user if logged in
-      status: "pending" as const,
-      paymentStatus: "pending" as const,
+      status: orderStatus as "pending" | "confirmed",
+      paymentStatus: paymentStatus as "pending" | "paid" | "failed",
       paymentMethod: body.paymentMethod || "cod",
       subtotal: body.subtotal,
       discount: 0,

@@ -156,10 +156,21 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
                 <h3 className="font-bold text-gray-800">Payment</h3>
               </div>
               <div className="text-gray-600 text-sm space-y-2">
-                <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium">
-                  💵 Cash on Delivery
-                </div>
-                <p className="text-gray-500">Pay when you receive</p>
+                {order.paymentMethod === "stripe" ? (
+                  <>
+                    <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium">
+                      💳 Credit Card
+                    </div>
+                    <p className="text-gray-500">Paid via Stripe</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium">
+                      💵 Cash on Delivery
+                    </div>
+                    <p className="text-gray-500">Pay when you receive</p>
+                  </>
+                )}
               </div>
             </div>
           </div>
