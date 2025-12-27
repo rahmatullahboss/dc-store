@@ -141,6 +141,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       backgroundColor: surfaceColor.withAlpha(242),
                       surfaceTintColor: Colors.transparent,
                       elevation: 0,
+                      leading: IconButton(
+                        onPressed: () => context.pop(),
+                        icon: Icon(LucideIcons.arrowLeft, color: textColor),
+                      ),
                       title: Row(
                         children: [
                           Text(

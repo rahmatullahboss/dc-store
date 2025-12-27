@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:toastification/toastification.dart';
 import '../../core/config/white_label_config.dart';
 import '../../core/widgets/skeleton_loader.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
@@ -1344,16 +1345,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onTap: () {
                             // Add to cart
                             ref.read(cartProvider.notifier).addToCart(product);
-                            // Show confirmation
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${product.name} added to cart'),
-                                duration: const Duration(seconds: 2),
-                                action: SnackBarAction(
-                                  label: 'View Cart',
-                                  onPressed: () => context.go('/cart'),
-                                ),
-                              ),
+                            // Show confirmation toast
+                            toastification.show(
+                              context: context,
+                              type: ToastificationType.success,
+                              style: ToastificationStyle.fillColored,
+                              title: Text('${product.name} added to cart'),
+                              autoCloseDuration: const Duration(seconds: 2),
+                              alignment: Alignment.bottomCenter,
                             );
                           },
                           child: Container(
