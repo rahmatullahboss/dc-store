@@ -4,6 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -12,7 +19,8 @@ import {
   Check,
   Truck,
   Shield,
-  Banknote
+  Banknote,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +37,11 @@ import { useCart } from "@/lib/cart-context";
 import { useSession } from "@/lib/auth-client";
 import { formatPrice, siteConfig } from "@/lib/config";
 import { toast } from "sonner";
+
+// Load Stripe
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
 
 // Bangladesh divisions, districts
 const divisions = [
@@ -63,12 +76,77 @@ interface FormData {
   notes: string;
 }
 
+// Stripe Payment Form Component
+function StripePaymentForm({ 
+  onSuccess, 
+  isProcessing, 
+  setIsProcessing 
+}: { 
+  onSuccess: () => void;
+  isProcessing: boolean;
+  setIsProcessing: (v: boolean) => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleStripeSubmit = async () => {
+    if (!stripe || !elements) return false;
+
+    setIsProcessing(true);
+    setError(null);
+
+    const { error: submitError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/orders?success=true`,
+      },
+      redirect: "if_required",
+    });
+
+    if (submitError) {
+      setError(submitError.message || "Payment failed");
+      setIsProcessing(false);
+      return false;
+    }
+
+    onSuccess();
+    return true;
+  };
+
+  // Expose the submit function via a ref-like pattern
+  useEffect(() => {
+    (window as unknown as { stripeSubmit?: () => Promise<boolean> }).stripeSubmit = handleStripeSubmit;
+    return () => {
+      delete (window as unknown as { stripeSubmit?: () => Promise<boolean> }).stripeSubmit;
+    };
+  });
+
+  return (
+    <div className="space-y-4">
+      <PaymentElement options={{ layout: "tabs" }} />
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        <Shield className="h-4 w-4" />
+        <span>Secured by Stripe</span>
+      </div>
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "stripe">("cod");
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [stripeLoading, setStripeLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
@@ -78,6 +156,11 @@ export default function CheckoutPage() {
     address: "",
     notes: "",
   });
+
+  const shippingCost = subtotal >= siteConfig.shipping.freeShippingThreshold 
+    ? 0 
+    : siteConfig.shipping.defaultShippingCost;
+  const total = subtotal + shippingCost;
 
   // Fetch and pre-fill form with user profile data
   useEffect(() => {
@@ -115,10 +198,28 @@ export default function CheckoutPage() {
     fetchProfile();
   }, [session, profileLoaded]);
 
-  const shippingCost = subtotal >= siteConfig.shipping.freeShippingThreshold 
-    ? 0 
-    : siteConfig.shipping.defaultShippingCost;
-  const total = subtotal + shippingCost;
+  // Create Stripe Payment Intent when selecting card payment
+  useEffect(() => {
+    if (paymentMethod === "stripe" && !clientSecret && items.length > 0) {
+      setStripeLoading(true);
+      fetch("/api/payments/create-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Math.round(total * 100),
+          currency: "bdt",
+        }),
+      })
+        .then((res) => res.json())
+        .then((data: { clientSecret?: string }) => {
+          if (data.clientSecret) {
+            setClientSecret(data.clientSecret);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setStripeLoading(false));
+    }
+  }, [paymentMethod, clientSecret, total, items.length]);
 
   // Empty cart redirect
   if (items.length === 0) {
@@ -172,6 +273,18 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
+      // For Stripe, confirm payment first
+      if (paymentMethod === "stripe") {
+        const stripeSubmit = (window as unknown as { stripeSubmit?: () => Promise<boolean> }).stripeSubmit;
+        if (stripeSubmit) {
+          const success = await stripeSubmit();
+          if (!success) {
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+
       // Create order via API
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -196,7 +309,8 @@ export default function CheckoutPage() {
             country: "Bangladesh",
           },
           notes: formData.notes || null,
-          paymentMethod: "cod",
+          paymentMethod: paymentMethod,
+          paymentStatus: paymentMethod === "stripe" ? "paid" : "pending",
         }),
       });
 
@@ -223,7 +337,6 @@ export default function CheckoutPage() {
           });
         } catch (error) {
           console.error("Error saving profile:", error);
-          // Don't block order completion if profile save fails
         }
       }
 
@@ -401,18 +514,97 @@ export default function CheckoutPage() {
                   <h2 className="text-lg font-bold text-gray-800">Payment Method</h2>
                 </div>
 
-                {/* Cash on Delivery - Selected */}
-                <div className="p-4 border-2 border-amber-500 rounded-xl bg-amber-50 flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-r from-amber-500 to-rose-500 rounded-full text-white">
-                    <Banknote className="h-6 w-6" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-800">Cash on Delivery</h3>
-                    <p className="text-sm text-gray-600">Pay when you receive your order</p>
-                  </div>
-                  <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center">
-                    <Check className="h-4 w-4 text-white" />
-                  </div>
+                <div className="space-y-4">
+                  {/* Cash on Delivery */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("cod")}
+                    className={`w-full p-4 border-2 rounded-xl flex items-center gap-4 transition-all ${
+                      paymentMethod === "cod"
+                        ? "border-amber-500 bg-amber-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className={`p-3 rounded-full ${
+                      paymentMethod === "cod"
+                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white"
+                        : "bg-gray-100 text-gray-600"
+                    }`}>
+                      <Banknote className="h-6 w-6" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="font-bold text-gray-800">Cash on Delivery</h3>
+                      <p className="text-sm text-gray-600">Pay when you receive your order</p>
+                    </div>
+                    {paymentMethod === "cod" && (
+                      <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center">
+                        <Check className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Card Payment (Stripe) */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("stripe")}
+                    className={`w-full p-4 border-2 rounded-xl flex items-center gap-4 transition-all ${
+                      paymentMethod === "stripe"
+                        ? "border-amber-500 bg-amber-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className={`p-3 rounded-full ${
+                      paymentMethod === "stripe"
+                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white"
+                        : "bg-gray-100 text-gray-600"
+                    }`}>
+                      <CreditCard className="h-6 w-6" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="font-bold text-gray-800">Credit/Debit Card</h3>
+                      <p className="text-sm text-gray-600">Pay securely with Stripe</p>
+                    </div>
+                    {paymentMethod === "stripe" && (
+                      <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center">
+                        <Check className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Stripe Elements */}
+                  {paymentMethod === "stripe" && (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-xl">
+                      {stripeLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+                        </div>
+                      ) : clientSecret ? (
+                        <Elements
+                          stripe={stripePromise}
+                          options={{
+                            clientSecret,
+                            appearance: {
+                              theme: "stripe",
+                              variables: {
+                                colorPrimary: "#f59e0b",
+                                borderRadius: "12px",
+                              },
+                            },
+                          }}
+                        >
+                          <StripePaymentForm
+                            onSuccess={() => {}}
+                            isProcessing={isLoading}
+                            setIsProcessing={setIsLoading}
+                          />
+                        </Elements>
+                      ) : (
+                        <p className="text-gray-500 text-center py-4">
+                          Unable to load payment form. Please try again.
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -485,7 +677,16 @@ export default function CheckoutPage() {
                   className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-full text-lg py-6"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Placing Order..." : "Place Order"}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : paymentMethod === "stripe" ? (
+                    "Pay & Place Order"
+                  ) : (
+                    "Place Order"
+                  )}
                 </Button>
 
                 {/* Trust Badges */}
