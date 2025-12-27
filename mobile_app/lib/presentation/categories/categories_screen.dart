@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../data/models/category/category_model.dart';
+import '../../features/cart/presentation/providers/cart_provider.dart';
 
 /// Demo categories for when API is unavailable
 final _demoCategories = [
@@ -181,24 +182,44 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                 IconButton(
                                   onPressed: () => context.push('/cart'),
                                   icon: Icon(
-                                    Icons.shopping_bag_outlined,
+                                    Icons.shopping_cart_outlined,
                                     color: textColor,
                                   ),
                                 ),
                                 Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: surfaceColor,
-                                        width: 2,
-                                      ),
-                                    ),
+                                  top: 6,
+                                  right: 6,
+                                  child: Consumer(
+                                    builder: (context, ref, child) {
+                                      final cartItems = ref.watch(cartProvider);
+                                      final count = cartItems.fold<int>(
+                                        0,
+                                        (sum, item) => sum + item.quantity,
+                                      );
+                                      if (count == 0) return const SizedBox();
+                                      return Container(
+                                        width: 18,
+                                        height: 18,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: surfaceColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            count > 9 ? '9+' : '$count',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
