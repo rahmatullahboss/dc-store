@@ -131,6 +131,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
+  void _signInWithGoogle() async {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text('Signing in with Google...'),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+    // TODO: Integrate with GoogleSignInService when ready
+  }
+
+  void _signInWithApple() {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text('Apple Sign-In'),
+      description: const Text('Coming soon!'),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -708,7 +728,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             child: _buildSocialButton(
                               icon: 'assets/icons/google.png',
                               label: 'Google',
-                              onTap: () {},
+                              onTap: () => _signInWithGoogle(),
                               isDark: isDark,
                               surfaceColor: surfaceColor,
                               textColor: textColor,
@@ -720,7 +740,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             child: _buildSocialButton(
                               icon: 'assets/icons/apple.png',
                               label: 'Apple',
-                              onTap: () {},
+                              onTap: () => _signInWithApple(),
                               isDark: isDark,
                               surfaceColor: surfaceColor,
                               textColor: textColor,

@@ -59,6 +59,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     super.dispose();
   }
 
+  void _shareProduct() {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text('Sharing product...'),
+      description: const Text('Share feature coming soon!'),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final productAsync = ref.watch(productDetailsProvider(widget.id));
@@ -197,7 +207,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 children: [
                   _buildFloatingButton(
                     icon: LucideIcons.share2,
-                    onTap: () {},
+                    onTap: () => _shareProduct(),
                     isDark: isDark,
                   ),
                   const SizedBox(width: 12),
@@ -274,7 +284,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             children: [
               // Brand Link
               GestureDetector(
-                onTap: () {},
+                onTap: () =>
+                    context.push('/products?category=${categoryId ?? ''}'),
                 child: Text(
                   categoryId?.toUpperCase() ?? 'BRAND',
                   style: TextStyle(
@@ -886,7 +897,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => context.push('/products'),
                   child: Text(
                     'View all',
                     style: TextStyle(

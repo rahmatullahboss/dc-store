@@ -105,6 +105,25 @@ class _WishlistScreenState extends State<WishlistScreen> {
     );
   }
 
+  void _shareWishlist() {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text("Sharing wishlist..."),
+      description: const Text("Share feature coming soon!"),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
+  void _toggleLayout() {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text("Layout options coming soon!"),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -175,7 +194,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                   children: [
                                     _buildHeaderButton(
                                       icon: LucideIcons.share,
-                                      onTap: () {},
+                                      onTap: () => _shareWishlist(),
                                       isDark: isDark,
                                       cardColor: cardColor,
                                       textColor: textColor,
@@ -183,7 +202,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                     const SizedBox(width: 12),
                                     _buildHeaderButton(
                                       icon: LucideIcons.layoutGrid,
-                                      onTap: () {},
+                                      onTap: () => _toggleLayout(),
                                       isDark: isDark,
                                       cardColor: cardColor,
                                       textColor: textColor,

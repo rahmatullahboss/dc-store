@@ -361,7 +361,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {},
+                onTap: () => _showAllTickets(context),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
                   padding: const EdgeInsets.all(16),

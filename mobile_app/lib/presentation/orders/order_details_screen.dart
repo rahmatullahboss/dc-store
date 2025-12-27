@@ -90,7 +90,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 actions: [
                   IconButton(
                     icon: Icon(LucideIcons.share, size: 20, color: textColor),
-                    onPressed: () {},
+                    onPressed: () => _shareOrder(context, order),
                   ),
                 ],
               ),
@@ -184,7 +184,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () => _showInvoice(context, order),
                         child: Container(
                           height: 52,
                           decoration: BoxDecoration(
@@ -217,7 +217,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () => _trackShipment(context, order),
                         child: Container(
                           height: 52,
                           decoration: BoxDecoration(
@@ -926,7 +926,7 @@ class OrderDetailsScreen extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () {},
+              onTap: () => _needHelp(context),
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -955,7 +955,7 @@ class OrderDetailsScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: GestureDetector(
-              onTap: () {},
+              onTap: () => _cancelOrder(context, isDark),
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -979,6 +979,73 @@ class OrderDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper methods for order actions
+  void _shareOrder(BuildContext context, _OrderDetails order) {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text('Sharing order details...'),
+      description: Text('Order #${order.id}'),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
+  void _showInvoice(BuildContext context, _OrderDetails order) {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: const Text('Invoice'),
+      description: const Text('Invoice download coming soon!'),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
+  void _trackShipment(BuildContext context, _OrderDetails order) {
+    context.push('/track/${order.id}');
+  }
+
+  void _needHelp(BuildContext context) {
+    context.push('/chat');
+  }
+
+  void _cancelOrder(BuildContext context, bool isDark) {
+    final cardColor = isDark ? Colors.grey[850]! : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: cardColor,
+        title: Text('Cancel Order?', style: TextStyle(color: textColor)),
+        content: Text(
+          'Are you sure you want to cancel this order? This action cannot be undone.',
+          style: TextStyle(color: textColor.withAlpha(179)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Keep Order'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              toastification.show(
+                context: context,
+                type: ToastificationType.success,
+                title: const Text('Order cancellation requested'),
+                autoCloseDuration: const Duration(seconds: 2),
+              );
+            },
+            child: Text(
+              'Cancel Order',
+              style: TextStyle(color: Colors.red[600]),
             ),
           ),
         ],

@@ -106,7 +106,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   icon: LucideIcons.mapPin,
                   label: 'Country/Region',
                   value: _country,
-                  onTap: () {},
+                  onTap: () => _showComingSoonToast('Country/Region selection'),
                   isDark: isDark,
                   textColor: textColor,
                   subtleTextColor: subtleTextColor,
@@ -702,7 +702,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             icon: LucideIcons.mail,
             label: 'Email Preferences',
             value: '',
-            onTap: () {},
+            onTap: () => _showComingSoonToast('Email preferences'),
             isDark: isDark,
             textColor: textColor,
             subtleTextColor: subtleTextColor,
@@ -752,7 +752,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           icon: LucideIcons.mapPin,
           label: 'Location Services',
           value: _locationServices,
-          onTap: () {},
+          onTap: () => _showLocationServicesSheet(),
           isDark: isDark,
           textColor: textColor,
           subtleTextColor: subtleTextColor,
@@ -810,7 +810,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           icon: LucideIcons.shield,
           label: 'Two-Factor Authentication',
           value: '',
-          onTap: () {},
+          onTap: () => _showComingSoonToast('Two-Factor Authentication'),
           isDark: isDark,
           textColor: textColor,
           subtleTextColor: subtleTextColor,
@@ -821,7 +821,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           icon: LucideIcons.smartphone,
           label: 'Active Sessions',
           value: '2 devices',
-          onTap: () {},
+          onTap: () => _showComingSoonToast('Active sessions management'),
           isDark: isDark,
           textColor: textColor,
           subtleTextColor: subtleTextColor,
@@ -901,7 +901,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               size: 18,
               color: subtleTextColor,
             ),
-            onTap: () {},
+            onTap: () => _showComingSoonToast('Data download'),
             isDark: isDark,
             textColor: textColor,
             subtleTextColor: subtleTextColor,
@@ -1001,7 +1001,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             icon: LucideIcons.fileText,
             label: 'Open Source Licenses',
             value: '',
-            onTap: () {},
+            onTap: () => _showComingSoonToast('Open Source Licenses'),
             isDark: isDark,
             textColor: textColor,
             subtleTextColor: subtleTextColor,
@@ -1009,7 +1009,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildActionRow(
             icon: LucideIcons.star,
             label: 'Rate App',
-            onTap: () {},
+            onTap: () => _showComingSoonToast('App rating'),
             color: _accentColor,
             isDark: isDark,
             borderColor: borderColor,
@@ -1017,7 +1017,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildActionRow(
             icon: LucideIcons.share2,
             label: 'Share App',
-            onTap: () {},
+            onTap: () => _showComingSoonToast('App sharing'),
             color: _accentColor,
             isDark: isDark,
             borderColor: borderColor,
@@ -1213,6 +1213,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showComingSoonToast(String feature) {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      title: Text('$feature coming soon!'),
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
+  void _showLocationServicesSheet() {
+    final options = ['Never', 'While Using', 'Always'];
+    _showOptionSheet(
+      'Location Services',
+      options,
+      _locationServices,
+      (v) => _showComingSoonToast('Location services'),
     );
   }
 }
