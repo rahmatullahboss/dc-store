@@ -107,8 +107,8 @@ export default function OffersPage() {
         <div className="bg-primary rounded-2xl p-8 md:p-12 mb-8 text-white relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-20 -right-20 w-60 h-60 bg-card/10 rounded-full blur-3xl dark:opacity-0" />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-card/10 rounded-full blur-3xl dark:opacity-0" />
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-card/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-card/10 rounded-full blur-3xl" />
           </div>
           
           <div className="relative z-10">
