@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Google Sign-In Configuration -->
+	<key>GIDClientID</key>
+	<string>46787300862-lo0fvlgsg534qul73adhk8m2aedmv8e8.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.46787300862-lo0fvlgsg534qul73adhk8m2aedmv8e8</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Microphone Permission for Voice Search -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone for voice search functionality.</string>
 </dict>
 </plist>
