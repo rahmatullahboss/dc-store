@@ -19,6 +19,7 @@ import '../presentation/categories/categories_screen.dart';
 // Products
 import '../presentation/products/products_screen.dart';
 import '../presentation/products/product_details_screen.dart';
+import '../presentation/products/category_products_screen.dart';
 
 // Cart & Checkout
 import '../presentation/cart/cart_screen.dart';
@@ -162,7 +163,7 @@ class AppRouter {
                         final categoryId = state.pathParameters['categoryId']!;
                         final extra = state.extra as Map<String, dynamic>?;
                         return AppTransitions.slideRight(
-                          child: _ProductListScreen(
+                          child: CategoryProductsScreen(
                             categoryId: categoryId,
                             categoryName: extra?['categoryName'],
                           ),
@@ -315,7 +316,7 @@ class AppRouter {
             final categoryId = state.pathParameters['categoryId']!;
             final extra = state.extra as Map<String, dynamic>?;
             return AppTransitions.slideRight(
-              child: _ProductListScreen(
+              child: CategoryProductsScreen(
                 categoryId: categoryId,
                 categoryName: extra?['categoryName'],
               ),
@@ -765,17 +766,6 @@ class _ProfileScreen extends StatelessWidget {
         ),
       ],
     ),
-  );
-}
-
-class _ProductListScreen extends StatelessWidget {
-  final String? categoryId;
-  final String? categoryName;
-  const _ProductListScreen({this.categoryId, this.categoryName});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(categoryName ?? 'Products')),
-    body: Center(child: Text('Products for ${categoryId ?? 'all'}')),
   );
 }
 

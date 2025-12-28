@@ -45,3 +45,11 @@ final searchResultsProvider = FutureProvider<List<Product>>((ref) async {
 final isSearchingProvider = Provider<bool>((ref) {
   return ref.watch(searchResultsProvider).isLoading;
 });
+
+/// Products by category provider
+final productsByCategoryProvider = FutureProvider.family<List<Product>, String>(
+  (ref, categoryId) async {
+    final repository = ref.watch(productRepositoryProvider);
+    return repository.getProductsByCategory(categoryId);
+  },
+);
