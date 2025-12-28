@@ -120,10 +120,8 @@ class RouteGuards {
 
   bool _isProtectedRoute(String path) {
     // Routes that require authentication
-    // Note: Edit profile does NOT require auth - user can view their profile
-    // Only checkout, orders, wishlist require auth
-    return path.startsWith('/checkout') ||
-        path.startsWith('/orders') ||
-        path == AppRoutes.wishlistPath;
+    // Note: /orders is accessible from profile which already checks auth
+    // Only checkout requires strict auth guard
+    return path.startsWith('/checkout');
   }
 }
