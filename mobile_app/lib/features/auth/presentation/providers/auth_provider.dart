@@ -135,6 +135,9 @@ class AuthController extends AsyncNotifier<AuthState> {
       final account = await googleService.signIn();
 
       if (account != null) {
+        // Get storage service instance to save token
+        final storage = await StorageService.getInstance();
+
         // For Google Sign-In, we create a user from Google account
         // In production, you'd send the Google token to your backend
         // to create/link an account
@@ -144,6 +147,11 @@ class AuthController extends AsyncNotifier<AuthState> {
           name: account.displayName ?? account.email.split('@')[0],
           image: account.photoUrl,
         );
+
+        // Save auth token to storage so route guards work
+        // Using Google ID as token for now - in production, use backend token
+        await storage.setString('auth_token', 'google_${account.id}');
+        await storage.setString('user_id', account.id);
 
         state = AsyncValue.data(AuthState(user: user, isInitialized: true));
         return true;

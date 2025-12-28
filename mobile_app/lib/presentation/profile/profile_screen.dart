@@ -174,60 +174,43 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      // Member badges
+                      // Member badges - show registration date from user
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? primaryColor.withAlpha(51)
-                                  : primarySoft,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  LucideIcons.award,
-                                  size: 14,
-                                  color: primaryColor,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Gold Member',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                          // Show member status based on account
+                          if (user.name != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? primaryColor.withAlpha(51)
+                                    : primarySoft,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    LucideIcons.checkCircle,
+                                    size: 14,
                                     color: primaryColor,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Verified Member',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: primaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                LucideIcons.calendar,
-                                size: 14,
-                                color: subtleColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Member since 2021',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: subtleColor,
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ],
@@ -236,7 +219,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
 
-            // Stats Card
+            // Quick Actions - replace stats with useful actions
             Padding(
               padding: const EdgeInsets.all(20),
               child: Container(
@@ -254,18 +237,36 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    _buildStatItem('24', 'Orders', textColor, subtleColor),
-                    _buildStatDivider(borderColor),
-                    _buildStatItem('12', 'Wishlist', textColor, subtleColor),
-                    _buildStatDivider(borderColor),
-                    _buildStatItem('8', 'Reviews', textColor, subtleColor),
-                    _buildStatDivider(borderColor),
-                    _buildStatItem(
-                      '\$140',
-                      'Wallet',
-                      primaryColor,
-                      subtleColor,
-                      isHighlighted: true,
+                    _buildQuickAction(
+                      icon: LucideIcons.shoppingBag,
+                      label: 'Orders',
+                      onTap: () => context.push('/orders'),
+                      textColor: textColor,
+                      subtleColor: subtleColor,
+                    ),
+                    _buildQuickActionDivider(borderColor),
+                    _buildQuickAction(
+                      icon: LucideIcons.heart,
+                      label: 'Wishlist',
+                      onTap: () => context.push('/wishlist'),
+                      textColor: textColor,
+                      subtleColor: subtleColor,
+                    ),
+                    _buildQuickActionDivider(borderColor),
+                    _buildQuickAction(
+                      icon: LucideIcons.wallet,
+                      label: 'Wallet',
+                      onTap: () => context.push('/wallet'),
+                      textColor: textColor,
+                      subtleColor: subtleColor,
+                    ),
+                    _buildQuickActionDivider(borderColor),
+                    _buildQuickAction(
+                      icon: LucideIcons.tag,
+                      label: 'Coupons',
+                      onTap: () => context.push('/coupons'),
+                      textColor: textColor,
+                      subtleColor: subtleColor,
                     ),
                   ],
                 ),
@@ -504,40 +505,40 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatItem(
-    String value,
-    String label,
-    Color valueColor,
-    Color labelColor, {
-    bool isHighlighted = false,
+  Widget _buildQuickAction({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required Color textColor,
+    required Color subtleColor,
   }) {
     return Expanded(
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: valueColor,
-            ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            children: [
+              Icon(icon, size: 22, color: textColor),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: subtleColor,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: labelColor,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatDivider(Color color) {
-    return Container(width: 1, height: 32, color: color);
+  Widget _buildQuickActionDivider(Color color) {
+    return Container(width: 1, height: 40, color: color);
   }
 
   Widget _buildSection({
