@@ -38,6 +38,23 @@ import '../presentation/profile/change_password_screen.dart';
 // Orders
 import '../presentation/orders/orders_screen.dart';
 import '../presentation/orders/order_details_screen.dart';
+import '../presentation/orders/track_order_screen.dart';
+
+// Support
+import '../presentation/support/faq_screen.dart';
+import '../presentation/support/contact_us_screen.dart';
+import '../presentation/support/about_screen.dart';
+import '../presentation/support/privacy_policy_screen.dart';
+import '../presentation/support/terms_screen.dart';
+
+// Address
+import '../presentation/profile/add_address_screen.dart';
+import '../presentation/profile/edit_address_screen.dart';
+
+// Checkout Flow
+import '../features/checkout/presentation/address_selection_screen.dart';
+import '../features/checkout/presentation/payment_method_screen.dart';
+import '../features/checkout/presentation/order_review_screen.dart';
 
 // Other
 import '../presentation/notifications/notifications_screen.dart';
@@ -235,7 +252,7 @@ class AppRouter {
                           name: AppRoutes.addAddress,
                           pageBuilder: (context, state) =>
                               AppTransitions.slideUp(
-                                child: const _AddAddressScreen(),
+                                child: const AddAddressScreen(),
                                 state: state,
                               ),
                         ),
@@ -246,7 +263,7 @@ class AppRouter {
                             final addressId =
                                 state.pathParameters['addressId']!;
                             return AppTransitions.slideRight(
-                              child: _EditAddressScreen(addressId: addressId),
+                              child: EditAddressScreen(addressId: addressId),
                               state: state,
                             );
                           },
@@ -352,7 +369,7 @@ class AppRouter {
               path: 'address',
               name: AppRoutes.addressSelection,
               pageBuilder: (context, state) => AppTransitions.slideRight(
-                child: const _AddressSelectionScreen(),
+                child: const AddressSelectionScreen(),
                 state: state,
               ),
             ),
@@ -360,7 +377,7 @@ class AppRouter {
               path: 'payment',
               name: AppRoutes.paymentMethod,
               pageBuilder: (context, state) => AppTransitions.slideRight(
-                child: const _PaymentMethodScreen(),
+                child: const PaymentMethodScreen(),
                 state: state,
               ),
             ),
@@ -368,7 +385,7 @@ class AppRouter {
               path: 'review',
               name: AppRoutes.orderReview,
               pageBuilder: (context, state) => AppTransitions.slideRight(
-                child: const _OrderReviewScreen(),
+                child: const OrderReviewScreen(),
                 state: state,
               ),
             ),
@@ -414,7 +431,7 @@ class AppRouter {
           pageBuilder: (context, state) {
             final orderId = state.pathParameters['orderId']!;
             return AppTransitions.slideUp(
-              child: _TrackOrderScreen(orderId: orderId),
+              child: TrackOrderScreen(orderId: orderId),
               state: state,
             );
           },
@@ -470,16 +487,14 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.faqPath,
           name: AppRoutes.faq,
-          pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _FaqScreen(),
-            state: state,
-          ),
+          pageBuilder: (context, state) =>
+              AppTransitions.slideRight(child: const FaqScreen(), state: state),
         ),
         GoRoute(
           path: AppRoutes.contactUsPath,
           name: AppRoutes.contactUs,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _ContactUsScreen(),
+            child: const ContactUsScreen(),
             state: state,
           ),
         ),
@@ -487,7 +502,7 @@ class AppRouter {
           path: AppRoutes.aboutPath,
           name: AppRoutes.about,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _AboutScreen(),
+            child: const AboutScreen(),
             state: state,
           ),
         ),
@@ -495,7 +510,7 @@ class AppRouter {
           path: AppRoutes.privacyPolicyPath,
           name: AppRoutes.privacyPolicy,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _PrivacyPolicyScreen(),
+            child: const PrivacyPolicyScreen(),
             state: state,
           ),
         ),
@@ -503,7 +518,7 @@ class AppRouter {
           path: AppRoutes.termsOfServicePath,
           name: AppRoutes.termsOfService,
           pageBuilder: (context, state) => AppTransitions.slideRight(
-            child: const _TermsScreen(),
+            child: const TermsScreen(),
             state: state,
           ),
         ),
@@ -794,150 +809,6 @@ class _CheckoutScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Checkout')),
     body: const Center(child: Text('Checkout Screen')),
-  );
-}
-
-class _AddressSelectionScreen extends StatelessWidget {
-  const _AddressSelectionScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Select Address')),
-    body: const Center(child: Text('Address Selection')),
-  );
-}
-
-class _PaymentMethodScreen extends StatelessWidget {
-  const _PaymentMethodScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Payment Method')),
-    body: const Center(child: Text('Payment Method Screen')),
-  );
-}
-
-class _OrderReviewScreen extends StatelessWidget {
-  const _OrderReviewScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Review Order')),
-    body: const Center(child: Text('Order Review Screen')),
-  );
-}
-
-class _OrderSuccessScreen extends StatelessWidget {
-  final String orderId;
-  const _OrderSuccessScreen({required this.orderId});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.check_circle, size: 80, color: Colors.green),
-          const SizedBox(height: 16),
-          const Text('Order Placed Successfully!'),
-          Text('Order ID: $orderId'),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => context.go(AppRoutes.homePath),
-            child: const Text('Continue Shopping'),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-class _OrdersScreen extends StatelessWidget {
-  const _OrdersScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('My Orders')),
-    body: const Center(child: Text('Orders Screen')),
-  );
-}
-
-class _OrderDetailScreen extends StatelessWidget {
-  final String orderId;
-  const _OrderDetailScreen({required this.orderId});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Order Details')),
-    body: Center(child: Text('Order: $orderId')),
-  );
-}
-
-class _TrackOrderScreen extends StatelessWidget {
-  final String orderId;
-  const _TrackOrderScreen({required this.orderId});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Track Order')),
-    body: Center(child: Text('Tracking: $orderId')),
-  );
-}
-
-class _AddAddressScreen extends StatelessWidget {
-  const _AddAddressScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Add Address')),
-    body: const Center(child: Text('Add Address Screen')),
-  );
-}
-
-class _EditAddressScreen extends StatelessWidget {
-  final String addressId;
-  const _EditAddressScreen({required this.addressId});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Edit Address')),
-    body: Center(child: Text('Edit Address: $addressId')),
-  );
-}
-
-class _FaqScreen extends StatelessWidget {
-  const _FaqScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('FAQ')),
-    body: const Center(child: Text('FAQ Screen')),
-  );
-}
-
-class _ContactUsScreen extends StatelessWidget {
-  const _ContactUsScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Contact Us')),
-    body: const Center(child: Text('Contact Us Screen')),
-  );
-}
-
-class _AboutScreen extends StatelessWidget {
-  const _AboutScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('About')),
-    body: const Center(child: Text('About Screen')),
-  );
-}
-
-class _PrivacyPolicyScreen extends StatelessWidget {
-  const _PrivacyPolicyScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Privacy Policy')),
-    body: const Center(child: Text('Privacy Policy Screen')),
-  );
-}
-
-class _TermsScreen extends StatelessWidget {
-  const _TermsScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Terms of Service')),
-    body: const Center(child: Text('Terms of Service Screen')),
   );
 }
 
