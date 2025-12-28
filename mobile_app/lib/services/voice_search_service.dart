@@ -55,9 +55,11 @@ class VoiceSearchService {
         }
       },
       localeId: localeId,
-      listenMode: ListenMode.search,
-      cancelOnError: true,
-      partialResults: true,
+      listenOptions: SpeechListenOptions(
+        listenMode: ListenMode.search,
+        cancelOnError: true,
+        partialResults: true,
+      ),
     );
   }
 
