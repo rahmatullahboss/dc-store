@@ -1,90 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/white_label_config.dart';
+import '../../features/orders/data/orders_repository.dart';
 import '../common/widgets/animated_empty_state.dart';
 
-class OrdersScreen extends StatefulWidget {
+class OrdersScreen extends ConsumerStatefulWidget {
   const OrdersScreen({super.key});
 
   @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
+  ConsumerState<OrdersScreen> createState() => _OrdersScreenState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   String _selectedFilter = 'All';
 
   final List<String> _filters = ['All', 'Active', 'Completed', 'Cancelled'];
 
-  // Mock orders data
-  final List<_Order> _orders = [
-    _Order(
-      id: 'ORD-3920',
-      date: 'Oct 24, 2023',
-      itemCount: 2,
-      status: OrderStatus.processing,
-      total: 145.00,
-      thumbnails: [
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuC2UEbrLQhd-vwHiK759ASCGcKyu4SLgV03OGmzH2svbhK0nrL5bArpC4YZ07hxhGKQddqpjmx-ALcLOEuLhbHLBtmcwg_IuFufWRRNIpXM7S8kxKXYx_inhzmelNAvJwX-uOiaAcu6c6UiDVnozfoXNE-HAcqxFuZzkUyI8RGRRPhK3zYRJz4kz1L2_0fkmp7GsHCJCZdjJ4OVdyg9LNH9KyeHjDl3xrLtnLHmGZM_S_z5keJbNYQPB6IGNW1LcXkqi8JKCauD_Uc',
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuC943PQNcBYQrxPSzZHM9Z4XDis5F2MGaR4u9QNMKD6019BDL4STVStBdv-ZdmQ6HsPpYWJyHeCQo5u--2SowMAHW080WvAX4x7D1CSAIYIrfb3h7c3TN9-gi5vwDL662QMjnuKztqAnGgH27bmaazy6TbGWnIvS0Rv8sZOKZ5WiDF6IUe5JVUP_JA7--GrueZdgHNqqQrVOjTz5RtRIYLM80gk17JRJfQ_RY9j2uJfqcOsvO1f-YCO87RKZG51RZlwq1G9x_sG3zE',
-      ],
-    ),
-    _Order(
-      id: 'ORD-2481',
-      date: 'Sept 12, 2023',
-      itemCount: 3,
-      status: OrderStatus.shipped,
-      total: 35.00,
-      thumbnails: [
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDIM_NQnao8xwrc7xLuRTrdy8BFV3CRTcwFL4WBkMkYX5j_2sdWkjx7XrjSS9GFvvBTPFS567gT3uH3EAcUde9HCRJyYl0vTgf4FMEfmsg5E-AB5O_9Bh1-kruMHt0X45FssPuPp4OpQfomSSxFeh_drkIanaUOp-FlibSLflQHS1kcLd2AGf1m3wQf2kjjrLqq7Th7001EN-5oE_bB8hr9cwW0xqaXiZAW-ysked_svknjdjTXjNU6-IkQuO9vui0p_SJQ2Yk3u2E',
-      ],
-    ),
-    _Order(
-      id: 'ORD-1156',
-      date: 'Aug 05, 2023',
-      itemCount: 1,
-      status: OrderStatus.delivered,
-      total: 299.00,
-      thumbnails: [
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAo8nUru5sJiyboNGtUD4xyw_yX5oDTJ0Lw_9Eb8DKgthrQeUwtEp3pA6lh-SQuQwQ2tZ6-RDaQGs47r_zGHMwhXyMmUOxTJYcOa1zWv6r5vtwI5l0u4KVFuqAJRArplmNG9QH7_6hF-77NN6T4zF8k7nFiySLb4GzXyPBDN4xX4U3VH-ONfqLuhpGPP1ih8VM9KKaNWVyCmRWhVGgsdUaPRq9wG5CqCQs18Ufaz1rw1MsL3KckDWauR9Dltr3ZYpVopt5i7w0FjeE',
-      ],
-    ),
-    _Order(
-      id: 'ORD-0922',
-      date: 'Jul 12, 2023',
-      itemCount: 1,
-      status: OrderStatus.cancelled,
-      total: 25.00,
-      thumbnails: [
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCq42kRoWsAr6EDn71SZmM0nzfbjUK68fe8TmoyYCXZzH6E0nSmD5xmERBM820jNxtlVgrCwmZvF51acLX6iX3UyFLuKt9YqZ8GhbH0crhJG7EVulroHVlDqblZY0FIoFi6HW1Iz9deUx1s8KgcZLuThEA5bQXVBRtXBNEmctzj6OPQD_QQYXQ-Sbe9GiZOqeI40FDZGjpU2UvBP1IVYvJE7y7ics43cCFMwu5KvPbUudah_6rMNuszPWUM2VUO68sK681VSDjjTjI',
-      ],
-    ),
-  ];
-
-  List<_Order> get _filteredOrders {
-    if (_selectedFilter == 'All') return _orders;
+  // Filtered orders based on selection
+  List<Order> _getFilteredOrders(List<Order> orders) {
+    if (_selectedFilter == 'All') return orders;
     if (_selectedFilter == 'Active') {
-      return _orders
+      return orders
           .where(
             (o) =>
-                o.status == OrderStatus.processing ||
-                o.status == OrderStatus.shipped,
+                o.status == 'processing' ||
+                o.status == 'confirmed' ||
+                o.status == 'shipped' ||
+                o.status == 'pending',
           )
           .toList();
     }
     if (_selectedFilter == 'Completed') {
-      return _orders.where((o) => o.status == OrderStatus.delivered).toList();
+      return orders.where((o) => o.status == 'delivered').toList();
     }
     if (_selectedFilter == 'Cancelled') {
-      return _orders.where((o) => o.status == OrderStatus.cancelled).toList();
+      return orders.where((o) => o.status == 'cancelled').toList();
     }
-    return _orders;
+    return orders;
+  }
+
+  // Convert API status to UI status
+  OrderStatus _getOrderStatus(String status) {
+    switch (status) {
+      case 'processing':
+      case 'pending':
+      case 'confirmed':
+        return OrderStatus.processing;
+      case 'shipped':
+        return OrderStatus.shipped;
+      case 'delivered':
+        return OrderStatus.delivered;
+      case 'cancelled':
+        return OrderStatus.cancelled;
+      default:
+        return OrderStatus.processing;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final ordersState = ref.watch(ordersProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final primaryBlue = WhiteLabelConfig.accentColor;
@@ -95,6 +74,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
         ? Colors.grey[400]!
         : const Color(0xFF616F89);
     final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
+
+    // Get filtered orders from API
+    final filteredOrders = _getFilteredOrders(ordersState.orders);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -202,28 +184,35 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
             // Orders List
             Expanded(
-              child: _filteredOrders.isEmpty
-                  ? _buildEmptyState(
-                      isDark,
-                      textColor,
-                      subtleTextColor,
-                      primaryBlue,
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _filteredOrders.length,
-                      itemBuilder: (context, index) {
-                        return _buildOrderCard(
-                          _filteredOrders[index],
-                          index,
-                          isDark,
-                          cardColor,
-                          textColor,
-                          subtleTextColor,
-                          borderColor,
-                          primaryBlue,
-                        );
-                      },
+              child: ordersState.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : RefreshIndicator(
+                      onRefresh: () =>
+                          ref.read(ordersProvider.notifier).refresh(),
+                      child: filteredOrders.isEmpty
+                          ? _buildEmptyState(
+                              isDark,
+                              textColor,
+                              subtleTextColor,
+                              primaryBlue,
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: filteredOrders.length,
+                              itemBuilder: (context, index) {
+                                final order = filteredOrders[index];
+                                return _buildApiOrderCard(
+                                  order,
+                                  index,
+                                  isDark,
+                                  cardColor,
+                                  textColor,
+                                  subtleTextColor,
+                                  borderColor,
+                                  primaryBlue,
+                                );
+                              },
+                            ),
                     ),
             ),
           ],
@@ -232,8 +221,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
-  Widget _buildOrderCard(
-    _Order order,
+  Widget _buildApiOrderCard(
+    Order order,
     int index,
     bool isDark,
     Color cardColor,
@@ -242,7 +231,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
     Color borderColor,
     Color primaryBlue,
   ) {
-    final isCancelled = order.status == OrderStatus.cancelled;
+    final status = _getOrderStatus(order.status);
+    final isCancelled = status == OrderStatus.cancelled;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -273,7 +263,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Order #${order.id}',
+                      'Order #${order.orderNumber}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -282,7 +272,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${order.date} • ${order.itemCount} ${order.itemCount == 1 ? 'Item' : 'Items'}',
+                      '${order.formattedDate} • ${order.itemCount} ${order.itemCount == 1 ? 'Item' : 'Items'}',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -291,7 +281,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                   ],
                 ),
-                _buildStatusBadge(order.status, isDark),
+                _buildStatusBadge(status, isDark),
               ],
             ),
             const SizedBox(height: 16),
@@ -465,14 +455,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Widget _buildActionButtons(
-    _Order order,
+    Order order,
     bool isDark,
     Color cardColor,
     Color textColor,
     Color borderColor,
     Color primaryBlue,
   ) {
-    switch (order.status) {
+    final status = _getOrderStatus(order.status);
+    switch (status) {
       case OrderStatus.processing:
       case OrderStatus.shipped:
         return _buildPrimaryButton('Track Order', primaryBlue, () {});
@@ -582,21 +573,3 @@ class _OrdersScreenState extends State<OrdersScreen> {
 }
 
 enum OrderStatus { processing, shipped, delivered, cancelled }
-
-class _Order {
-  final String id;
-  final String date;
-  final int itemCount;
-  final OrderStatus status;
-  final double total;
-  final List<String> thumbnails;
-
-  _Order({
-    required this.id,
-    required this.date,
-    required this.itemCount,
-    required this.status,
-    required this.total,
-    required this.thumbnails,
-  });
-}
