@@ -32,6 +32,7 @@ import '../presentation/profile/addresses_screen.dart';
 import '../presentation/profile/settings_screen.dart';
 import '../presentation/profile/help_support_screen.dart';
 import '../presentation/profile/coupons_screen.dart';
+import '../presentation/profile/change_password_screen.dart';
 
 // Orders
 import '../presentation/orders/orders_screen.dart';
@@ -256,7 +257,7 @@ class AppRouter {
                       name: AppRoutes.changePassword,
                       pageBuilder: (context, state) =>
                           AppTransitions.slideRight(
-                            child: const _ChangePasswordScreen(),
+                            child: const ChangePasswordScreen(),
                             state: state,
                           ),
                     ),
@@ -902,15 +903,6 @@ class _EditAddressScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Edit Address')),
     body: Center(child: Text('Edit Address: $addressId')),
-  );
-}
-
-class _ChangePasswordScreen extends StatelessWidget {
-  const _ChangePasswordScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Change Password')),
-    body: const Center(child: Text('Change Password Screen')),
   );
 }
 

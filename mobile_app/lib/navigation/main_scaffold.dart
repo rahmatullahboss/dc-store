@@ -21,8 +21,7 @@ class MainScaffold extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
 
     // Get real cart count from provider
-    final cartItems = ref.watch(cartProvider);
-    final cartCount = cartItems.length;
+    final cartCount = ref.watch(cartItemCountProvider);
 
     return Scaffold(
       body: child,

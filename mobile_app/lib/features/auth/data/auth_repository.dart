@@ -109,43 +109,48 @@ class AuthRepository {
         return null;
       }
 
-      // Check if this is a Google Sign-In session (uses local token)
-      // Google Sign-In tokens start with 'google_signin_token_'
-      if (token.startsWith('google_signin_token_')) {
-        // For Google Sign-In, use cached user directly
-        // No need to validate with server as this is a social login
+      // Validate session by fetching user profile from server
+      // This works for both Google Sign-In and email/password login
+      // as our /api/user/profile supports Bearer token auth
+      try {
+        final response = await _client.get<Map<String, dynamic>>(
+          ApiConstants.userProfile, // /api/user/profile
+        );
+
+        if (response.isSuccess && response.data != null) {
+          final data = response.data!;
+          final profileData = data['profile'] as Map<String, dynamic>?;
+
+          if (profileData != null) {
+            // Update stored user data with fresh data from server
+            await _saveUserData(profileData);
+            return User.fromJson(profileData);
+          }
+        }
+
+        // API returned but no valid user data - session might be invalid
+        // Try cached user as fallback for offline mode
         final cachedUser = _getCachedUser();
         if (cachedUser != null) {
-          debugPrint('Google Sign-In session restored from cache');
+          debugPrint('Using cached user - profile API had no data');
           return cachedUser;
         }
-        // If no cached user, session is invalid
+
+        // No cached user either, session is truly invalid
         await _clearAuthData();
         return null;
-      }
-
-      // For email/password login, validate session with server
-      final response = await _client.get<Map<String, dynamic>>(
-        ApiConstants.getSession,
-      );
-
-      if (response.isSuccess && response.data != null) {
-        final data = response.data!;
-        final userData = data['user'] as Map<String, dynamic>?;
-
-        if (userData != null) {
-          // Update stored user data
-          await _saveUserData(userData);
-          return User.fromJson(userData);
+      } catch (e) {
+        debugPrint('Profile API error: $e');
+        // API failed - try cached user for offline mode
+        final cachedUser = _getCachedUser();
+        if (cachedUser != null) {
+          debugPrint('Using cached user due to network error');
+          return cachedUser;
         }
+        return null;
       }
-
-      // Session invalid, clear local data
-      await _clearAuthData();
-      return null;
     } catch (e) {
       debugPrint('Get session error: $e');
-      // Try to return cached user if available (for offline mode)
       return _getCachedUser();
     }
   }

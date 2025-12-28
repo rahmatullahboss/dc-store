@@ -191,10 +191,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                   right: 6,
                                   child: Consumer(
                                     builder: (context, ref, child) {
-                                      final cartItems = ref.watch(cartProvider);
-                                      final count = cartItems.fold<int>(
-                                        0,
-                                        (sum, item) => sum + item.quantity,
+                                      final count = ref.watch(
+                                        cartItemCountProvider,
                                       );
                                       if (count == 0) return const SizedBox();
                                       return Container(

@@ -1,20 +1,53 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { wishlist, products } from "@/db/schema";
+import { wishlist, products, sessions } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import { nanoid } from "nanoid";
 
 export const dynamic = "force-dynamic";
 
-// GET - Fetch user's wishlist with product details
-export async function GET() {
+// Helper to get user ID from Bearer token or session cookie
+async function getUserId(request: NextRequest): Promise<string | null> {
+  // First try Bearer token (for mobile app)
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    const db = await getDatabase();
+
+    const session = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.token, token))
+      .then((rows) => rows[0]);
+
+    if (session && new Date(session.expiresAt) >= new Date()) {
+      return session.userId;
+    }
+  }
+
+  // Fallback to cookie-based session (for web)
   try {
     const auth = await getAuth();
     const headersList = await headers();
     const session = await auth.api.getSession({ headers: headersList });
 
-    if (!session?.user) {
+    if (session?.user) {
+      return session.user.id;
+    }
+  } catch {
+    // Ignore cookie session errors
+  }
+
+  return null;
+}
+
+// GET - Fetch user's wishlist with product details
+export async function GET(request: NextRequest) {
+  try {
+    const userId = await getUserId(request);
+
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -39,7 +72,7 @@ export async function GET() {
       })
       .from(wishlist)
       .innerJoin(products, eq(wishlist.productId, products.id))
-      .where(eq(wishlist.userId, session.user.id));
+      .where(eq(wishlist.userId, userId));
 
     return NextResponse.json({
       items: wishlistItems.map((item) => ({
@@ -62,17 +95,15 @@ export async function GET() {
 }
 
 // POST - Add product to wishlist
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const auth = await getAuth();
-    const headersList = await headers();
-    const session = await auth.api.getSession({ headers: headersList });
+    const userId = await getUserId(request);
 
-    if (!session?.user) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json() as { productId?: string };
+    const body = (await request.json()) as { productId?: string };
     const { productId } = body;
 
     if (!productId) {
@@ -88,12 +119,7 @@ export async function POST(request: Request) {
     const existing = await db
       .select()
       .from(wishlist)
-      .where(
-        and(
-          eq(wishlist.userId, session.user.id),
-          eq(wishlist.productId, productId)
-        )
-      )
+      .where(and(eq(wishlist.userId, userId), eq(wishlist.productId, productId)))
       .limit(1);
 
     if (existing.length > 0) {
@@ -106,7 +132,7 @@ export async function POST(request: Request) {
     // Add to wishlist
     const newItem = {
       id: nanoid(),
-      userId: session.user.id,
+      userId,
       productId,
     };
 

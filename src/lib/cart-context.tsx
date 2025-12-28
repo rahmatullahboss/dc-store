@@ -10,15 +10,28 @@ import {
 } from "react";
 import type { CartItem } from "@/db/schema";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 // ============================================
 // Types
 // ============================================
 
+interface CartApiItem {
+  id: string;
+  productId: string;
+  productName: string;
+  productImage: string;
+  price: number;
+  quantity: number;
+  variantId?: string;
+  maxQuantity: number;
+}
+
 interface CartState {
   items: CartItem[];
   isLoading: boolean;
   isOpen: boolean;
+  isSyncing: boolean;
 }
 
 type CartAction =
@@ -33,6 +46,7 @@ type CartAction =
   | { type: "REMOVE_ITEM"; productId: string; variantId?: string }
   | { type: "CLEAR_CART" }
   | { type: "SET_LOADING"; isLoading: boolean }
+  | { type: "SET_SYNCING"; isSyncing: boolean }
   | { type: "TOGGLE_CART"; isOpen?: boolean };
 
 interface CartContextType extends CartState {
@@ -45,6 +59,7 @@ interface CartContextType extends CartState {
   removeItem: (productId: string, variantId?: string) => void;
   clearCart: () => void;
   toggleCart: (isOpen?: boolean) => void;
+  refreshCart: () => Promise<void>;
   itemCount: number;
   subtotal: number;
 }
@@ -120,6 +135,9 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "SET_LOADING":
       return { ...state, isLoading: action.isLoading };
 
+    case "SET_SYNCING":
+      return { ...state, isSyncing: action.isSyncing };
+
     case "TOGGLE_CART":
       return { ...state, isOpen: action.isOpen ?? !state.isOpen };
 
@@ -145,11 +163,40 @@ export function CartProvider({ children }: CartProviderProps) {
     items: [],
     isLoading: true,
     isOpen: false,
+    isSyncing: false,
   });
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
+  // Fetch cart from server if logged in, otherwise load from localStorage
+  const fetchCart = useCallback(async () => {
+    dispatch({ type: "SET_LOADING", isLoading: true });
+
     try {
+      // Check if user is logged in
+      const session = await authClient.getSession();
+
+      if (session?.data?.user) {
+        // Fetch cart from server
+        const response = await fetch("/api/cart");
+        if (response.ok) {
+          const data = (await response.json()) as { cart?: { items?: CartApiItem[] } };
+          const serverItems: CartItem[] = (data.cart?.items || []).map(
+            (item: CartApiItem) => ({
+              productId: item.productId,
+              variantId: item.variantId,
+              name: item.productName,
+              price: item.price,
+              quantity: item.quantity,
+              image: item.productImage,
+            })
+          );
+          dispatch({ type: "SET_ITEMS", items: serverItems });
+          // Also save to localStorage as backup
+          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(serverItems));
+          return;
+        }
+      }
+
+      // Fallback to localStorage for guests or if server fails
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
         const items = JSON.parse(savedCart) as CartItem[];
@@ -158,18 +205,72 @@ export function CartProvider({ children }: CartProviderProps) {
         dispatch({ type: "SET_LOADING", isLoading: false });
       }
     } catch {
-      dispatch({ type: "SET_LOADING", isLoading: false });
+      // Fallback to localStorage on error
+      try {
+        const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+        if (savedCart) {
+          const items = JSON.parse(savedCart) as CartItem[];
+          dispatch({ type: "SET_ITEMS", items });
+        } else {
+          dispatch({ type: "SET_LOADING", isLoading: false });
+        }
+      } catch {
+        dispatch({ type: "SET_LOADING", isLoading: false });
+      }
     }
   }, []);
 
-  // Save cart to localStorage whenever items change
+  // Load cart on mount
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
+
+  // Sync cart to server (debounced)
+  const syncToServer = useCallback(async (items: CartItem[]) => {
+    try {
+      const session = await authClient.getSession();
+      if (!session?.data?.user) return;
+
+      // For now, we sync by clearing and re-adding items
+      // In a production app, you'd want a more efficient sync strategy
+      dispatch({ type: "SET_SYNCING", isSyncing: true });
+
+      // Clear server cart first
+      await fetch("/api/cart", { method: "DELETE" });
+
+      // Add all items
+      for (const item of items) {
+        await fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productId: item.productId,
+            quantity: item.quantity,
+            variantId: item.variantId,
+          }),
+        });
+      }
+
+      dispatch({ type: "SET_SYNCING", isSyncing: false });
+    } catch (error) {
+      console.error("Cart sync error:", error);
+      dispatch({ type: "SET_SYNCING", isSyncing: false });
+    }
+  }, []);
+
+  // Save cart to localStorage and sync to server whenever items change
   useEffect(() => {
     if (!state.isLoading) {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
+      // Debounce server sync
+      const timer = setTimeout(() => {
+        syncToServer(state.items);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [state.items, state.isLoading]);
+  }, [state.items, state.isLoading, syncToServer]);
 
-  const addItem = useCallback((item: CartItem) => {
+  const addItem = useCallback(async (item: CartItem) => {
     dispatch({ type: "ADD_ITEM", item });
     toast.success(`${item.name} added to cart`);
   }, []);
@@ -186,8 +287,17 @@ export function CartProvider({ children }: CartProviderProps) {
     toast.success("Item removed from cart");
   }, []);
 
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback(async () => {
     dispatch({ type: "CLEAR_CART" });
+    // Also clear on server
+    try {
+      const session = await authClient.getSession();
+      if (session?.data?.user) {
+        await fetch("/api/cart", { method: "DELETE" });
+      }
+    } catch {
+      // Ignore
+    }
   }, []);
 
   const toggleCart = useCallback((isOpen?: boolean) => {
@@ -209,6 +319,7 @@ export function CartProvider({ children }: CartProviderProps) {
         removeItem,
         clearCart,
         toggleCart,
+        refreshCart: fetchCart,
         itemCount,
         subtotal,
       }}

@@ -82,6 +82,8 @@ class ApiConstants {
   // ═══════════════════════════════════════════════════════════════
 
   static const String cart = '/api/cart';
+  static const String cartItems =
+      '/api/cart/items'; // For /api/cart/items/[itemId]
   static const String addToCart = '/api/cart/add';
   static const String updateCartItem = '/api/cart/update';
   static const String removeFromCart = '/api/cart/remove';

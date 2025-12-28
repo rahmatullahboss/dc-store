@@ -13,11 +13,7 @@ class MainLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cartItems = ref.watch(cartProvider);
-    final cartCount = cartItems.fold<int>(
-      0,
-      (sum, item) => sum + item.quantity,
-    );
+    final cartCount = ref.watch(cartItemCountProvider);
 
     int getCurrentIndex() {
       if (currentPath == '/products') return 1;

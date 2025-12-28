@@ -5,6 +5,7 @@ import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/cache/cache_service.dart';
 import 'core/config/white_label_config.dart';
+import 'core/network/dio_client.dart' show storageServiceProvider;
 // import 'core/widgets/app_error_boundary.dart'; // Temporarily disabled
 import 'l10n/app_localizations.dart';
 import 'navigation/app_router.dart';
@@ -25,7 +26,10 @@ void main() async {
 
   runApp(
     ProviderScope(
-      overrides: [cacheServiceProvider.overrideWithValue(cacheService)],
+      overrides: [
+        cacheServiceProvider.overrideWithValue(cacheService),
+        storageServiceProvider.overrideWithValue(storageService),
+      ],
       child: MyApp(appRouter: appRouter),
     ),
   );

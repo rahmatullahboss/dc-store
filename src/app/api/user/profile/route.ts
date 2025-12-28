@@ -1,31 +1,65 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { users, orders, wishlist } from "@/db/schema";
+import { users, orders, wishlist, sessions } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
-// GET - Fetch user profile with stats
-export async function GET() {
+// Helper to get user ID from Bearer token or session cookie
+async function getUserId(request: NextRequest): Promise<string | null> {
+  // First try Bearer token (for mobile app)
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    const db = await getDatabase();
+
+    const session = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.token, token))
+      .then((rows) => rows[0]);
+
+    if (session && new Date(session.expiresAt) >= new Date()) {
+      return session.userId;
+    }
+  }
+
+  // Fallback to cookie-based session (for web)
   try {
     const auth = await getAuth();
     const headersList = await headers();
     const session = await auth.api.getSession({ headers: headersList });
 
-    if (!session?.user) {
+    if (session?.user) {
+      return session.user.id;
+    }
+  } catch {
+    // Ignore cookie session errors
+  }
+
+  return null;
+}
+
+// GET - Fetch user profile with stats
+export async function GET(request: NextRequest) {
+  try {
+    const userId = await getUserId(request);
+
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const db = await getDatabase();
-    
+
     // Fetch user profile
     const user = await db.query.users.findFirst({
-      where: eq(users.id, session.user.id),
+      where: eq(users.id, userId),
       columns: {
         id: true,
         name: true,
         email: true,
+        image: true,
         phone: true,
         defaultAddress: true,
         preferences: true,
@@ -40,7 +74,7 @@ export async function GET() {
         totalSpent: sql<number>`coalesce(sum(${orders.total}), 0)`,
       })
       .from(orders)
-      .where(eq(orders.userId, session.user.id));
+      .where(eq(orders.userId, userId));
 
     // Fetch wishlist count
     const wishlistStats = await db
@@ -48,11 +82,11 @@ export async function GET() {
         count: sql<number>`count(*)`,
       })
       .from(wishlist)
-      .where(eq(wishlist.userId, session.user.id));
+      .where(eq(wishlist.userId, userId));
 
     // Fetch recent orders (last 5)
     const recentOrders = await db.query.orders.findMany({
-      where: eq(orders.userId, session.user.id),
+      where: eq(orders.userId, userId),
       orderBy: (orders, { desc }) => [desc(orders.createdAt)],
       limit: 5,
       columns: {
@@ -70,7 +104,7 @@ export async function GET() {
 
     // Helper to safely parse JSON fields that might be strings
     const safeParseJson = (value: unknown): unknown => {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         try {
           return JSON.parse(value);
         } catch {
@@ -80,20 +114,22 @@ export async function GET() {
       return value;
     };
 
-    return NextResponse.json({ 
-      profile: user ? {
-        ...user,
-        // Ensure JSON fields are properly parsed objects
-        defaultAddress: safeParseJson(user.defaultAddress),
-        preferences: safeParseJson(user.preferences),
-      } : null,
+    return NextResponse.json({
+      profile: user
+        ? {
+            ...user,
+            // Ensure JSON fields are properly parsed objects
+            defaultAddress: safeParseJson(user.defaultAddress),
+            preferences: safeParseJson(user.preferences),
+          }
+        : null,
       stats: {
         orderCount: Number(stats.orderCount) || 0,
         totalSpent: Number(stats.totalSpent) || 0,
         wishlistCount: Number(wishlistCount) || 0,
         rewardPoints: 0, // TODO: Implement rewards system
       },
-      recentOrders: recentOrders.map(order => ({
+      recentOrders: recentOrders.map((order) => ({
         id: order.id,
         orderNumber: order.orderNumber,
         date: order.createdAt,
@@ -104,22 +140,23 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching profile:", error);
-    return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 }
+    );
   }
 }
 
 // PATCH - Update user profile with shipping info
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
-    const auth = await getAuth();
-    const headersList = await headers();
-    const session = await auth.api.getSession({ headers: headersList });
+    const userId = await getUserId(request);
 
-    if (!session?.user) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       name?: string;
       phone?: string;
       defaultAddress?: {
@@ -134,16 +171,16 @@ export async function PATCH(request: Request) {
     };
 
     const db = await getDatabase();
-    
+
     // First, fetch existing user data to merge with new data
     const existingUser = await db.query.users.findFirst({
-      where: eq(users.id, session.user.id),
+      where: eq(users.id, userId),
       columns: {
         defaultAddress: true,
         preferences: true,
       },
     });
-    
+
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
@@ -157,13 +194,19 @@ export async function PATCH(request: Request) {
     }
 
     // Helper to safely parse JSON fields
-    const safeParseJson = (value: unknown): Record<string, string> | null => {
+    const safeParseJson = (
+      value: unknown
+    ): Record<string, string> | null => {
       if (!value) return null;
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         try {
           const parsed = JSON.parse(value);
           // Check if it's a valid object (not a corrupted char-indexed object)
-          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          if (
+            parsed &&
+            typeof parsed === "object" &&
+            !Array.isArray(parsed)
+          ) {
             // Verify it has real property names (not just numeric indexes)
             const keys = Object.keys(parsed);
             if (keys.length === 0 || (keys[0] && isNaN(Number(keys[0])))) {
@@ -175,7 +218,7 @@ export async function PATCH(request: Request) {
           return null;
         }
       }
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === "object" && value !== null) {
         // Verify it's a real object, not corrupted
         const keys = Object.keys(value);
         if (keys.length === 0 || (keys[0] && isNaN(Number(keys[0])))) {
@@ -205,14 +248,14 @@ export async function PATCH(request: Request) {
       };
     }
 
-    await db
-      .update(users)
-      .set(updateData)
-      .where(eq(users.id, session.user.id));
+    await db.update(users).set(updateData).where(eq(users.id, userId));
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating profile:", error);
-    return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update profile" },
+      { status: 500 }
+    );
   }
 }

@@ -76,7 +76,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cartItems = ref.watch(cartProvider);
+    final cartState = ref.watch(cartProvider);
+    final cartItems = cartState.items;
     final cartTotal = ref.watch(cartTotalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

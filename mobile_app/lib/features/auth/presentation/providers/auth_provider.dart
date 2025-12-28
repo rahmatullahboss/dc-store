@@ -147,13 +147,11 @@ class AuthController extends AsyncNotifier<AuthState> {
           throw Exception('Failed to get Google ID token');
         }
 
-        // Send ID token to Better Auth server for validation
+        // Send ID token to custom mobile Google auth endpoint
+        // This endpoint validates ID tokens from iOS/Android client IDs
         final response = await _dioClient.post<Map<String, dynamic>>(
-          '/api/auth/sign-in/social',
-          data: {
-            'provider': 'google',
-            'idToken': {'token': idToken},
-          },
+          '/api/auth/mobile-google',
+          data: {'idToken': idToken},
         );
 
         if (response.isSuccess && response.data != null) {

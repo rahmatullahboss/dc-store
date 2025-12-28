@@ -292,11 +292,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     bool isDark,
     Color backgroundColor,
   ) {
-    final cartItems = ref.watch(cartProvider);
-    final cartCount = cartItems.fold<int>(
-      0,
-      (sum, item) => sum + item.quantity,
-    );
+    final cartCount = ref.watch(cartItemCountProvider);
 
     return SliverAppBar(
       floating: true,

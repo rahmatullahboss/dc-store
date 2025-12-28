@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../core/providers/settings_provider.dart';
 
 /// Primary accent color
 const _accentColor = Color(0xFF4F46E5);
@@ -20,9 +21,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  // Settings state
-  String _language = 'English (US)';
-  String _currency = 'BDT (৳)';
+  // Settings state - language and currency now managed by provider
   final String _country = 'Bangladesh';
   AppThemeMode _themeMode = AppThemeMode.light;
   double _textSize = 50;
@@ -44,6 +43,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = ref.watch(settingsProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
         ? const Color(0xFF101622)
@@ -88,7 +88,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildNavigationRow(
                   icon: LucideIcons.globe,
                   label: 'Language',
-                  value: _language,
+                  value: settings.language,
                   onTap: () => _showLanguageSheet(),
                   isDark: isDark,
                   textColor: textColor,
@@ -97,7 +97,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _buildNavigationRow(
                   icon: LucideIcons.wallet,
                   label: 'Currency',
-                  value: _currency,
+                  value: '${settings.currency} (${settings.currencySymbol})',
                   onTap: () => _showCurrencySheet(),
                   isDark: isDark,
                   textColor: textColor,
@@ -1096,28 +1096,111 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showLanguageSheet() {
-    final languages = [
-      'English (US)',
-      'English (UK)',
-      'বাংলা',
-      'हिंदी',
-      'العربية',
-    ];
-    _showOptionSheet(
-      'Select Language',
-      languages,
-      _language,
-      (v) => setState(() => _language = v),
+    final settings = ref.read(settingsProvider);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+        final textColor = isDark ? Colors.white : const Color(0xFF111827);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  'Select Language',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+              ),
+              ...availableLanguages.map(
+                (lang) => ListTile(
+                  title: Text(lang.name, style: TextStyle(color: textColor)),
+                  subtitle: Text(
+                    lang.nativeName,
+                    style: TextStyle(color: textColor.withAlpha(150)),
+                  ),
+                  trailing: lang.name == settings.language
+                      ? const Icon(Icons.check, color: _accentColor)
+                      : null,
+                  onTap: () {
+                    ref.read(settingsProvider.notifier).setLanguage(lang);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 
   void _showCurrencySheet() {
-    final currencies = ['BDT (৳)', 'USD (\$)', 'EUR (€)', 'GBP (£)', 'INR (₹)'];
-    _showOptionSheet(
-      'Select Currency',
-      currencies,
-      _currency,
-      (v) => setState(() => _currency = v),
+    final settings = ref.read(settingsProvider);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+        final textColor = isDark ? Colors.white : const Color(0xFF111827);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  'Select Currency',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+              ),
+              ...availableCurrencies.map(
+                (currency) => ListTile(
+                  title: Text(
+                    '${currency.code} (${currency.symbol})',
+                    style: TextStyle(color: textColor),
+                  ),
+                  subtitle: Text(
+                    currency.name,
+                    style: TextStyle(color: textColor.withAlpha(150)),
+                  ),
+                  trailing: currency.code == settings.currency
+                      ? const Icon(Icons.check, color: _accentColor)
+                      : null,
+                  onTap: () {
+                    ref.read(settingsProvider.notifier).setCurrency(currency);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 

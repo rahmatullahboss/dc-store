@@ -26,6 +26,13 @@ export function createAuth(db: Database) {
         enabled: !!(
           process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
         ),
+        // Additional client IDs for ID token verification from mobile apps
+        // These are from the same Google Cloud project but different OAuth clients
+        idTokenClientIds: [
+          process.env.GOOGLE_CLIENT_ID || "", // Web client
+          process.env.GOOGLE_IOS_CLIENT_ID || "", // iOS client
+          process.env.GOOGLE_ANDROID_CLIENT_ID || "", // Android client
+        ].filter(Boolean),
       },
     },
     session: {

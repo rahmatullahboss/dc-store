@@ -91,15 +91,34 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                 border: Border(bottom: BorderSide(color: borderColor)),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'My Orders',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                      letterSpacing: -0.3,
+                  // Back Button
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark ? Colors.grey[800] : Colors.grey[100],
+                      ),
+                      child: Icon(
+                        LucideIcons.arrowLeft,
+                        size: 20,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'My Orders',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                        letterSpacing: -0.3,
+                      ),
                     ),
                   ),
                   GestureDetector(

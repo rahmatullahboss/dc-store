@@ -267,6 +267,13 @@ class DioClient {
 // PROVIDER
 // ═══════════════════════════════════════════════════════════════
 
+/// Storage service provider - initialized in main.dart
+final storageServiceProvider = Provider<StorageService?>((ref) {
+  // This will be overridden in main.dart with the actual instance
+  return null;
+});
+
 final dioClientProvider = Provider<DioClient>((ref) {
-  return DioClient();
+  final storage = ref.watch(storageServiceProvider);
+  return DioClient(storageService: storage);
 });
