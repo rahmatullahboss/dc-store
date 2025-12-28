@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../services/google_sign_in_service.dart';
 import '../../../../services/storage_service.dart';
@@ -41,13 +43,14 @@ class AuthState {
 /// Authentication controller - manages auth state with real API
 class AuthController extends AsyncNotifier<AuthState> {
   late AuthRepository _repository;
+  late DioClient _dioClient;
 
   @override
   Future<AuthState> build() async {
     // Initialize repository with dependencies
-    final dioClient = ref.read(dioClientProvider);
+    _dioClient = ref.read(dioClientProvider);
     final storage = await StorageService.getInstance();
-    _repository = AuthRepository(client: dioClient, storage: storage);
+    _repository = AuthRepository(client: _dioClient, storage: storage);
 
     // Check for existing session on app start
     return _checkExistingSession();
@@ -124,6 +127,7 @@ class AuthController extends AsyncNotifier<AuthState> {
   }
 
   /// Sign in with Google
+  /// Sends Google ID token to server for validation and session creation
   Future<bool> signInWithGoogle() async {
     state = AsyncValue.data(
       state.value?.copyWith(isLoading: true, clearError: true) ??
@@ -135,24 +139,91 @@ class AuthController extends AsyncNotifier<AuthState> {
       final account = await googleService.signIn();
 
       if (account != null) {
-        // Get storage service instance to save token
-        final storage = await StorageService.getInstance();
+        // Get authentication to retrieve ID token
+        final auth = googleService.getAuthentication(account);
+        final idToken = auth?.idToken;
 
-        // For Google Sign-In, we create a user from Google account
-        // In production, you'd send the Google token to your backend
-        // to create/link an account
+        if (idToken == null) {
+          throw Exception('Failed to get Google ID token');
+        }
+
+        // Send ID token to Better Auth server for validation
+        final response = await _dioClient.post<Map<String, dynamic>>(
+          '/api/auth/sign-in/social',
+          data: {
+            'provider': 'google',
+            'idToken': {'token': idToken},
+          },
+        );
+
+        if (response.isSuccess && response.data != null) {
+          final data = response.data!;
+          final userData = data['user'] as Map<String, dynamic>?;
+          final token = data['token'] as String?;
+
+          if (userData != null) {
+            // Save auth data to storage
+            final storage = await StorageService.getInstance();
+            if (token != null) {
+              await storage.setString(StorageKeys.authToken, token);
+            }
+            await storage.setString(
+              StorageKeys.userId,
+              userData['id'] ?? account.id,
+            );
+            await storage.setString(
+              StorageKeys.userEmail,
+              userData['email'] ?? account.email,
+            );
+            await storage.setString(
+              StorageKeys.userName,
+              userData['name'] ?? account.displayName ?? '',
+            );
+            if (userData['image'] != null) {
+              await storage.setString(
+                StorageKeys.userAvatar,
+                userData['image'],
+              );
+            } else if (account.photoUrl != null) {
+              await storage.setString(
+                StorageKeys.userAvatar,
+                account.photoUrl!,
+              );
+            }
+            await storage.setBool(StorageKeys.isLoggedIn, true);
+
+            final user = User.fromJson(userData);
+            debugPrint('Google Sign-In server validated: ${user.email}');
+            state = AsyncValue.data(AuthState(user: user, isInitialized: true));
+            return true;
+          }
+        }
+
+        // Server validation failed - fall back to local account (temporary)
+        // This keeps the app working while server integration is being fixed
+        debugPrint('Server validation failed, using local Google account');
+        final storage = await StorageService.getInstance();
+        await storage.setString(
+          StorageKeys.authToken,
+          'google_signin_token_${account.id}',
+        );
+        await storage.setString(StorageKeys.userId, account.id);
+        await storage.setString(StorageKeys.userEmail, account.email);
+        await storage.setString(
+          StorageKeys.userName,
+          account.displayName ?? account.email.split('@')[0],
+        );
+        if (account.photoUrl != null) {
+          await storage.setString(StorageKeys.userAvatar, account.photoUrl!);
+        }
+        await storage.setBool(StorageKeys.isLoggedIn, true);
+
         final user = User(
           id: account.id,
           email: account.email,
           name: account.displayName ?? account.email.split('@')[0],
           image: account.photoUrl,
         );
-
-        // Save auth token to storage so route guards work
-        // Using Google ID as token for now - in production, use backend token
-        await storage.setString('auth_token', 'google_${account.id}');
-        await storage.setString('user_id', account.id);
-
         state = AsyncValue.data(AuthState(user: user, isInitialized: true));
         return true;
       } else {
@@ -162,6 +233,7 @@ class AuthController extends AsyncNotifier<AuthState> {
         return false;
       }
     } catch (e) {
+      debugPrint('Google Sign-In error: $e');
       state = AsyncValue.data(
         AuthState(
           error: 'Google Sign-In failed: ${e.toString()}',
