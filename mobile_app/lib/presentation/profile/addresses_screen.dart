@@ -5,6 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../core/config/white_label_config.dart';
+import '../../data/address_repository.dart';
+import '../../data/models/address/address_model.dart';
 
 /// Address Type Enum
 enum AddressType { home, office, other }
@@ -948,7 +950,9 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                                   ? const Color(0xFFEFF6FF)
                                   : Colors.transparent,
                               border: Border.all(
-                                color: isSelected ? WhiteLabelConfig.accentColor : borderColor,
+                                color: isSelected
+                                    ? WhiteLabelConfig.accentColor
+                                    : borderColor,
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -962,7 +966,9 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: isSelected ? WhiteLabelConfig.accentColor : textColor,
+                                color: isSelected
+                                    ? WhiteLabelConfig.accentColor
+                                    : textColor,
                               ),
                             ),
                           ),
@@ -985,7 +991,9 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
-                              color: _isDefault ? WhiteLabelConfig.accentColor : borderColor,
+                              color: _isDefault
+                                  ? WhiteLabelConfig.accentColor
+                                  : borderColor,
                               width: 2,
                             ),
                           ),

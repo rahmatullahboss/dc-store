@@ -271,6 +271,29 @@ export const wishlist = sqliteTable("wishlist", {
   ),
 });
 
+export const addresses = sqliteTable("addresses", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  phone: text("phone").notNull(),
+  addressLine1: text("address_line_1").notNull(),
+  addressLine2: text("address_line_2"),
+  city: text("city").notNull(),
+  state: text("state"),
+  zipCode: text("zip_code"),
+  country: text("country").default("Bangladesh"),
+  type: text("type", { enum: ["home", "office", "other"] }).default("home"),
+  isDefault: integer("is_default", { mode: "boolean" }).default(false),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
 export const settings = sqliteTable("settings", {
   id: text("id").primaryKey(),
   key: text("key").notNull().unique(),
@@ -423,6 +446,13 @@ export const wishlistRelations = relations(wishlist, ({ one }) => ({
   }),
 }));
 
+export const addressesRelations = relations(addresses, ({ one }) => ({
+  user: one(users, {
+    fields: [addresses.userId],
+    references: [users.id],
+  }),
+}));
+
 // ===========================================
 // Types
 // ===========================================
@@ -442,6 +472,8 @@ export type ChatConversation = typeof chatConversations.$inferSelect;
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type Wishlist = typeof wishlist.$inferSelect;
 export type NewWishlist = typeof wishlist.$inferInsert;
+export type UserAddress = typeof addresses.$inferSelect;
+export type NewUserAddress = typeof addresses.$inferInsert;
 
 export interface CartItem {
   productId: string;
