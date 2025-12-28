@@ -66,7 +66,34 @@ class ProductRepository {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final List<dynamic> products = data['products'] ?? [];
-        return products.map((json) => Product.fromJson(json)).toList();
+        final productList = products
+            .map((json) => Product.fromJson(json))
+            .toList();
+
+        // Client-side filtering as fallback (in case API doesn't filter)
+        final queryLower = query.toLowerCase();
+        final filtered = productList
+            .where(
+              (p) =>
+                  p.name.toLowerCase().contains(queryLower) ||
+                  (p.description?.toLowerCase().contains(queryLower) ??
+                      false) ||
+                  (p.slug?.toLowerCase().contains(queryLower) ?? false),
+            )
+            .toList();
+
+        // If API returned all products (no server-side filter), use client filter
+        // If API filtered (fewer results), return as-is
+        return filtered.length < productList.length
+            ? filtered
+            : (productList.any(
+                    (p) =>
+                        p.name.toLowerCase().contains(queryLower) ||
+                        (p.description?.toLowerCase().contains(queryLower) ??
+                            false),
+                  )
+                  ? filtered
+                  : productList);
       }
     } catch (e) {
       debugPrint('Error searching products: $e');
