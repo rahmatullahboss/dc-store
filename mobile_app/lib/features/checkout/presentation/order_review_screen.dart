@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../../core/config/white_label_config.dart';
+import '../../../core/config/app_config.dart';
 import '../../cart/presentation/providers/cart_provider.dart';
 
 /// Order Review Screen - Final checkout step
@@ -15,17 +18,87 @@ class OrderReviewScreen extends ConsumerStatefulWidget {
 
 class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
   bool _isPlacingOrder = false;
+  String? _errorMessage;
 
   Future<void> _placeOrder() async {
-    setState(() => _isPlacingOrder = true);
+    setState(() {
+      _isPlacingOrder = true;
+      _errorMessage = null;
+    });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final cartState = ref.read(cartProvider);
+      final items = cartState.items;
+      const shipping = 50.0;
+      final subtotal = cartState.totalPrice;
+      final total = subtotal + shipping;
 
-    if (mounted) {
-      // Clear cart and navigate to success
-      ref.read(cartProvider.notifier).clearCart();
-      context.go('/order-success/ORD-${DateTime.now().millisecondsSinceEpoch}');
+      // Prepare order items for API
+      final orderItems = items
+          .map(
+            (item) => {
+              'productId': item.product.id,
+              'name': item.product.name,
+              'price': item.product.price,
+              'quantity': item.quantity,
+              'image': item.product.featuredImage,
+              'total': item.product.price * item.quantity,
+            },
+          )
+          .toList();
+
+      // Create order via API
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}/api/orders'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'items': orderItems,
+          'subtotal': subtotal,
+          'shippingCost': shipping,
+          'total': total,
+          'customerName': 'Mobile User', // TODO: Get from user profile
+          'customerPhone': '+880123456789', // TODO: Get from user profile
+          'customerEmail': null,
+          'shippingAddress': {
+            'name': 'Mobile User',
+            'phone': '+880123456789',
+            'address': 'Dhaka, Bangladesh',
+            'city': 'Dhaka',
+            'country': 'Bangladesh',
+          },
+          'paymentMethod': 'cod',
+          'paymentStatus': 'pending',
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final orderNumber =
+            data['order']?['orderNumber'] ??
+            'ORD-${DateTime.now().millisecondsSinceEpoch}';
+
+        if (mounted) {
+          // Clear cart and navigate to success
+          ref.read(cartProvider.notifier).clearCart();
+          context.go('/order-success/$orderNumber');
+        }
+      } else {
+        final data = jsonDecode(response.body);
+        throw Exception(data['error'] ?? 'Failed to place order');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+          _isPlacingOrder = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_errorMessage ?? 'Failed to place order'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
