@@ -252,13 +252,18 @@ export const metadata = {
 
 ### Deploying
 
+> [!IMPORTANT] > **Git push does NOT auto-deploy!** You must manually deploy after pushing changes.
+
 ```bash
 # 1. Test locally
 npm run build
 npm run preview
 
-# 2. Deploy
+# 2. Deploy to Cloudflare (REQUIRED after git push)
 npm run deploy
+
+# 3. If database schema changed, run migrations
+npm run db:migrate:remote
 ```
 
 ---
