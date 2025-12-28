@@ -56,85 +56,13 @@ class _CouponsScreenState extends State<CouponsScreen>
     'Bank Offers',
   ];
 
-  // Mock coupon data
-  final List<Coupon> _availableCoupons = [
-    const Coupon(
-      id: '1',
-      code: 'NIKE20',
-      title: 'Flat 20% OFF',
-      description: 'On sneakers & sports shoes above \$100',
-      category: 'Fashion',
-      expiryDate: '24 Oct',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuB2AQv_rferTrriTWqzA2z6I1az90cC1LUqTAVvHXzq17NqwFXfqqo_U1PYlCq33iOiuCInLxj45nCtJ1I8roY4B1g5zUjK9ZljrjHYhE36LcSjoISciedb5lan_zd7uiKhg2mRHm20ZHwXHbOUJAzPzO9LwRnhoVfu3yvDpnG4-k_sRtyaiNeRXVCB9hMyWlI0AW2y84KFNEusZNdwgoaEnujy_2sboFIwc_lAnNaKgsci_2uFXO2gh19rgMmO8U-NWugJANi5mGw',
-      terms: [
-        'Offer valid only on Nike products.',
-        'Minimum cart value must be \$100.',
-        'Cannot be combined with other offers.',
-      ],
-    ),
-    const Coupon(
-      id: '2',
-      code: 'TASTY50',
-      title: 'Free Burger',
-      description: 'On orders above \$25 at BurgerKing',
-      category: 'Food',
-      expiryDate: '30 Oct',
-      icon: LucideIcons.sandwich,
-      terms: [
-        'Valid at participating locations only.',
-        'Not valid on delivery orders.',
-      ],
-    ),
-    const Coupon(
-      id: '3',
-      code: 'CITI10',
-      title: '10% Cashback',
-      description: 'Up to \$50 using Citi Cards',
-      category: 'Bank Offers',
-      expiryDate: '15 Nov',
-      icon: LucideIcons.landmark,
-      isBankOffer: true,
-      terms: [
-        'Valid only for Citi credit/debit cards.',
-        'Maximum cashback \$50 per transaction.',
-        'Minimum purchase \$200 required.',
-      ],
-    ),
-    const Coupon(
-      id: '4',
-      code: 'TECH30',
-      title: '30% OFF Electronics',
-      description: 'On all gadgets and accessories',
-      category: 'Electronics',
-      expiryDate: '20 Nov',
-      icon: LucideIcons.smartphone,
-      terms: ['Valid on select electronics only.', 'Maximum discount \$150.'],
-    ),
-    const Coupon(
-      id: '5',
-      code: 'SHOP15',
-      title: '15% OFF Everything',
-      description: 'Expired on 10 Oct',
-      category: 'Fashion',
-      expiryDate: '10 Oct',
-      icon: LucideIcons.shoppingBag,
-      isExpired: true,
-    ),
-  ];
+  // Available coupons - fetched from API
+  // TODO: Replace with actual API call
+  final List<Coupon> _availableCoupons = [];
 
-  final List<Coupon> _myCoupons = [
-    const Coupon(
-      id: '6',
-      code: 'WELCOME50',
-      title: '\$50 Welcome Bonus',
-      description: 'First order discount',
-      category: 'All',
-      expiryDate: '31 Dec',
-      icon: LucideIcons.gift,
-      terms: ['Valid for first-time users only.', 'One-time use per account.'],
-    ),
-  ];
+  // User's saved coupons - fetched from API
+  // TODO: Replace with actual API call
+  final List<Coupon> _myCoupons = [];
 
   @override
   void initState() {

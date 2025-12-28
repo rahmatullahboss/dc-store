@@ -17,53 +17,11 @@ class WishlistScreen extends StatefulWidget {
 class _WishlistScreenState extends State<WishlistScreen> {
   String _selectedCollection = 'All Items';
 
-  final List<String> _collections = ['All Items', 'Holiday Gifts', 'Tech'];
+  final List<String> _collections = ['All Items'];
 
-  // Mock wishlist items
-  final List<_WishlistItem> _wishlistItems = [
-    _WishlistItem(
-      id: '1',
-      name: 'Urban Runner X1',
-      price: 120.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuD8iZyEbXGJ0qqjkDMkzl4YIPZDljXapsTH0b9uVLy4JvfcNhb23y2DlfUbXzj3xek0dxvNqot9MAOL05GAPgBZZxUwy82OKyRRolUdBnU2Q2ULI_heqpaAxDoGxBhf82dpZFAKXS3mykGrU-Cu3GrEQWuuQJ9KSratqxgg3criZDdfFMHZrQRqy1HlneIBw0POIdCSSflAUGgucuobkycflR11og7elSghHECFG9_bwX4lJBRpONc4nabcz9vlWKBvTF_r2hmjltE',
-      isInStock: true,
-    ),
-    _WishlistItem(
-      id: '2',
-      name: 'Noise Cancel Pro',
-      price: 299.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDXuH-MhK05lBrjn45maN52YBHX7rwDswV31fCZBny-UnwZGtfPBkMvwZ8EyTp92ibKmVY3qyONngLOnHDn93EpkdD2-ca5HCR_KVu3-y2oDz3HcuOQgr7CacYMcuKSgNAKYIckYGbT3txP54H3x9IwdZBbVhIV9fnS92TC9EoquQcIJ4Fz6rI1jeUc9bpcZrxh3F0rYTDxM1OUhTwepa3uh267q4UcAVOsmxIYORkDrww1CPVPwty1GSgAODDAXPW-U3UYBjN9KvM',
-      isInStock: false,
-    ),
-    _WishlistItem(
-      id: '3',
-      name: 'Classic Chrono S',
-      price: 140.00,
-      originalPrice: 175.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCxpzdS3eKNvdo_gcH5QAmRjUil7wBH73DWek7Bh753lsaVh2sCAqYOfnHzDlwPLA8bGdGpyThC_w-se5a6ZCUfPF1hTXKrOhKtNkm-NVJCWMpudLlyQdKUlqYqYEMFNNJXTQfMFYj9qZMY0i4US8MacedHzAsrg2seNjw9VaA3rAaKIu_Az1j4Sc2MiwMPHcz8tutoWeRuNyJhpaobI79myQNjmqBeyxdgpJIxItHcwHm5m_gQAhyayvO1P87yK5kHFlHRNnhEwzE',
-      isInStock: true,
-      discountPercent: 20,
-    ),
-    _WishlistItem(
-      id: '4',
-      name: 'Traveler Backpack',
-      price: 85.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuD3xCYyupX6mU4IxWiOK8OeH4tL4stj6DQh33cSA14TjaX6orTFv4mZNdnWt_FXua3A313eG-9QXV26i9J1eyMG0tTvw5ndVumpc4bO9mPr1xRMFnbZFONwvt-nO9jboec9dSKvH-k8m0K9fGTcFwVZX3QqXFne1d9e_RYco3k1hcryGVuXDf5a-QJcYeYua0qHn_jkHygYX87_kEXYeaEes-oBMAhUpLEW9IM6U9Ue6iMFkz5Vc5jZJyQ5OvBZ8aCLqSEGUhxXwHA',
-      isInStock: true,
-    ),
-    _WishlistItem(
-      id: '5',
-      name: 'Ceramic Vase',
-      price: 45.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuBk8-44FZ-YWe7SJb6DB0yeZO6VhzkL4bU4YDkrKuVLGuOmkYzlp3LD5IJStYVycsJBalLIswA-LNQxNaptBkIrn3w2WdItHkoqEGNQ_gVHGlfgOrqVy33Q5oWBoXikBcabcdhb19qNbnCDpUntlQL7fe9dsG7yGvA1x7VTcddjHyEO75tYMmKvrnBdCOdI9YTwW6RRT2l9AwnUp4F09NDdaE4Eu1bmKRqjmFqZJ9OrCTQIO3rItE20zGzJzqOgDnyxWO7S3On9bhE',
-      isInStock: true,
-    ),
-  ];
+  // Wishlist items - empty for new users, will be populated from local storage/API
+  // TODO: Replace with actual wishlist provider or API
+  final List<_WishlistItem> _wishlistItems = [];
 
   void _removeItem(String id) {
     setState(() {

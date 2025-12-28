@@ -25,37 +25,13 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   String? _appliedCoupon;
   double _discountAmount = 0;
 
-  // Saved for later items (mock data for now)
-  final List<_SavedItem> _savedItems = [
-    _SavedItem(
-      name: 'Smart Watch Series 7',
-      price: 399.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDdI-lCrVaxhcXYU7IJ6SEwYO0JZdFMHgY1m-C4vaJwPJZzGeWYKZdaL4Xo2O3UzffCyl-WpQdIkUI-gNlwYujSF5Q8PYqAuC9ndgxMZ1YUcd8IPjF43grYBxxsyDX8tm-iWWuTcfvE600hAz2tT7_i6FljV8n3DlpFvWyjmt8zdSWucOf_gd1Ry4nR5_VvDJTq3k-CeDtk0NfImJyOvAOgQtucFYvAuNFvwiTVgrG4LFdOjOtNvTcJvsoIDYbA9IrM-tJK1pE6EoU',
-    ),
-  ];
+  // Saved for later items - empty for now, will be populated from local storage
+  // TODO: Replace with actual saved items provider
+  final List<_SavedItem> _savedItems = [];
 
-  // Recommendation products (mock data)
-  final List<_RecommendedProduct> _recommendations = [
-    _RecommendedProduct(
-      name: 'Laptop Sleeve',
-      price: 29.99,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDrLZsRZeSMJ7V3UdKkp8k_9BIzJCe1TZNkVW9mBeEBKxnBs-IH9NxDzVOdlYQIG_yzOOKomEDGlloxwIIcC7p2ACWTT6-og4QiBk3KuXFynTkp7YUgkCZrtZjJk7fJIBK-RyRhHzX8JZTRxqZtJm2TSr1P3k8GlFwEnlYxRvTcCjXcVoKOT1fLKTxBJUmDAOHcGVk2DhT1nD9asA49NMMaPfme8Ow8kglh4T-tRF4FyBppMcPp3CogpzEUqQApkbrs-3dNx5l8Psc',
-    ),
-    _RecommendedProduct(
-      name: 'Fast Charger',
-      price: 45.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDBNGeCHger-x2r_0iw4ywGhbn-C2yxe_sbRiYlDaAtfeR4aH839sRovJVQ25Ao1prcBU4MvjjhEiTcqQcreznLEM8jDwytH8RaVffTjUsJlXM7LjYNogmxta-TUc2vPhD1gK_yroYEBtBykrDYHIBQ3yMstz8Ql9gQnM-pvrMKnE5-p2V1HB4_iyDYwyywzzHsKxi4Yq8JbqW7x8ArMPq9L-BNYFtdX0Ou9BID6PXGW8sS6potMuNUEQlAPR99rl0h_57WBBMn9eA',
-    ),
-    _RecommendedProduct(
-      name: 'Pro Mouse',
-      price: 89.00,
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuAAkRmbW7wXJJJTN7OG7AZw1SAbx1qmN9ot84OIZhiqulrQQLElngUKrcRh7mXblIycD4IqEFC1yXhzZ4FZC7n_VLYqtaXP2R9D-C0YBKjgFYymoUfyUr33oKqHPdJviBkKUE2tJU6MYtv1qWEyshKJKQcphFhe8ywVzGxXojDuYEqBxm_QBzV06MVxMOt-CQEPgqmFLV6r4SjHM3a6gKAUeKE889kSnO0JUXEbvjsyj939Yru5fCpEkoLbpKrGhwet_IhlUpKXwMY',
-    ),
-  ];
+  // Recommendation products - will be populated from API based on cart items
+  // TODO: Replace with actual recommendations from API
+  final List<_RecommendedProduct> _recommendations = [];
 
   @override
   void dispose() {
