@@ -109,7 +109,22 @@ class AuthRepository {
         return null;
       }
 
-      // Validate session with server
+      // Check if this is a Google Sign-In session (uses local token)
+      // Google Sign-In tokens start with 'google_signin_token_'
+      if (token.startsWith('google_signin_token_')) {
+        // For Google Sign-In, use cached user directly
+        // No need to validate with server as this is a social login
+        final cachedUser = _getCachedUser();
+        if (cachedUser != null) {
+          debugPrint('Google Sign-In session restored from cache');
+          return cachedUser;
+        }
+        // If no cached user, session is invalid
+        await _clearAuthData();
+        return null;
+      }
+
+      // For email/password login, validate session with server
       final response = await _client.get<Map<String, dynamic>>(
         ApiConstants.getSession,
       );
@@ -130,7 +145,7 @@ class AuthRepository {
       return null;
     } catch (e) {
       debugPrint('Get session error: $e');
-      // Try to return cached user if available
+      // Try to return cached user if available (for offline mode)
       return _getCachedUser();
     }
   }
