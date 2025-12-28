@@ -1,6 +1,6 @@
 import { eq, sql, and } from "drizzle-orm";
 import { getDatabase } from "@/lib/cloudflare";
-import { categories, products } from "@/db/schema";
+import { categories } from "@/db/schema";
 import type { Category } from "@/db/schema";
 
 export interface CategoryWithCount extends Category {
@@ -26,9 +26,9 @@ export async function getCategories(): Promise<CategoryWithCount[]> {
       createdAt: categories.createdAt,
       updatedAt: categories.updatedAt,
       productCount: sql<number>`(
-        SELECT COUNT(*) FROM ${products} 
-        WHERE ${products.categoryId} = ${categories.id} 
-        AND ${products.isActive} = 1
+        SELECT COUNT(*) FROM products 
+        WHERE products.category_id = ${categories.id} 
+        AND products.is_active = 1
       )`.as("productCount"),
     })
     .from(categories)
@@ -37,6 +37,7 @@ export async function getCategories(): Promise<CategoryWithCount[]> {
   
   return result;
 }
+
 
 /**
  * Get a single category by slug
