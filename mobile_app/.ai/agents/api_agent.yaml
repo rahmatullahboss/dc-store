@@ -1,0 +1,136 @@
+# API Integration Agent
+
+name: "API Integration Agent"
+version: "1.0.0"
+description: "Next.js backend এর সাথে API integration handle করে"
+
+context:
+  backend: "Next.js"
+  api_style: "RESTful"
+  auth_method: "Better Auth (JWT)"
+
+instructions: |
+  ## Next.js API Integration Guidelines
+
+  ### API Response Format (Expected from Next.js):
+  ```json
+  {
+    "success": true,
+    "data": { },
+    "message": "Success message",
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+  ```
+
+  ### Error Response Format:
+  ```json
+  {
+    "success": false,
+    "error": {
+      "code": "ERROR_CODE",
+      "message": "Error description"
+    }
+  }
+  ```
+
+  ### Implementation Rules:
+  1. সব API call try-catch এ wrap করো
+  2. Proper error types define করো (NetworkError, ServerError, etc.)
+  3. Token management properly handle করো
+  4. Request/Response logging implement করো (debug mode এ)
+  5. Retry mechanism implement করো failed requests এর জন্য
+
+code_templates:
+  repository: |
+    // lib/features/{feature}/data/{feature}_repository.dart
+
+    final {feature}RepositoryProvider = Provider<{Feature}Repository>((ref) {
+      final dioClient = ref.watch(dioClientProvider);
+      return {Feature}Repository(dioClient);
+    });
+
+    class {Feature}Repository {
+      final DioClient _client;
+      
+      {Feature}Repository(this._client);
+      
+      Future<List<{Feature}>> get{Feature}s() async {
+        try {
+          final response = await _client.get('/api/{feature}s');
+          
+          final data = response.data['data'] as List;
+          return data.map((json) => {Feature}.fromJson(json)).toList();
+        } on DioException catch (e) {
+          throw _handleError(e);
+        }
+      }
+      
+      Future<{Feature}> get{Feature}(String id) async {
+        try {
+          final response = await _client.get('/api/{feature}s/$id');
+          return {Feature}.fromJson(response.data['data']);
+        } on DioException catch (e) {
+          throw _handleError(e);
+        }
+      }
+      
+      Exception _handleError(DioException e) {
+        switch (e.type) {
+          case DioExceptionType.connectionError:
+            return NetworkException('No internet connection');
+          case DioExceptionType.receiveTimeout:
+            return ServerException('Server timeout');
+          default:
+            final message = e.response?.data?['error']?['message'] ?? 'Unknown error';
+            return ServerException(message);
+        }
+      }
+    }
+
+  model: |
+    // lib/data/models/{feature}_model.dart
+
+    import 'package:freezed_annotation/freezed_annotation.dart';
+
+    part '{feature}_model.freezed.dart';
+    part '{feature}_model.g.dart';
+
+    @freezed
+    class {Feature} with _${Feature} {
+      const factory {Feature}({
+        required String id,
+        required String name,
+        // Add other fields
+      }) = _{Feature};
+      
+      factory {Feature}.fromJson(Map<String, dynamic> json) =>
+          _${Feature}FromJson(json);
+    }
+
+error_handling_guide: |
+  ## Error Classes
+
+  ```dart
+  // lib/core/errors/exceptions.dart
+
+  class NetworkException implements Exception {
+    final String message;
+    NetworkException(this.message);
+  }
+
+  class ServerException implements Exception {
+    final String message;
+    final int? statusCode;
+    ServerException(this.message, [this.statusCode]);
+  }
+
+  class AuthException implements Exception {
+    final String message;
+    AuthException(this.message);
+  }
+  ```

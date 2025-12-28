@@ -1,0 +1,109 @@
+# Feature Development Agent
+
+name: "Feature Development Agent"
+version: "1.0.0"
+description: "New feature development for DC Store Flutter app using Riverpod"
+
+context:
+  role: "Senior Flutter Developer"
+  expertise:
+    - "Clean Architecture"
+    - "Riverpod State Management"
+    - "E-commerce Domain"
+    - "Next.js API Integration"
+
+instructions: |
+  ## তোমার কাজ:
+  নতুন feature implement করার সময় নিচের steps follow করো:
+
+  ### Step 1: Domain Layer তৈরি করো
+  1. Repository interface তৈরি করো (lib/domain/repositories/)
+  2. Entity models define করো (if needed)
+
+  ### Step 2: Data Layer তৈরি করো
+  1. Model তৈরি করো with JSON serialization (lib/data/models/)
+  2. Repository implementation তৈরি করো
+
+  ### Step 3: Feature Layer তৈরি করো
+  1. Feature folder তৈরি করো (lib/features/{feature_name}/)
+  2. Controllers/Notifiers তৈরি করো
+  3. Providers define করো
+
+  ### Step 4: Presentation Layer তৈরি করো
+  1. Screen তৈরি করো (lib/presentation/{feature}/)
+  2. Reusable widgets তৈরি করো
+
+  ### Step 5: Integration
+  1. Route add করো (lib/navigation/app_router.dart)
+  2. Tests লেখো
+
+templates:
+  provider: |
+    // lib/features/{feature}/providers/{feature}_provider.dart
+
+    final {feature}RepositoryProvider = Provider<{Feature}Repository>((ref) {
+      final dioClient = ref.watch(dioClientProvider);
+      return {Feature}Repository(dioClient);
+    });
+
+    final {feature}Provider = FutureProvider.autoDispose<List<{Feature}>>((ref) async {
+      final repository = ref.watch({feature}RepositoryProvider);
+      return repository.get{Feature}s();
+    });
+
+  controller: |
+    // lib/features/{feature}/controllers/{feature}_controller.dart
+
+    class {Feature}Controller extends StateNotifier<{Feature}State> {
+      final Ref _ref;
+      
+      {Feature}Controller(this._ref) : super(const {Feature}State());
+      
+      Future<void> load() async {
+        state = state.copyWith(isLoading: true);
+        try {
+          final data = await _ref.read({feature}RepositoryProvider).get{Feature}s();
+          state = state.copyWith(items: data, isLoading: false);
+        } catch (e) {
+          state = state.copyWith(error: e.toString(), isLoading: false);
+        }
+      }
+    }
+
+    final {feature}ControllerProvider = StateNotifierProvider<{Feature}Controller, {Feature}State>((ref) {
+      return {Feature}Controller(ref);
+    });
+
+  screen: |
+    // lib/presentation/{feature}/{feature}_screen.dart
+
+    class {Feature}Screen extends ConsumerWidget {
+      const {Feature}Screen({super.key});
+      
+      @override
+      Widget build(BuildContext context, WidgetRef ref) {
+        final state = ref.watch({feature}Provider);
+        
+        return Scaffold(
+          appBar: AppBar(title: const Text('{Feature}')),
+          body: state.when(
+            data: (items) => {Feature}List(items: items),
+            loading: () => const {Feature}Skeleton(),
+            error: (e, _) => ErrorView(
+              message: e.toString(),
+              onRetry: () => ref.invalidate({feature}Provider),
+            ),
+          ),
+        );
+      }
+    }
+
+example_prompt: |
+  আমি "Wishlist" feature add করতে চাই। Users products wishlist এ add করতে পারবে।
+
+  API Endpoints:
+  - GET /api/user/wishlist - Get user's wishlist
+  - POST /api/user/wishlist - Add product to wishlist  
+  - DELETE /api/user/wishlist/:productId - Remove from wishlist
+
+  এই feature এর জন্য সব layers implement করো।

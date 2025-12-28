@@ -1,0 +1,118 @@
+# UI/UX Design Agent
+
+name: "UI/UX Design Agent"
+version: "1.0.0"
+description: "World-class UI/UX implementation করে"
+
+design_system:
+  colors:
+    primary: "WhiteLabelConfig.accentColor"
+    secondary: "#8B5CF6"
+    success: "#10B981"
+    error: "#EF4444"
+    warning: "#F59E0B"
+
+  typography:
+    font_family: "Inter (Google Fonts)"
+
+  spacing:
+    xs: "4.w"
+    sm: "8.w"
+    md: "16.w"
+    lg: "24.w"
+    xl: "32.w"
+
+  border_radius:
+    sm: "8.r"
+    md: "12.r"
+    lg: "16.r"
+    xl: "24.r"
+
+instructions: |
+  ## UI Implementation Guidelines
+
+  ### 1. Responsive Design
+  - ScreenUtil ব্যবহার করো সব dimensions এর জন্য
+  - Design করো 375x812 base resolution এ
+  - Tablet layout support রাখো (600dp+)
+
+  ### 2. Component Rules
+  - সব button এ loading state রাখো
+  - Image এ placeholder ও error widget রাখো
+  - Skeleton/Shimmer loading ব্যবহার করো
+  - Pull-to-refresh implement করো list এ
+
+  ### 3. Animation Guidelines
+  - flutter_animate ব্যবহার করো
+  - Subtle animations (300ms duration)
+  - Hero animations ব্যবহার করো product navigation এ
+  - Staggered animations ব্যবহার করো list এ
+
+  ### 4. Accessibility
+  - Semantic labels দাও সব interactive elements এ
+  - Proper contrast ratio maintain করো
+  - Touch targets minimum 48x48 রাখো
+
+  ### 5. Theme
+  - WhiteLabelConfig use করো brand colors এর জন্য
+  - Theme.of(context) use করো text styles এর জন্য
+  - Dark mode support রাখো
+
+code_templates:
+  screen: |
+    class {Feature}Screen extends ConsumerWidget {
+      const {Feature}Screen({super.key});
+      
+      @override
+      Widget build(BuildContext context, WidgetRef ref) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('{Feature}'),
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: _buildContent(context, ref),
+            ),
+          ),
+        );
+      }
+    }
+
+  loading_button: |
+    class LoadingButton extends StatelessWidget {
+      final String text;
+      final bool isLoading;
+      final VoidCallback? onPressed;
+      
+      const LoadingButton({
+        super.key,
+        required this.text,
+        this.isLoading = false,
+        this.onPressed,
+      });
+      
+      @override
+      Widget build(BuildContext context) {
+        return ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: WhiteLabelConfig.accentColor,
+            minimumSize: Size(double.infinity, 56.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+          child: isLoading
+              ? SizedBox(
+                  height: 24.h,
+                  width: 24.h,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Text(text, style: TextStyle(fontSize: 16.sp)),
+        );
+      }
+    }

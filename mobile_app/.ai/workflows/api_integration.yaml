@@ -1,0 +1,80 @@
+# API Integration Workflow
+
+name: "API Integration Workflow"
+version: "1.0.0"
+
+trigger: "নতুন API endpoint integrate করতে হলে"
+
+pre_requisites:
+  - "API documentation/specification"
+  - "Sample request/response"
+  - "Authentication requirements"
+
+steps:
+  - name: "1. API Analysis"
+    actions:
+      - "Endpoint URL ও method confirm করো"
+      - "Request parameters/body structure বোঝো"
+      - "Response structure analyze করো"
+      - "Error responses বোঝো"
+
+  - name: "2. Model Creation"
+    depends_on: ["1"]
+    actions:
+      - "Freezed model তৈরি করো"
+      - "JSON serialization add করো"
+    template: |
+      @freezed
+      class {Name} with _${Name} {
+        const factory {Name}({
+          required String id,
+          // Add fields based on API response
+        }) = _{Name};
+        
+        factory {Name}.fromJson(Map<String, dynamic> json) =>
+            _${Name}FromJson(json);
+      }
+
+  - name: "3. Repository Method"
+    depends_on: ["2"]
+    template: |
+      Future<{ReturnType}> {methodName}({params}) async {
+        try {
+          final response = await _client.{httpMethod}('/api/{endpoint}');
+          return {ReturnType}.fromJson(response.data['data']);
+        } on DioException catch (e) {
+          throw _handleError(e);
+        }
+      }
+
+  - name: "4. Provider Creation"
+    depends_on: ["3"]
+    template: |
+      final {name}Provider = FutureProvider.autoDispose<{ReturnType}>((ref) async {
+        final repository = ref.watch({feature}RepositoryProvider);
+        return repository.{methodName}();
+      });
+
+  - name: "5. UI Integration"
+    depends_on: ["4"]
+    template: |
+      final asyncValue = ref.watch({name}Provider);
+
+      return asyncValue.when(
+        data: (data) => {Widget}(data: data),
+        loading: () => const LoadingSkeleton(),
+        error: (e, _) => ErrorView(message: e.toString()),
+      );
+
+  - name: "6. Code Generation"
+    actions:
+      - "Run build_runner"
+    commands:
+      - "flutter pub run build_runner build --delete-conflicting-outputs"
+
+  - name: "7. Testing"
+    depends_on: ["6"]
+    actions:
+      - "Mock response তৈরি করো"
+      - "Repository test লেখো"
+      - "Provider test লেখো"

@@ -1,5 +1,6 @@
 /// Category Remote Data Source - API calls for categories
 library;
+
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/exceptions.dart';
@@ -31,7 +32,9 @@ class CategoryRemoteDataSource implements ICategoryRemoteDataSource {
     }
 
     final data = response.data!;
-    return (data['categories'] as List? ?? data['data'] as List? ?? [])
+    final categoriesList =
+        data['categories'] as List? ?? data['data'] as List? ?? [];
+    return categoriesList
         .map((item) => CategoryModel.fromJson(item as Map<String, dynamic>))
         .toList();
   }

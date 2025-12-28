@@ -1,0 +1,83 @@
+# Release Workflow
+
+name: "Release Workflow"
+version: "1.0.0"
+
+trigger: "নতুন version release করতে হলে"
+
+pre_release_checklist:
+  code_quality:
+    - "flutter analyze passes"
+    - "flutter test passes"
+    - "No critical issues"
+
+  functionality:
+    - "সব features working"
+    - "Critical user flows tested"
+    - "Edge cases handled"
+
+  performance:
+    - "App startup time acceptable"
+    - "Smooth scrolling"
+    - "Network calls optimized"
+
+steps:
+  - name: "1. Version Bump"
+    actions:
+      - "pubspec.yaml এ version update করো"
+    versioning_guide: |
+      ## Semantic Versioning
+      - MAJOR.MINOR.PATCH+BUILD
+      - Example: 1.2.3+45
+
+      - MAJOR: Breaking changes
+      - MINOR: New features
+      - PATCH: Bug fixes
+      - BUILD: Build number
+
+  - name: "2. Code Quality Check"
+    commands:
+      - "flutter clean"
+      - "flutter pub get"
+      - "flutter analyze"
+      - "flutter test"
+
+  - name: "3. Build Generation"
+    android:
+      - "flutter build appbundle --release"
+      - "flutter build apk --release --split-per-abi"
+    ios:
+      - "flutter build ios --release"
+      - "Open Xcode and archive"
+
+  - name: "4. Testing"
+    actions:
+      - "Install release build on device"
+      - "Test critical flows"
+      - "Check performance"
+
+  - name: "5. Store Submission"
+    play_store:
+      - "Upload AAB to Play Console"
+      - "Fill release notes"
+      - "Submit for review"
+    app_store:
+      - "Upload via App Store Connect"
+      - "Fill release notes"
+      - "Submit for review"
+
+  - name: "6. Post-Release"
+    actions:
+      - "Git tag create করো"
+      - "GitHub release create করো"
+      - "Team কে notify করো"
+
+release_commands: |
+  # Android
+  flutter build appbundle --release
+
+  # iOS
+  flutter build ios --release
+
+  # Both APKs
+  flutter build apk --release --split-per-abi

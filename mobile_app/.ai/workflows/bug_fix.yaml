@@ -1,0 +1,88 @@
+# Bug Fix Workflow
+
+name: "Bug Fix Workflow"
+version: "1.0.0"
+
+trigger: "Bug report পাওয়া গেলে"
+
+steps:
+  - name: "1. Bug Report Analysis"
+    actions:
+      - "Bug description পড়ো"
+      - "Reproduction steps বোঝো"
+      - "Expected vs actual behavior বোঝো"
+      - "Error logs collect করো"
+    questions:
+      - "কোন screen/feature এ bug?"
+      - "সব users এ হচ্ছে নাকি specific conditions এ?"
+      - "কখন থেকে হচ্ছে?"
+
+  - name: "2. Reproduce the Bug"
+    depends_on: ["1"]
+    actions:
+      - "Local environment এ reproduce করো"
+      - "Debug mode এ run করো"
+      - "Relevant logs enable করো"
+    commands:
+      - "flutter run --debug"
+
+  - name: "3. Root Cause Analysis"
+    depends_on: ["2"]
+    checklist:
+      network_issues:
+        - "API response check করো"
+        - "Request format verify করো"
+      state_issues:
+        - "Provider state check করো"
+        - "ref.watch vs ref.read verify করো"
+      ui_issues:
+        - "Widget tree inspect করো"
+        - "BuildContext validity check করো"
+      build_issues:
+        - "build_runner run করা হয়েছে?"
+        - "flutter clean করা হয়েছে?"
+
+  - name: "4. Fix Implementation"
+    depends_on: ["3"]
+    guidelines:
+      - "Minimal change এ fix করো"
+      - "Side effects consider করো"
+      - "Backward compatibility maintain করো"
+
+  - name: "5. Testing"
+    depends_on: ["4"]
+    actions:
+      - "Fix verify করো manually"
+      - "Regression test করো"
+      - "Test case লেখো এই bug এর জন্য"
+    commands:
+      - "flutter test"
+      - "flutter analyze"
+
+  - name: "6. Documentation"
+    depends_on: ["5"]
+    actions:
+      - "Fix description লেখো"
+      - "Root cause document করো"
+
+template_response: |
+  ## Bug Fix Report
+
+  ### Issue
+  [Bug এর description]
+
+  ### Root Cause
+  [কেন bug হচ্ছিল]
+
+  ### Fix Applied
+  [কি change করা হয়েছে]
+
+  ### Files Changed
+  - `path/to/file.dart`
+
+  ### Test Added
+  ```dart
+  test('should not [bug description]', () {
+    // test code
+  });
+  ```

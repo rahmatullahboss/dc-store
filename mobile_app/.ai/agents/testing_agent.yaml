@@ -1,0 +1,139 @@
+# Testing Agent
+
+name: "Testing Agent"
+version: "1.0.0"
+description: "Comprehensive test coverage নিশ্চিত করে"
+
+coverage_requirements:
+  unit_tests: 80%
+  widget_tests: 70%
+  integration_tests: "critical_flows"
+
+instructions: |
+  ## Testing Guidelines
+
+  ### 1. Unit Tests (test/unit/)
+  - সব Repository implementations test করো
+  - সব Controllers/Notifiers test করো
+  - Edge cases cover করো
+
+  ### 2. Widget Tests (test/widget/)
+  - সব custom widgets test করো
+  - Different states test করো (loading, error, empty, data)
+  - User interactions test করো
+
+  ### 3. Integration Tests (integration_test/)
+  - Complete user flows test করো:
+    - Authentication flow
+    - Product browsing → Add to cart → Checkout
+    - Profile update flow
+
+  ### 4. Mocking Strategy
+  - Mocktail ব্যবহার করো mocking এর জন্য
+  - ProviderContainer use করো Riverpod testing এ
+
+code_templates:
+  provider_test: |
+    // test/unit/providers/{feature}_provider_test.dart
+
+    import 'package:flutter_test/flutter_test.dart';
+    import 'package:flutter_riverpod/flutter_riverpod.dart';
+    import 'package:mocktail/mocktail.dart';
+
+    class MockRepository extends Mock implements {Feature}Repository {}
+
+    void main() {
+      late MockRepository mockRepository;
+      late ProviderContainer container;
+      
+      setUp(() {
+        mockRepository = MockRepository();
+        container = ProviderContainer(
+          overrides: [
+            {feature}RepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        );
+      });
+      
+      tearDown(() {
+        container.dispose();
+      });
+      
+      group('{Feature}Provider', () {
+        test('should return data on success', () async {
+          // Arrange
+          final testData = [{Feature}(id: '1', name: 'Test')];
+          when(() => mockRepository.get{Feature}s())
+              .thenAnswer((_) async => testData);
+          
+          // Act
+          final future = container.read({feature}Provider.future);
+          
+          // Assert
+          expect(await future, testData);
+        });
+        
+        test('should throw on error', () async {
+          // Arrange
+          when(() => mockRepository.get{Feature}s())
+              .thenThrow(ServerException('Error'));
+          
+          // Act & Assert
+          expect(
+            () => container.read({feature}Provider.future),
+            throwsA(isA<ServerException>()),
+          );
+        });
+      });
+    }
+
+  widget_test: |
+    // test/widget/{feature}_card_test.dart
+
+    import 'package:flutter/material.dart';
+    import 'package:flutter_test/flutter_test.dart';
+    import 'package:network_image_mock/network_image_mock.dart';
+
+    void main() {
+      group('{Feature}Card', () {
+        final testItem = {Feature}(
+          id: '1',
+          name: 'Test Item',
+          imageUrl: 'https://example.com/image.jpg',
+        );
+        
+        testWidgets('renders correctly', (tester) async {
+          await mockNetworkImagesFor(() async {
+            await tester.pumpWidget(
+              MaterialApp(
+                home: Scaffold(
+                  body: {Feature}Card(item: testItem),
+                ),
+              ),
+            );
+            
+            expect(find.text('Test Item'), findsOneWidget);
+          });
+        });
+        
+        testWidgets('calls onTap when tapped', (tester) async {
+          var tapped = false;
+          
+          await mockNetworkImagesFor(() async {
+            await tester.pumpWidget(
+              MaterialApp(
+                home: Scaffold(
+                  body: {Feature}Card(
+                    item: testItem,
+                    onTap: () => tapped = true,
+                  ),
+                ),
+              ),
+            );
+            
+            await tester.tap(find.byType({Feature}Card));
+            expect(tapped, isTrue);
+          });
+        });
+      });
+    }

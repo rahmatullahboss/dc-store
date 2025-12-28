@@ -109,10 +109,23 @@ class ApiResponse<T> {
         }
 
         // Extract and parse data
+        // If 'data' key exists, use that; otherwise use full response
         final dataKey = responseData.containsKey('data')
             ? responseData['data']
             : responseData;
-        parsedData = fromJson != null ? fromJson(dataKey) : dataKey as T?;
+
+        if (fromJson != null) {
+          parsedData = fromJson(dataKey);
+        } else {
+          // When no fromJson provided, try to cast appropriately
+          // If T is Map<String, dynamic> and dataKey is already that, use it directly
+          try {
+            parsedData = dataKey as T?;
+          } catch (_) {
+            // If cast fails, pass the responseData as-is for Map type
+            parsedData = responseData as T?;
+          }
+        }
       } else {
         parsedData = fromJson != null
             ? fromJson(responseData)
