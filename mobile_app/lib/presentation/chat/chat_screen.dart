@@ -5,8 +5,9 @@ import '../../core/config/white_label_config.dart';
 import '../../features/chat/providers/ai_chat_provider.dart';
 import 'components/chat_bubble.dart';
 import 'components/typing_indicator.dart';
+import 'components/human_support_sheet.dart';
 
-/// AI Chat Screen
+/// AI Chat Screen with server-side persistence and human support options
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
@@ -65,7 +66,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear Chat'),
-        content: const Text('Are you sure you want to clear all messages?'),
+        content: const Text('This will start a new conversation. Continue?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -80,6 +81,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showHumanSupportSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const HumanSupportSheet(),
     );
   }
 
@@ -240,7 +250,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Ask me anything about orders, products, shipping, or returns.',
+            'Ask me about products, orders, shipping, or returns.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
@@ -334,8 +344,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _buildInputArea(bool isLoading, bool isDark) {
     return Container(
       padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
+        left: 12,
+        right: 12,
         top: 12,
         bottom: MediaQuery.of(context).padding.bottom + 12,
       ),
@@ -349,72 +359,118 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              focusNode: _focusNode,
-              enabled: !isLoading,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => _sendMessage(),
-              maxLines: 4,
-              minLines: 1,
-              decoration: InputDecoration(
-                hintText: 'Type a message...',
-                hintStyle: TextStyle(
-                  color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+          // Human support button
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Material(
+              color: isDark
+                  ? const Color(0xFF2A2A2A)
+                  : Colors.blue.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(10),
+              child: InkWell(
+                onTap: _showHumanSupportSheet,
+                borderRadius: BorderRadius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.support_agent_rounded,
+                        size: 18,
+                        color: isDark ? Colors.white70 : Colors.blue.shade600,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Talk to Human',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white70 : Colors.blue.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                filled: true,
-                fillColor: isDark
-                    ? const Color(0xFF2A2A2A)
-                    : const Color(0xFFF1F5F9),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-              ),
-              style: TextStyle(
-                color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            child: Material(
-              color: isLoading
-                  ? (isDark ? Colors.white24 : const Color(0xFFE2E8F0))
-                  : WhiteLabelConfig.accentColor,
-              borderRadius: BorderRadius.circular(24),
-              child: InkWell(
-                onTap: isLoading ? null : _sendMessage,
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  alignment: Alignment.center,
-                  child: isLoading
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: isDark ? Colors.white54 : Colors.grey,
-                          ),
-                        )
-                      : const Icon(
-                          Icons.send_rounded,
-                          color: Colors.white,
-                          size: 22,
-                        ),
+
+          // Input row
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _messageController,
+                  focusNode: _focusNode,
+                  enabled: !isLoading,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
+                  maxLines: 4,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                    hintText: 'Type a message...',
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                    ),
+                    filled: true,
+                    fillColor: isDark
+                        ? const Color(0xFF2A2A2A)
+                        : const Color(0xFFF1F5F9),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                child: Material(
+                  color: isLoading
+                      ? (isDark ? Colors.white24 : const Color(0xFFE2E8F0))
+                      : WhiteLabelConfig.accentColor,
+                  borderRadius: BorderRadius.circular(24),
+                  child: InkWell(
+                    onTap: isLoading ? null : _sendMessage,
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      alignment: Alignment.center,
+                      child: isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: isDark ? Colors.white54 : Colors.grey,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.send_rounded,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

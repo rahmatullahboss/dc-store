@@ -139,6 +139,9 @@ class WhiteLabelConfig {
   /// Instagram page URL
   static const String instagramUrl = 'https://instagram.com/digitalcarestore';
 
+  /// Facebook page ID (for Messenger)
+  static const String facebookPageId = 'dcstore';
+
   // ─────────────────────────────────────────────────────────────────────────
   // GENERATED STRINGS (computed from appName)
   // ─────────────────────────────────────────────────────────────────────────
