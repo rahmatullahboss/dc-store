@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/white_label_config.dart';
 
@@ -41,68 +42,8 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  // Mock data - grouped by time
-  final Map<String, List<NotificationItem>> _notifications = {
-    'Today': [
-      NotificationItem(
-        id: '1',
-        title: 'Order #2938 Shipped',
-        message:
-            'Your package is on the way. Track your shipment to see the estimated delivery time.',
-        time: '2h ago',
-        type: NotificationType.orderShipped,
-        isRead: false,
-      ),
-      NotificationItem(
-        id: '2',
-        title: 'Price Drop Alert',
-        message:
-            'The Nike Air Zoom Pegasus 39 you liked is now 20% off. Grab it before it\'s gone!',
-        time: '5h ago',
-        type: NotificationType.priceDrop,
-        isRead: false,
-      ),
-    ],
-    'Yesterday': [
-      NotificationItem(
-        id: '3',
-        title: '24h Flash Sale',
-        message: 'Don\'t miss out! 24-hour sale starts now on all electronics.',
-        time: '1d ago',
-        type: NotificationType.flashSale,
-        isRead: true,
-      ),
-      NotificationItem(
-        id: '4',
-        title: 'Review your purchase',
-        message:
-            'How do you like your new Coffee Maker? Share your thoughts with others.',
-        time: '1d ago',
-        type: NotificationType.review,
-        isRead: true,
-      ),
-    ],
-    'Earlier': [
-      NotificationItem(
-        id: '5',
-        title: 'Item Back in Stock',
-        message:
-            'The item "Leather Weekend Bag" in your wishlist is back in stock.',
-        time: '3d ago',
-        type: NotificationType.backInStock,
-        isRead: true,
-      ),
-      NotificationItem(
-        id: '6',
-        title: 'Security Update',
-        message:
-            'We\'ve updated our privacy policy. Please review the changes.',
-        time: '5d ago',
-        type: NotificationType.system,
-        isRead: true,
-      ),
-    ],
-  };
+  // Real notifications would come from an API - empty for now
+  final Map<String, List<NotificationItem>> _notifications = {};
 
   void _markAllAsRead() {
     setState(() {
@@ -139,133 +80,108 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: CustomScrollView(
-        slivers: [
-          // Sticky Header
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 120,
-            backgroundColor: bgColor.withAlpha(230),
-            surfaceTintColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            flexibleSpace: FlexibleSpaceBar(
-              background: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Top Row: Settings & Mark all read
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              LucideIcons.settings,
-                              color: subtleColor,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: _markAllAsRead,
-                            child: Text(
-                              'Mark all read',
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Title
-                      Text(
-                        'Notifications',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: textColor,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ],
-                  ),
+      appBar: AppBar(
+        backgroundColor: bgColor,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: Icon(LucideIcons.arrowLeft, color: textColor),
+        ),
+        title: Text(
+          'Notifications',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+        actions: [
+          if (_notifications.isNotEmpty)
+            TextButton(
+              onPressed: _markAllAsRead,
+              child: Text(
+                'Mark all read',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
             ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(
-                height: 1,
-                color: isDark
-                    ? Colors.grey[800]!.withAlpha(128)
-                    : Colors.grey[200],
-              ),
-            ),
-          ),
-
-          // Content
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final entries = _notifications.entries.toList();
-                if (index >= entries.length) return null;
-
-                final group = entries[index];
-                return _buildNotificationGroup(
-                  context,
-                  title: group.key,
-                  notifications: group.value,
-                  isDark: isDark,
-                  surfaceColor: surfaceColor,
-                  textColor: textColor,
-                  subtleColor: subtleColor,
-                  borderColor: borderColor,
-                  primaryColor: primaryColor,
-                );
-              }, childCount: _notifications.length),
-            ),
-          ),
-
-          // Footer
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Column(
-                children: [
-                  TextButton.icon(
-                    onPressed: () {},
-                    icon: Text(
-                      'Notification Preferences',
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                    label: Icon(
-                      LucideIcons.arrowRight,
-                      size: 16,
-                      color: primaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "You're all caught up!",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: subtleColor.withAlpha(153),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
+      ),
+      body: _notifications.isEmpty
+          ? _buildEmptyState(isDark, textColor, subtleColor, primaryColor)
+          : CustomScrollView(
+              slivers: [
+                // Content
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final entries = _notifications.entries.toList();
+                      if (index >= entries.length) return null;
+
+                      final group = entries[index];
+                      return _buildNotificationGroup(
+                        context,
+                        title: group.key,
+                        notifications: group.value,
+                        isDark: isDark,
+                        surfaceColor: surfaceColor,
+                        textColor: textColor,
+                        subtleColor: subtleColor,
+                        borderColor: borderColor,
+                        primaryColor: primaryColor,
+                      );
+                    }, childCount: _notifications.length),
+                  ),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 40)),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildEmptyState(
+    bool isDark,
+    Color textColor,
+    Color subtleColor,
+    Color primaryColor,
+  ) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(LucideIcons.bellOff, size: 40, color: primaryColor),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No Notifications',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'You\'re all caught up! Check back later for updates on your orders and promotions.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: subtleColor, height: 1.5),
+            ),
+          ],
+        ),
       ),
     );
   }

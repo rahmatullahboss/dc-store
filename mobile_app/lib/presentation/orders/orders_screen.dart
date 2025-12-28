@@ -485,7 +485,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     switch (status) {
       case OrderStatus.processing:
       case OrderStatus.shipped:
-        return _buildPrimaryButton('Track Order', primaryBlue, () {});
+        return _buildPrimaryButton('Track Order', primaryBlue, () {
+          context.push('/track/${order.id}');
+        });
       case OrderStatus.delivered:
         return Row(
           children: [
@@ -497,24 +499,30 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
               () => context.push('/write-review?orderId=${order.id}'),
             ),
             const SizedBox(width: 8),
-            _buildPrimaryButton('Reorder', primaryBlue, () {}),
+            _buildPrimaryButton('Reorder', primaryBlue, () {
+              // Navigate to product page for reorder
+              context.push('/orders/${order.id}');
+            }),
           ],
         );
       case OrderStatus.cancelled:
-        return Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.grey[800] : Colors.grey[100],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Center(
-            child: Text(
-              'View Details',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textColor,
+        return GestureDetector(
+          onTap: () => context.push('/orders/${order.id}'),
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey[800] : Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                'View Details',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
               ),
             ),
           ),
