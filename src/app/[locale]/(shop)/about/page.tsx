@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/routing";
-import Image from "next/image";
-import { ArrowRight, CheckCircle, Award, Target, Heart, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle, Award, Target, Heart, Zap, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { siteConfig } from "@/lib/config";
@@ -124,13 +123,8 @@ export default function AboutPage() {
                   </Link>
                 </div>
               </div>
-              <div className="relative h-80 lg:h-96 rounded-2xl overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop"
-                  alt="Our team"
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative h-80 lg:h-96 rounded-2xl overflow-hidden brand-gradient flex items-center justify-center">
+                <Store className="w-24 h-24 text-white/80" />
               </div>
             </div>
           </div>
@@ -149,7 +143,7 @@ export default function AboutPage() {
             {values.map((value) => (
               <Card key={value.title} className="bg-card/80 backdrop-blur text-center hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-r from-amber-100 to-rose-100 rounded-xl flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 mx-auto bg-primary/10 rounded-xl flex items-center justify-center mb-4">
                     <value.icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="font-bold text-foreground mb-2">{value.title}</h3>
@@ -183,7 +177,7 @@ export default function AboutPage() {
 
         {/* Why Choose Us */}
         <section className="container mx-auto px-4 py-16">
-          <div className="bg-primary rounded-3xl p-8 md:p-12 text-white text-center">
+          <div className="brand-gradient rounded-3xl p-8 md:p-12 text-white text-center">
             <h2 className="text-3xl font-bold mb-6">{t("cta.whyShop")}</h2>
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
               {features.map((feature) => (

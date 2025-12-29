@@ -195,7 +195,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header Background */}
-      <div className="h-48 bg-gradient-to-r from-amber-500 to-rose-500 relative overflow-hidden">
+      <div className="h-48 brand-gradient relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
       </div>

@@ -9,7 +9,7 @@ const shinyButtonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-rose-600 border-0 transition-colors duration-200 hover:shadow-xl',
+          'brand-gradient brand-gradient-shadow text-white border-0 transition-all duration-200 hover:shadow-xl hover:scale-[1.02]',
         solid:
           'bg-primary text-white shadow-md hover:bg-primary/90 border-0 transition-colors duration-200',
         destructive:

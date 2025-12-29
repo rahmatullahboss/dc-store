@@ -77,7 +77,7 @@ export function AddToCartButton({
       disabled={isAdding}
       className={`gap-2 ${
         variant === "default"
-          ? "bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white"
+          ? "brand-gradient brand-gradient-shadow text-white"
           : ""
       } ${className}`}
     >

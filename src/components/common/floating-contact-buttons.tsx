@@ -28,7 +28,7 @@ export function FloatingContactButtons() {
       <Button
         size="sm"
         onClick={handleOpenChat}
-        className="bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-lg shadow-amber-500/30 hover:scale-105 transition-all duration-200"
+        className="brand-gradient brand-gradient-shadow text-white hover:scale-105 transition-all duration-200"
       >
         <MessageCircle className="h-4 w-4 mr-2" />
         Chat

@@ -25,10 +25,13 @@ export const siteConfig = {
   // Theme Colors (CSS custom properties)
   // These should match globals.css - can be overridden via environment variables
   theme: {
-    primaryColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#f48c25",
-    accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#f48c25",
+    primaryColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#f59e0b",
+    accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#f59e0b",
     backgroundColor: process.env.NEXT_PUBLIC_BG_COLOR || "#f8f7f5",
     textColor: process.env.NEXT_PUBLIC_TEXT_COLOR || "#181411",
+    // Brand Gradient Colors - For white-label customization
+    brandGradientStart: process.env.NEXT_PUBLIC_BRAND_START || "#f59e0b", // amber-500
+    brandGradientEnd: process.env.NEXT_PUBLIC_BRAND_END || "#f43f5e",     // rose-500
   },
 
   // Currency Settings

@@ -143,7 +143,7 @@ export function CartSheet() {
                   amount: () => <span className="font-bold text-primary">{formatPrice(Math.max(0, 5000 - subtotal))}</span>
                 })}
               </p>
-              <Button className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600" size="lg" asChild>
+              <Button className="w-full brand-gradient brand-gradient-shadow text-white" size="lg" asChild>
                 <Link href="/checkout" onClick={() => toggleCart(false)}>
                   {t('summary.checkout')}
                 </Link>

@@ -26,6 +26,7 @@
   "Categories": {
     "title": "Shop by Category",
     "subtitle": "Explore our curated collections and find exactly what you need.",
+    "badge": "Explore Collections",
     "metaTitle": "Categories",
     "metaDescription": "Browse our product categories and find what you're looking for.",
     "featured": "Featured Categories",
@@ -574,6 +575,7 @@
     "search": {
       "title": "Search: \"{query}\"",
       "placeholder": "Search products...",
+      "button": "Search",
       "found": "Found {count} products matching your search",
       "defaultDesc": "Discover our curated collection of premium products"
     },

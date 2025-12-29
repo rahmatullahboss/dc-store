@@ -86,7 +86,7 @@ function LoginForm() {
 
       <div className="relative z-10 min-h-screen flex">
         {/* Left side - Branding (hidden on mobile) */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-500 via-rose-500 to-purple-600 p-12 items-center justify-center relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 brand-gradient p-12 items-center justify-center relative overflow-hidden">
           {/* Decorative circles */}
           <div className="absolute top-20 left-10 w-32 h-32 bg-card/10 rounded-full blur-xl" />
           <div className="absolute bottom-20 right-10 w-48 h-48 bg-card/10 rounded-full blur-xl" />

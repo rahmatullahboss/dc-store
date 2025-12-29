@@ -467,7 +467,7 @@ export function ChatBot() {
       >
         <div className="bg-card rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[70vh]">
           {/* Header */}
-          <div className="bg-gradient-to-r from-amber-500 to-rose-500 p-4 flex items-center justify-between">
+          <div className="brand-gradient p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-card/20 flex items-center justify-center">
                 <Bot className="w-5 h-5 text-white" />
@@ -522,7 +522,7 @@ export function ChatBot() {
                 />
                 <button
                   type="submit"
-                  className="w-full py-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-lg font-medium text-sm hover:from-amber-600 hover:to-rose-600 transition-colors"
+                  className="w-full py-2 brand-gradient text-white rounded-lg font-medium text-sm transition-colors"
                 >
                   {t('startButton')}
                 </button>
@@ -562,7 +562,7 @@ export function ChatBot() {
                     className={cn(
                       "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
                       msg.role === "user"
-                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-br-md"
+                        ? "brand-gradient text-white rounded-br-md"
                         : "bg-muted text-foreground rounded-bl-md"
                     )}
                   >
@@ -610,7 +610,7 @@ export function ChatBot() {
                     className={cn(
                       "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
                       message.role === "user"
-                        ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-br-md"
+                        ? "brand-gradient text-white rounded-br-md"
                         : "bg-muted text-foreground rounded-bl-md"
                     )}
                   >
@@ -725,7 +725,7 @@ export function ChatBot() {
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                     input.trim() && status === "ready"
-                      ? "bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white"
+                      ? "brand-gradient text-white"
                       : "bg-muted text-muted-foreground"
                   )}
                 >

@@ -165,7 +165,7 @@ export function Header() {
                 <Button variant="ghost" size="icon" className="relative">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
-                    <AvatarFallback className="text-xs bg-gradient-to-r from-amber-500 to-rose-500 text-white">
+                    <AvatarFallback className="text-xs brand-gradient text-white">
                       {session.user.name?.charAt(0).toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
