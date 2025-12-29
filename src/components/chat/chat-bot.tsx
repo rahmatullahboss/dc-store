@@ -269,8 +269,8 @@ export function ChatBot() {
             localStorage.setItem("chat_guest_info", JSON.stringify(data.guestInfo));
           }
         }
-      } catch (error) {
-        console.error("Failed to load chat history:", error);
+      } catch {
+        // Silently ignore - chat history is optional and may fail in dev mode
       } finally {
         setHistoryLoaded(true);
       }
