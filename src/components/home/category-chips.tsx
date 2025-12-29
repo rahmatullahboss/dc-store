@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import {
-  Grid3X3,
+  LayoutGrid,
   Shirt,
   Watch,
   Laptop,
@@ -10,22 +10,26 @@ import {
   Sparkles,
 } from "lucide-react";
 
-const categories = [
-  { name: "All", icon: Grid3X3, href: "/products", active: true },
-  { name: "Fashion", icon: Shirt, href: "/products?category=fashion" },
-  { name: "Watches", icon: Watch, href: "/products?category=watches" },
-  { name: "Electronics", icon: Laptop, href: "/products?category=electronics" },
-  { name: "Accessories", icon: ShoppingBag, href: "/products?category=accessories" },
-  { name: "New", icon: Sparkles, href: "/products?sort=newest" },
-];
+import { useTranslations } from "next-intl";
 
 export function CategoryChips() {
+  const t = useTranslations("HomePage.Categories");
+
+  const categories = [
+    { name: t("all"), icon: LayoutGrid, href: "/products", active: true },
+    { name: t("fashion"), icon: Shirt, href: "/products?category=fashion" },
+    { name: t("watches"), icon: Watch, href: "/products?category=watches" },
+    { name: t("electronics"), icon: Laptop, href: "/products?category=electronics" },
+    { name: t("accessories"), icon: ShoppingBag, href: "/products?category=accessories" },
+    { name: t("new"), icon: Sparkles, href: "/products?sort=newest" },
+  ];
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-4">
       <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
         {categories.map((category) => (
           <Link
-            key={category.name}
+            key={category.href}
             href={category.href}
             className={`flex h-10 shrink-0 items-center justify-center gap-2 rounded-full px-5 sm:px-6 font-medium text-sm transition-all ${
               category.active

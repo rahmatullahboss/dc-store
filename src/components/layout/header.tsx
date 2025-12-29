@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { LanguageSwitcher } from "@/components/common/language-switcher";
+import { Link, useRouter } from "@/i18n/routing";
 import { useState } from "react";
 import { Menu, Search, ShoppingCart, User, X, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -19,21 +20,25 @@ import {
 import { useCart } from "@/lib/cart-context";
 import { useSession, signOut } from "@/lib/auth-client";
 import { siteConfig } from "@/lib/config";
-import { useRouter } from "next/navigation";
 
-const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
-  { name: "Categories", href: "/categories" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
-];
+
+
+import { useTranslations } from "next-intl";
 
 export function Header() {
+  const t = useTranslations();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { itemCount, toggleCart } = useCart();
   const { data: session, isPending } = useSession();
   const router = useRouter();
+
+  const navigation = [
+    { name: t('Navigation.home'), href: "/" },
+    { name: t('Navigation.products'), href: "/products" },
+    { name: t('Navigation.categories'), href: "/categories" },
+    { name: t('Navigation.about'), href: "/about" },
+    { name: t('Navigation.contact'), href: "/contact" },
+  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -49,14 +54,14 @@ export function Header() {
           <SheetTrigger asChild className="md:hidden">
             <Button variant="ghost" size="icon">
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
+              <span className="sr-only">{t('Common.toggleMenu')}</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] p-6">
             <nav className="flex flex-col gap-4 mt-6">
               {navigation.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.href} // Changed key to href as name is now localized and might change
                   href={item.href}
                   className="text-lg font-medium hover:text-primary transition-colors"
                 >
@@ -69,13 +74,13 @@ export function Header() {
                     href="/profile"
                     className="text-lg font-medium hover:text-primary transition-colors"
                   >
-                    Profile
+                    {t('Common.profile')}
                   </Link>
                   <Link
                     href="/orders"
                     className="text-lg font-medium hover:text-primary transition-colors"
                   >
-                    My Orders
+                    {t('Common.orders')}
                   </Link>
                 </>
               )}
@@ -94,7 +99,7 @@ export function Header() {
         <nav className="hidden md:flex items-center justify-center gap-6 flex-1">
           {navigation.map((item) => (
             <Link
-              key={item.name}
+              key={item.href}
               href={item.href}
               className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
@@ -121,7 +126,7 @@ export function Header() {
             >
               <Input
                 name="search"
-                placeholder="Search products..."
+                placeholder={t('Common.searchPlaceholder')}
                 className="flex-1"
                 autoFocus
               />
@@ -141,11 +146,12 @@ export function Header() {
               onClick={() => setIsSearchOpen(true)}
             >
               <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
+              <span className="sr-only">{t('Common.search')}</span>
             </Button>
           )}
 
           {/* Theme Toggle */}
+          <LanguageSwitcher />
           <ThemeToggle />
 
           {/* User - Session Aware */}

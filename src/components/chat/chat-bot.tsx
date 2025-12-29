@@ -3,6 +3,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslations, useLocale } from "next-intl";
+// ... imports ...
 import {
   X,
   Send,
@@ -154,6 +156,8 @@ function ChatProductCard({ product }: { product: Product }) {
 }
 
 export function ChatBot() {
+  const t = useTranslations("Chatbot");
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [showHumanOptions, setShowHumanOptions] = useState(false);
@@ -194,6 +198,7 @@ export function ChatBot() {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
+      body: { locale },
     }),
   });
 
@@ -432,7 +437,7 @@ export function ChatBot() {
 
   const getWhatsAppLink = () => {
     const message = encodeURIComponent(
-      `হ্যালো, আমি ${siteConfig.name} থেকে সাহায্য চাই।`
+      locale === 'bn' ? `হ্যালো, আমি ${siteConfig.name} থেকে সাহায্য চাই।` : `Hello, I need help from ${siteConfig.name}.`
     );
     return `https://wa.me/${siteConfig.whatsapp.replace(
       /[^0-9]/g,
@@ -468,11 +473,11 @@ export function ChatBot() {
                 <Bot className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">AI Assistant</h3>
+                <h3 className="font-semibold text-white">{t('title')}</h3>
                 <p className="text-xs text-white/80">
                   {guestInfo
-                    ? `Hello, ${guestInfo.name}!`
-                    : "Always here to help"}
+                    ? t('subtitleUser', { name: guestInfo.name })
+                    : t('subtitle')}
                 </p>
               </div>
             </div>
@@ -493,8 +498,8 @@ export function ChatBot() {
             >
               <p className="text-sm text-muted-foreground mb-3">
                 {userId 
-                  ? "Chat শুরু করতে আপনার ফোন নম্বর দিন:"
-                  : "আসসালামু আলাইকুম! Chat শুরু করতে আপনার তথ্য দিন:"}
+                  ? t('guestGreeting')
+                  : t('guestGreeting')}
               </p>
               <div className="space-y-2">
                 {!userId && (
@@ -502,7 +507,7 @@ export function ChatBot() {
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    placeholder="আপনার নাম"
+                    placeholder={t('namePlaceholder')}
                     className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:border-amber-400 text-sm"
                     required
                   />
@@ -511,7 +516,7 @@ export function ChatBot() {
                   type="tel"
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
-                  placeholder="ফোন নম্বর (01...)"
+                  placeholder={t('phonePlaceholder')}
                   className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:border-amber-400 text-sm"
                   required
                 />
@@ -519,7 +524,7 @@ export function ChatBot() {
                   type="submit"
                   className="w-full py-2 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-lg font-medium text-sm hover:from-amber-600 hover:to-rose-600 transition-colors"
                 >
-                  Chat শুরু করুন
+                  {t('startButton')}
                 </button>
               </div>
             </form>
@@ -534,10 +539,7 @@ export function ChatBot() {
                     <Bot className="w-7 h-7 text-primary" />
                   </div>
                   <p className="text-muted-foreground text-sm">
-                    আসসালামু আলাইকুম, {guestInfo.name}! 👋
-                  </p>
-                  <p className="text-muted-foreground text-xs mt-1">
-                    কিভাবে সাহায্য করতে পারি?
+                    {t('greeting')}
                   </p>
                 </div>
               )}
@@ -646,7 +648,7 @@ export function ChatBot() {
                   <div className="flex items-center gap-2 mb-3">
                     <Users className="w-4 h-4 text-blue-600" />
                     <p className="text-sm font-medium text-blue-800">
-                      মানুষের সাথে কথা বলুন
+                      {t('humanSupportTitle')}
                     </p>
                   </div>
                   <div className="grid grid-cols-1 gap-2">
@@ -657,7 +659,7 @@ export function ChatBot() {
                       className="flex items-center gap-2 bg-[#0084FF] text-white px-4 py-2.5 rounded-lg hover:bg-[#0073E6] transition-colors text-sm font-medium"
                     >
                       <FaFacebookMessenger className="w-4 h-4" />
-                      Facebook Messenger
+                      {t('messenger')}
                     </a>
                     <a
                       href={getWhatsAppLink()}
@@ -666,14 +668,14 @@ export function ChatBot() {
                       className="flex items-center gap-2 bg-[#25D366] text-white px-4 py-2.5 rounded-lg hover:bg-[#1DA851] transition-colors text-sm font-medium"
                     >
                       <FaWhatsapp className="w-4 h-4" />
-                      WhatsApp
+                      {t('whatsapp')}
                     </a>
                     <a
                       href={`tel:${siteConfig.phone}`}
                       className="flex items-center gap-2 bg-emerald-500 text-white px-4 py-2.5 rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
                     >
                       <Phone className="w-4 h-4" />
-                      Call Us
+                      {t('callUs')}
                     </a>
                   </div>
                 </div>
@@ -696,7 +698,7 @@ export function ChatBot() {
                 )}
               >
                 <Users className="w-3.5 h-3.5" />
-                {showHumanOptions ? "বন্ধ করুন" : "মানুষের সাথে কথা বলুন"}
+                {showHumanOptions ? t('closeHuman') : t('talkToHuman')}
               </button>
             </div>
           )}
@@ -713,7 +715,7 @@ export function ChatBot() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="আপনার বার্তা লিখুন..."
+                  placeholder={t('placeholder')}
                   className="flex-1 px-4 py-2 rounded-full border border-border focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 text-sm"
                   disabled={status !== "ready"}
                 />

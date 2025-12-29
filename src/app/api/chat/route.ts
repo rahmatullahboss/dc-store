@@ -42,11 +42,13 @@ async function fetchProducts() {
   }
 }
 
-function generateSystemPrompt(productList: string) {
+function generateSystemPrompt(productList: string, locale: string = "en") {
+  const isBengali = locale === "bn";
+
   return `You are a customer support assistant for "${siteConfig.name}" e-commerce store.
 
-LANGUAGE: Bengali when user writes Bengali, otherwise English.
-GREETING: Use "সালাম" or "আসসালামু আলাইকুম" - NEVER "নমস্কার"
+LANGUAGE: ${isBengali ? "Bengali (Bangla). Use English only if user asks in English or for technical terms." : "English. Use Bengali only if user asks in Bengali."}
+GREETING: ${isBengali ? 'Use "আসসালামু আলাইকুম"' : 'Use "Hello" or "Hi"'}. Never use "Namaskar".
 
 ## PRODUCT DISPLAY FORMAT (MANDATORY)
 When showing products, you MUST use this EXACT format - no exceptions:
@@ -66,16 +68,16 @@ ${productList}
 5. ALWAYS include product tags when recommending products - NEVER just describe them in text
 
 ## EXAMPLE RESPONSE
-User: "কি কি আছে?"
-You: আমাদের কিছু প্রোডাক্ট দেখুন:
+User: "${isBengali ? "কি কি আছে?" : "What do you have?"}"
+You: ${isBengali ? "আমাদের কিছু প্রোডাক্ট দেখুন:" : "Here are some of our products:"}
 
 [PRODUCT:premium-headphones:Premium Headphones:4999:Electronics:true:/placeholder.svg]
 [PRODUCT:classic-watch:Classic Watch:2999:Accessories:true:/placeholder.svg]
 
-আরো দেখতে চাইলে বলুন! 😊
+${isBengali ? "আরো দেখতে চাইলে বলুন! 😊" : "Let me know if you want to see more! 😊"}
 
 ## ORDERING
-- Tell customers: "প্রোডাক্ট কার্ডে ক্লিক করুন এবং Add to Cart করুন!"
+- Tell customers: "${isBengali ? 'প্রোডাক্ট কার্ডে ক্লিক করুন এবং Add to Cart করুন!' : 'Click the product card and Add to Cart!'}"
 - Never take orders directly in chat
 
 ## STORE INFO
@@ -86,7 +88,7 @@ You: আমাদের কিছু প্রোডাক্ট দেখুন
 }
 
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  const { messages, locale }: { messages: UIMessage[], locale?: string } = await req.json();
 
   // Fetch real products from database
   const realProducts = await fetchProducts();
@@ -100,7 +102,7 @@ export async function POST(req: Request) {
         .join("\n")
     : "No products available.";
 
-  const systemPrompt = generateSystemPrompt(productListStr);
+  const systemPrompt = generateSystemPrompt(productListStr, locale || "en");
   const enhancedMessages = await convertToModelMessages(messages);
 
   const openrouterKey = process.env.OPENROUTER_API_KEY;

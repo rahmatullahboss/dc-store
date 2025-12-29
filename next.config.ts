@@ -4,6 +4,10 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 // Initialize OpenNext Cloudflare for local development
 initOpenNextCloudflareForDev();
 
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
+
 const nextConfig: NextConfig = {
   // Image optimization configuration
   images: {
@@ -81,4 +85,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

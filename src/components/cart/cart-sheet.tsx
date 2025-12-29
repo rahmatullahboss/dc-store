@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +12,11 @@ import {
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/config";
 
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
+
 export function CartSheet() {
+  const t = useTranslations("Cart");
   const { items, isOpen, toggleCart, updateQuantity, removeItem, subtotal } =
     useCart();
 
@@ -23,16 +26,19 @@ export function CartSheet() {
         <SheetHeader className="p-4 pb-0 border-b">
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
-            Shopping Cart ({items.length})
+            {t('title')} ({items.length})
           </SheetTitle>
         </SheetHeader>
 
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6">
             <ShoppingCart className="h-16 w-16 text-muted-foreground" />
-            <p className="text-muted-foreground">Your cart is empty</p>
+            <div className="text-center">
+              <p className="font-semibold text-lg">{t('empty.title')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('empty.desc')}</p>
+            </div>
             <Button onClick={() => toggleCart(false)} asChild>
-              <Link href="/products">Continue Shopping</Link>
+              <Link href="/products">{t('empty.startShopping')}</Link>
             </Button>
           </div>
         ) : (
@@ -75,6 +81,7 @@ export function CartSheet() {
                           }
                         >
                           <X className="h-4 w-4" />
+                          <span className="sr-only">Remove</span>
                         </Button>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -128,15 +135,17 @@ export function CartSheet() {
 
             <div className="space-y-4 p-4 border-t bg-muted/50">
               <div className="flex justify-between text-lg font-semibold">
-                <span>Subtotal</span>
+                <span>{t('summary.subtotal')}</span>
                 <span className="text-primary">{formatPrice(subtotal)}</span>
               </div>
               <p className="text-sm text-muted-foreground text-center">
-                Shipping and taxes calculated at checkout
+                {t.rich('summary.shippingMsg', {
+                  amount: () => <span className="font-bold text-primary">{formatPrice(Math.max(0, 5000 - subtotal))}</span>
+                })}
               </p>
               <Button className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600" size="lg" asChild>
                 <Link href="/checkout" onClick={() => toggleCart(false)}>
-                  Proceed to Checkout
+                  {t('summary.checkout')}
                 </Link>
               </Button>
               <Button

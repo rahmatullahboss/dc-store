@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ShoppingCart } from "lucide-react";
 import {
   Card,
@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ProductCardFooter } from "./product-card-footer";
 import type { Product } from "@/db/schema";
+import { useTranslations } from "next-intl";
 
 interface ProductCardProps {
   product: Product;
@@ -19,6 +20,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
+  const t = useTranslations("Products");
   const discountPercentage = product.compareAtPrice
     ? Math.round(
         ((product.compareAtPrice - product.price) / product.compareAtPrice) *
@@ -57,7 +59,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                   variant="destructive"
                   className="bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-md text-[10px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1"
                 >
-                  -{discountPercentage}% OFF
+                  -{discountPercentage}% {t('off')}
                 </Badge>
               </div>
             )}
@@ -78,7 +80,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             {product.isFeatured && (
               <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-10">
                 <Badge className="bg-primary text-primary-foreground border-0 shadow-md text-[10px] sm:text-xs font-medium px-1.5 py-0.5 sm:px-2 sm:py-1">
-                  ⭐ Featured
+                  ⭐ {t('featured')}
                 </Badge>
               </div>
             )}

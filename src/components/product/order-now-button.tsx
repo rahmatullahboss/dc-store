@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { useCart } from "@/lib/cart-context";
 
+import { useTranslations } from "next-intl";
+
 interface OrderNowButtonProps {
   productId: string;
   productName: string;
@@ -25,6 +27,7 @@ export function OrderNowButton({
   wrapperClassName = "",
   compact,
 }: OrderNowButtonProps) {
+  const t = useTranslations("Products");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { addItem, items } = useCart();
@@ -64,7 +67,7 @@ export function OrderNowButton({
           className
         )}
       >
-        {loading ? "..." : compact ? "Order" : "Order Now"}
+        {loading ? "..." : compact ? t('order') : t('orderNow')}
       </ShinyButton>
     </div>
   );

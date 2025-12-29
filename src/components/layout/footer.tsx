@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import {
   Facebook,
   Instagram,
@@ -9,27 +9,32 @@ import {
 } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
-const footerLinks = {
-  shop: [
-    { name: "All Products", href: "/products" },
-    { name: "New Arrivals", href: "/products?sort=newest" },
-    { name: "Best Sellers", href: "/products?sort=popular" },
-    { name: "Sale", href: "/products?sale=true" },
-  ],
-  support: [
-    { name: "Contact Us", href: "/contact" },
-    { name: "FAQs", href: "/faq" },
-    { name: "Returns & Shipping", href: "/returns" },
-    { name: "Track Order", href: "/track-order" },
-  ],
-  company: [
-    { name: "About Us", href: "/about" },
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-  ],
-};
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations("Footer");
+  const tCommon = useTranslations("Common");
+
+  const footerLinks = {
+    shop: [
+      { name: t("shopLinks.allProducts"), href: "/products" },
+      { name: t("shopLinks.newArrivals"), href: "/products?sort=newest" },
+      { name: t("shopLinks.bestSellers"), href: "/products?sort=popular" },
+      { name: t("shopLinks.sale"), href: "/products?sale=true" },
+    ],
+    support: [
+      { name: t("supportLinks.contactUs"), href: "/contact" },
+      { name: t("supportLinks.faqs"), href: "/faq" },
+      { name: t("supportLinks.returns"), href: "/returns" },
+      { name: t("supportLinks.trackOrder"), href: "/track-order" },
+    ],
+    company: [
+      { name: t("companyLinks.aboutUs"), href: "/about" },
+      { name: t("companyLinks.privacy"), href: "/privacy" },
+      { name: t("companyLinks.terms"), href: "/terms" },
+    ],
+  };
+
   return (
     <footer className="relative z-10 border-t bg-muted/30">
       <div className="container mx-auto px-4 py-12">
@@ -69,10 +74,10 @@ export function Footer() {
 
           {/* Shop Links */}
           <div className="text-center md:text-left">
-            <h3 className="font-semibold mb-4">Shop</h3>
+            <h3 className="font-semibold mb-4">{t('shop')}</h3>
             <ul className="space-y-2">
               {footerLinks.shop.map((link) => (
-                <li key={link.name}>
+                <li key={link.href}>
                   <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
@@ -86,10 +91,10 @@ export function Footer() {
 
           {/* Support Links */}
           <div className="text-center md:text-left">
-            <h3 className="font-semibold mb-4">Support</h3>
+            <h3 className="font-semibold mb-4">{t('support')}</h3>
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
-                <li key={link.name}>
+                <li key={link.href}>
                   <Link
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
@@ -103,7 +108,7 @@ export function Footer() {
 
           {/* Contact Info */}
           <div className="text-center md:text-left">
-            <h3 className="font-semibold mb-4">Contact</h3>
+            <h3 className="font-semibold mb-4">{t('contact')}</h3>
             <ul className="space-y-3">
               <li className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4" />
@@ -135,13 +140,12 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} {siteConfig.name}. All rights
-              reserved.
+              {tCommon('copyright', { year: new Date().getFullYear(), name: siteConfig.name })}
             </p>
             <div className="flex gap-6">
               {footerLinks.company.map((link) => (
                 <Link
-                  key={link.name}
+                  key={link.href}
                   href={link.href}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >

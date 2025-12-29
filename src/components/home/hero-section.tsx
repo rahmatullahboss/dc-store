@@ -1,10 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
+import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function HeroSection() {
+  const t = useTranslations("HomePage.Hero");
+
   return (
     <section className="relative z-10 w-full max-w-7xl mx-auto px-4 lg:px-10 py-6 lg:py-8">
       <div className="relative overflow-hidden rounded-2xl min-h-[450px] sm:min-h-[550px] lg:min-h-[650px] flex items-center">
@@ -21,22 +24,21 @@ export function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs sm:text-sm font-bold tracking-wide uppercase">
             <span className="size-2 rounded-full bg-primary animate-pulse" />
-            New Collection
+            {t('newCollection')}
           </div>
 
           {/* Title */}
           <h1 className="text-white text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[0.95] tracking-tighter">
-            Premium
+            {t('premium')}
             <br />
-            <span className="text-primary">Quality</span>
+            <span className="text-primary">{t('quality')}</span>
             <br />
-            Products
+            {t('products')}
           </h1>
 
           {/* Description */}
           <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-md leading-relaxed">
-            Discover our curated collection of premium products. Quality you can
-            trust, delivered to your doorstep.
+            {t('description')}
           </p>
 
           {/* CTA Buttons */}
@@ -46,7 +48,7 @@ export function HeroSection() {
               className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-primary text-black font-bold hover:bg-card hover:scale-105 transition-all duration-200 shadow-[0_0_20px_rgba(244,140,37,0.4)]"
             >
               <Link href="/products">
-                Shop Now
+                {t('shopNow')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -55,7 +57,7 @@ export function HeroSection() {
               variant="outline"
               className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-card/10 backdrop-blur-md border-white/20 text-white font-bold hover:bg-card/20 transition-all"
             >
-              <Link href="/categories">Browse Categories</Link>
+              <Link href="/categories">{t('browseCategories')}</Link>
             </Button>
           </div>
         </div>
@@ -71,9 +73,9 @@ export function HeroSection() {
             />
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-bold truncate">
-                Featured Item
+                {t('featuredItem')}
               </p>
-              <p className="text-primary text-xs font-bold">Best Seller</p>
+              <p className="text-primary text-xs font-bold">{t('bestSeller')}</p>
             </div>
             <Button
               size="icon"

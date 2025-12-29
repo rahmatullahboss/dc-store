@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -30,7 +30,10 @@ const trendingProducts = [
   },
 ];
 
+import { useTranslations } from "next-intl";
+
 export function TrendingSection() {
+  const t = useTranslations("HomePage.Trending");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -48,7 +51,7 @@ export function TrendingSection() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-          Trending Now
+          {t('title')}
         </h2>
         <div className="flex gap-2">
           <Button
@@ -89,7 +92,7 @@ export function TrendingSection() {
               {product.badge && (
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-primary text-xs font-bold uppercase tracking-wider">
-                    {product.badge}
+                    {t('bestSeller')}
                   </span>
                 </div>
               )}

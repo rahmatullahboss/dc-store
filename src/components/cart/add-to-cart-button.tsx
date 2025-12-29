@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
 import { cn } from "@/lib/utils";
 import type { CartItem } from "@/db/schema";
+import { useTranslations } from "next-intl";
 
 interface AddToCartButtonProps {
   item: {
@@ -25,6 +26,7 @@ export function AddToCartButton({
   compact = false,
   variant = "default",
 }: AddToCartButtonProps) {
+  const t = useTranslations("Products");
   const { addItem } = useCart();
   const [isAdded, setIsAdded] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -75,12 +77,12 @@ export function AddToCartButton({
       ) : isAdded ? (
         <>
           <Check className={cn(compact ? "h-3 w-3 mr-1" : "h-4 w-4 mr-2")} />
-          <span>{compact ? "✓" : "Added!"}</span>
+          <span>{compact ? "✓" : t('added')}</span>
         </>
       ) : (
         <>
           <Plus className={cn(compact ? "h-3 w-3 mr-1" : "h-4 w-4 mr-2")} />
-          <span>{compact ? "Add" : "Add to Cart"}</span>
+          <span>{compact ? t('add') : t('addToCart')}</span>
         </>
       )}
     </Button>

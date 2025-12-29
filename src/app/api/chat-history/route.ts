@@ -16,7 +16,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const db = await getDatabase();
+    let db;
+    try {
+      db = await getDatabase();
+    } catch (e) {
+      console.warn("Database connection failed (likely in dev mode without local D1). Returning empty history.");
+      return NextResponse.json({ messages: [], guestInfo: null });
+    }
 
     // Find the conversation by sessionId
     const conversation = await db.query.chatConversations.findFirst({

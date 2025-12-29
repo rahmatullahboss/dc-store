@@ -1,10 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { useTranslations } from "next-intl";
+
 export function PromoBanner() {
+  const t = useTranslations("HomePage.Promo");
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-8">
       <div className="relative overflow-hidden rounded-2xl bg-primary">
@@ -22,23 +26,22 @@ export function PromoBanner() {
         <div className="relative z-20 min-h-[400px] lg:min-h-[500px] flex items-center">
           <div className="p-8 lg:p-16 max-w-lg">
             <span className="text-primary-foreground font-bold text-sm sm:text-lg mb-4 tracking-widest uppercase block">
-              Limited Offer
+              {t('limitedOffer')}
             </span>
             <h2 className="text-primary-foreground text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.9] mb-4 sm:mb-6">
-              SPECIAL
+              {t('special')}
               <br />
-              <span className="text-background">DEALS</span>
+              <span className="text-background">{t('deals')}</span>
             </h2>
             <p className="text-primary-foreground/90 text-base sm:text-xl font-medium mb-6 sm:mb-8 max-w-sm">
-              Get amazing discounts on our premium collection. Limited time
-              offers you can&apos;t miss.
+              {t('description')}
             </p>
             <Button
               asChild
               className="w-fit bg-background text-foreground px-6 sm:px-8 py-3 sm:py-4 h-auto rounded-lg font-bold text-base sm:text-lg hover:bg-background/90 transition-colors"
             >
               <Link href="/offers" className="flex items-center gap-2">
-                Shop Sale
+                {t('shopSale')}
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>

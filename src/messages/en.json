@@ -1,0 +1,881 @@
+{
+  "Common": {
+    "searchPlaceholder": "Search products...",
+    "search": "Search",
+    "menu": "Menu",
+    "account": "Account",
+    "cart": "Cart",
+    "profile": "Profile",
+    "orders": "My Orders",
+    "signOut": "Sign Out",
+    "signIn": "Sign In",
+    "helpfulLinks": "Helpful Links",
+    "contactUs": "Contact Us",
+    "allRightsReserved": "All rights reserved.",
+    "toggleMenu": "Toggle menu",
+    "copyright": "© {year} {name}. All rights reserved."
+  },
+  "Navigation": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "about": "About",
+    "contactUs": "Contact Us"
+  },
+  "Categories": {
+    "title": "Shop by Category",
+    "subtitle": "Explore our curated collections and find exactly what you need.",
+    "metaTitle": "Categories",
+    "metaDescription": "Browse our product categories and find what you're looking for.",
+    "featured": "Featured Categories",
+    "more": "More Categories",
+    "browse": "Browse products",
+    "items": "{count} items",
+    "products": "{count} Products",
+    "viewAll": "View All Products",
+    "empty": {
+      "title": "Categories Coming Soon",
+      "desc": "We're setting up our categories. Check back soon to explore our collections!"
+    }
+  },
+  "Checkout": {
+    "title": "Checkout",
+    "subtitle": "Complete your order",
+    "steps": {
+      "cart": "Cart",
+      "shipping": "Shipping",
+      "done": "Done"
+    },
+    "shippingInfo": "Shipping Information",
+    "form": {
+      "name": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email (Optional)",
+      "division": "Division",
+      "district": "District",
+      "address": "Full Address",
+      "notes": "Delivery Note (Optional)",
+      "placeholders": {
+        "name": "Enter your full name",
+        "phone": "01XXXXXXXXX",
+        "email": "your@email.com",
+        "selectDivision": "Select Division",
+        "selectDistrict": "Select District",
+        "selectDivisionFirst": "Select Division first",
+        "address": "House no, Road no, Area name...",
+        "notes": "Any special instructions for delivery..."
+      }
+    },
+    "paymentMethod": "Payment Method",
+    "methods": {
+      "cod": {
+        "title": "Cash on Delivery",
+        "desc": "Pay when you receive your order"
+      },
+      "stripe": {
+        "title": "Credit/Debit Card",
+        "desc": "Pay securely with Stripe"
+      }
+    },
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "FREE",
+    "total": "Total",
+    "placeOrder": "Place Order",
+    "payAndPlaceOrder": "Pay & Place Order",
+    "processing": "Processing...",
+    "secure": "Secure",
+    "fastDelivery": "Fast Delivery",
+    "empty": {
+      "title": "Your cart is empty",
+      "desc": "Add some products to your cart before checkout.",
+      "action": "Start Shopping"
+    },
+    "errors": {
+      "fillRequired": "Please fill in all required fields",
+      "invalidPhone": "Please enter a valid Bangladesh phone number",
+      "paymentLoadFailed": "Failed to load payment. Please try again.",
+      "orderFailed": "Failed to place order. Please try again."
+    }
+  },
+  "Profile": {
+    "title": "My Profile",
+    "subtitle": "Manage your account",
+    "tabs": {
+      "info": "Personal Info",
+      "stats": "Stats",
+      "orders": "Recent Orders",
+      "addresses": "Addresses"
+    },
+    "stats": {
+      "totalOrders": "Total Orders",
+      "totalSpent": "Total Spent",
+      "wishlist": "Wishlist Items",
+      "points": "Reward Points"
+    },
+    "info": {
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "memberSince": "Member Since",
+      "update": "Update Profile",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "edit": "Edit"
+    },
+    "orders": {
+      "title": "Recent Orders",
+      "viewAll": "View All",
+      "orderId": "Order #",
+      "total": "Total",
+      "items": "Items",
+      "actions": {
+        "details": "Details",
+        "track": "Track Order"
+      },
+      "empty": {
+        "title": "No recent orders",
+        "action": "Start Shopping"
+      }
+    },
+    "address": {
+      "default": "Default Shipping Address",
+      "noAddress": "No address saved"
+    },
+    "logout": "Logout",
+    "toasts": {
+      "updateSuccess": "Profile updated successfully",
+      "updateError": "Failed to update profile"
+    }
+  },
+  "Footer": {
+    "shop": "Shop",
+    "support": "Support",
+    "contact": "Contact",
+    "company": "Company",
+    "shopLinks": {
+      "allProducts": "All Products",
+      "newArrivals": "New Arrivals",
+      "bestSellers": "Best Sellers",
+      "sale": "Sale"
+    },
+    "supportLinks": {
+      "contactUs": "Contact Us",
+      "faqs": "FAQs",
+      "returns": "Returns & Shipping",
+      "trackOrder": "Track Order"
+    },
+    "companyLinks": {
+      "aboutUs": "About Us",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "Products": {
+    "addToCart": "Add to Cart",
+    "add": "Add",
+    "added": "Added!",
+    "orderNow": "Order Now",
+    "order": "Order",
+    "off": "OFF",
+    "featured": "Featured",
+    "outOfStock": "Out of Stock"
+  },
+
+  "HomePage": {
+    "Hero": {
+      "newCollection": "New Collection",
+      "premium": "Premium",
+      "quality": "Quality",
+      "products": "Products",
+      "description": "Discover our curated collection of premium products. Quality you can trust, delivered to your doorstep.",
+      "shopNow": "Shop Now",
+      "browseCategories": "Browse Categories",
+      "featuredItem": "Featured Item",
+      "bestSeller": "Best Seller"
+    },
+    "Categories": {
+      "all": "All",
+      "fashion": "Fashion",
+      "watches": "Watches",
+      "electronics": "Electronics",
+      "accessories": "Accessories",
+      "new": "New"
+    },
+    "Promo": {
+      "limitedOffer": "Limited Offer",
+      "special": "SPECIAL",
+      "deals": "DEALS",
+      "description": "Get amazing discounts on our premium collection. Limited time offers you can't miss.",
+      "shopSale": "Shop Sale"
+    },
+    "Trending": {
+      "title": "Trending Now",
+      "bestSeller": "Best Seller"
+    },
+    "NewArrivals": {
+      "title": "New Arrivals",
+      "viewAll": "View all",
+      "viewAllProducts": "View All Products",
+      "comingSoonTitle": "Products Coming Soon!",
+      "comingSoonDesc": "We're preparing our collection for you."
+    }
+  },
+  "Chatbot": {
+    "title": "AI Assistant",
+    "subtitle": "Always here to help",
+    "subtitleUser": "Hello, {name}!",
+    "placeholder": "Type your message...",
+    "greeting": "Hello! How can I help you today?",
+    "guestGreeting": "Hello! Please provide your details to start chatting:",
+    "namePlaceholder": "Your Name",
+    "phonePlaceholder": "Phone Number (01...)",
+    "startButton": "Start Chat",
+    "talkToHuman": "Talk to Human",
+    "closeHuman": "Close",
+    "humanSupportTitle": "Talk to Human Support",
+    "messenger": "Facebook Messenger",
+    "whatsapp": "WhatsApp",
+    "callUs": "Call Us",
+    "error": "Something went wrong. Please try again."
+  },
+  "About": {
+    "title": "Welcome to {name}",
+    "mission": "We're on a mission to make online shopping easy, affordable, and delightful for everyone in Bangladesh. From electronics to fashion, we bring you quality products at the best prices.",
+    "stats": {
+      "customers": "Happy Customers",
+      "products": "Products",
+      "categories": "Categories",
+      "satisfaction": "Satisfaction"
+    },
+    "story": {
+      "title": "Our Story",
+      "p1": "{name} is a trusted online shopping platform in Bangladesh where you can find quality products at affordable prices. We believe online shopping should be easy, safe, and enjoyable.",
+      "p2": "Our goal is to bring you the best products, offer competitive prices, and provide exceptional customer service. Every product is carefully selected to ensure you get the best experience.",
+      "developedBy": "This store is developed by <link>DigitalCare Team</link> — we build modern business solutions using the latest technology."
+    },
+    "values": {
+      "title": "What We Stand For",
+      "subtitle": "Our core values guide everything we do, from product selection to customer service.",
+      "customerFirst": {
+        "title": "Customer First",
+        "desc": "Every decision we make starts with our customers in mind."
+      },
+      "quality": {
+        "title": "Quality Products",
+        "desc": "We partner with trusted brands to bring you the best products."
+      },
+      "fastDelivery": {
+        "title": "Fast Delivery",
+        "desc": "Quick and reliable delivery to your doorstep, every time."
+      },
+      "bestPrices": {
+        "title": "Best Prices",
+        "desc": "Competitive pricing and regular deals to save you money."
+      }
+    },
+    "cta": {
+      "explore": "Explore Our Products",
+      "startShopping": "Start Shopping",
+      "whyShop": "Why Shop With Us?",
+      "features": {
+        "shipping": "Free Shipping on ৳1000+",
+        "returns": "7-Day Easy Returns",
+        "secure": "Secure Payments",
+        "support": "24/7 Support"
+      }
+    },
+    "developedBy": {
+      "title": "Developed By",
+      "desc": "This e-commerce platform is designed and developed by DigitalCare Team.",
+      "visit": "Visit DigitalCare"
+    }
+  },
+  "Contact": {
+    "title": "We're Here to Help",
+    "subtitle": "Have a question or need assistance? Our team is ready to help you with anything you need.",
+    "methods": {
+      "call": { "title": "Call Us", "desc": "Mon-Sat, 10am-8pm" },
+      "email": { "title": "Email Us", "desc": "We'll reply within 24h" },
+      "chat": { "title": "Live Chat", "desc": "Chat with our AI assistant", "value": "Start a conversation" },
+      "visit": { "title": "Visit Us", "desc": "Our main office", "value": "Dhanmondi, Dhaka" }
+    },
+    "form": {
+      "title": "Send us a Message",
+      "desc": "Fill out the form and we'll get back to you within 24 hours.",
+      "labels": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "subject": "Subject",
+        "message": "Message"
+      },
+      "placeholders": {
+        "name": "Your full name",
+        "email": "your@email.com",
+        "phone": "+880 1XXX XXXXXX",
+        "subject": "How can we help?",
+        "message": "Tell us more about your inquiry..."
+      },
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": {
+        "title": "Message Sent!",
+        "desc": "Thank you for reaching out. Our team will get back to you within 24 hours.",
+        "another": "Send Another Message"
+      },
+      "error": "Please fill in all required fields"
+    },
+    "followUs": {
+      "title": "Follow Us",
+      "desc": "Stay connected for updates and offers!"
+    },
+    "businessHours": {
+      "title": "Business Hours",
+      "weekdays": "Saturday - Thursday",
+      "friday": "Friday",
+      "closed": "Closed"
+    },
+    "quickLinks": {
+      "title": "Quick Links",
+      "faq": "Frequently Asked Questions",
+      "returns": "Returns & Shipping",
+      "track": "Track Your Order"
+    },
+    "location": {
+      "city": "Dhanmondi, Dhaka",
+      "country": "Bangladesh"
+    },
+    "Orders": {
+      "title": "My Orders",
+      "subtitle": "Track and manage your orders",
+      "refresh": "Refresh",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded"
+      },
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "loading": "Loading your orders...",
+      "empty": {
+        "title": "No orders yet",
+        "titleFiltered": "No {status} orders",
+        "desc": "Start shopping to see your orders here",
+        "descFiltered": "You don't have any orders with \"{status}\" status",
+        "action": "Start Shopping",
+        "viewAll": "View All Orders"
+      },
+      "card": {
+        "orderNumber": "Order #{number}",
+        "items": "{count} items",
+        "total": "Total:",
+        "payment": "Payment:",
+        "cod": "Cash on Delivery",
+        "viewDetails": "View Details",
+        "track": "Track",
+        "reorder": "Reorder"
+      },
+      "summary": "Showing {shown} of {total} orders",
+      "help": {
+        "title": "Need Help?",
+        "desc": "Have questions about your order? We're here to help!",
+        "call": "Call Support",
+        "chat": "Chat with Us"
+      }
+    },
+    "Wishlist": {
+      "title": "My Wishlist",
+      "subtitle": "{count} {count, plural, =1 {item} other {items}} saved",
+      "loading": "Loading your wishlist...",
+      "empty": {
+        "title": "Your wishlist is empty",
+        "desc": "Start adding products you love to your wishlist!",
+        "action": "Start Shopping"
+      },
+      "error": {
+        "login": "Sign in to save and view your favorite items.",
+        "generic": "Failed to load wishlist. Please try again.",
+        "refresh": "Please try refreshing the page.",
+        "signIn": "Sign In",
+        "tryAgain": "Try Again"
+      },
+      "card": {
+        "outOfStock": "Out of Stock",
+        "addToCart": "Add to Cart",
+        "adding": "Adding...",
+        "remove": "Remove from wishlist"
+      },
+      "continueShopping": "Continue Shopping",
+      "toast": {
+        "removed": "Removed from wishlist",
+        "removeError": "Failed to remove item",
+        "addedToCart": "Added to cart"
+      }
+    },
+    "Search": {
+      "placeholder": "Search for products...",
+      "button": "Search",
+      "loading": "Loading products...",
+      "results": {
+        "count": "{count} {count, plural, =1 {result} other {results}}",
+        "for": "for \"{query}\"",
+        "empty": "No products found",
+        "emptyDesc": "Try adjusting your search or filters",
+        "browseAll": "Browse All Products"
+      },
+      "filters": {
+        "title": "Filters",
+        "priceRange": "Price Range",
+        "categories": "Categories",
+        "clear": "Clear Filters"
+      },
+      "sort": {
+        "relevance": "Relevance",
+        "priceLow": "Price: Low to High",
+        "priceHigh": "Price: High to Low"
+      },
+      "card": {
+        "addToCart": "Add to Cart"
+      }
+    },
+    "FAQ": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about orders, shipping, returns, and more.",
+      "searchPlaceholder": "Search for answers...",
+      "noResults": "No results found for \"{query}\"",
+      "cta": {
+        "title": "Still have questions?",
+        "desc": "Our support team is available 24/7 to help you with any questions.",
+        "button": "Contact Support"
+      },
+      "categories": {
+        "orders": "Orders & Shipping",
+        "returns": "Returns & Refunds",
+        "payments": "Payments",
+        "account": "Account"
+      },
+      "questions": {
+        "orders": {
+          "track": {
+            "q": "How can I track my order?",
+            "a": "You can track your order by visiting the Track Order page and entering your order number. You'll also receive tracking updates via email and SMS."
+          },
+          "delivery": {
+            "q": "How long does delivery take?",
+            "a": "Inside Dhaka: 2-3 business days. Outside Dhaka: 3-5 business days. Express delivery options are available at checkout for faster delivery."
+          },
+          "shipping": {
+            "q": "Do you offer free shipping?",
+            "a": "Yes! We offer free shipping on all orders above ৳1000. Orders below this amount have a flat shipping fee of ৳60 (Dhaka) or ৳120 (Outside Dhaka)."
+          },
+          "address": {
+            "q": "Can I change my delivery address after placing an order?",
+            "a": "You can change your delivery address within 2 hours of placing your order by contacting our support team. After this window, changes may not be possible if the order has already been processed."
+          }
+        },
+        "returns": {
+          "policy": {
+            "q": "What is your return policy?",
+            "a": "We offer a 7-day return policy for most items. Products must be unused, in original packaging, and with all tags attached. Some items like undergarments and perishables are non-returnable."
+          },
+          "initiate": {
+            "q": "How do I initiate a return?",
+            "a": "Go to your Orders page, select the order, and click 'Return Item'. Follow the instructions to print your return label and schedule a pickup or drop-off."
+          },
+          "refund": {
+            "q": "How long does a refund take?",
+            "a": "Refunds are processed within 5-7 business days after we receive and inspect the returned item. The amount will be credited to your original payment method."
+          },
+          "exchange": {
+            "q": "Can I exchange an item instead of returning it?",
+            "a": "Yes! During the return process, you can choose to exchange for a different size or color. We'll ship the replacement as soon as we receive your return."
+          }
+        },
+        "payments": {
+          "methods": {
+            "q": "What payment methods do you accept?",
+            "a": "We accept bKash, Nagad, Visa, Mastercard, American Express, and Cash on Delivery (COD). All online payments are secured with SSL encryption."
+          },
+          "cod": {
+            "q": "Is Cash on Delivery available everywhere?",
+            "a": "COD is available for most locations in Bangladesh. Some remote areas may have COD restrictions. You'll see available payment options at checkout based on your delivery address."
+          },
+          "charges": {
+            "q": "Are there any extra charges for Cash on Delivery?",
+            "a": "There's a small COD fee of ৳20 per order. This helps cover the additional logistics costs for handling cash payments."
+          },
+          "secure": {
+            "q": "Is my payment information secure?",
+            "a": "Absolutely! We use industry-standard SSL encryption and never store your card details. All transactions are processed through secure, PCI-compliant payment gateways."
+          }
+        },
+        "account": {
+          "create": {
+            "q": "How do I create an account?",
+            "a": "Click the 'Sign Up' button in the header, enter your email and create a password. You can also sign up quickly using your Google account."
+          },
+          "forgot": {
+            "q": "I forgot my password. How do I reset it?",
+            "a": "Click 'Forgot Password' on the login page, enter your email, and we'll send you a reset link. The link is valid for 24 hours."
+          },
+          "guest": {
+            "q": "Can I order without creating an account?",
+            "a": "Currently, you need an account to place orders. This helps us track your orders and provide better support. Creating an account takes less than a minute!"
+          },
+          "delete": {
+            "q": "How do I delete my account?",
+            "a": "Contact our support team to request account deletion. We'll process your request within 48 hours and confirm via email."
+          }
+        }
+      }
+    }
+  },
+  "Cart": {
+    "title": "Shopping Cart",
+    "empty": {
+      "title": "Your cart is empty",
+      "desc": "Looks like you haven't added anything to your cart yet. Explore our products and find something you'll love!",
+      "startShopping": "Start Shopping"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "total": "Total",
+      "free": "FREE",
+      "checkout": "Proceed to Checkout",
+      "continue": "Continue Shopping",
+      "discount": "Discount Code",
+      "apply": "Apply",
+      "shippingMsg": "Add {amount} more for free shipping!",
+      "freeShipping": "You've unlocked free shipping!"
+    },
+    "itemsCount": "{count} items in your cart"
+  },
+  "ProductsPage": {
+    "title": "All Products",
+    "meta": {
+      "title": "All Products",
+      "description": "Browse our collection of premium products"
+    },
+    "search": {
+      "title": "Search: \"{query}\"",
+      "placeholder": "Search products...",
+      "found": "Found {count} products matching your search",
+      "defaultDesc": "Discover our curated collection of premium products"
+    },
+    "filters": {
+      "title": "Filters",
+      "all": "All",
+      "showing": "Showing {count} products",
+      "sort": {
+        "bestSelling": "Best Selling",
+        "priceLowHigh": "Price: Low to High",
+        "priceHighLow": "Price: High to Low",
+        "newest": "Newest First"
+      }
+    },
+    "empty": {
+      "title": "No Products Yet",
+      "desc": "Products will appear here once they're added to the store."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "newsletter": {
+      "title": "Get 10% Off Your First Order!",
+      "desc": "Subscribe to our newsletter and get exclusive offers, new arrivals, and special discounts delivered to your inbox.",
+      "placeholder": "Enter your email",
+      "subscribe": "Subscribe"
+    }
+  },
+  "OrderConfirmation": {
+    "title": "Thank You!",
+    "subtitle": "Your order has been placed successfully",
+    "orderNumber": "Order Number",
+    "orderDate": "Order Date",
+    "summary": "Order Summary",
+    "qty": "Qty: {count}",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "FREE",
+    "total": "Total",
+    "shippingAddress": "Shipping Address",
+    "payment": "Payment",
+    "methods": {
+      "card": "Credit Card",
+      "stripe": "Paid via Stripe",
+      "cod": "Cash on Delivery",
+      "payOnDelivery": "Pay when you receive"
+    },
+    "estimatedDelivery": {
+      "title": "Estimated Delivery",
+      "desc": "We'll send you updates about your order status"
+    },
+    "actions": {
+      "track": "Track Order",
+      "continue": "Continue Shopping"
+    },
+    "emailNotice": "📧 A confirmation email has been sent to your email address"
+  },
+  "TrackOrder": {
+    "title": "Track Your Order",
+    "subtitle": "Enter your order number to track current status and delivery details",
+    "form": {
+      "label": "Order Number",
+      "placeholder": "e.g., ORD-123456",
+      "button": "Track Order",
+      "error": {
+        "required": "Please enter an order number",
+        "notFound": "Order not found. Please check the order number and try again.",
+        "failed": "Failed to search. Please try again."
+      }
+    },
+    "status": {
+      "pending": "Order Placed",
+      "confirmed": "Confirmed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "timeline": {
+      "pending": "Pending",
+      "placedOn": "Placed on {date}"
+    },
+    "details": {
+      "items": "Order Items",
+      "shipping": "Shipping Address",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "discount": "Discount"
+    },
+    "actions": {
+      "viewOrders": "View All Orders",
+      "continueShopping": "Continue Shopping"
+    }
+  },
+  "Blog": {
+    "title": "Our Blog",
+    "subtitle": "Insights, tips, and stories about shopping, technology, fashion, and more.",
+    "categories": {
+      "all": "All",
+      "tech": "Technology",
+      "guide": "Buying Guide",
+      "guides": "Guides",
+      "fashion": "Fashion",
+      "fitness": "Fitness"
+    },
+    "featured": "Featured",
+    "readMore": "Read More",
+    "newsletter": {
+      "title": "Subscribe to Our Newsletter",
+      "desc": "Get the latest articles, deals, and updates delivered straight to your inbox.",
+      "placeholder": "Enter your email",
+      "subscribe": "Subscribe"
+    }
+  },
+  "Legal": {
+    "Privacy": {
+      "title": "Privacy Policy",
+      "meta": {
+        "title": "Privacy Policy",
+        "description": "Learn about how {name} collects, uses, and protects your personal information."
+      },
+      "lastUpdated": "Last updated: December 24, 2024",
+      "intro": "At {name}, we collect information to provide better services to our users. The types of information we collect include:",
+      "sections": {
+        "1": { "title": "1. Information We Collect", "list": ["<b>Personal Information:</b> Name, email address, phone number, shipping address", "<b>Payment Information:</b> Credit card details (processed securely through payment gateways)", "<b>Usage Data:</b> Pages visited, time spent on site, browser type", "<b>Device Information:</b> IP address, device type, operating system"] },
+        "2": { "title": "2. How We Use Your Information", "content": "We use the information we collect for the following purposes:", "list": ["Processing and fulfilling your orders", "Communicating with you about orders, products, and services", "Improving our website and customer experience", "Sending promotional offers (with your consent)", "Preventing fraud and ensuring security"] },
+        "3": { "title": "3. Information Sharing", "content": "We do not sell your personal information to third parties. We may share your information with:", "list": ["<b>Service Providers:</b> Shipping companies, payment processors", "<b>Legal Requirements:</b> When required by law or to protect our rights", "<b>Business Transfers:</b> In case of merger or acquisition"] },
+        "4": { "title": "4. Data Security", "content": "We implement industry-standard security measures to protect your personal information:", "list": ["SSL encryption for all data transmission", "Secure payment processing through trusted gateways", "Regular security audits and updates", "Limited access to personal data by authorized personnel only"] },
+        "5": { "title": "5. Cookies", "content": "We use cookies to enhance your browsing experience. Cookies help us:", "list": ["Remember your preferences and cart items", "Analyze website traffic and usage patterns", "Provide personalized recommendations"], "note": "You can control cookie settings through your browser. Disabling cookies may affect some features of our website." },
+        "6": { "title": "6. Your Rights", "content": "You have the right to:", "list": ["Access the personal information we hold about you", "Request correction of inaccurate data", "Request deletion of your data (subject to legal requirements)", "Opt-out of marketing communications", "Withdraw consent at any time"] },
+        "7": { "title": "7. Children's Privacy", "content": "Our services are not intended for children under 13. We do not knowingly collect personal information from children under 13. If you believe we have collected such information, please contact us immediately." },
+        "8": { "title": "8. Changes to This Policy", "content": "We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting a notice on our website or sending you an email." },
+        "9": { "title": "9. Contact Us", "content": "If you have any questions about this Privacy Policy or our data practices, please contact us:", "list": ["Email: privacy@dcstore.com", "Phone: +880 1XXX XXXXXX", "Address: Dhaka, Bangladesh"] }
+      }
+    },
+    "Terms": {
+      "title": "Terms of Service",
+      "meta": {
+        "title": "Terms of Service",
+        "description": "Read the terms of service for {name}. These terms govern your use of our website and services."
+      },
+      "lastUpdated": "Last updated: December 24, 2024",
+      "sections": {
+        "1": { "title": "1. Introduction", "content": "Welcome to {name}. By accessing and using our website, you agree to be bound by these Terms of Service. Please read them carefully before using our services." },
+        "2": { "title": "2. Definitions", "list": ["<b>\"Service\"</b> refers to the {name} website and all related services.", "<b>\"User\"</b> refers to any individual who accesses or uses our Service.", "<b>\"Products\"</b> refers to items available for purchase on our website."] },
+        "3": { "title": "3. Account Registration", "content": "To access certain features of our Service, you may need to create an account. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account." },
+        "4": { "title": "4. Orders and Payment", "content": "All orders are subject to acceptance and availability. We reserve the right to refuse or cancel any order for any reason. Prices are subject to change without notice.", "list": ["Orders are confirmed only after successful payment processing", "We accept major credit cards, bKash, and Nagad", "All prices are displayed in Bangladeshi Taka (BDT)"] },
+        "5": { "title": "5. Shipping and Delivery", "content": "We strive to deliver your orders within the estimated timeframe. Delivery times may vary based on location and product availability.", "list": ["Inside Dhaka: 2-3 business days", "Outside Dhaka: 3-5 business days", "Shipping costs are calculated at checkout"] },
+        "6": { "title": "6. Returns and Refunds", "content": "We offer a 7-day return policy for most items. Products must be unused and in their original packaging. Refunds will be processed within 5-7 business days after receiving the returned item." },
+        "7": { "title": "7. Intellectual Property", "content": "All content on this website, including text, images, logos, and graphics, is the property of {name} and is protected by copyright laws." },
+        "8": { "title": "8. Limitation of Liability", "content": "{name} shall not be liable for any indirect, incidental, special, or consequential damages arising out of your use of our Service." },
+        "9": { "title": "9. Changes to Terms", "content": "We reserve the right to modify these Terms of Service at any time. Changes will be effective immediately upon posting on our website." },
+        "10": { "title": "10. Contact Information", "content": "If you have any questions about these Terms, please contact us at:", "list": ["Email: support@dcstore.com", "Phone: +880 1XXX XXXXXX"] }
+      }
+    },
+    "Returns": {
+      "title": "Returns & Shipping",
+      "subtitle": "Everything you need to know about returns and delivery",
+      "meta": {
+        "title": "Returns & Shipping",
+        "description": "Learn about our return policy, shipping options, and delivery information."
+      },
+      "policy": {
+        "title": "Return Policy",
+        "banner": { "title": "7-Day Easy Returns", "desc": "Not satisfied with your purchase? Return it within 7 days for a full refund. No questions asked!" },
+        "steps": {
+          "request": { "title": "Request Return", "desc": "Go to Orders and select the item to return" },
+          "approve": { "title": "Get Approved", "desc": "We'll review and approve within 24 hours" },
+          "ship": { "title": "Ship Item", "desc": "Pack the item and schedule a pickup" },
+          "refund": { "title": "Get Refund", "desc": "Receive your refund within 5-7 days" }
+        },
+        "eligible": { "title": "Eligible for Return", "list": ["Unused and unworn items", "Items in original packaging", "Items with all tags attached", "Items returned within 7 days"] },
+        "notEligible": { "title": "Not Eligible", "list": ["Undergarments and swimwear", "Perishable goods", "Customized or personalized items", "Items marked as final sale", "Items without original packaging"] }
+      },
+      "shipping": {
+        "title": "Shipping Information",
+        "banner": { "title": "Free Shipping on Orders ৳1000+", "desc": "Inside Dhaka • No code needed" },
+        "table": {
+          "zone": "Delivery Zone",
+          "time": "Delivery Time",
+          "cost": "Shipping Cost",
+          "freeAbove": "Free Above"
+        },
+        "zones": {
+          "dhaka": { "zone": "Inside Dhaka", "delivery": "2-3 Business Days" },
+          "outside": { "zone": "Outside Dhaka", "delivery": "3-5 Business Days" },
+          "remote": { "zone": "Remote Areas", "delivery": "5-7 Business Days" }
+        },
+        "note": "<b>Note:</b> Delivery times are estimates and may vary during peak seasons or due to unforeseen circumstances. You'll receive tracking information via SMS and email once your order ships."
+      },
+      "cta": {
+        "text": "Have more questions?",
+        "faq": "View FAQ",
+        "contact": "Contact Support"
+      }
+    }
+  },
+  "Offers": {
+    "title": "Offers & Deals",
+    "meta": {
+      "title": "Offers & Deals",
+      "description": "Check out our latest offers, flash sales, and exclusive deals. Save big on your favorite products!"
+    },
+    "hero": {
+      "title": "🎉 Hot Deals & Offers",
+      "subtitle": "Discover amazing discounts on your favorite products. Limited time offers you don't want to miss!",
+      "badges": {
+        "flash": "⚡ Flash Sales",
+        "bogo": "🎁 BOGO Deals",
+        "bundle": "📦 Bundle Savings",
+        "shipping": "🚚 Free Shipping"
+      }
+    },
+    "sections": {
+      "flash": {
+        "title": "⚡ Flash Sales",
+        "desc": "Limited time offers - grab them before they're gone!"
+      },
+      "bogo": {
+        "title": "🎁 Buy & Get Free",
+        "desc": "Buy more, save more with our BOGO deals"
+      },
+      "category": {
+        "title": "🏷️ Category Sales",
+        "desc": "Entire categories on discount!"
+      },
+      "bundle": {
+        "title": "📦 Bundle Deals",
+        "desc": "Buy together and save big!"
+      },
+      "shipping": {
+        "title": "🚚 Free Shipping",
+        "desc": "No delivery charges on these offers"
+      },
+      "promo": {
+        "title": "🎯 Special Promotions",
+        "desc": "Exclusive deals and promo codes"
+      }
+    },
+    "empty": {
+      "title": "No Active Offers",
+      "desc": "Check back soon for amazing deals!",
+      "cta": "Browse Products"
+    },
+    "cta": "View All Products",
+    "card": {
+      "shop": "Shop",
+      "freeShipping": "FREE SHIPPING",
+      "onOrdersAbove": "On orders above {amount}",
+      "buy2get1": "BUY 2 GET 1 FREE",
+      "off": "{amount} OFF",
+      "onAllItems": "On all {category} items",
+      "types": {
+        "flash_sale": "Flash Sale",
+        "category_sale": "Category Sale",
+        "buy_x_get_y": "Buy X Get Y",
+        "bundle": "Bundle Deal",
+        "free_shipping": "Free Shipping",
+        "promo_banner": "Promotion"
+      }
+    }
+  },
+  "ProductDetails": {
+    "backToProducts": "Back to Products",
+    "off": "OFF",
+    "featured": "Featured",
+    "highlights": "Highlights",
+    "rated": "Rated {rating} / 5",
+    "verifiedReviews": "{count} verified reviews",
+    "reviewsCount": "{count} Reviews",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "specialOffer": "Special Offer Price",
+    "startingFrom": "Starting from",
+    "save": "Save {amount}",
+    "needHelp": "Need help?",
+    "helpDesc": "Chat with our support team for personalized recommendations, delivery schedules, or bulk order support. We are online 9am – 11pm daily.",
+    "relatedProducts": "Related Products",
+    "tabs": {
+      "description": "Description",
+      "reviews": "Reviews ({count})",
+      "shipping": "Shipping"
+    },
+    "reviews": {
+      "verifiedPurchase": "Verified Purchase",
+      "noReviews": "No reviews yet. Be the first to review this product!"
+    },
+    "shipping": {
+      "deliveryInfo": "Delivery Information",
+      "deliveryPoints": {
+        "inside": "Inside Dhaka: 2-3 business days",
+        "outside": "Outside Dhaka: 3-5 business days",
+        "free": "Free shipping on orders over ৳2000"
+      },
+      "returnPolicy": "Return Policy",
+      "returnDesc": "We offer a 7-day return policy for unused items in original packaging. Please contact our support team to initiate a return."
+    },
+    "features": {
+      "delivery": { "title": "Fast Delivery", "desc": "Delivery within 2-3 business days" },
+      "payment": { "title": "Secure Payment", "desc": "100% secure payment gateway" },
+      "returns": { "title": "Easy Returns", "desc": "7-day return policy" }
+    }
+  }
+}
