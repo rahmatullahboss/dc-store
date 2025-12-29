@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowRight, Zap, Tag, Gift, Package, Truck, Percent } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CountdownTimer } from "@/components/common/countdown-timer";

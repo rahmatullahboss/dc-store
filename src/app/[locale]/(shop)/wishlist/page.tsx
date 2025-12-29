@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { Heart, ShoppingCart, Trash2, ArrowRight, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";

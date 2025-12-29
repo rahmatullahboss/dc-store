@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { FileText, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { siteConfig } from "@/lib/config";

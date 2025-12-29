@@ -28,7 +28,7 @@ export async function getCategories(): Promise<CategoryWithCount[]> {
       productCount: sql<number>`(
         SELECT COUNT(*) FROM products 
         WHERE products.category_id = ${categories.id} 
-        AND products.is_active = TRUE
+        AND products.is_active = 1
       )`.as("productCount"),
     })
     .from(categories)

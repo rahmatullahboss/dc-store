@@ -5,7 +5,7 @@ import { formatPrice } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 interface Coupon {
   id: string;

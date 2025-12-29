@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { ArrowRight, ShoppingBag, Package } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

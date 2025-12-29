@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { CheckCircle2, Package, Truck, MapPin, CreditCard, ArrowRight, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getDatabase } from "@/lib/cloudflare";
