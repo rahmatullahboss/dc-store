@@ -7,66 +7,9 @@ import 'package:toastification/toastification.dart';
 import '../../core/config/white_label_config.dart';
 import '../../data/address_repository.dart';
 import '../../data/models/address/address_model.dart';
+import '../../features/auth/presentation/providers/auth_provider.dart';
 
-/// Address Type Enum
-enum AddressType { home, office, other }
-
-/// Address Model
-class Address {
-  final String id;
-  final String name;
-  final String phone;
-  final String addressLine1;
-  final String addressLine2;
-  final String city;
-  final String state;
-  final String zipCode;
-  final String country;
-  final AddressType type;
-  final bool isDefault;
-
-  const Address({
-    required this.id,
-    required this.name,
-    required this.phone,
-    required this.addressLine1,
-    this.addressLine2 = '',
-    required this.city,
-    required this.state,
-    required this.zipCode,
-    this.country = 'Bangladesh',
-    this.type = AddressType.home,
-    this.isDefault = false,
-  });
-
-  Address copyWith({
-    String? id,
-    String? name,
-    String? phone,
-    String? addressLine1,
-    String? addressLine2,
-    String? city,
-    String? state,
-    String? zipCode,
-    String? country,
-    AddressType? type,
-    bool? isDefault,
-  }) {
-    return Address(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
-      addressLine1: addressLine1 ?? this.addressLine1,
-      addressLine2: addressLine2 ?? this.addressLine2,
-      city: city ?? this.city,
-      state: state ?? this.state,
-      zipCode: zipCode ?? this.zipCode,
-      country: country ?? this.country,
-      type: type ?? this.type,
-      isDefault: isDefault ?? this.isDefault,
-    );
-  }
-}
+// Use AddressType from AddressModel
 
 class AddressesScreen extends ConsumerStatefulWidget {
   const AddressesScreen({super.key});
@@ -76,122 +19,146 @@ class AddressesScreen extends ConsumerStatefulWidget {
 }
 
 class _AddressesScreenState extends ConsumerState<AddressesScreen> {
-  static const int _maxAddresses = 5;
+  static const int _maxAddresses = WhiteLabelConfig.maxAddresses;
+  bool _isLoading = false;
 
-  List<Address> _addresses = [
-    const Address(
-      id: '1',
-      name: 'John Doe',
-      phone: '+880 1234567890',
-      addressLine1: '123 Maple Avenue, Apt 4B',
-      city: 'Dhaka',
-      state: 'Dhaka Division',
-      zipCode: '1205',
-      type: AddressType.home,
-      isDefault: true,
-    ),
-    const Address(
-      id: '2',
-      name: 'John Doe',
-      phone: '+880 9876543210',
-      addressLine1: 'Tech Park, Building C, Floor 5',
-      addressLine2: '456 Innovation Blvd',
-      city: 'Chittagong',
-      state: 'Chittagong Division',
-      zipCode: '4000',
-      type: AddressType.office,
-      isDefault: false,
-    ),
-    const Address(
-      id: '3',
-      name: 'Jane Doe',
-      phone: '+880 1111111111',
-      addressLine1: '789 Country Road',
-      city: 'Sylhet',
-      state: 'Sylhet Division',
-      zipCode: '3100',
-      type: AddressType.other,
-      isDefault: false,
-    ),
-  ];
+  Future<void> _refreshAddresses() async {
+    ref.invalidate(addressesProvider);
+  }
 
-  void _showAddEditSheet({Address? address}) {
+  void _showAddEditSheet({AddressModel? address}) {
+    final user = ref.read(authControllerProvider).value?.user;
+    if (user == null) {
+      toastification.show(
+        context: context,
+        type: ToastificationType.error,
+        title: const Text('You must be logged in to manage addresses'),
+        autoCloseDuration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _AddEditAddressSheet(
         address: address,
-        onSave: (newAddress) {
-          setState(() {
+        userId: user.id,
+        onSave: (newAddress) async {
+          setState(() => _isLoading = true);
+          final repository = ref.read(addressRepositoryProvider);
+
+          // Save (Add or Edit)
+          try {
             if (address != null) {
-              // Edit existing
-              final index = _addresses.indexWhere((a) => a.id == address.id);
-              if (index != -1) {
-                _addresses[index] = newAddress;
-              }
+              await repository.updateAddress(newAddress);
             } else {
-              // Add new
-              _addresses.add(newAddress);
+              await repository.addAddress(newAddress);
             }
-            // Handle default
-            if (newAddress.isDefault) {
-              _addresses = _addresses.map((a) {
-                return a.id == newAddress.id ? a : a.copyWith(isDefault: false);
-              }).toList();
+
+            setState(() => _isLoading = false);
+            await _refreshAddresses();
+
+            if (mounted) {
+              toastification.show(
+                context: context,
+                type: ToastificationType.success,
+                title: Text(
+                  address != null ? 'Address updated' : 'Address added',
+                ),
+                autoCloseDuration: const Duration(seconds: 2),
+              );
             }
-          });
-          toastification.show(
-            context: context,
-            type: ToastificationType.success,
-            title: Text(address != null ? 'Address updated' : 'Address added'),
-            autoCloseDuration: const Duration(seconds: 2),
-          );
+          } catch (e) {
+            setState(() => _isLoading = false);
+            if (mounted) {
+              toastification.show(
+                context: context,
+                type: ToastificationType.error,
+                title: Text('Failed to save address: ${e.toString()}'),
+                autoCloseDuration: const Duration(seconds: 3),
+              );
+            }
+          }
         },
       ),
     );
   }
 
-  void _showDeleteDialog(Address address) {
+  void _showDeleteDialog(AddressModel address) {
     showDialog(
       context: context,
       builder: (context) => _DeleteConfirmationDialog(
-        onConfirm: () {
-          setState(() {
-            _addresses.removeWhere((a) => a.id == address.id);
-            // If deleted was default, make first one default
-            if (address.isDefault && _addresses.isNotEmpty) {
-              _addresses[0] = _addresses[0].copyWith(isDefault: true);
-            }
-          });
+        onConfirm: () async {
           Navigator.pop(context);
-          toastification.show(
-            context: context,
-            type: ToastificationType.success,
-            title: const Text('Address deleted'),
-            autoCloseDuration: const Duration(seconds: 2),
-          );
+          setState(() => _isLoading = true);
+
+          try {
+            final repository = ref.read(addressRepositoryProvider);
+            await repository.deleteAddress(address.id);
+
+            setState(() => _isLoading = false);
+            await _refreshAddresses();
+
+            if (mounted) {
+              toastification.show(
+                context: context,
+                type: ToastificationType.success,
+                title: const Text('Address deleted'),
+                autoCloseDuration: const Duration(seconds: 2),
+              );
+            }
+          } catch (e) {
+            setState(() => _isLoading = false);
+            if (mounted) {
+              toastification.show(
+                context: context,
+                type: ToastificationType.error,
+                title: Text('Failed to delete address: ${e.toString()}'),
+                autoCloseDuration: const Duration(seconds: 3),
+              );
+            }
+          }
         },
       ),
     );
   }
 
-  void _setAsDefault(Address address) {
-    setState(() {
-      _addresses = _addresses.map((a) {
-        return a.copyWith(isDefault: a.id == address.id);
-      }).toList();
-    });
-    toastification.show(
-      context: context,
-      type: ToastificationType.success,
-      title: const Text('Default address updated'),
-      autoCloseDuration: const Duration(seconds: 2),
-    );
+  void _setAsDefault(AddressModel address) async {
+    setState(() => _isLoading = true);
+
+    try {
+      final repository = ref.read(addressRepositoryProvider);
+      await repository.updateAddress(address.copyWith(isDefault: true));
+
+      setState(() => _isLoading = false);
+      await _refreshAddresses();
+
+      if (mounted) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          title: const Text('Default address updated'),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          title: Text('Failed to update default address: ${e.toString()}'),
+          autoCloseDuration: const Duration(seconds: 3),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final addressesAsync = ref.watch(addressesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
         ? const Color(0xFF101622)
@@ -224,56 +191,84 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
         ),
         centerTitle: true,
         actions: [
-          if (_addresses.length < _maxAddresses)
-            TextButton(
-              onPressed: () => _showAddEditSheet(),
-              child: const Text(
-                'Add',
-                style: TextStyle(
-                  color: WhiteLabelConfig.accentColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
-            ),
+          addressesAsync.maybeWhen(
+            data: (addresses) => addresses.length < _maxAddresses
+                ? TextButton(
+                    onPressed: () => _showAddEditSheet(),
+                    child: const Text(
+                      'Add',
+                      style: TextStyle(
+                        color: WhiteLabelConfig.accentColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            orElse: () => const SizedBox.shrink(),
+          ),
         ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: _addresses.isEmpty
-                ? _buildEmptyState(textColor, subtleTextColor)
-                : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _addresses.length + 1, // +1 for count indicator
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
-                      if (index == _addresses.length) {
-                        // Address count indicator
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Text(
-                              '${_addresses.length} of $_maxAddresses addresses used',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: subtleTextColor.withAlpha(150),
+            child: addressesAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      LucideIcons.alertCircle,
+                      size: 48,
+                      color: subtleTextColor,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load addresses',
+                      style: TextStyle(color: textColor),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => ref.invalidate(addressesProvider),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+              data: (addresses) => addresses.isEmpty
+                  ? _buildEmptyState(textColor, subtleTextColor)
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: addresses.length + 1, // +1 for count indicator
+                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      itemBuilder: (context, index) {
+                        if (index == addresses.length) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                '${addresses.length} of $_maxAddresses addresses used',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: subtleTextColor.withAlpha(150),
+                                ),
                               ),
                             ),
-                          ),
+                          );
+                        }
+                        return _buildAddressCard(
+                          addresses[index],
+                          index,
+                          isDark,
+                          surfaceColor,
+                          textColor,
+                          subtleTextColor,
+                          borderColor,
                         );
-                      }
-                      return _buildAddressCard(
-                        _addresses[index],
-                        index,
-                        isDark,
-                        surfaceColor,
-                        textColor,
-                        subtleTextColor,
-                        borderColor,
-                      );
-                    },
-                  ),
+                      },
+                    ),
+            ),
           ),
           // Sticky Footer
           Container(
@@ -287,9 +282,12 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _addresses.length < _maxAddresses
-                      ? () => _showAddEditSheet()
-                      : null,
+                  onPressed: addressesAsync.maybeWhen(
+                    data: (addresses) => addresses.length < _maxAddresses
+                        ? () => _showAddEditSheet()
+                        : null,
+                    orElse: () => null,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Colors.black,
                     foregroundColor: isDark ? Colors.black : Colors.white,
@@ -343,7 +341,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
   }
 
   Widget _buildAddressCard(
-    Address address,
+    AddressModel address,
     int index,
     bool isDark,
     Color surfaceColor,
@@ -473,7 +471,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${address.addressLine1}${address.addressLine2.isNotEmpty ? '\n${address.addressLine2}' : ''}\n${address.city}, ${address.state} ${address.zipCode}\n${address.country}',
+                        '${address.addressLine1}${(address.addressLine2 ?? '').isNotEmpty ? '\n${address.addressLine2}' : ''}\n${address.city}, ${address.state} ${address.zipCode}\n${address.country}',
                         style: TextStyle(
                           fontSize: 13,
                           color: subtleTextColor,
@@ -628,10 +626,15 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
 // ═══════════════════════════════════════════════════════════════
 
 class _AddEditAddressSheet extends StatefulWidget {
-  final Address? address;
-  final Function(Address) onSave;
+  final AddressModel? address;
+  final String userId;
+  final Function(AddressModel) onSave;
 
-  const _AddEditAddressSheet({this.address, required this.onSave});
+  const _AddEditAddressSheet({
+    this.address,
+    required this.userId,
+    required this.onSave,
+  });
 
   @override
   State<_AddEditAddressSheet> createState() => _AddEditAddressSheetState();
@@ -688,10 +691,11 @@ class _AddEditAddressSheetState extends State<_AddEditAddressSheet> {
       return;
     }
 
-    final newAddress = Address(
+    final newAddress = AddressModel(
       id:
           widget.address?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
+      userId: widget.userId,
       name: _nameController.text,
       phone: '+880 ${_phoneController.text}',
       addressLine1: _addressController.text,

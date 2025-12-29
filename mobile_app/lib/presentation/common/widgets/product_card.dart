@@ -308,25 +308,30 @@ class _ProductCardState extends State<ProductCard>
                       ),
                       const SizedBox(height: 10),
                       // Order Now Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 34,
-                        child: ElevatedButton(
-                          onPressed: widget.onOrderNow,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 0,
+                      GestureDetector(
+                        onTap: widget.onOrderNow,
+                        child: Container(
+                          width: double.infinity,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(50),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withAlpha(77),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
-                          child: const Text(
-                            "Order Now",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                          child: const Center(
+                            child: Text(
+                              "Order Now",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),

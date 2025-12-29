@@ -355,7 +355,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final hasDiscount =
         item.product.compareAtPrice != null &&
         item.product.compareAtPrice! > item.product.price;
-    final isLowStock = item.product.stock <= 2;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -478,14 +477,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       "Default Variant",
                       style: TextStyle(fontSize: 12, color: subtleTextColor),
                     ),
-                    if (isLowStock)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
+                    // Show stock status (only Out of Stock if stock is 0)
+                    if (item.product.stock <= 0)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 2),
                         child: Text(
-                          "Only ${item.product.stock} left in stock",
-                          style: const TextStyle(
+                          "Out of stock",
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFFEA580C),
+                            color: Color(0xFFDC2626),
                             fontWeight: FontWeight.w500,
                           ),
                         ),

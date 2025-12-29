@@ -30,6 +30,9 @@ class WhiteLabelConfig {
   /// Short tagline for the app
   static const String appTagline = 'Shop Smart, Live Better';
 
+  /// Maximum number of addresses a user can have
+  static const int maxAddresses = 5;
+
   /// Company/brand name
   static const String companyName = 'Digital Care';
 

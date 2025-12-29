@@ -89,9 +89,9 @@ class SizeSelector extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.info,
+                    color: AppColors.accent,
                     decoration: TextDecoration.underline,
-                    decorationColor: AppColors.info,
+                    decorationColor: AppColors.accent,
                   ),
                 ),
               ),
@@ -164,18 +164,18 @@ class _SizeButton extends StatelessWidget {
         width: 56,
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.info
+              ? AppColors.accent
               : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected
-                ? AppColors.info
+                ? AppColors.accent
                 : (isDark ? AppColors.darkBorder : AppColors.border),
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.info.withAlpha(51),
+                    color: AppColors.accent.withAlpha(51),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

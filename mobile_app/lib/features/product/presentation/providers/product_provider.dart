@@ -46,10 +46,26 @@ final isSearchingProvider = Provider<bool>((ref) {
   return ref.watch(searchResultsProvider).isLoading;
 });
 
-/// Products by category provider
 final productsByCategoryProvider = FutureProvider.family<List<Product>, String>(
   (ref, categoryId) async {
     final repository = ref.watch(productRepositoryProvider);
     return repository.getProductsByCategory(categoryId);
   },
 );
+
+/// Related products provider - fetches products from same category, excluding current product
+final relatedProductsProvider =
+    FutureProvider.family<
+      List<Product>,
+      ({String productId, String? categoryId})
+    >((ref, params) async {
+      if (params.categoryId == null) return [];
+
+      final repository = ref.watch(productRepositoryProvider);
+      final products = await repository.getProductsByCategory(
+        params.categoryId!,
+      );
+
+      // Filter out the current product and limit to 6
+      return products.where((p) => p.id != params.productId).take(6).toList();
+    });

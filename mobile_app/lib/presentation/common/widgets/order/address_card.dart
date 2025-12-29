@@ -273,13 +273,13 @@ class _LabelBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: AppColors.info.withValues(alpha: 0.1),
+        color: AppColors.accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         label,
         style: AppTextStyles.overline.copyWith(
-          color: AppColors.info,
+          color: AppColors.accent,
           fontWeight: FontWeight.w600,
         ),
       ),

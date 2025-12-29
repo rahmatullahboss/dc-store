@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
 import { getProducts, getProductCategories } from "@/lib/queries";
+import { getCategoryBySlug } from "@/lib/queries/categories";
 
 // ISR: Cache for 3600 seconds (1 hour), on-demand revalidation via admin actions
 // Note: Only works with manual deploy (wrangler deploy), not Git integration
@@ -22,9 +23,19 @@ interface ProductsPageProps {
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;
   const searchQuery = params.search?.toLowerCase() || "";
-  const categoryFilter = params.category || "";
+  const categorySlug = params.category || "";
+
+  // If a category is selected, get its ID first
+  let targetCategoryId = "";
+  if (categorySlug && categorySlug !== "All") {
+    const category = await getCategoryBySlug(categorySlug);
+    if (category) {
+      targetCategoryId = category.id;
+    }
+  }
 
   // Fetch products and categories from database
+  // Pass categoryId to the query for better performance if filtering by category
   const [allProducts, categoryIds] = await Promise.all([
     getProducts(),
     getProductCategories(),
@@ -35,8 +46,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     const matchesSearch = !searchQuery || 
       product.name.toLowerCase().includes(searchQuery) ||
       (product.description && product.description.toLowerCase().includes(searchQuery));
-    const matchesCategory = !categoryFilter || categoryFilter === "All" || 
-      product.categoryId === categoryFilter;
+    
+    // Filter by category ID, not slug
+    const matchesCategory = !categorySlug || categorySlug === "All" || 
+      product.categoryId === targetCategoryId;
+      
     return matchesSearch && matchesCategory;
   });
 
@@ -83,8 +97,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-2 md:pb-0 scrollbar-hide">
               {categories.map((category) => {
                 const isActive = category.id === "All" 
-                  ? !categoryFilter 
-                  : categoryFilter === category.id;
+                  ? !categorySlug 
+                  : categorySlug === category.id;
                 return (
                   <Badge
                     key={category.id}

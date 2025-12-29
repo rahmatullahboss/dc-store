@@ -144,7 +144,7 @@ class OfferCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.info,
+                    color: AppColors.accent,
                   ),
                 ),
               ),
@@ -211,7 +211,7 @@ class OfferCard extends StatelessWidget {
   Color _getAccentColor() {
     switch (type) {
       case OfferType.bank:
-        return AppColors.info;
+        return AppColors.accent;
       case OfferType.special:
         return const Color(0xFFEA580C);
       case OfferType.coupon:

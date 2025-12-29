@@ -153,10 +153,10 @@ class _ImageCarouselState extends State<ImageCarousel> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _currentPage == index
-                          ? AppColors.info
+                          ? AppColors.accent
                           : Colors.white.withAlpha(128),
                       border: _currentPage == index
-                          ? Border.all(color: AppColors.info, width: 2)
+                          ? Border.all(color: AppColors.accent, width: 2)
                           : null,
                     ),
                   ),
@@ -189,7 +189,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: isSelected
-                                ? AppColors.info
+                                ? AppColors.accent
                                 : Colors.transparent,
                             width: 2,
                           ),

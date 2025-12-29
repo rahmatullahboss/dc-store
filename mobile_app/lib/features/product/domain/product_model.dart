@@ -43,7 +43,7 @@ class Product {
           [],
       categoryId: json['categoryId'] as String?,
       isFeatured: json['isFeatured'] as bool? ?? false,
-      stock: json['stock'] as int? ?? 0,
+      stock: json['quantity'] as int? ?? json['stock'] as int? ?? 0,
     );
   }
 }

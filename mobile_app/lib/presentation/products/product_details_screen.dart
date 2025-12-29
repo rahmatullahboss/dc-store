@@ -443,7 +443,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
                   // Similar Products
                   SliverToBoxAdapter(
-                    child: _buildSimilarProducts(isDark, textColor),
+                    child: _buildSimilarProducts(product, isDark, textColor),
                   ),
 
                   // Bottom Spacing for sticky footer
@@ -569,7 +569,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.info,
+                    color: AppColors.accent,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -735,7 +735,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Icon(LucideIcons.tag, size: 18, color: AppColors.info),
+                Icon(LucideIcons.tag, size: 18, color: AppColors.accent),
                 const SizedBox(width: 8),
                 Text(
                   'Available Offers',
@@ -946,7 +946,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       border: Border(
                         bottom: BorderSide(
                           color: isSelected
-                              ? AppColors.info
+                              ? AppColors.accent
                               : Colors.transparent,
                           width: 2,
                         ),
@@ -961,7 +961,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             ? FontWeight.w600
                             : FontWeight.w500,
                         color: isSelected
-                            ? AppColors.info
+                            ? AppColors.accent
                             : (isDark ? Colors.grey[400] : Colors.grey[500]),
                       ),
                     ),
@@ -1137,13 +1137,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildSimilarProducts(bool isDark, Color textColor) {
-    // Demo similar products
-    final similarProducts = [
-      {'name': 'Air Zoom Pegasus', 'category': 'Running', 'price': 120},
-      {'name': 'Blazer Mid \'77', 'category': 'Lifestyle', 'price': 95},
-      {'name': 'Free Run 5.0', 'category': 'Running', 'price': 100},
-    ];
+  Widget _buildSimilarProducts(dynamic product, bool isDark, Color textColor) {
+    // Fetch related products using the provider
+    final relatedProductsAsync = ref.watch(
+      relatedProductsProvider((
+        productId: product.id,
+        categoryId: product.categoryId,
+      )),
+    );
 
     return Container(
       margin: const EdgeInsets.only(top: 8),
@@ -1179,7 +1180,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.info,
+                      color: AppColors.accent,
                     ),
                   ),
                 ),
@@ -1192,93 +1193,125 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           // Products Horizontal Scroll
           SizedBox(
             height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: similarProducts.length,
-              itemBuilder: (context, index) {
-                final product = similarProducts[index];
-                return Container(
-                  width: 144,
-                  margin: const EdgeInsets.only(right: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Image
-                      Stack(
-                        children: [
-                          Container(
-                            height: 120,
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? AppColors.darkSurface
-                                  : Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
+            child: relatedProductsAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, __) => const Center(child: Text('Failed to load')),
+              data: (similarProducts) {
+                if (similarProducts.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No similar products found',
+                      style: TextStyle(color: textColor.withAlpha(153)),
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: similarProducts.length,
+                  itemBuilder: (context, index) {
+                    final relatedProduct = similarProducts[index];
+                    return GestureDetector(
+                      onTap: () =>
+                          context.push('/products/${relatedProduct.id}'),
+                      child: Container(
+                        width: 144,
+                        margin: const EdgeInsets.only(right: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Image
+                            Stack(
+                              children: [
+                                Container(
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? AppColors.darkSurface
+                                        : Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(12),
+                                    image: relatedProduct.featuredImage != null
+                                        ? DecorationImage(
+                                            image: NetworkImage(
+                                              relatedProduct.featuredImage!,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
+                                  ),
+                                  child: relatedProduct.featuredImage == null
+                                      ? Center(
+                                          child: Icon(
+                                            LucideIcons.image,
+                                            size: 32,
+                                            color: isDark
+                                                ? Colors.grey[600]
+                                                : Colors.grey[400],
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                                // Wishlist Button
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      color: isDark
+                                          ? Colors.black.withAlpha(51)
+                                          : Colors.white.withAlpha(179),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      LucideIcons.heart,
+                                      size: 14,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.grey[800],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: Center(
-                              child: Icon(
-                                LucideIcons.image,
-                                size: 32,
+                            const SizedBox(height: 8),
+                            // Name
+                            Text(
+                              relatedProduct.name,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: textColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            // Category
+                            Text(
+                              relatedProduct.categoryId ?? 'Product',
+                              style: TextStyle(
+                                fontSize: 12,
                                 color: isDark
-                                    ? Colors.grey[600]
+                                    ? Colors.grey[500]
                                     : Colors.grey[400],
                               ),
                             ),
-                          ),
-                          // Wishlist Button
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.black.withAlpha(51)
-                                    : Colors.white.withAlpha(179),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                LucideIcons.heart,
-                                size: 14,
-                                color: isDark ? Colors.white : Colors.grey[800],
+                            const SizedBox(height: 4),
+                            // Price
+                            Text(
+                              '৳${relatedProduct.price.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Name
-                      Text(
-                        product['name'] as String,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      // Category
-                      Text(
-                        product['category'] as String,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.grey[500] : Colors.grey[400],
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      // Price
-                      Text(
-                        '৳${product['price']}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -1356,8 +1389,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 children: [
                   // Add to Cart Button
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
+                    child: GestureDetector(
+                      onTap: () {
                         AppHaptics.mediumImpact();
                         for (var i = 0; i < _quantity; i++) {
                           ref.read(cartProvider.notifier).addToCart(product);
@@ -1371,14 +1404,31 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           autoCloseDuration: const Duration(seconds: 2),
                         );
                       },
-                      icon: const Icon(LucideIcons.shoppingCart, size: 18),
-                      label: const Text('Add'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.info,
-                        side: BorderSide(color: AppColors.info),
+                      child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: AppColors.accent, width: 2),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              LucideIcons.shoppingCart,
+                              size: 18,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Add',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.accent,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -1389,8 +1439,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   // Buy Now Button
                   Expanded(
                     flex: 2,
-                    child: ElevatedButton(
-                      onPressed: () {
+                    child: GestureDetector(
+                      onTap: () {
                         AppHaptics.heavyImpact();
                         for (var i = 0; i < _quantity; i++) {
                           ref.read(cartProvider.notifier).addToCart(product);
@@ -1398,21 +1448,28 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         // Use context.go for shell route tab navigation
                         context.go('/cart');
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.info,
-                        foregroundColor: Colors.white,
+                      child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent,
+                          borderRadius: BorderRadius.circular(50),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.accent.withAlpha(77),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        elevation: 4,
-                        shadowColor: AppColors.info.withAlpha(77),
-                      ),
-                      child: const Text(
-                        'Buy Now',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                        child: const Center(
+                          child: Text(
+                            'Buy Now',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),

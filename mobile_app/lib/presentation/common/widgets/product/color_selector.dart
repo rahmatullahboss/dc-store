@@ -111,7 +111,7 @@ class ColorSelector extends StatelessWidget {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppColors.info.withAlpha(77),
+                            color: AppColors.accent.withAlpha(77),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -129,7 +129,7 @@ class ColorSelector extends StatelessWidget {
                           transformAlignment: Alignment.center,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.info, width: 2),
+                            border: Border.all(color: AppColors.accent, width: 2),
                           ),
                         ),
                       ),
