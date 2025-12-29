@@ -1,6 +1,6 @@
-import { eq, sql, and } from "drizzle-orm";
+import { eq, and, count } from "drizzle-orm";
 import { getDatabase } from "@/lib/cloudflare";
-import { categories } from "@/db/schema";
+import { categories, products } from "@/db/schema";
 import type { Category } from "@/db/schema";
 
 export interface CategoryWithCount extends Category {
@@ -13,29 +13,33 @@ export interface CategoryWithCount extends Category {
 export async function getCategories(): Promise<CategoryWithCount[]> {
   const db = await getDatabase();
   
-  const result = await db
-    .select({
-      id: categories.id,
-      name: categories.name,
-      slug: categories.slug,
-      description: categories.description,
-      image: categories.image,
-      parentId: categories.parentId,
-      sortOrder: categories.sortOrder,
-      isActive: categories.isActive,
-      createdAt: categories.createdAt,
-      updatedAt: categories.updatedAt,
-      productCount: sql<number>`(
-        SELECT COUNT(*) FROM products 
-        WHERE products.category_id = ${categories.id} 
-        AND products.is_active = 1
-      )`.as("productCount"),
-    })
+  // First get all categories
+  const allCategories = await db
+    .select()
     .from(categories)
     .where(eq(categories.isActive, true))
     .orderBy(categories.sortOrder, categories.name);
   
-  return result;
+  // Then get product counts for each category
+  const productCounts = await db
+    .select({
+      categoryId: products.categoryId,
+      count: count(),
+    })
+    .from(products)
+    .where(eq(products.isActive, true))
+    .groupBy(products.categoryId);
+  
+  // Create a map for quick lookup
+  const countMap = new Map(
+    productCounts.map(pc => [pc.categoryId, pc.count])
+  );
+  
+  // Merge the results
+  return allCategories.map(cat => ({
+    ...cat,
+    productCount: countMap.get(cat.id) || 0,
+  }));
 }
 
 
