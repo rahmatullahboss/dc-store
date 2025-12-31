@@ -20,6 +20,7 @@ class AddressesScreen extends ConsumerStatefulWidget {
 
 class _AddressesScreenState extends ConsumerState<AddressesScreen> {
   static const int _maxAddresses = WhiteLabelConfig.maxAddresses;
+  // ignore: unused_field
   bool _isLoading = false;
 
   Future<void> _refreshAddresses() async {

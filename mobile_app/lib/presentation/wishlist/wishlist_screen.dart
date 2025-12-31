@@ -649,6 +649,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 }
 
+// Model for wishlist items - parameters will be used when integrated with actual API
+// ignore: unused_element
 class _WishlistItem {
   final String id;
   final String name;
