@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/price_formatter.dart';
 import '../../../l10n/app_localizations.dart';
 
 import '../../cart/presentation/providers/cart_provider.dart';
@@ -25,6 +26,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cartTotal = ref.watch(cartTotalProvider);
+    final priceFormatter = ref.watch(priceFormatterProvider);
     final l10n = AppLocalizations.of(context)!;
     final checkoutState = ref.watch(checkoutProvider);
 
@@ -245,6 +247,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               borderColor: borderColor,
               primaryAccent: primaryAccent,
               isPaymentSelected: checkoutState.paymentMethod != null,
+              priceFormatter: priceFormatter,
             ),
           ),
         ],
@@ -261,6 +264,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     required Color borderColor,
     required Color primaryAccent,
     required bool isPaymentSelected,
+    required PriceFormatter priceFormatter,
   }) {
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -295,7 +299,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     style: TextStyle(fontSize: 12, color: subtleColor),
                   ),
                   Text(
-                    '৳${total.toStringAsFixed(0)}',
+                    priceFormatter.format(total),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_haptics.dart';
+import '../../core/utils/price_formatter.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../../services/share_service.dart';
@@ -344,6 +345,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final productAsync = ref.watch(productDetailsProvider(widget.id));
+    final priceFormatter = ref.watch(priceFormatterProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.darkBackground : Colors.white;
     final cardColor = isDark ? AppColors.darkCard : Colors.white;
@@ -397,6 +399,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       product.categoryId,
                       isDark,
                       textColor,
+                      priceFormatter,
                     ),
                   ),
 
@@ -455,7 +458,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               _buildFloatingNavBar(isDark, cardColor, textColor),
 
               // Sticky Footer
-              _buildStickyFooter(product, isDark, cardColor, textColor),
+              _buildStickyFooter(
+                product,
+                isDark,
+                cardColor,
+                textColor,
+                priceFormatter,
+              ),
             ],
           );
         },
@@ -550,6 +559,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     String? categoryId,
     bool isDark,
     Color textColor,
+    PriceFormatter priceFormatter,
   ) {
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -620,7 +630,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '৳${price.toStringAsFixed(0)}',
+                priceFormatter.format(price),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -632,7 +642,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2),
                   child: Text(
-                    '৳${compareAtPrice.toStringAsFixed(0)}',
+                    priceFormatter.format(compareAtPrice),
                     style: TextStyle(
                       fontSize: 18,
                       color: isDark ? Colors.grey[500] : Colors.grey[400],
@@ -1329,6 +1339,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     bool isDark,
     Color cardColor,
     Color textColor,
+    PriceFormatter priceFormatter,
   ) {
     return Positioned(
       bottom: 0,
@@ -1372,7 +1383,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                   ),
                 ),
                 Text(
-                  '৳${(product.price * _quantity).toStringAsFixed(0)}',
+                  priceFormatter.format(product.price * _quantity),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
