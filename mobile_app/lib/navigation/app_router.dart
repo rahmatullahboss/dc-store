@@ -63,6 +63,7 @@ import '../presentation/wishlist/wishlist_screen.dart';
 
 // AI Chat
 import '../presentation/chat/chat_screen.dart';
+import '../presentation/common/floating_chat_button.dart';
 
 // Auth
 import '../features/auth/presentation/login_screen.dart';
@@ -578,6 +579,7 @@ class _MainShellScaffold extends StatelessWidget {
 
     return Scaffold(
       body: navigationShell,
+      floatingActionButton: const FloatingChatButton(),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
