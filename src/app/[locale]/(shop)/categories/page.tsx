@@ -5,8 +5,8 @@ import { siteConfig } from "@/lib/config";
 import { getCategories } from "@/lib/queries";
 import { getTranslations } from "next-intl/server";
 
-// Force dynamic rendering for Cloudflare context
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 export async function generateMetadata({params}: {params: Promise<{locale: string}>}) {
   const { locale } = await params;

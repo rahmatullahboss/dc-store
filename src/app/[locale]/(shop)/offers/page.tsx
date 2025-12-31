@@ -8,7 +8,8 @@ import { OfferCard } from "./offer-card";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
