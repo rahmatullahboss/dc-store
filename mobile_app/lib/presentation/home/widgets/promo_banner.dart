@@ -1,41 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/price_formatter.dart';
 
-class PromoBanner extends StatefulWidget {
+class PromoBanner extends ConsumerStatefulWidget {
   const PromoBanner({super.key});
 
   @override
-  State<PromoBanner> createState() => _PromoBannerState();
+  ConsumerState<PromoBanner> createState() => _PromoBannerState();
 }
 
-class _PromoBannerState extends State<PromoBanner> {
+class _PromoBannerState extends ConsumerState<PromoBanner> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-
-  final List<PromoItem> _promos = [
-    PromoItem(
-      title: 'Flash Sale',
-      subtitle: 'Up to 50% OFF',
-      description: 'Limited time offer on premium products',
-      gradientColors: [const Color(0xFF667eea), const Color(0xFF764ba2)],
-      icon: Icons.flash_on,
-    ),
-    PromoItem(
-      title: 'New Arrivals',
-      subtitle: 'Fresh Collection',
-      description: 'Discover the latest trending products',
-      gradientColors: [const Color(0xFFf093fb), const Color(0xFFf5576c)],
-      icon: Icons.new_releases,
-    ),
-    PromoItem(
-      title: 'Free Shipping',
-      subtitle: 'Orders over ৳500',
-      description: 'Fast & reliable delivery nationwide',
-      gradientColors: [const Color(0xFF4facfe), const Color(0xFF00f2fe)],
-      icon: Icons.local_shipping,
-    ),
-  ];
 
   @override
   void initState() {
@@ -46,7 +24,7 @@ class _PromoBannerState extends State<PromoBanner> {
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
-        final nextPage = (_currentPage + 1) % _promos.length;
+        final nextPage = (_currentPage + 1) % 3; // 3 promos
         _pageController.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 500),
@@ -65,6 +43,33 @@ class _PromoBannerState extends State<PromoBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final priceFormatter = ref.watch(priceFormatterProvider);
+
+    // Build promos with dynamic currency
+    final promos = [
+      PromoItem(
+        title: 'Flash Sale',
+        subtitle: 'Up to 50% OFF',
+        description: 'Limited time offer on premium products',
+        gradientColors: [const Color(0xFF667eea), const Color(0xFF764ba2)],
+        icon: Icons.flash_on,
+      ),
+      PromoItem(
+        title: 'New Arrivals',
+        subtitle: 'Fresh Collection',
+        description: 'Discover the latest trending products',
+        gradientColors: [const Color(0xFFf093fb), const Color(0xFFf5576c)],
+        icon: Icons.new_releases,
+      ),
+      PromoItem(
+        title: 'Free Shipping',
+        subtitle: 'Orders over ${priceFormatter.format(500)}',
+        description: 'Fast & reliable delivery nationwide',
+        gradientColors: [const Color(0xFF4facfe), const Color(0xFF00f2fe)],
+        icon: Icons.local_shipping,
+      ),
+    ];
+
     return Column(
       children: [
         SizedBox(
@@ -72,9 +77,9 @@ class _PromoBannerState extends State<PromoBanner> {
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: (index) => setState(() => _currentPage = index),
-            itemCount: _promos.length,
+            itemCount: promos.length,
             itemBuilder: (context, index) {
-              final promo = _promos[index];
+              final promo = promos[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
@@ -174,7 +179,7 @@ class _PromoBannerState extends State<PromoBanner> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            _promos.length,
+            promos.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 4),
