@@ -15,6 +15,7 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  preload: true, // Explicitly enable font preloading
 });
 
 export const metadata: Metadata = {
@@ -73,8 +74,13 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang={locale} className={`${inter.variable} ${inter.className}`} suppressHydrationWarning>
+      <head>
+        {/* Preconnect to external origins for faster resource loading */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+      </head>
+      <body className="font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <CartProvider>
