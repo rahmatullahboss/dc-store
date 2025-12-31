@@ -31,8 +31,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       Future.delayed(const Duration(milliseconds: 100), () {
+        // For reversed ListView, scroll to 0 (which is the bottom)
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          0,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -327,16 +328,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Widget _buildMessageList(ChatState chatState, bool isDark) {
+    // Build items in reverse order for reversed ListView
+    final itemCount = chatState.messages.length + (chatState.isLoading ? 1 : 0);
+
     return ListView.builder(
       controller: _scrollController,
+      reverse: true, // Messages start from bottom
       padding: const EdgeInsets.symmetric(vertical: 16),
-      itemCount: chatState.messages.length + (chatState.isLoading ? 1 : 0),
+      itemCount: itemCount,
       itemBuilder: (context, index) {
-        if (index == chatState.messages.length) {
+        // Reverse the index since ListView is reversed
+        final reversedIndex = itemCount - 1 - index;
+
+        if (reversedIndex == chatState.messages.length) {
           return const TypingIndicator();
         }
 
-        final message = chatState.messages[index];
+        final message = chatState.messages[reversedIndex];
         return ChatBubble(
           message: message,
           onCopy: () => _copyMessage(message.content),
