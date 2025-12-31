@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../core/config/white_label_config.dart';
 import '../../../core/config/app_config.dart';
+import '../../../services/payment_service.dart';
 import '../../cart/presentation/providers/cart_provider.dart';
 import 'providers/checkout_provider.dart';
 
@@ -36,6 +37,23 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
       const shipping = 50.0;
       final subtotal = cartState.totalPrice;
       final total = subtotal + shipping;
+
+      // Generate temp order ID for payment
+      final tempOrderId = 'ORD-${DateTime.now().millisecondsSinceEpoch}';
+
+      // If Stripe payment, process payment first
+      if (isStripe) {
+        final paymentService = PaymentService.instance;
+        final paymentResult = await paymentService.processStripePayment(
+          orderId: tempOrderId,
+          amount: total,
+          currency: 'BDT',
+        );
+
+        if (!paymentResult.success) {
+          throw Exception(paymentResult.message ?? 'Payment failed');
+        }
+      }
 
       // Prepare order items for API
       final orderItems = items

@@ -15,4 +15,9 @@ class AppConfig {
     // For mobile development, use localhost (change as needed)
     return productionUrl; // Using production for now
   }
+
+  // Stripe Configuration
+  // NOTE: Replace with your actual Stripe publishable key
+  static const String stripePublishableKey =
+      'pk_test_51RIIbgP0LJrJ5EamZxvaopbXJNRh6qIIFjFvXPMAJLmZJrKkJzRFd9K6xMD5zKmDzIHIlQbZMDJRZiK9QHQY4Mj600RiL0vvhB';
 }

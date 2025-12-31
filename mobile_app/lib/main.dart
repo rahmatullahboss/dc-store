@@ -5,11 +5,13 @@ import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/cache/cache_service.dart';
 import 'core/config/white_label_config.dart';
+import 'core/config/app_config.dart';
 import 'core/network/dio_client.dart' show storageServiceProvider;
 // import 'core/widgets/app_error_boundary.dart'; // Temporarily disabled
 import 'l10n/app_localizations.dart';
 import 'navigation/app_router.dart';
 import 'services/storage_service.dart';
+import 'services/payment_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,11 @@ void main() async {
   // Initialize cache service
   final cacheService = CacheService();
   await cacheService.init();
+
+  // Initialize Stripe payment service
+  await PaymentService.instance.initialize(
+    stripePublishableKey: AppConfig.stripePublishableKey,
+  );
 
   // Create router with storage service for route guards
   final appRouter = AppRouter(storageService);
