@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/white_label_config.dart';
 import '../../features/orders/data/orders_repository.dart';
 import '../common/widgets/animated_empty_state.dart';
+import '../common/widgets/price_text.dart';
 
 class OrdersScreen extends ConsumerStatefulWidget {
   const OrdersScreen({super.key});
@@ -392,8 +393,8 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        '\$${order.total.toStringAsFixed(2)}',
+                      PriceText(
+                        price: order.total,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

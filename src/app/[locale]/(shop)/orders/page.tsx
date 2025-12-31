@@ -32,7 +32,7 @@ interface Order {
 const filterTabs = ["all", "pending", "processing", "shipped", "delivered", "cancelled"];
 
 export default function MyOrdersPage() {
-  const t = useTranslations("Orders");
+  const t = useTranslations("OrdersPage");
   const { data: session, isPending: isSessionLoading } = useSession();
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);

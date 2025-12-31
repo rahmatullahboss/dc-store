@@ -389,7 +389,7 @@
       "country": "Bangladesh"
     }
   },
-  "Orders": {
+  "OrdersPage": {
       "title": "My Orders",
       "subtitle": "Track and manage your orders",
       "refresh": "Refresh",
