@@ -1153,10 +1153,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               const SizedBox(height: 12),
             ],
             _buildSummaryRow(
-              \"Shipping\",
-              shipping == 0
-                  ? \"Free\"
-                  : _priceFormatter.format(shipping),
+              "Shipping",
+              shipping == 0 ? "Free" : _priceFormatter.format(shipping),
               textColor,
               subtleTextColor,
             ),
