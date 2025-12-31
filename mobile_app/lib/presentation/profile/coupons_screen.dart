@@ -340,7 +340,7 @@ class _CouponsScreenState extends State<CouponsScreen>
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemCount: _categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final category = _categories[index];
           final isSelected = _selectedCategory == category;
@@ -572,11 +572,12 @@ class _CouponsScreenState extends State<CouponsScreen>
                                 width: 40,
                                 height: 40,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  coupon.icon ?? LucideIcons.tag,
-                                  color: categoryColors['icon'],
-                                  size: 28,
-                                ),
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(
+                                      coupon.icon ?? LucideIcons.tag,
+                                      color: categoryColors['icon'],
+                                      size: 28,
+                                    ),
                               ),
                             )
                           : Icon(

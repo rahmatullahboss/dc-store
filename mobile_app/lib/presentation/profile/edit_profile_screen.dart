@@ -237,7 +237,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         fit: BoxFit.cover,
         width: 112,
         height: 112,
-        errorBuilder: (_, __, ___) => _buildInitials(user, primaryColor),
+        errorBuilder: (context, error, stackTrace) =>
+            _buildInitials(user, primaryColor),
       );
     } else {
       imageContent = _buildInitials(user, primaryColor);

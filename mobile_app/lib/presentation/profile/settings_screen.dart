@@ -1292,7 +1292,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.pop(context);
               // Sign out using auth provider
               await ref.read(authControllerProvider.notifier).logout();
-              if (mounted) {
+              if (context.mounted) {
                 context.go('/login');
               }
             },

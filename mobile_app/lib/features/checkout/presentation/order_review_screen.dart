@@ -307,10 +307,12 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                                         child: Image.network(
                                           item.product.featuredImage!,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) => Icon(
-                                            LucideIcons.image,
-                                            color: subtleColor,
-                                          ),
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Icon(
+                                                    LucideIcons.image,
+                                                    color: subtleColor,
+                                                  ),
                                         ),
                                       )
                                     : Icon(

@@ -405,7 +405,7 @@ class ProductCard extends StatelessWidget {
     return Image.network(
       imageUrl!,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => Container(
+      errorBuilder: (context, error, stackTrace) => Container(
         color: AppColors.muted,
         alignment: Alignment.center,
         child: Icon(

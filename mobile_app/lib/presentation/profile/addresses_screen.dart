@@ -61,7 +61,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
             setState(() => _isLoading = false);
             await _refreshAddresses();
 
-            if (mounted) {
+            if (context.mounted) {
               toastification.show(
                 context: context,
                 type: ToastificationType.success,
@@ -73,7 +73,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
             }
           } catch (e) {
             setState(() => _isLoading = false);
-            if (mounted) {
+            if (context.mounted) {
               toastification.show(
                 context: context,
                 type: ToastificationType.error,
@@ -102,7 +102,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
             setState(() => _isLoading = false);
             await _refreshAddresses();
 
-            if (mounted) {
+            if (context.mounted) {
               toastification.show(
                 context: context,
                 type: ToastificationType.success,
@@ -112,7 +112,7 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
             }
           } catch (e) {
             setState(() => _isLoading = false);
-            if (mounted) {
+            if (context.mounted) {
               toastification.show(
                 context: context,
                 type: ToastificationType.error,
@@ -242,7 +242,8 @@ class _AddressesScreenState extends ConsumerState<AddressesScreen> {
                   : ListView.separated(
                       padding: const EdgeInsets.all(16),
                       itemCount: addresses.length + 1, // +1 for count indicator
-                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 16),
                       itemBuilder: (context, index) {
                         if (index == addresses.length) {
                           return Center(

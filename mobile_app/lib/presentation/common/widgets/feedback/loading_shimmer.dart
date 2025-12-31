@@ -176,7 +176,7 @@ class ShimmerPatterns {
         mainAxisSpacing: 12,
       ),
       itemCount: itemCount,
-      itemBuilder: (_, __) => const _ProductCardShimmer(),
+      itemBuilder: (context, index) => const _ProductCardShimmer(),
     );
   }
 
@@ -187,8 +187,8 @@ class ShimmerPatterns {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
       itemCount: itemCount,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, __) => _ProductListItemShimmer(),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, idx) => _ProductListItemShimmer(),
     );
   }
 
@@ -200,8 +200,8 @@ class ShimmerPatterns {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: itemCount,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (_, __) => const ShimmerBox(
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        itemBuilder: (context, idx) => const ShimmerBox(
           width: 100,
           height: 120,
           borderRadius: BorderRadius.all(Radius.circular(12)),

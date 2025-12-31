@@ -135,7 +135,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         setState(() {});
 
                         // Navigate to search with the text
-                        if (_voiceSearchText.isNotEmpty && mounted) {
+                        if (_voiceSearchText.isNotEmpty && context.mounted) {
                           Navigator.pop(context);
                           context.push(
                             '/products?search=${Uri.encodeComponent(_voiceSearchText)}',
@@ -158,7 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             setState(() => _isListening = false);
 
                             // Auto navigate after final result
-                            if (finalText.isNotEmpty && mounted) {
+                            if (finalText.isNotEmpty && context.mounted) {
                               Navigator.pop(context);
                               context.push(
                                 '/products?search=${Uri.encodeComponent(finalText)}',

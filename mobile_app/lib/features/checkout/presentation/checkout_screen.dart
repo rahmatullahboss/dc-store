@@ -161,14 +161,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                               'assets/images/visa.png',
                               width: 32,
                               height: 20,
-                              errorBuilder: (_, __, ___) => const SizedBox(),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const SizedBox(),
                             ),
                             const SizedBox(width: 4),
                             Image.asset(
                               'assets/images/mastercard.png',
                               width: 32,
                               height: 20,
-                              errorBuilder: (_, __, ___) => const SizedBox(),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const SizedBox(),
                             ),
                           ],
                         ),

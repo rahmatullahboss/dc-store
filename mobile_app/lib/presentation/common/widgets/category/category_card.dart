@@ -228,7 +228,7 @@ class CategoryCard extends StatelessWidget {
     return Image.network(
       imageUrl!,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => Container(
+      errorBuilder: (context, error, stackTrace) => Container(
         color: AppColors.muted,
         alignment: Alignment.center,
         child: Icon(
@@ -415,7 +415,7 @@ class CategoryList extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
         itemCount: categories.length,
-        separatorBuilder: (_, __) => SizedBox(width: spacing),
+        separatorBuilder: (context, index) => SizedBox(width: spacing),
         itemBuilder: (_, index) => categories[index],
       ),
     );

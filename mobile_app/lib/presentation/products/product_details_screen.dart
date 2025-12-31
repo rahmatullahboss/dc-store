@@ -1195,7 +1195,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             height: 200,
             child: relatedProductsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const Center(child: Text('Failed to load')),
+              error: (error, stack) =>
+                  const Center(child: Text('Failed to load')),
               data: (similarProducts) {
                 if (similarProducts.isEmpty) {
                   return Center(
