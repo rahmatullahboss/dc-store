@@ -14,7 +14,7 @@ export function HeroSection() {
       <div className="relative overflow-hidden rounded-2xl min-h-[450px] sm:min-h-[550px] lg:min-h-[650px] flex items-center">
         {/* LCP Hero Image - prioritized for fast loading */}
         <Image
-          src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=2574&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=1200&auto=format&fit=crop"
           alt="Premium quality products showcase"
           fill
           priority

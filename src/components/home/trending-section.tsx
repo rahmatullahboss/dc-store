@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -82,11 +83,16 @@ export function TrendingSection() {
             key={product.id}
             className="min-w-[280px] sm:min-w-[320px] md:min-w-[400px] snap-center bg-card rounded-xl overflow-hidden flex flex-col md:flex-row group border border-border hover:border-primary/50 transition-colors"
           >
-            {/* Image */}
-            <div
-              className="w-full md:w-2/5 aspect-square md:aspect-auto min-h-[150px] bg-cover bg-center"
-              style={{ backgroundImage: `url("${product.image}")` }}
-            />
+            {/* Image - Using Next.js Image for optimization */}
+            <div className="w-full md:w-2/5 aspect-square md:aspect-auto min-h-[150px] relative">
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 280px, 200px"
+                className="object-cover"
+              />
+            </div>
             {/* Content */}
             <div className="p-4 sm:p-6 flex flex-col justify-center flex-1">
               {product.badge && (
