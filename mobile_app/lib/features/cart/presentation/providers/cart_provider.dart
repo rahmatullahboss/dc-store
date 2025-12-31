@@ -75,6 +75,8 @@ class CartNotifier extends Notifier<CartState> {
               price: (map['price'] as num).toDouble(),
               featuredImage: map['productImage'] as String?,
               description: '',
+              // Include stock from API or default to 999 (in stock)
+              stock: map['stock'] as int? ?? map['quantity'] as int? ?? 999,
             ),
             quantity: map['quantity'] as int? ?? 1,
           );

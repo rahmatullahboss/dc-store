@@ -61,14 +61,15 @@ class CurrencyNotifier extends Notifier<Currency> {
 
   @override
   Currency build() {
-    _loadCurrency();
+    // Use microtask to ensure async loading happens after build
+    Future.microtask(() => _loadCurrency());
     return Currency.bdt; // Default to BDT
   }
 
   Future<void> _loadCurrency() async {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString(_key);
-    if (code != null) {
+    if (code != null && code != state.code) {
       state = Currency.fromCode(code);
     }
   }
