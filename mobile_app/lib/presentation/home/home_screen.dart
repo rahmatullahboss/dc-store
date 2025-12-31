@@ -11,6 +11,7 @@ import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/product/domain/product_model.dart';
 import '../../services/voice_search_service.dart';
+import '../common/widgets/price_text.dart';
 
 /// Primary/accent color for the app (orange - matches web store)
 final _primaryColor = WhiteLabelConfig.accentColor;
@@ -1100,8 +1101,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text(
-                        '৳${product.price.toStringAsFixed(0)}',
+                      PriceText(
+                        price: product.price,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1110,14 +1111,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       if (hasDiscount) ...[
                         const SizedBox(width: 4),
-                        Text(
-                          '৳${product.compareAtPrice!.toStringAsFixed(0)}',
+                        PriceText(
+                          price: product.compareAtPrice!,
+                          isStrikethrough: true,
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark
                                 ? const Color(0xFF64748B)
                                 : const Color(0xFF94A3B8),
-                            decoration: TextDecoration.lineThrough,
                           ),
                         ),
                       ],
@@ -1475,18 +1476,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (hasDiscount)
-                              Text(
-                                '৳${product.compareAtPrice!.toStringAsFixed(0)}',
+                              PriceText(
+                                price: product.compareAtPrice!,
+                                isStrikethrough: true,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: isDark
                                       ? const Color(0xFF64748B)
                                       : const Color(0xFF94A3B8),
-                                  decoration: TextDecoration.lineThrough,
                                 ),
                               ),
-                            Text(
-                              '৳${product.price.toStringAsFixed(0)}',
+                            PriceText(
+                              price: product.price,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -1708,8 +1709,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     const SizedBox(height: 4),
-                                    Text(
-                                      '৳${product.price.toStringAsFixed(0)}',
+                                    PriceText(
+                                      price: product.price,
                                       style: TextStyle(
                                         color: Colors.white.withValues(
                                           alpha: 0.9,

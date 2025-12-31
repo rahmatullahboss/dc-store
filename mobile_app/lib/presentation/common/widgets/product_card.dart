@@ -6,6 +6,7 @@ import 'package:dc_store/core/theme/app_colors.dart';
 import 'package:dc_store/core/utils/app_semantics.dart';
 import 'app_badge.dart';
 import 'shimmer_loading.dart';
+import 'price_text.dart';
 
 class ProductCard extends StatefulWidget {
   final String id;
@@ -264,8 +265,8 @@ class _ProductCardState extends State<ProductCard>
                       // Price Row
                       Row(
                         children: [
-                          Text(
-                            "৳${widget.price.toStringAsFixed(0)}",
+                          PriceText(
+                            price: widget.price,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -274,10 +275,10 @@ class _ProductCardState extends State<ProductCard>
                           ),
                           if (widget.compareAtPrice != null) ...[
                             const SizedBox(width: 6),
-                            Text(
-                              "৳${widget.compareAtPrice!.toStringAsFixed(0)}",
+                            PriceText(
+                              price: widget.compareAtPrice!,
+                              isStrikethrough: true,
                               style: TextStyle(
-                                decoration: TextDecoration.lineThrough,
                                 color: Colors.grey[500],
                                 fontSize: 12,
                               ),

@@ -17,6 +17,7 @@ import '../common/widgets/product/size_selector.dart';
 import '../common/widgets/product/offer_card.dart';
 import '../common/widgets/product/quantity_selector.dart';
 import '../common/widgets/animated_heart_button.dart';
+import '../common/widgets/price_text.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   final String id;
@@ -1310,8 +1311,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                             ),
                             const SizedBox(height: 4),
                             // Price
-                            Text(
-                              '৳${relatedProduct.price.toStringAsFixed(0)}',
+                            PriceText(
+                              price: relatedProduct.price,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,

@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/config/white_label_config.dart';
 import '../../../data/models/chat_product.dart';
+import '../../common/widgets/price_text.dart';
 
 /// Chat product card widget
 ///
@@ -80,8 +81,8 @@ class ChatProductCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Text(
-                            '৳${product.price.toStringAsFixed(0)}',
+                          PriceText(
+                            price: product.price,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
