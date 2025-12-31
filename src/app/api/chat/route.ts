@@ -88,7 +88,25 @@ ${isBengali ? "আরো দেখতে চাইলে বলুন! 😊" : "
 }
 
 export async function POST(req: Request) {
-  const { messages, locale }: { messages: UIMessage[], locale?: string } = await req.json();
+  const body = await req.json();
+  const { messages: rawMessages, locale } = body as { messages: unknown[], locale?: string };
+
+  // Convert simple {role, content} format (from mobile) to UIMessage format if needed
+  const messages: UIMessage[] = rawMessages.map((msg: unknown, index: number) => {
+    const m = msg as { id?: string; role: string; content?: string; parts?: unknown[] };
+    
+    // If already in UIMessage format with parts, use as-is
+    if (m.parts && Array.isArray(m.parts)) {
+      return m as UIMessage;
+    }
+    
+    // Convert simple format to UIMessage format
+    return {
+      id: m.id || `msg-${index}-${Date.now()}`,
+      role: m.role as 'user' | 'assistant' | 'system',
+      parts: [{ type: 'text' as const, text: m.content || '' }],
+    };
+  });
 
   // Fetch real products from database
   const realProducts = await fetchProducts();
