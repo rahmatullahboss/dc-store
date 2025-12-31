@@ -44,11 +44,6 @@ const nextConfig: NextConfig = {
 
   // Performance optimizations
   experimental: {
-    // Inline CSS to eliminate render-blocking stylesheets
-    // This inlines all styles into <style> tags for faster FCP and LCP
-    inlineCss: true,
-    // Optimize CSS chunking - 'loose' allows better code splitting
-    cssChunking: 'strict',
     // Enable React's optimizing compiler
     optimizePackageImports: [
       // Icon libraries (large bundles)
