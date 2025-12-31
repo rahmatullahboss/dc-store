@@ -5,7 +5,6 @@ import 'app_routes.dart';
 import 'app_transitions.dart';
 import 'route_guards.dart';
 import 'navigation_service.dart';
-import '../core/config/white_label_config.dart';
 import '../features/cart/presentation/providers/cart_provider.dart';
 import '../services/storage_service.dart';
 
@@ -648,65 +647,6 @@ class _CartBadge extends ConsumerWidget {
 // PLACEHOLDER SCREENS (Replace with actual implementations)
 // ═══════════════════════════════════════════════════════════════
 
-class _SplashScreen extends StatelessWidget {
-  const _SplashScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    // Auto-navigate after delay
-    Future.delayed(const Duration(seconds: 2), () {
-      if (context.mounted) {
-        context.go(AppRoutes.homePath);
-      }
-    });
-
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.shopping_bag,
-              size: 80,
-              color: Theme.of(context).primaryColor,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              WhiteLabelConfig.appName,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _OnboardingScreen extends StatelessWidget {
-  const _OnboardingScreen();
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Onboarding')));
-}
-
-class _LoginScreen extends StatelessWidget {
-  const _LoginScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Login')),
-    body: const Center(child: Text('Login Screen')),
-  );
-}
-
-class _RegisterScreen extends StatelessWidget {
-  const _RegisterScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Register')),
-    body: const Center(child: Text('Register Screen')),
-  );
-}
-
 class _ForgotPasswordScreen extends StatelessWidget {
   const _ForgotPasswordScreen();
   @override
@@ -722,93 +662,6 @@ class _VerifyOtpScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Verify OTP')),
     body: const Center(child: Text('Verify OTP Screen')),
-  );
-}
-
-class _CategoriesScreen extends StatelessWidget {
-  const _CategoriesScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Categories')),
-    body: const Center(child: Text('Categories Screen')),
-  );
-}
-
-class _SearchScreen extends StatelessWidget {
-  const _SearchScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Search')),
-    body: const Center(child: Text('Search Screen')),
-  );
-}
-
-class _CartScreen extends StatelessWidget {
-  const _CartScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Cart')),
-    body: const Center(child: Text('Cart Screen')),
-  );
-}
-
-class _ProfileScreen extends StatelessWidget {
-  const _ProfileScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Profile')),
-    body: ListView(
-      children: [
-        ListTile(
-          title: const Text('Edit Profile'),
-          onTap: () => context.goNamed(AppRoutes.editProfile),
-        ),
-        ListTile(
-          title: const Text('Addresses'),
-          onTap: () => context.goNamed(AppRoutes.addresses),
-        ),
-        ListTile(
-          title: const Text('Orders'),
-          onTap: () => context.go(AppRoutes.ordersPath),
-        ),
-        ListTile(
-          title: const Text('Wishlist'),
-          onTap: () => context.go(AppRoutes.wishlistPath),
-        ),
-        ListTile(
-          title: const Text('Settings'),
-          onTap: () => context.goNamed(AppRoutes.settings),
-        ),
-      ],
-    ),
-  );
-}
-
-class _ProductDetailScreen extends StatelessWidget {
-  final String productId;
-  const _ProductDetailScreen({required this.productId});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Product Detail')),
-    body: Center(child: Text('Product: $productId')),
-  );
-}
-
-class _WishlistScreen extends StatelessWidget {
-  const _WishlistScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Wishlist')),
-    body: const Center(child: Text('Wishlist Screen')),
-  );
-}
-
-class _CheckoutScreen extends StatelessWidget {
-  const _CheckoutScreen();
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Checkout')),
-    body: const Center(child: Text('Checkout Screen')),
   );
 }
 

@@ -843,6 +843,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildFlashSaleSection(bool isDark, Color surfaceColor) {
     final hours = _flashSaleRemaining.inHours.toString().padLeft(2, '0');
     final minutes = (_flashSaleRemaining.inMinutes % 60).toString().padLeft(
@@ -1735,6 +1736,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildPopularBrandsSection(bool isDark, Color surfaceColor) {
     final brands = ['Nike', 'Adidas', 'Apple', 'Samsung', 'Puma'];
 
