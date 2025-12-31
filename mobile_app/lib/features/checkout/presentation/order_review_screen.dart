@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../core/config/white_label_config.dart';
 import '../../../core/config/app_config.dart';
+import '../../../core/utils/price_formatter.dart';
 import '../../../services/payment_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../core/constants/storage_keys.dart';
@@ -41,20 +42,29 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
       final subtotal = cartState.totalPrice;
       final total = subtotal + shipping;
 
+      // Get current currency for payment
+      final priceFormatter = ref.read(priceFormatterProvider);
+      final currencyCode = priceFormatter.code; // e.g., 'USD' or 'BDT'
+      final convertedTotal = priceFormatter.convert(
+        total,
+      ); // Convert to selected currency
+
       debugPrint('Payment method: $paymentMethod, isStripe: $isStripe');
-      debugPrint('Cart items: ${items.length}, Total: $total');
+      debugPrint(
+        'Cart items: ${items.length}, Total: $total BDT, Converted: $convertedTotal $currencyCode',
+      );
 
       // Generate temp order ID for payment
       final tempOrderId = 'ORD-${DateTime.now().millisecondsSinceEpoch}';
 
       // If Stripe payment, process payment first
       if (isStripe) {
-        debugPrint('Processing Stripe payment...');
+        debugPrint('Processing Stripe payment in $currencyCode...');
         final paymentService = PaymentService.instance;
         final paymentResult = await paymentService.processStripePayment(
           orderId: tempOrderId,
-          amount: total,
-          currency: 'BDT',
+          amount: convertedTotal, // Use converted amount
+          currency: currencyCode, // Use selected currency code
         );
         debugPrint(
           'Stripe result: success=${paymentResult.success}, message=${paymentResult.message}',
@@ -164,6 +174,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
 
     final cartState = ref.watch(cartProvider);
     final checkoutState = ref.watch(checkoutProvider);
+    final priceFormatter = ref.watch(priceFormatterProvider);
     final items = cartState.items;
     final subtotal = cartState.totalPrice;
     const shipping = 50.0;
@@ -347,7 +358,9 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                                 ),
                               ),
                               Text(
-                                '৳${(item.product.price * item.quantity).toStringAsFixed(0)}',
+                                priceFormatter.format(
+                                  item.product.price * item.quantity,
+                                ),
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -374,14 +387,14 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                       children: [
                         _buildSummaryRow(
                           'Subtotal',
-                          '৳${subtotal.toStringAsFixed(0)}',
+                          priceFormatter.format(subtotal),
                           textColor,
                           subtleColor,
                         ),
                         const SizedBox(height: 8),
                         _buildSummaryRow(
                           'Shipping',
-                          '৳${shipping.toStringAsFixed(0)}',
+                          priceFormatter.format(shipping),
                           textColor,
                           subtleColor,
                         ),
@@ -401,7 +414,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                               ),
                             ),
                             Text(
-                              '৳${total.toStringAsFixed(0)}',
+                              priceFormatter.format(total),
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -453,7 +466,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                           ),
                         )
                       : Text(
-                          'Place Order • ৳${total.toStringAsFixed(0)}',
+                          'Place Order • ${priceFormatter.format(total)}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
