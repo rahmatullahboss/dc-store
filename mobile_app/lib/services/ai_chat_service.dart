@@ -6,7 +6,7 @@ import '../data/models/chat_message.dart';
 /// AI Chat Service using the backend API
 ///
 /// Connects to the existing Next.js API route at /api/chat
-/// which uses OpenRouter with google/gemini-2.0-flash-001 model
+/// which uses Vercel AI SDK with streamText and toUIMessageStreamResponse
 class AIChatService {
   final Dio _dio;
 
@@ -15,6 +15,8 @@ class AIChatService {
     _dio.options.headers = {'Content-Type': 'application/json'};
     _dio.options.connectTimeout = const Duration(seconds: 30);
     _dio.options.receiveTimeout = const Duration(seconds: 60);
+    // Important: Accept the stream response type
+    _dio.options.responseType = ResponseType.plain;
   }
 
   /// Send a message and get AI response
@@ -27,7 +29,7 @@ class AIChatService {
     String userMessage,
   ) async {
     try {
-      // Build message list in the format expected by the API
+      // Build message list in the format expected by the Vercel AI SDK
       final apiMessages = <Map<String, dynamic>>[
         // Add previous messages for context (limit to last 10)
         ...messages
@@ -48,27 +50,11 @@ class AIChatService {
       );
 
       if (response.statusCode == 200) {
-        // Handle streaming response - collect all data
         final data = response.data;
 
-        // If raw string response (streamed)
+        // Parse the Vercel AI SDK stream response
         if (data is String) {
-          return _parseStreamedResponse(data);
-        }
-
-        // If JSON response
-        if (data is Map) {
-          if (data['error'] != null) {
-            throw AIChatException(data['error'] as String);
-          }
-          // Try to extract content from various response formats
-          final content =
-              data['content'] ??
-              data['text'] ??
-              data['message'] ??
-              data['choices']?[0]?['message']?['content'];
-          return content?.toString() ??
-              'Sorry, I could not generate a response.';
+          return _parseVercelAIStreamResponse(data);
         }
 
         return 'Sorry, I could not generate a response.';
@@ -78,6 +64,14 @@ class AIChatService {
     } on DioException catch (e) {
       if (e.response?.statusCode == 500) {
         final errorData = e.response?.data;
+        if (errorData is String) {
+          try {
+            final parsed = jsonDecode(errorData);
+            if (parsed is Map && parsed['error'] != null) {
+              throw AIChatException(parsed['error'] as String);
+            }
+          } catch (_) {}
+        }
         if (errorData is Map && errorData['error'] != null) {
           throw AIChatException(errorData['error'] as String);
         }
@@ -100,37 +94,51 @@ class AIChatService {
     }
   }
 
-  /// Parse streamed response from the API
-  String _parseStreamedResponse(String data) {
-    final lines = data.split('\n');
+  /// Parse Vercel AI SDK stream response (toUIMessageStreamResponse format)
+  ///
+  /// The format uses specific prefixes:
+  /// - "0:" for text content
+  /// - "e:" for finish reason/metadata
+  /// - "d:" for done signal
+  String _parseVercelAIStreamResponse(String data) {
     final buffer = StringBuffer();
+    final lines = data.split('\n');
 
     for (final line in lines) {
       if (line.isEmpty) continue;
 
-      // Handle data: prefix (SSE format)
-      String content = line;
-      if (line.startsWith('data: ')) {
-        content = line.substring(6);
-      }
-
-      if (content == '[DONE]') break;
-
-      try {
-        final json = jsonDecode(content);
-        // Handle different response formats
-        final text =
-            json['text'] ??
-            json['content'] ??
-            json['delta']?['content'] ??
-            json['choices']?[0]?['delta']?['content'];
-        if (text != null) {
-          buffer.write(text);
-        }
-      } catch (_) {
-        // If not JSON, treat as plain text
-        if (!content.startsWith('{') && !content.startsWith('[')) {
+      // Handle Vercel AI SDK stream format
+      // Text chunks are prefixed with "0:"
+      if (line.startsWith('0:')) {
+        final content = line.substring(2);
+        try {
+          // Content is JSON encoded string
+          final decoded = jsonDecode(content);
+          if (decoded is String) {
+            buffer.write(decoded);
+          }
+        } catch (_) {
+          // If not JSON, just use the raw content
           buffer.write(content);
+        }
+      }
+      // Handle older SSE format (data: prefix)
+      else if (line.startsWith('data: ')) {
+        final content = line.substring(6);
+        if (content == '[DONE]') break;
+
+        try {
+          final json = jsonDecode(content);
+          final text =
+              json['text'] ??
+              json['content'] ??
+              json['delta']?['content'] ??
+              json['choices']?[0]?['delta']?['content'];
+          if (text != null) {
+            buffer.write(text);
+          }
+        } catch (_) {
+          // Ignore parsing errors for non-JSON lines
         }
       }
     }
