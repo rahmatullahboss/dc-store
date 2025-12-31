@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../core/config/white_label_config.dart';
+import '../../core/utils/price_formatter.dart';
 import '../common/widgets/animated_empty_state.dart';
 
-class WishlistScreen extends StatefulWidget {
+class WishlistScreen extends ConsumerStatefulWidget {
   const WishlistScreen({super.key});
 
   @override
-  State<WishlistScreen> createState() => _WishlistScreenState();
+  ConsumerState<WishlistScreen> createState() => _WishlistScreenState();
 }
 
-class _WishlistScreenState extends State<WishlistScreen> {
+class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   String _selectedCollection = 'All Items';
+  late String _currencySymbol;
 
   final List<String> _collections = ['All Items'];
 
@@ -84,6 +87,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final priceFormatter = ref.watch(priceFormatterProvider);
+    _currencySymbol = priceFormatter.symbol;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme colors
@@ -555,7 +560,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                       Row(
                         children: [
                           Text(
-                            "\$${item.price.toStringAsFixed(2)}",
+                            "$_currencySymbol${item.price.toStringAsFixed(2)}",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -567,7 +572,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                           if (item.originalPrice != null) ...[
                             const SizedBox(width: 6),
                             Text(
-                              "\$${item.originalPrice!.toStringAsFixed(2)}",
+                              "$_currencySymbol${item.originalPrice!.toStringAsFixed(2)}",
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,

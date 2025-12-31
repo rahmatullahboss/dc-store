@@ -25,7 +25,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   final _couponController = TextEditingController();
   String? _appliedCoupon;
   double _discountAmount = 0;
-  late String _currencySymbol; // Set in build() for use across methods
+  late PriceFormatter _priceFormatter; // Set in build() for use across methods
 
   // Saved for later items - empty for now, will be populated from local storage
   // TODO: Replace with actual saved items provider
@@ -82,7 +82,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final cartItems = cartState.items;
     final cartTotal = ref.watch(cartTotalProvider);
     final priceFormatter = ref.watch(priceFormatterProvider);
-    _currencySymbol = priceFormatter.symbol; // For use in helper methods
+    _priceFormatter = priceFormatter; // For use in helper methods
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme-aware colors using AppColors
@@ -500,7 +500,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
-                          "Price dropped by $_currencySymbol${(item.product.compareAtPrice! - item.product.price).toStringAsFixed(0)}",
+                          "Price dropped by ${_priceFormatter.formatWhole(item.product.compareAtPrice! - item.product.price)}",
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF16A34A),
@@ -1137,7 +1137,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             const SizedBox(height: 16),
             _buildSummaryRow(
               "Subtotal",
-              "$_currencySymbol${subtotal.toStringAsFixed(2)}",
+              _priceFormatter.format(subtotal),
               textColor,
               subtleTextColor,
             ),
@@ -1145,7 +1145,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             if (discount > 0) ...[
               _buildSummaryRow(
                 "Discount",
-                "-$_currencySymbol${discount.toStringAsFixed(2)}",
+                "-${_priceFormatter.format(discount)}",
                 const Color(0xFF16A34A),
                 subtleTextColor,
                 isHighlight: true,
@@ -1153,17 +1153,17 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               const SizedBox(height: 12),
             ],
             _buildSummaryRow(
-              "Shipping",
+              \"Shipping\",
               shipping == 0
-                  ? "Free"
-                  : "$_currencySymbol${shipping.toStringAsFixed(2)}",
+                  ? \"Free\"
+                  : _priceFormatter.format(shipping),
               textColor,
               subtleTextColor,
             ),
             const SizedBox(height: 12),
             _buildSummaryRow(
               "Tax (Estimated)",
-              "$_currencySymbol${tax.toStringAsFixed(2)}",
+              _priceFormatter.format(tax),
               textColor,
               subtleTextColor,
             ),
@@ -1199,7 +1199,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    "You are saving $_currencySymbol${totalSavings.toStringAsFixed(2)} on this order!",
+                    "You are saving ${_priceFormatter.format(totalSavings)} on this order!",
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -1311,7 +1311,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           ),
                         ),
                         Text(
-                          "$_currencySymbol${total.toStringAsFixed(2)}",
+                          _priceFormatter.format(total),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

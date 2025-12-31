@@ -6,25 +6,29 @@ class Currency {
   final String code;
   final String name;
   final String symbol;
+  final double rate; // Conversion rate from BDT (base currency)
 
   const Currency({
     required this.code,
     required this.name,
     required this.symbol,
+    required this.rate,
   });
 
-  /// Default currency (BDT)
+  /// Default currency (BDT) - base currency
   static const Currency bdt = Currency(
     code: 'BDT',
     name: 'Bangladeshi Taka (৳)',
     symbol: '৳',
+    rate: 1.0, // Base currency
   );
 
-  /// USD currency
+  /// USD currency (1 BDT ≈ 0.0085 USD)
   static const Currency usd = Currency(
     code: 'USD',
     name: 'US Dollar (\$)',
     symbol: '\$',
+    rate: 0.0085, // 1 BDT = ~0.0085 USD (roughly 118 BDT = 1 USD)
   );
 
   /// List of all supported currencies
@@ -36,6 +40,11 @@ class Currency {
       (c) => c.code == code,
       orElse: () => bdt,
     );
+  }
+
+  /// Convert amount from BDT to this currency
+  double convert(double amountInBDT) {
+    return amountInBDT * rate;
   }
 
   /// Get display text for settings tile
