@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:toastification/toastification.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/theme_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'core/cache/cache_service.dart';
 import 'core/config/white_label_config.dart';
 import 'core/config/app_config.dart';
@@ -50,6 +51,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(localeProvider);
 
     // AppErrorBoundary temporarily disabled - causing framework errors
     return ToastificationWrapper(
@@ -58,6 +60,7 @@ class MyApp extends ConsumerWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
+        locale: locale,
         routerConfig: appRouter.router,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

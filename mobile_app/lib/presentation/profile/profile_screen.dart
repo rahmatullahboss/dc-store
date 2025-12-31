@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/app_config.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../core/providers/currency_provider.dart';
+import '../../core/providers/locale_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/support_config.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
@@ -45,6 +46,7 @@ class ProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeMode = ref.watch(themeModeProvider);
     final selectedCurrency = ref.watch(currencyProvider);
+    final selectedLanguage = ref.watch(selectedLanguageProvider);
 
     // Theme colors - using AppColors for consistency
     final bgColor = isDark ? AppColors.darkBackground : AppColors.background;
@@ -376,6 +378,7 @@ class ProfileScreen extends ConsumerWidget {
               borderColor: borderColor,
               primaryColor: primaryColor,
               selectedCurrency: selectedCurrency,
+              selectedLanguage: selectedLanguage,
             ),
 
             // Support Section
@@ -670,6 +673,7 @@ class ProfileScreen extends ConsumerWidget {
     required Color borderColor,
     required Color primaryColor,
     required Currency selectedCurrency,
+    required Language selectedLanguage,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -708,8 +712,13 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
                   iconColor: isDark ? Colors.grey[400]! : Colors.grey[600]!,
                   title: 'Language',
-                  trailing: 'English (US)',
-                  onTap: () => _showLanguageSelector(context, isDark),
+                  trailing: selectedLanguage.name,
+                  onTap: () => _showLanguageSelector(
+                    context,
+                    ref,
+                    isDark,
+                    selectedLanguage,
+                  ),
                   textColor: textColor,
                   subtleColor: subtleColor,
                   isDark: isDark,
@@ -946,17 +955,8 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Future<void> _launchLiveChat(BuildContext context) async {
-    final launcher = ExternalLauncherService.instance;
-    final result = await launcher.launchLiveChat();
-
-    if (!result.success && context.mounted) {
-      _showSnackBar(
-        context,
-        result.fallbackAction ??
-            result.errorMessage ??
-            'Could not launch live chat',
-      );
-    }
+    // Open in-app AI chat instead of external URL
+    context.push('/chat');
   }
 
   Future<void> _launchReportProblem(BuildContext context) async {
@@ -974,19 +974,22 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
-  void _showLanguageSelector(BuildContext context, bool isDark) {
-    final languages = [
-      {'code': 'en', 'name': 'English (US)', 'flag': '🇺🇸'},
-      {'code': 'bn', 'name': 'বাংলা (Bengali)', 'flag': '🇧🇩'},
-    ];
+  void _showLanguageSelector(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDark,
+    Language selectedLanguage,
+  ) {
+    final languages = Language.supportedLanguages;
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+      backgroundColor: isDark ? AppColors.darkCard : AppColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
+      builder: (sheetContext) => Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -997,25 +1000,52 @@ class ProfileScreen extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
             ...languages.map(
-              (lang) => ListTile(
-                leading: Text(
-                  lang['flag']!,
-                  style: const TextStyle(fontSize: 24),
-                ),
-                title: Text(
-                  lang['name']!,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
+              (language) => ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: language == selectedLanguage
+                        ? primaryColor.withAlpha(51)
+                        : (isDark ? Colors.grey[800] : Colors.grey[100]),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      language.flag,
+                      style: const TextStyle(fontSize: 24),
+                    ),
                   ),
                 ),
+                title: Text(
+                  language.name,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
+                    fontWeight: language == selectedLanguage
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+                trailing: language == selectedLanguage
+                    ? Icon(LucideIcons.check, color: primaryColor, size: 20)
+                    : null,
                 onTap: () async {
-                  Navigator.pop(context);
-                  await _savePreference('language', lang['code']!, context);
+                  Navigator.pop(sheetContext);
+                  // Update locale via provider
+                  await ref.read(localeProvider.notifier).setLanguage(language);
+                  // Also sync to backend
+                  if (context.mounted) {
+                    await _savePreference('language', language.code, context);
+                  }
                 },
               ),
             ),
