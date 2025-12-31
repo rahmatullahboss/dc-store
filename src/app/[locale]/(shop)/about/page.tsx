@@ -6,6 +6,9 @@ import { siteConfig } from "@/lib/config";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
+// Make this page fully static
+export const dynamic = "force-static";
+
 export async function generateMetadata({params}: {params: Promise<{locale: string}>}) {
   const { locale } = await params;
   const t = await getTranslations({locale, namespace: "About"});

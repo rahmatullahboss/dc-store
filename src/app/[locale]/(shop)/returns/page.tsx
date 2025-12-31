@@ -8,7 +8,7 @@ import { siteConfig } from "@/lib/config";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
