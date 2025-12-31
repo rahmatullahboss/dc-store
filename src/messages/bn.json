@@ -600,6 +600,7 @@
   "Profile": {
     "title": "আমার প্রোফাইল",
     "subtitle": "আপনার অ্যাকাউন্ট পরিচালনা করুন",
+    "loading": "প্রোফাইল লোড হচ্ছে...",
     "tabs": {
       "info": "ব্যক্তিগত তথ্য",
       "stats": "পরিসংখ্যান",
@@ -607,10 +608,21 @@
       "addresses": "ঠিকানা"
     },
     "stats": {
+      "title": "সংক্ষিপ্ত পরিসংখ্যান",
       "totalOrders": "মোট অর্ডার",
       "totalSpent": "মোট খরচ",
       "wishlist": "উইশলিস্ট",
       "points": "পয়েন্ট"
+    },
+    "personalInfo": {
+      "title": "ব্যক্তিগত তথ্য",
+      "labels": {
+        "name": "পুরো নাম",
+        "email": "ইমেল",
+        "phone": "মোবাইল নম্বর",
+        "address": "ডিফল্ট ঠিকানা"
+      },
+      "notSet": "সেট করা হয়নি"
     },
     "info": {
       "name": "পুরো নাম",
@@ -622,8 +634,13 @@
       "saving": "সেভ হচ্ছে...",
       "edit": "এডিট"
     },
-    "orders": {
+    "recentOrders": {
       "title": "সাম্প্রতিক অর্ডার",
+      "items": "টি আইটেম",
+      "empty": "এখনো কোনো অর্ডার নেই"
+    },
+    "orders": {
+      "title": "আমার অর্ডার",
       "viewAll": "সব দেখুন",
       "orderId": "অর্ডার #",
       "total": "মোট",
@@ -636,6 +653,28 @@
         "title": "কোনো অর্ডার নেই",
         "action": "কেনাকাটা শুরু করুন"
       }
+    },
+    "status": {
+      "pending": "পেন্ডিং",
+      "confirmed": "নিশ্চিত",
+      "processing": "প্রসেসিং",
+      "shipped": "শিপড",
+      "delivered": "ডেলিভারড",
+      "cancelled": "বাতিল",
+      "refunded": "রিফান্ড"
+    },
+    "actions": {
+      "edit": "এডিট",
+      "cancel": "বাতিল",
+      "save": "সংরক্ষণ করুন",
+      "logout": "লগআউট",
+      "manageAddresses": "ঠিকানা পরিচালনা",
+      "viewAll": "সব দেখুন",
+      "viewDetails": "বিস্তারিত দেখুন"
+    },
+    "notifications": {
+      "success": "প্রোফাইল সফলভাবে আপডেট হয়েছে",
+      "error": "প্রোফাইল আপডেট করতে ব্যর্থ"
     },
     "address": {
       "default": "ডিফল্ট শিপিং ঠিকানা",

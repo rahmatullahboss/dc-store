@@ -104,6 +104,7 @@
   "Profile": {
     "title": "My Profile",
     "subtitle": "Manage your account",
+    "loading": "Loading profile...",
     "tabs": {
       "info": "Personal Info",
       "stats": "Stats",
@@ -111,10 +112,21 @@
       "addresses": "Addresses"
     },
     "stats": {
+      "title": "Quick Stats",
       "totalOrders": "Total Orders",
       "totalSpent": "Total Spent",
       "wishlist": "Wishlist Items",
       "points": "Reward Points"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "labels": {
+        "name": "Full Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "address": "Default Address"
+      },
+      "notSet": "Not set"
     },
     "info": {
       "name": "Full Name",
@@ -126,8 +138,13 @@
       "saving": "Saving...",
       "edit": "Edit"
     },
-    "orders": {
+    "recentOrders": {
       "title": "Recent Orders",
+      "items": "items",
+      "empty": "No orders yet"
+    },
+    "orders": {
+      "title": "My Orders",
       "viewAll": "View All",
       "orderId": "Order #",
       "total": "Total",
@@ -137,9 +154,31 @@
         "track": "Track Order"
       },
       "empty": {
-        "title": "No recent orders",
+        "title": "No orders yet",
         "action": "Start Shopping"
       }
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "actions": {
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "logout": "Logout",
+      "manageAddresses": "Manage Addresses",
+      "viewAll": "View All",
+      "viewDetails": "View Details"
+    },
+    "notifications": {
+      "success": "Profile updated successfully",
+      "error": "Failed to update profile"
     },
     "address": {
       "default": "Default Shipping Address",
