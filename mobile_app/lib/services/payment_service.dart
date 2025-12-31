@@ -173,10 +173,11 @@ class PaymentService {
     required String orderId,
     required double amount,
     required String paymentMethodId,
+    String currency = 'BDT', // Currency code from selected currency
     String? customerEmail,
     Map<String, dynamic>? metadata,
   }) async {
-    debugPrint('Processing payment: $paymentMethodId for ৳$amount');
+    debugPrint('Processing payment: $paymentMethodId for $currency $amount');
 
     try {
       switch (paymentMethodId) {
@@ -185,6 +186,7 @@ class PaymentService {
           return processStripePayment(
             orderId: orderId,
             amount: amount,
+            currency: currency, // Pass the selected currency
             customerEmail: customerEmail,
           );
         case 'cod':

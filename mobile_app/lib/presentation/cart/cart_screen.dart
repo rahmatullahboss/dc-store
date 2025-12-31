@@ -8,6 +8,7 @@ import 'package:toastification/toastification.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_haptics.dart';
+import '../../core/utils/price_formatter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../features/cart/domain/cart_item_model.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
@@ -24,6 +25,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   final _couponController = TextEditingController();
   String? _appliedCoupon;
   double _discountAmount = 0;
+  late String _currencySymbol; // Set in build() for use across methods
 
   // Saved for later items - empty for now, will be populated from local storage
   // TODO: Replace with actual saved items provider
@@ -79,6 +81,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final cartState = ref.watch(cartProvider);
     final cartItems = cartState.items;
     final cartTotal = ref.watch(cartTotalProvider);
+    final priceFormatter = ref.watch(priceFormatterProvider);
+    _currencySymbol = priceFormatter.symbol; // For use in helper methods
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme-aware colors using AppColors
@@ -189,7 +193,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                "Free shipping on orders over \$500 unlocked!",
+                                "Free shipping on orders over ${priceFormatter.symbol}500 unlocked!",
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -247,6 +251,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               subtleTextColor,
                               borderColor,
                               primaryAccent,
+                              priceFormatter,
                             ),
                           );
                         }, childCount: cartItems.length),
@@ -351,6 +356,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     Color subtleTextColor,
     Color borderColor,
     Color primaryAccent,
+    PriceFormatter priceFormatter,
   ) {
     final hasDiscount =
         item.product.compareAtPrice != null &&
@@ -494,7 +500,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
-                          "Price dropped by \$${(item.product.compareAtPrice! - item.product.price).toStringAsFixed(0)}",
+                          "Price dropped by $_currencySymbol${(item.product.compareAtPrice! - item.product.price).toStringAsFixed(0)}",
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF16A34A),
@@ -512,7 +518,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             if (hasDiscount)
                               Text(
-                                "\$${item.product.compareAtPrice!.toStringAsFixed(2)}",
+                                "${priceFormatter.symbol}${item.product.compareAtPrice!.toStringAsFixed(2)}",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: subtleTextColor,
@@ -520,7 +526,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 ),
                               ),
                             Text(
-                              "\$${item.product.price.toStringAsFixed(2)}",
+                              "${priceFormatter.symbol}${item.product.price.toStringAsFixed(2)}",
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -1131,7 +1137,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             const SizedBox(height: 16),
             _buildSummaryRow(
               "Subtotal",
-              "\$${subtotal.toStringAsFixed(2)}",
+              "$_currencySymbol${subtotal.toStringAsFixed(2)}",
               textColor,
               subtleTextColor,
             ),
@@ -1139,7 +1145,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             if (discount > 0) ...[
               _buildSummaryRow(
                 "Discount",
-                "-\$${discount.toStringAsFixed(2)}",
+                "-$_currencySymbol${discount.toStringAsFixed(2)}",
                 const Color(0xFF16A34A),
                 subtleTextColor,
                 isHighlight: true,
@@ -1148,14 +1154,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ],
             _buildSummaryRow(
               "Shipping",
-              shipping == 0 ? "Free" : "\$${shipping.toStringAsFixed(2)}",
+              shipping == 0
+                  ? "Free"
+                  : "$_currencySymbol${shipping.toStringAsFixed(2)}",
               textColor,
               subtleTextColor,
             ),
             const SizedBox(height: 12),
             _buildSummaryRow(
               "Tax (Estimated)",
-              "\$${tax.toStringAsFixed(2)}",
+              "$_currencySymbol${tax.toStringAsFixed(2)}",
               textColor,
               subtleTextColor,
             ),
@@ -1191,7 +1199,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    "You are saving \$${totalSavings.toStringAsFixed(2)} on this order!",
+                    "You are saving $_currencySymbol${totalSavings.toStringAsFixed(2)} on this order!",
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -1303,7 +1311,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           ),
                         ),
                         Text(
-                          "\$${total.toStringAsFixed(2)}",
+                          "$_currencySymbol${total.toStringAsFixed(2)}",
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

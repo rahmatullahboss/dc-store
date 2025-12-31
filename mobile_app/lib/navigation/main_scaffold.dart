@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../features/cart/presentation/providers/cart_provider.dart';
+import '../presentation/common/floating_chat_button.dart';
 
 /// Main Shell Scaffold with Bottom Navigation
 /// Used as the shell route for main app tabs
@@ -25,6 +26,7 @@ class MainScaffold extends ConsumerWidget {
 
     return Scaffold(
       body: child,
+      floatingActionButton: const FloatingChatButton(),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,

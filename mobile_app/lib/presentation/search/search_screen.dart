@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/white_label_config.dart';
+import '../../core/utils/price_formatter.dart';
 import '../../services/storage_service.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/product/domain/product_model.dart';
@@ -51,6 +52,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Timer? _debounceTimer;
   bool _showResults = false;
   List<String> _recentSearches = [];
+  late String _currencySymbol;
 
   // Trending searches (static - could be from analytics in future)
   final List<String> _trendingSearches = [
@@ -154,6 +156,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final searchResults = ref.watch(searchResultsProvider);
     final isSearching = ref.watch(isSearchingProvider);
     final categories = ref.watch(categoriesProvider);
+    final priceFormatter = ref.watch(priceFormatterProvider);
+    _currencySymbol = priceFormatter.symbol;
 
     // Theme colors
     final primaryBlue = WhiteLabelConfig.accentColor;
@@ -570,7 +574,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   Row(
                     children: [
                       Text(
-                        '\$${product.price.toStringAsFixed(2)}',
+                        '$_currencySymbol${product.price.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -580,7 +584,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       if (product.compareAtPrice != null) ...[
                         const SizedBox(width: 8),
                         Text(
-                          '\$${product.compareAtPrice!.toStringAsFixed(2)}',
+                          '$_currencySymbol${product.compareAtPrice!.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 13,
                             color: subtleTextColor,
