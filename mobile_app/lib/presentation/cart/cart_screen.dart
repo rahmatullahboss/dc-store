@@ -104,8 +104,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     // Calculate totals
     final subtotal = cartTotal;
     final shipping = subtotal > 500 ? 0.0 : 60.0;
-    final tax = (subtotal - _discountAmount) * 0.03; // ~3% tax
-    final total = subtotal - _discountAmount + shipping + tax;
+    final total = subtotal - _discountAmount + shipping;
     final totalSavings = _discountAmount + (shipping == 0 ? 60 : 0);
 
     return Scaffold(
@@ -301,7 +300,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         subtotal,
                         _discountAmount,
                         shipping,
-                        tax,
                         total,
                         totalSavings,
                         isDark,
@@ -1100,7 +1098,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     double subtotal,
     double discount,
     double shipping,
-    double tax,
     double total,
     double totalSavings,
     bool isDark,
@@ -1160,13 +1157,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               textColor,
               subtleTextColor,
             ),
-            const SizedBox(height: 12),
-            _buildSummaryRow(
-              "Tax (Estimated)",
-              _priceFormatter.format(tax),
-              textColor,
-              subtleTextColor,
-            ),
+
             Container(
               margin: const EdgeInsets.symmetric(vertical: 16),
               height: 1,
