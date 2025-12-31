@@ -175,6 +175,32 @@ class OrdersRepository {
       return [];
     }
   }
+
+  /// Fetch a single order by ID
+  Future<Order?> getOrderById(String orderId) async {
+    try {
+      // First try to get from the single order endpoint
+      final response = await _client.get('/api/user/orders/$orderId');
+
+      if (response.isSuccess && response.data != null) {
+        final data = response.data as Map<String, dynamic>;
+        // Handle both direct order response and nested 'order' key
+        final orderData = data['order'] ?? data;
+        return Order.fromJson(orderData as Map<String, dynamic>);
+      }
+      return null;
+    } catch (e) {
+      // Fallback: search in the orders list
+      try {
+        final orders = await getOrders();
+        return orders.firstWhere(
+          (o) => o.id == orderId || o.orderNumber == orderId,
+        );
+      } catch (_) {
+        return null;
+      }
+    }
+  }
 }
 
 /// Orders state
@@ -228,4 +254,13 @@ final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((
 ) {
   final repository = ref.watch(ordersRepositoryProvider);
   return OrdersNotifier(repository);
+});
+
+/// Single order detail provider - uses FutureProvider.family for ID-based fetching
+final orderDetailProvider = FutureProvider.family<Order?, String>((
+  ref,
+  orderId,
+) {
+  final repository = ref.watch(ordersRepositoryProvider);
+  return repository.getOrderById(orderId);
 });
