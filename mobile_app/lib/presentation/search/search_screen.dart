@@ -52,7 +52,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Timer? _debounceTimer;
   bool _showResults = false;
   List<String> _recentSearches = [];
-  late String _currencySymbol;
+  late PriceFormatter _priceFormatter;
 
   // Trending searches (static - could be from analytics in future)
   final List<String> _trendingSearches = [
@@ -157,7 +157,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final isSearching = ref.watch(isSearchingProvider);
     final categories = ref.watch(categoriesProvider);
     final priceFormatter = ref.watch(priceFormatterProvider);
-    _currencySymbol = priceFormatter.symbol;
+    _priceFormatter = priceFormatter;
 
     // Theme colors
     final primaryBlue = WhiteLabelConfig.accentColor;
@@ -574,7 +574,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   Row(
                     children: [
                       Text(
-                        '$_currencySymbol${product.price.toStringAsFixed(2)}',
+                        _priceFormatter.format(product.price),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -584,7 +584,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       if (product.compareAtPrice != null) ...[
                         const SizedBox(width: 8),
                         Text(
-                          '$_currencySymbol${product.compareAtPrice!.toStringAsFixed(2)}',
+                          _priceFormatter.format(product.compareAtPrice!),
                           style: TextStyle(
                             fontSize: 13,
                             color: subtleTextColor,

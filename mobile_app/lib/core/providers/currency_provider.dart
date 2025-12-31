@@ -23,12 +23,12 @@ class Currency {
     rate: 1.0, // Base currency
   );
 
-  /// USD currency (1 BDT ≈ 0.0085 USD)
+  /// USD currency (1 BDT ≈ 0.0085 USD, ~118 BDT = $1)
   static const Currency usd = Currency(
     code: 'USD',
     name: 'US Dollar (\$)',
     symbol: '\$',
-    rate: 0.0085, // 1 BDT = ~0.0085 USD (roughly 118 BDT = 1 USD)
+    rate: 0.0085, // DB prices are in BDT, convert to USD
   );
 
   /// List of all supported currencies
@@ -72,7 +72,7 @@ class CurrencyNotifier extends Notifier<Currency> {
   Currency build() {
     // Use microtask to ensure async loading happens after build
     Future.microtask(() => _loadCurrency());
-    return Currency.bdt; // Default to BDT
+    return Currency.usd; // Default to USD
   }
 
   Future<void> _loadCurrency() async {

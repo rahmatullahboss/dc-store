@@ -18,7 +18,7 @@ class WishlistScreen extends ConsumerStatefulWidget {
 
 class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   String _selectedCollection = 'All Items';
-  late String _currencySymbol;
+  late PriceFormatter _priceFormatter;
 
   final List<String> _collections = ['All Items'];
 
@@ -88,7 +88,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     final priceFormatter = ref.watch(priceFormatterProvider);
-    _currencySymbol = priceFormatter.symbol;
+    _priceFormatter = priceFormatter;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme colors
@@ -560,7 +560,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                       Row(
                         children: [
                           Text(
-                            "$_currencySymbol${item.price.toStringAsFixed(2)}",
+                            _priceFormatter.format(item.price),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -572,7 +572,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                           if (item.originalPrice != null) ...[
                             const SizedBox(width: 6),
                             Text(
-                              "$_currencySymbol${item.originalPrice!.toStringAsFixed(2)}",
+                              _priceFormatter.format(item.originalPrice!),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,

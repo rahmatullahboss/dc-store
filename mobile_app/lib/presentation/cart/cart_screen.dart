@@ -54,7 +54,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         type: ToastificationType.success,
         title: Text(l10n.couponApplied),
         description: Text(
-          "\$${_discountAmount.toStringAsFixed(0)} ${l10n.discount.toLowerCase()}",
+          "${_priceFormatter.format(_discountAmount)} ${l10n.discount.toLowerCase()}",
         ),
         autoCloseDuration: const Duration(seconds: 2),
       );
@@ -518,7 +518,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             if (hasDiscount)
                               Text(
-                                "${priceFormatter.symbol}${item.product.compareAtPrice!.toStringAsFixed(2)}",
+                                _priceFormatter.format(
+                                  item.product.compareAtPrice!,
+                                ),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: subtleTextColor,
@@ -526,7 +528,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 ),
                               ),
                             Text(
-                              "${priceFormatter.symbol}${item.product.price.toStringAsFixed(2)}",
+                              _priceFormatter.format(item.product.price),
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -773,7 +775,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               ),
               const SizedBox(height: 2),
               Text(
-                "\$${item.price.toStringAsFixed(2)}",
+                _priceFormatter.format(item.price),
                 style: TextStyle(fontSize: 12, color: subtleTextColor),
               ),
               const SizedBox(height: 8),
@@ -890,7 +892,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            "\$${product.price.toStringAsFixed(2)}",
+            _priceFormatter.format(product.price),
             style: TextStyle(fontSize: 12, color: subtleTextColor),
           ),
           const SizedBox(height: 8),
@@ -996,7 +998,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             ),
                           ),
                           Text(
-                            "-\$${_discountAmount.toStringAsFixed(2)} saved",
+                            "-${_priceFormatter.format(_discountAmount)} saved",
                             style: const TextStyle(
                               fontSize: 12,
                               color: Color(0xFF16A34A),
@@ -1182,7 +1184,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   ),
                 ),
                 Text(
-                  "\$${total.toStringAsFixed(2)}",
+                  _priceFormatter.format(total),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
