@@ -96,10 +96,11 @@ class AIChatService {
 
   /// Parse Vercel AI SDK stream response (toUIMessageStreamResponse format)
   ///
-  /// The format uses specific prefixes:
-  /// - "0:" for text content
-  /// - "e:" for finish reason/metadata
-  /// - "d:" for done signal
+  /// AI SDK 5.0 format uses:
+  /// - data: {"type":"text-delta","id":"...","delta":"text"}
+  /// - data: {"type":"text-start",...}
+  /// - data: {"type":"finish",...}
+  /// - data: [DONE]
   String _parseVercelAIStreamResponse(String data) {
     final buffer = StringBuffer();
     final lines = data.split('\n');
@@ -107,38 +108,48 @@ class AIChatService {
     for (final line in lines) {
       if (line.isEmpty) continue;
 
-      // Handle Vercel AI SDK stream format
-      // Text chunks are prefixed with "0:"
-      if (line.startsWith('0:')) {
+      // Handle AI SDK 5.0 format: data: {...}
+      if (line.startsWith('data: ')) {
+        final content = line.substring(6).trim();
+        if (content == '[DONE]') break;
+
+        try {
+          final json = jsonDecode(content);
+          if (json is Map) {
+            final type = json['type'];
+
+            // Handle text-delta type (main content)
+            if (type == 'text-delta') {
+              final delta = json['delta'];
+              if (delta is String) {
+                buffer.write(delta);
+              }
+            }
+            // Also handle older text/content fields
+            else if (json['text'] != null) {
+              buffer.write(json['text']);
+            } else if (json['content'] != null) {
+              buffer.write(json['content']);
+            } else if (json['delta']?['content'] != null) {
+              buffer.write(json['delta']['content']);
+            } else if (json['choices']?[0]?['delta']?['content'] != null) {
+              buffer.write(json['choices'][0]['delta']['content']);
+            }
+          }
+        } catch (_) {
+          // Ignore parsing errors
+        }
+      }
+      // Handle older Vercel AI SDK format (0: prefix)
+      else if (line.startsWith('0:')) {
         final content = line.substring(2);
         try {
-          // Content is JSON encoded string
           final decoded = jsonDecode(content);
           if (decoded is String) {
             buffer.write(decoded);
           }
         } catch (_) {
-          // If not JSON, just use the raw content
           buffer.write(content);
-        }
-      }
-      // Handle older SSE format (data: prefix)
-      else if (line.startsWith('data: ')) {
-        final content = line.substring(6);
-        if (content == '[DONE]') break;
-
-        try {
-          final json = jsonDecode(content);
-          final text =
-              json['text'] ??
-              json['content'] ??
-              json['delta']?['content'] ??
-              json['choices']?[0]?['delta']?['content'];
-          if (text != null) {
-            buffer.write(text);
-          }
-        } catch (_) {
-          // Ignore parsing errors for non-JSON lines
         }
       }
     }
