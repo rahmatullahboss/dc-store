@@ -387,8 +387,9 @@
     "location": {
       "city": "Dhanmondi, Dhaka",
       "country": "Bangladesh"
-    },
-    "Orders": {
+    }
+  },
+  "Orders": {
       "title": "My Orders",
       "subtitle": "Track and manage your orders",
       "refresh": "Refresh",
@@ -435,8 +436,8 @@
         "call": "Call Support",
         "chat": "Chat with Us"
       }
-    },
-    "Wishlist": {
+  },
+  "Wishlist": {
       "title": "My Wishlist",
       "subtitle": "{count} {count, plural, =1 {item} other {items}} saved",
       "loading": "Loading your wishlist...",
@@ -464,8 +465,8 @@
         "removeError": "Failed to remove item",
         "addedToCart": "Added to cart"
       }
-    },
-    "Search": {
+  },
+  "Search": {
       "placeholder": "Search for products...",
       "button": "Search",
       "loading": "Loading products...",
@@ -490,8 +491,8 @@
       "card": {
         "addToCart": "Add to Cart"
       }
-    },
-    "FAQ": {
+  },
+  "FAQ": {
       "title": "Frequently Asked Questions",
       "subtitle": "Find answers to common questions about orders, shipping, returns, and more.",
       "searchPlaceholder": "Search for answers...",
@@ -581,7 +582,6 @@
           }
         }
       }
-    }
   },
   "Cart": {
     "title": "Shopping Cart",
