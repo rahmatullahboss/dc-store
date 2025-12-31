@@ -68,6 +68,7 @@ class AppRoutes {
   static const String about = 'about';
   static const String privacyPolicy = 'privacy-policy';
   static const String termsOfService = 'terms-of-service';
+  static const String returnPolicy = 'return-policy';
 
   // AI Chat
   static const String chat = 'chat';
@@ -137,6 +138,7 @@ class AppRoutes {
   static const String aboutPath = '/about';
   static const String privacyPolicyPath = '/privacy';
   static const String termsOfServicePath = '/terms';
+  static const String returnPolicyPath = '/return-policy';
 
   // AI Chat
   static const String chatPath = '/chat';

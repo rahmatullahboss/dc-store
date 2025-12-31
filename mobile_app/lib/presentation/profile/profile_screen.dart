@@ -446,7 +446,7 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
                   iconColor: isDark ? Colors.grey[400]! : Colors.grey[500]!,
                   title: 'Return Policy',
-                  onTap: () => context.push('/help'),
+                  onTap: () => context.push('/return-policy'),
                 ),
               ],
               isDark: isDark,

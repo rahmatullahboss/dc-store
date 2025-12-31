@@ -45,6 +45,7 @@ import '../presentation/support/contact_us_screen.dart';
 import '../presentation/support/about_screen.dart';
 import '../presentation/support/privacy_policy_screen.dart';
 import '../presentation/support/terms_screen.dart';
+import '../presentation/support/return_policy_screen.dart';
 
 // Address
 import '../presentation/profile/add_address_screen.dart';
@@ -518,6 +519,14 @@ class AppRouter {
           name: AppRoutes.termsOfService,
           pageBuilder: (context, state) => AppTransitions.slideRight(
             child: const TermsScreen(),
+            state: state,
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.returnPolicyPath,
+          name: AppRoutes.returnPolicy,
+          pageBuilder: (context, state) => AppTransitions.slideRight(
+            child: const ReturnPolicyScreen(),
             state: state,
           ),
         ),
