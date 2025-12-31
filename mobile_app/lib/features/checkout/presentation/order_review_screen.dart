@@ -23,6 +23,7 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
   String? _errorMessage;
 
   Future<void> _placeOrder() async {
+    debugPrint('=== PLACE ORDER STARTED ===');
     setState(() {
       _isPlacingOrder = true;
       _errorMessage = null;
@@ -38,16 +39,23 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
       final subtotal = cartState.totalPrice;
       final total = subtotal + shipping;
 
+      debugPrint('Payment method: $paymentMethod, isStripe: $isStripe');
+      debugPrint('Cart items: ${items.length}, Total: $total');
+
       // Generate temp order ID for payment
       final tempOrderId = 'ORD-${DateTime.now().millisecondsSinceEpoch}';
 
       // If Stripe payment, process payment first
       if (isStripe) {
+        debugPrint('Processing Stripe payment...');
         final paymentService = PaymentService.instance;
         final paymentResult = await paymentService.processStripePayment(
           orderId: tempOrderId,
           amount: total,
           currency: 'BDT',
+        );
+        debugPrint(
+          'Stripe result: success=${paymentResult.success}, message=${paymentResult.message}',
         );
 
         if (!paymentResult.success) {
@@ -68,6 +76,8 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
             },
           )
           .toList();
+
+      debugPrint('Calling API: ${AppConfig.baseUrl}/api/orders');
 
       // Create order via API
       final response = await http.post(
@@ -93,11 +103,15 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
         }),
       );
 
+      debugPrint('API Response: ${response.statusCode} - ${response.body}');
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         final orderNumber =
             data['order']?['orderNumber'] ??
             'ORD-${DateTime.now().millisecondsSinceEpoch}';
+
+        debugPrint('Order created: $orderNumber');
 
         if (mounted) {
           // Clear cart and navigate to success
@@ -106,9 +120,11 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
         }
       } else {
         final data = jsonDecode(response.body);
+        debugPrint('Order failed: ${data['error']}');
         throw Exception(data['error'] ?? 'Failed to place order');
       }
     } catch (e) {
+      debugPrint('=== ORDER ERROR: $e ===');
       if (mounted) {
         setState(() {
           _errorMessage = e.toString().replaceFirst('Exception: ', '');

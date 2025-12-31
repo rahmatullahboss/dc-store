@@ -339,7 +339,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             child: ElevatedButton(
               onPressed: isPaymentSelected
                   ? () {
-                      context.push('/order-confirmation');
+                      context.push('/checkout/review');
                     }
                   : null,
               style: ElevatedButton.styleFrom(
