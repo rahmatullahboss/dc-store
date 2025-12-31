@@ -102,11 +102,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // Show error if present
     if (chatState.error != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final errorMessage = chatState.error!;
+        // Clear error first to prevent re-triggering
+        ref.read(chatMessagesProvider.notifier).clearError();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(chatState.error!),
+            content: Text(errorMessage),
             backgroundColor: Colors.red.shade400,
             behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -114,12 +119,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               label: 'Dismiss',
               textColor: Colors.white,
               onPressed: () {
-                ref.read(chatMessagesProvider.notifier).clearError();
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
               },
             ),
           ),
         );
-        ref.read(chatMessagesProvider.notifier).clearError();
       });
     }
 
