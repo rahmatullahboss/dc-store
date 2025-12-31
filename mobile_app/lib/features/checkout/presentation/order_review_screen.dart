@@ -7,6 +7,8 @@ import 'dart:convert';
 import '../../../core/config/white_label_config.dart';
 import '../../../core/config/app_config.dart';
 import '../../../services/payment_service.dart';
+import '../../../services/storage_service.dart';
+import '../../../core/constants/storage_keys.dart';
 import '../../cart/presentation/providers/cart_provider.dart';
 import 'providers/checkout_provider.dart';
 
@@ -79,10 +81,17 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
 
       debugPrint('Calling API: ${AppConfig.baseUrl}/api/orders');
 
+      // Get auth token for API call
+      final storageService = await StorageService.getInstance();
+      final authToken = storageService.getString(StorageKeys.authToken);
+
       // Create order via API
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/orders'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          if (authToken != null) 'Authorization': 'Bearer $authToken',
+        },
         body: jsonEncode({
           'items': orderItems,
           'subtotal': subtotal,

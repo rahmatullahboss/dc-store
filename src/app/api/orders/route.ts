@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { orders } from "@/db/schema";
+import { orders, sessions } from "@/db/schema";
 import type { OrderItem, Address } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { headers } from "next/headers";
 import { sendOrderConfirmationEmail } from "@/lib/email";
@@ -36,17 +37,36 @@ export async function POST(request: Request) {
 
     const db = await getDatabase();
 
-    // Get current user session if logged in
+    // Get current user session - check Bearer token first (mobile app), then cookie (web)
     let userId: string | null = null;
-    try {
-      const auth = await getAuth();
-      const headersList = await headers();
-      const session = await auth.api.getSession({ headers: headersList });
-      if (session?.user?.id) {
-        userId = session.user.id;
+    
+    // First try Bearer token (for mobile app)
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      const session = await db
+        .select()
+        .from(sessions)
+        .where(eq(sessions.token, token))
+        .then((rows) => rows[0]);
+
+      if (session && new Date(session.expiresAt) >= new Date()) {
+        userId = session.userId;
       }
-    } catch {
-      // User is not logged in, proceed with guest checkout
+    }
+    
+    // Fallback to cookie-based session (for web)
+    if (!userId) {
+      try {
+        const auth = await getAuth();
+        const headersList = await headers();
+        const session = await auth.api.getSession({ headers: headersList });
+        if (session?.user?.id) {
+          userId = session.user.id;
+        }
+      } catch {
+        // User is not logged in, proceed with guest checkout
+      }
     }
 
     // Generate order number
