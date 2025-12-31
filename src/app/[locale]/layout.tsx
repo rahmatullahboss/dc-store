@@ -14,6 +14,7 @@ import { routing } from "@/i18n/routing";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
