@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
@@ -11,11 +12,21 @@ export function HeroSection() {
   return (
     <section className="relative z-10 w-full max-w-7xl mx-auto px-4 lg:px-10 py-6 lg:py-8">
       <div className="relative overflow-hidden rounded-2xl min-h-[450px] sm:min-h-[550px] lg:min-h-[650px] flex items-center">
-        {/* Background Image with Gradient Overlay */}
-        <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center"
+        {/* LCP Hero Image - prioritized for fast loading */}
+        <Image
+          src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=2574&auto=format&fit=crop"
+          alt="Premium quality products showcase"
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Gradient Overlay */}
+        <div 
+          className="absolute inset-0 w-full h-full"
           style={{
-            backgroundImage: `linear-gradient(105deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%), url("https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=2574&auto=format&fit=crop")`,
+            background: 'linear-gradient(105deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%)',
           }}
         />
 
