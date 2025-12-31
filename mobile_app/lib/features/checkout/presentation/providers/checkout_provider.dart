@@ -1,37 +1,57 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Checkout state for payment selection
 class CheckoutState {
+  final String? paymentMethod; // 'cod' or 'stripe'
   final bool isLoading;
   final String? error;
 
-  CheckoutState({this.isLoading = false, this.error});
+  const CheckoutState({this.paymentMethod, this.isLoading = false, this.error});
 
-  CheckoutState copyWith({bool? isLoading, String? error}) {
-    return CheckoutState(isLoading: isLoading ?? this.isLoading, error: error);
+  CheckoutState copyWith({
+    String? paymentMethod,
+    bool? isLoading,
+    String? error,
+    bool clearPaymentMethod = false,
+    bool clearError = false,
+  }) {
+    return CheckoutState(
+      paymentMethod: clearPaymentMethod
+          ? null
+          : (paymentMethod ?? this.paymentMethod),
+      isLoading: isLoading ?? this.isLoading,
+      error: clearError ? null : (error ?? this.error),
+    );
   }
 }
 
-class CheckoutController extends Notifier<CheckoutState> {
+/// Checkout notifier for managing payment state
+class CheckoutNotifier extends Notifier<CheckoutState> {
   @override
   CheckoutState build() {
-    return CheckoutState();
+    return const CheckoutState();
   }
 
-  Future<bool> placeOrder(Map<String, dynamic> orderData) async {
-    state = CheckoutState(isLoading: true);
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+  void setPaymentMethod(String method) {
+    state = state.copyWith(paymentMethod: method, clearError: true);
+  }
 
-      // Success
-      state = CheckoutState(isLoading: false);
-      return true;
-    } catch (e) {
-      state = CheckoutState(isLoading: false, error: e.toString());
-      return false;
-    }
+  void setLoading(bool value) {
+    state = state.copyWith(isLoading: value);
+  }
+
+  void setError(String? error) {
+    state = state.copyWith(error: error, isLoading: false);
+  }
+
+  void reset() {
+    state = const CheckoutState();
   }
 }
 
-final checkoutControllerProvider =
-    NotifierProvider<CheckoutController, CheckoutState>(CheckoutController.new);
+final checkoutProvider = NotifierProvider<CheckoutNotifier, CheckoutState>(
+  CheckoutNotifier.new,
+);
+
+// Legacy provider for backward compatibility
+final checkoutControllerProvider = checkoutProvider;

@@ -232,7 +232,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                     Switch(
                       value: _isDefault,
                       onChanged: (v) => setState(() => _isDefault = v),
-                      activeColor: WhiteLabelConfig.accentColor,
+                      activeThumbColor: WhiteLabelConfig.accentColor,
                     ),
                   ],
                 ),

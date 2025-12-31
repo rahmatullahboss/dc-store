@@ -78,7 +78,7 @@ class ProductRepository {
                   p.name.toLowerCase().contains(queryLower) ||
                   (p.description?.toLowerCase().contains(queryLower) ??
                       false) ||
-                  (p.slug?.toLowerCase().contains(queryLower) ?? false),
+                  (p.slug.toLowerCase().contains(queryLower) ?? false),
             )
             .toList();
 

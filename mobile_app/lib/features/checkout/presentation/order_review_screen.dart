@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../../../core/config/white_label_config.dart';
 import '../../../core/config/app_config.dart';
 import '../../cart/presentation/providers/cart_provider.dart';
+import 'providers/checkout_provider.dart';
 
 /// Order Review Screen - Final checkout step
 class OrderReviewScreen extends ConsumerStatefulWidget {
@@ -28,6 +29,9 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
 
     try {
       final cartState = ref.read(cartProvider);
+      final checkoutState = ref.read(checkoutProvider);
+      final paymentMethod = checkoutState.paymentMethod ?? 'cod';
+      final isStripe = paymentMethod == 'stripe';
       final items = cartState.items;
       const shipping = 50.0;
       final subtotal = cartState.totalPrice;
@@ -66,8 +70,8 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
             'city': 'Dhaka',
             'country': 'Bangladesh',
           },
-          'paymentMethod': 'cod',
-          'paymentStatus': 'pending',
+          'paymentMethod': paymentMethod,
+          'paymentStatus': isStripe ? 'paid' : 'pending',
         }),
       );
 
@@ -116,10 +120,13 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
         : const Color(0xFFE5E7EB);
 
     final cartState = ref.watch(cartProvider);
+    final checkoutState = ref.watch(checkoutProvider);
     final items = cartState.items;
     final subtotal = cartState.totalPrice;
     const shipping = 50.0;
     final total = subtotal + shipping;
+    final paymentMethod = checkoutState.paymentMethod ?? 'cod';
+    final isStripe = paymentMethod == 'stripe';
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -198,18 +205,24 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: WhiteLabelConfig.accentColor.withAlpha(20),
+                            color: isStripe
+                                ? Colors.indigo.withAlpha(20)
+                                : Colors.green.withAlpha(20),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
-                            LucideIcons.banknote,
+                            isStripe
+                                ? LucideIcons.creditCard
+                                : LucideIcons.banknote,
                             size: 20,
-                            color: WhiteLabelConfig.accentColor,
+                            color: isStripe
+                                ? Colors.indigo[600]
+                                : Colors.green[600],
                           ),
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Cash on Delivery',
+                          isStripe ? 'Card Payment' : 'Cash on Delivery',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,

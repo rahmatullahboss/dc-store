@@ -3,7 +3,6 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../core/errors/failures.dart';
 import '../core/network/dio_client.dart';
 import 'datasources/remote/address_remote_datasource.dart';
 import 'models/address/address_model.dart';

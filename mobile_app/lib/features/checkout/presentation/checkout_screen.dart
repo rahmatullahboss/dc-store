@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:toastification/toastification.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 
 import '../../cart/presentation/providers/cart_provider.dart';
 import 'widgets/checkout_step_indicator.dart';
-import 'widgets/wallet_section.dart';
-import 'widgets/saved_card_widget.dart';
-import 'widgets/payment_method_tile.dart';
-import 'widgets/add_card_sheet.dart';
+import 'providers/checkout_provider.dart';
 
-/// Redesigned Checkout Screen - Payment Step
-/// Features: Progress stepper, wallet toggle, saved cards carousel,
-/// payment methods, sticky footer with dark mode support
+/// Checkout Screen - Payment Step
+/// Features: Progress stepper, payment methods (COD + Stripe only),
+/// sticky footer with dark mode support
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
@@ -25,40 +21,12 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
-  // State
-  bool _useWallet = false;
-  String? _selectedCardId = '1';
-  String? _selectedPaymentMethod;
-  bool _billingSameAsShipping = true;
-
-  // Mock saved cards
-  final List<SavedCard> _savedCards = const [
-    SavedCard(
-      id: '1',
-      cardNumber: '4242',
-      cardHolder: 'Jonathan Doe',
-      expiryDate: '12/25',
-      cardType: 'visa',
-      label: 'Personal',
-      isDefault: true,
-    ),
-    SavedCard(
-      id: '2',
-      cardNumber: '8899',
-      cardHolder: 'Jonathan Doe',
-      expiryDate: '09/24',
-      cardType: 'mastercard',
-      label: 'Business',
-    ),
-  ];
-
-  // Mock wallet balance
-  final double _walletBalance = 45.00;
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cartTotal = ref.watch(cartTotalProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final checkoutState = ref.watch(checkoutProvider);
 
     // Theme-aware colors using AppColors
     final bgColor = AppColors.getBackground(context);
@@ -78,11 +46,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
     // Calculate total
     final shippingCost = cartTotal > 500 ? 0.0 : 60.0;
-    final walletDiscount = _useWallet ? _walletBalance : 0.0;
-    final total = (cartTotal + shippingCost - walletDiscount).clamp(
-      0.0,
-      double.infinity,
-    );
+    final total = cartTotal + shippingCost;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -101,18 +65,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   icon: Icon(LucideIcons.arrowLeft, color: textColor),
                 ),
                 centerTitle: true,
-                title: Builder(
-                  builder: (context) {
-                    final l10n = AppLocalizations.of(context)!;
-                    return Text(
-                      l10n.checkout,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    );
-                  },
+                title: Text(
+                  l10n.checkout,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                 ),
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(1),
@@ -126,87 +85,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               ),
 
               // Divider
-              SliverToBoxAdapter(child: Container(height: 8, color: bgColor)),
-
-              // Wallet Section
-              SliverToBoxAdapter(
-                child: WalletSection(
-                  balance: _walletBalance,
-                  isEnabled: _useWallet,
-                  onToggle: (value) => setState(() => _useWallet = value),
-                ),
-              ),
-
-              // Divider
               SliverToBoxAdapter(child: Container(height: 16, color: bgColor)),
 
-              // Saved Cards Section
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Saved Cards',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 192,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: _savedCards.length + 1,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 16),
-                        itemBuilder: (context, index) {
-                          if (index == _savedCards.length) {
-                            return AddCardButton(
-                              onTap: () => AddCardSheet.show(
-                                context,
-                                onCardAdded: () {
-                                  toastification.show(
-                                    context: context,
-                                    type: ToastificationType.success,
-                                    title: const Text(
-                                      'Card added successfully!',
-                                    ),
-                                    autoCloseDuration: const Duration(
-                                      seconds: 2,
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          }
-                          final card = _savedCards[index];
-                          return SavedCardWidget(
-                            card: card,
-                            isSelected: _selectedCardId == card.id,
-                            onTap: () {
-                              setState(() {
-                                _selectedCardId = card.id;
-                                _selectedPaymentMethod = null;
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Divider
-              SliverToBoxAdapter(child: Container(height: 24, color: bgColor)),
-
-              // More Payment Options
+              // Payment Methods Section
               SliverToBoxAdapter(
                 child: Container(
                   color: surfaceColor,
@@ -214,155 +95,131 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                         child: Text(
-                          'More Options',
+                          'Payment Method',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: textColor,
                           ),
                         ),
                       ),
-                      // UPI
-                      PaymentMethodTile(
-                        icon: LucideIcons.qrCode,
-                        iconColor: Colors.orange[600]!,
-                        iconBgColor: isDark
-                            ? Colors.orange.withAlpha(51)
-                            : const Color(0xFFFFF7ED),
-                        title: 'UPI / VPA',
-                        subtitle: 'Google Pay, PhonePe, Paytm',
-                        isSelected: _selectedPaymentMethod == 'upi',
-                        onTap: () {
-                          setState(() {
-                            _selectedPaymentMethod = 'upi';
-                            _selectedCardId = null;
-                          });
-                        },
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Select your preferred payment option',
+                          style: TextStyle(fontSize: 13, color: subtleColor),
+                        ),
                       ),
-                      // Net Banking
-                      PaymentMethodTile(
-                        icon: LucideIcons.landmark,
-                        iconColor: Colors.blue[600]!,
-                        iconBgColor: isDark
-                            ? Colors.blue.withAlpha(51)
-                            : const Color(0xFFEFF6FF),
-                        title: 'Net Banking',
-                        subtitle: 'All major banks supported',
-                        isSelected: _selectedPaymentMethod == 'netbanking',
-                        onTap: () {
-                          setState(() {
-                            _selectedPaymentMethod = 'netbanking';
-                            _selectedCardId = null;
-                          });
-                        },
-                      ),
+                      const SizedBox(height: 16),
+
                       // Cash on Delivery
-                      PaymentMethodTile(
+                      _PaymentOptionTile(
                         icon: LucideIcons.banknote,
                         iconColor: Colors.green[600]!,
                         iconBgColor: isDark
-                            ? Colors.green.withAlpha(51)
+                            ? Colors.green.withAlpha(38)
                             : const Color(0xFFF0FDF4),
                         title: 'Cash on Delivery',
-                        subtitle: 'Pay when you receive',
-                        isSelected: _selectedPaymentMethod == 'cod',
+                        subtitle: 'Pay when you receive your order',
+                        isSelected: checkoutState.paymentMethod == 'cod',
                         onTap: () {
-                          setState(() {
-                            _selectedPaymentMethod = 'cod';
-                            _selectedCardId = null;
-                          });
+                          ref
+                              .read(checkoutProvider.notifier)
+                              .setPaymentMethod('cod');
                         },
+                        isDark: isDark,
+                        textColor: textColor,
+                        subtleColor: subtleColor,
+                        borderColor: borderColor,
                       ),
+
+                      // Stripe Card Payment
+                      _PaymentOptionTile(
+                        icon: LucideIcons.creditCard,
+                        iconColor: Colors.indigo[600]!,
+                        iconBgColor: isDark
+                            ? Colors.indigo.withAlpha(38)
+                            : const Color(0xFFEEF2FF),
+                        title: 'Card Payment',
+                        subtitle: 'Pay securely with Visa, Mastercard',
+                        isSelected: checkoutState.paymentMethod == 'stripe',
+                        onTap: () {
+                          ref
+                              .read(checkoutProvider.notifier)
+                              .setPaymentMethod('stripe');
+                        },
+                        isDark: isDark,
+                        textColor: textColor,
+                        subtleColor: subtleColor,
+                        borderColor: borderColor,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              'assets/images/visa.png',
+                              width: 32,
+                              height: 20,
+                              errorBuilder: (_, __, ___) => const SizedBox(),
+                            ),
+                            const SizedBox(width: 4),
+                            Image.asset(
+                              'assets/images/mastercard.png',
+                              width: 32,
+                              height: 20,
+                              errorBuilder: (_, __, ___) => const SizedBox(),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
               ),
 
               // Divider
-              SliverToBoxAdapter(child: Container(height: 8, color: bgColor)),
+              SliverToBoxAdapter(child: Container(height: 16, color: bgColor)),
 
-              // Billing Address Toggle
+              // Security & Trust Badges
               SliverToBoxAdapter(
                 child: Container(
-                  color: surfaceColor,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
-                  child: InkWell(
-                    onTap: () => setState(
-                      () => _billingSameAsShipping = !_billingSameAsShipping,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: _billingSameAsShipping
-                                ? primaryAccent
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: _billingSameAsShipping
-                                  ? primaryAccent
-                                  : (isDark
-                                        ? Colors.grey[600]!
-                                        : Colors.grey[400]!),
-                              width: 2,
-                            ),
-                          ),
-                          child: _billingSameAsShipping
-                              ? const Icon(
-                                  LucideIcons.check,
-                                  color: Colors.white,
-                                  size: 14,
-                                )
-                              : null,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Billing address is same as shipping',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: isDark ? Colors.grey[300] : Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
+                  decoration: BoxDecoration(
+                    color: surfaceColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: borderColor),
                   ),
-                ),
-              ),
-
-              // Gift Card / Promo Section
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextButton.icon(
-                    onPressed: () {
-                      toastification.show(
-                        context: context,
-                        type: ToastificationType.info,
-                        title: const Text('Coming soon!'),
-                        autoCloseDuration: const Duration(seconds: 2),
-                      );
-                    },
-                    icon: Icon(
-                      LucideIcons.gift,
-                      color: primaryAccent,
-                      size: 18,
-                    ),
-                    label: Text(
-                      'Add Gift Card or Promo Code',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: primaryAccent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _TrustBadge(
+                        icon: LucideIcons.shield,
+                        label: 'Secure Payment',
+                        color: Colors.green[600]!,
+                        isDark: isDark,
+                        subtleColor: subtleColor,
                       ),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      alignment: Alignment.centerLeft,
-                    ),
+                      Container(width: 1, height: 32, color: borderColor),
+                      _TrustBadge(
+                        icon: LucideIcons.truck,
+                        label: 'Fast Delivery',
+                        color: Colors.blue[600]!,
+                        isDark: isDark,
+                        subtleColor: subtleColor,
+                      ),
+                      Container(width: 1, height: 32, color: borderColor),
+                      _TrustBadge(
+                        icon: LucideIcons.refreshCw,
+                        label: 'Easy Returns',
+                        color: Colors.orange[600]!,
+                        isDark: isDark,
+                        subtleColor: subtleColor,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -385,6 +242,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               subtleColor: subtleColor,
               borderColor: borderColor,
               primaryAccent: primaryAccent,
+              isPaymentSelected: checkoutState.paymentMethod != null,
             ),
           ),
         ],
@@ -400,6 +258,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     required Color subtleColor,
     required Color borderColor,
     required Color primaryAccent,
+    required bool isPaymentSelected,
   }) {
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -433,58 +292,39 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     'Total to Pay',
                     style: TextStyle(fontSize: 12, color: subtleColor),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        '\$${total.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () {
-                          // Show order summary
-                          toastification.show(
-                            context: context,
-                            type: ToastificationType.info,
-                            title: const Text('Order summary'),
-                            autoCloseDuration: const Duration(seconds: 2),
-                          );
-                        },
-                        child: Text(
-                          'View Details',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: primaryAccent,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    '৳${total.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
                   ),
                 ],
               ),
               // Security Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(4),
+                  color: isDark
+                      ? Colors.green.withAlpha(25)
+                      : Colors.green.withAlpha(20),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.lock, size: 12, color: Colors.green[600]),
+                    Icon(LucideIcons.lock, size: 14, color: Colors.green[600]),
                     const SizedBox(width: 4),
                     Text(
                       '100% Secure',
                       style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: subtleColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green[600],
                       ),
                     ),
                   ],
@@ -497,18 +337,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed:
-                  _selectedCardId != null || _selectedPaymentMethod != null
+              onPressed: isPaymentSelected
                   ? () {
-                      // Navigate to order review/confirmation
-                      toastification.show(
-                        context: context,
-                        type: ToastificationType.success,
-                        title: const Text('Proceeding to Review'),
-                        autoCloseDuration: const Duration(seconds: 2),
-                      );
-
-                      // Navigate to order confirmation screen
                       context.push('/order-confirmation');
                     }
                   : null,
@@ -525,24 +355,177 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                elevation: 4,
+                elevation: 2,
                 shadowColor: primaryAccent.withAlpha(77),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Continue to Review',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    isPaymentSelected
+                        ? 'Continue to Review'
+                        : 'Select Payment Method',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(width: 8),
-                  Icon(LucideIcons.arrowRight, size: 18),
+                  if (isPaymentSelected) ...[
+                    const SizedBox(width: 8),
+                    const Icon(LucideIcons.arrowRight, size: 18),
+                  ],
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Payment Option Tile Widget
+class _PaymentOptionTile extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBgColor;
+  final String title;
+  final String subtitle;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final bool isDark;
+  final Color textColor;
+  final Color subtleColor;
+  final Color borderColor;
+  final Widget? trailing;
+
+  const _PaymentOptionTile({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBgColor,
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.onTap,
+    required this.isDark,
+    required this.textColor,
+    required this.subtleColor,
+    required this.borderColor,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                    ? AppColors.accent.withAlpha(15)
+                    : AppColors.accent.withAlpha(10))
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppColors.accent : borderColor,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Icon Container
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: iconColor, size: 24),
+            ),
+            const SizedBox(width: 14),
+            // Title & Subtitle
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 12, color: subtleColor),
+                  ),
+                ],
+              ),
+            ),
+            // Trailing widget or radio indicator
+            if (trailing != null) ...[trailing!, const SizedBox(width: 12)],
+            // Selection Indicator
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? AppColors.accent : Colors.transparent,
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.accent
+                      : (isDark ? Colors.grey[600]! : Colors.grey[400]!),
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(LucideIcons.check, size: 14, color: Colors.white)
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Trust Badge Widget
+class _TrustBadge extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool isDark;
+  final Color subtleColor;
+
+  const _TrustBadge({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.isDark,
+    required this.subtleColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 20, color: color),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            color: subtleColor,
+          ),
+        ),
+      ],
     );
   }
 }
