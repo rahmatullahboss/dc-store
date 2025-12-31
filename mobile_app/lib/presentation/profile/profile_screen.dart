@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/config/app_config.dart';
 import '../../core/providers/theme_provider.dart';
+import '../../core/providers/currency_provider.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/constants/support_config.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/login_screen.dart';
@@ -42,15 +44,22 @@ class ProfileScreen extends ConsumerWidget {
     final user = authState.user!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeMode = ref.watch(themeModeProvider);
+    final selectedCurrency = ref.watch(currencyProvider);
 
-    // Theme colors
-    final bgColor = isDark ? const Color(0xFF101622) : const Color(0xFFF9FAFB);
-    final surfaceColor = isDark ? const Color(0xFF1b2431) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtleColor = isDark ? Colors.grey[400]! : const Color(0xFF6B7280);
-    final borderColor = isDark ? Colors.grey[800]! : Colors.grey[100]!;
-    const primaryColor = Color(0xFF4F46E5);
-    const primarySoft = Color(0xFFEEF2FF);
+    // Theme colors - using AppColors for consistency
+    final bgColor = isDark ? AppColors.darkBackground : AppColors.background;
+    final surfaceColor = isDark ? AppColors.darkCard : AppColors.card;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.textPrimary;
+    final subtleColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
+    final borderColor = isDark ? AppColors.darkBorder : AppColors.border;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final primarySoft = isDark
+        ? primaryColor.withAlpha(51)
+        : AppColors.primaryLight.withAlpha(77);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -366,6 +375,7 @@ class ProfileScreen extends ConsumerWidget {
               subtleColor: subtleColor,
               borderColor: borderColor,
               primaryColor: primaryColor,
+              selectedCurrency: selectedCurrency,
             ),
 
             // Support Section
@@ -659,6 +669,7 @@ class ProfileScreen extends ConsumerWidget {
     required Color subtleColor,
     required Color borderColor,
     required Color primaryColor,
+    required Currency selectedCurrency,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -711,8 +722,13 @@ class ProfileScreen extends ConsumerWidget {
                   iconBgColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
                   iconColor: isDark ? Colors.grey[400]! : Colors.grey[600]!,
                   title: 'Currency',
-                  trailing: 'BDT (৳)',
-                  onTap: () => _showCurrencySelector(context, isDark),
+                  trailing: selectedCurrency.displayText,
+                  onTap: () => _showCurrencySelector(
+                    context,
+                    ref,
+                    isDark,
+                    selectedCurrency,
+                  ),
                   textColor: textColor,
                   subtleColor: subtleColor,
                   isDark: isDark,
@@ -1009,19 +1025,22 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _showCurrencySelector(BuildContext context, bool isDark) {
-    final currencies = [
-      {'code': 'BDT', 'name': 'Bangladeshi Taka (৳)', 'symbol': '৳'},
-      {'code': 'USD', 'name': 'US Dollar (\$)', 'symbol': '\$'},
-    ];
+  void _showCurrencySelector(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDark,
+    Currency selectedCurrency,
+  ) {
+    final currencies = Currency.supportedCurrencies;
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+      backgroundColor: isDark ? AppColors.darkCard : AppColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
+      builder: (sheetContext) => Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1032,25 +1051,59 @@ class ProfileScreen extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
             ...currencies.map(
               (currency) => ListTile(
-                leading: Text(
-                  currency['symbol']!,
-                  style: const TextStyle(fontSize: 24),
-                ),
-                title: Text(
-                  currency['name']!,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: currency == selectedCurrency
+                        ? primaryColor.withAlpha(51)
+                        : (isDark ? Colors.grey[800] : Colors.grey[100]),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      currency.symbol,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: currency == selectedCurrency
+                            ? primaryColor
+                            : (isDark ? Colors.white70 : Colors.black54),
+                      ),
+                    ),
                   ),
                 ),
+                title: Text(
+                  currency.name,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
+                    fontWeight: currency == selectedCurrency
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+                trailing: currency == selectedCurrency
+                    ? Icon(LucideIcons.check, color: primaryColor, size: 20)
+                    : null,
                 onTap: () async {
-                  Navigator.pop(context);
-                  await _savePreference('currency', currency['code']!, context);
+                  Navigator.pop(sheetContext);
+                  // Update local state via provider
+                  await ref
+                      .read(currencyProvider.notifier)
+                      .setCurrency(currency);
+                  // Also sync to backend
+                  if (context.mounted) {
+                    await _savePreference('currency', currency.code, context);
+                  }
                 },
               ),
             ),
