@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,15 +9,17 @@ import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/config/app_config.dart';
 import '../../core/config/white_label_config.dart';
+import '../../core/utils/price_formatter.dart';
 import '../../services/share_service.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends ConsumerWidget {
   final String orderId;
 
   const OrderDetailsScreen({super.key, required this.orderId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final priceFormatter = ref.watch(priceFormatterProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final primaryBlue = WhiteLabelConfig.accentColor;
@@ -125,6 +128,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       borderColor,
                       context,
                       order.id,
+                      priceFormatter,
                     ),
 
                     // Delivery & Payment Info
@@ -145,6 +149,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       textColor,
                       subtleTextColor,
                       borderColor,
+                      priceFormatter,
                     ),
 
                     // Secondary Actions
@@ -527,6 +532,7 @@ class OrderDetailsScreen extends StatelessWidget {
     Color borderColor,
     BuildContext context,
     String orderId,
+    PriceFormatter priceFormatter,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -603,7 +609,7 @@ class OrderDetailsScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '\$${item.price.toStringAsFixed(2)}',
+                              priceFormatter.format(item.price),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -810,6 +816,7 @@ class OrderDetailsScreen extends StatelessWidget {
     Color textColor,
     Color subtleTextColor,
     Color borderColor,
+    PriceFormatter priceFormatter,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -834,7 +841,7 @@ class OrderDetailsScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildSummaryRow(
               'Subtotal (${order.items.length} items)',
-              '\$${order.subtotal.toStringAsFixed(2)}',
+              priceFormatter.format(order.subtotal),
               subtleTextColor,
               null,
             ),
@@ -843,21 +850,21 @@ class OrderDetailsScreen extends StatelessWidget {
               'Shipping',
               order.shipping == 0
                   ? 'Free'
-                  : '\$${order.shipping.toStringAsFixed(2)}',
+                  : priceFormatter.format(order.shipping),
               subtleTextColor,
               const Color(0xFF10B981),
             ),
             const SizedBox(height: 12),
             _buildSummaryRow(
               'Tax',
-              '\$${order.tax.toStringAsFixed(2)}',
+              priceFormatter.format(order.tax),
               subtleTextColor,
               null,
             ),
             const SizedBox(height: 12),
             _buildSummaryRow(
               'Discount',
-              '- \$${order.discount.toStringAsFixed(2)}',
+              '- ${priceFormatter.format(order.discount)}',
               subtleTextColor,
               const Color(0xFF10B981),
             ),
@@ -877,7 +884,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$${order.total.toStringAsFixed(2)}',
+                  priceFormatter.format(order.total),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
