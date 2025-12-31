@@ -51,15 +51,35 @@ const nextConfig: NextConfig = {
     cssChunking: 'strict',
     // Enable React's optimizing compiler
     optimizePackageImports: [
+      // Icon libraries (large bundles)
       "lucide-react",
+      "react-icons",
+      // Radix UI components
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-checkbox",
       "@radix-ui/react-dialog",
       "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
       "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slider",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-switch",
       "@radix-ui/react-tabs",
+      // AI SDK packages
+      "ai",
+      "@ai-sdk/groq",
+      "@ai-sdk/react",
+      "@ai-sdk/openai-compatible",
+      // Utility libraries
       "class-variance-authority",
       "clsx",
       "tailwind-merge",
       "sonner",
+      // Form and validation
+      "react-hook-form",
+      "@hookform/resolvers",
+      "zod",
     ],
   },
 
