@@ -35,7 +35,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   // User data from auth
   String _email = '';
-  final String _phone = '';
+  String _phone = '';
   final bool _emailVerified = true;
   final bool _phoneVerified = true;
 
@@ -56,7 +56,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       setState(() {
         _fullNameController.text = user.name ?? '';
         _email = user.email;
+        _phone = user.phone ?? '';
         _profileImageUrl = user.image;
+        // Load gender if available
+        if (user.gender != null && user.gender!.isNotEmpty) {
+          _selectedGender = user.gender!;
+        }
+        // Load date of birth if available
+        if (user.dateOfBirth != null && user.dateOfBirth!.isNotEmpty) {
+          _dobController.text = user.dateOfBirth!;
+        }
       });
     }
   }
