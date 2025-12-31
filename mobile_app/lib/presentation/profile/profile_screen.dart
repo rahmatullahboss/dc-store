@@ -1040,12 +1040,10 @@ class ProfileScreen extends ConsumerWidget {
                     : null,
                 onTap: () async {
                   Navigator.pop(sheetContext);
-                  // Update locale via provider
+                  // Update locale via provider (persists locally)
                   await ref.read(localeProvider.notifier).setLanguage(language);
-                  // Also sync to backend
-                  if (context.mounted) {
-                    await _savePreference('language', language.code, context);
-                  }
+                  // Sync to backend silently (optional, may fail if not logged in)
+                  _syncPreferenceToBackend('language', language.code);
                 },
               ),
             ),
@@ -1126,14 +1124,12 @@ class ProfileScreen extends ConsumerWidget {
                     : null,
                 onTap: () async {
                   Navigator.pop(sheetContext);
-                  // Update local state via provider
+                  // Update local state via provider (persists locally)
                   await ref
                       .read(currencyProvider.notifier)
                       .setCurrency(currency);
-                  // Also sync to backend
-                  if (context.mounted) {
-                    await _savePreference('currency', currency.code, context);
-                  }
+                  // Sync to backend silently (optional)
+                  _syncPreferenceToBackend('currency', currency.code);
                 },
               ),
             ),
@@ -1143,31 +1139,19 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _savePreference(
-    String key,
-    String value,
-    BuildContext context,
-  ) async {
+  /// Sync preference to backend silently (fire and forget)
+  /// This is optional - local state via SharedPreferences already works
+  void _syncPreferenceToBackend(String key, String value) async {
     try {
       final url = Uri.parse('${AppConfig.baseUrl}/api/user/preferences');
-      final response = await http.patch(
+      await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({key: value}),
       );
-
-      if (context.mounted) {
-        if (response.statusCode == 200) {
-          final capitalizedKey = key[0].toUpperCase() + key.substring(1);
-          _showSnackBar(context, '$capitalizedKey updated to $value');
-        } else {
-          _showSnackBar(context, 'Failed to update preference');
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
-        _showSnackBar(context, 'Could not save preference');
-      }
+      // Silently succeed or fail - local state is the source of truth
+    } catch (_) {
+      // Ignore errors - local state already persisted
     }
   }
 
