@@ -5,8 +5,11 @@ import { Link } from "@/i18n/routing";
 import { formatPrice } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Eye, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Pagination } from "@/components/admin/pagination";
+import { ExportButton } from "@/components/admin/export-button";
 
 interface Order {
   id: string;
@@ -20,16 +23,6 @@ interface Order {
   createdAt: string;
 }
 
-const statusTabs = [
-  { value: "all", label: "All" },
-  { value: "pending", label: "Pending" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "processing", label: "Processing" },
-  { value: "shipped", label: "Shipped" },
-  { value: "delivered", label: "Delivered" },
-  { value: "cancelled", label: "Cancelled" },
-];
-
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-500/20 text-yellow-400",
   confirmed: "bg-blue-500/20 text-blue-400",
@@ -37,32 +30,45 @@ const statusColors: Record<string, string> = {
   shipped: "bg-cyan-500/20 text-cyan-400",
   delivered: "bg-green-500/20 text-green-400",
   cancelled: "bg-red-500/20 text-red-400",
-  refunded: "bg-muted0/20 text-muted-foreground",
+  refunded: "bg-slate-500/20 text-slate-400",
 };
 
 const paymentColors: Record<string, string> = {
   pending: "text-yellow-400",
   paid: "text-green-400",
   failed: "text-red-400",
-  refunded: "text-muted-foreground",
+  refunded: "text-slate-400",
 };
+
+const ITEMS_PER_PAGE = 20;
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [status, setStatus] = useState("all");
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchOrders = async (status?: string) => {
+  const fetchOrders = async (page = 1) => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
       if (status && status !== "all") params.set("status", status);
       if (search) params.set("search", search);
+      params.set("page", String(page));
+      params.set("limit", String(ITEMS_PER_PAGE));
+      
       const res = await fetch(`/api/admin/orders?${params}`);
       if (res.ok) {
-        const data = await res.json() as { orders: Order[] };
+        const data = await res.json() as { orders: Order[]; total?: number; totalPages?: number };
         setOrders(data.orders || []);
+        if (data.totalPages) {
+          setTotalPages(data.totalPages);
+        } else if (data.total) {
+          setTotalPages(Math.ceil(data.total / ITEMS_PER_PAGE));
+        }
+        setCurrentPage(page);
       }
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -72,37 +78,59 @@ export default function AdminOrdersPage() {
   };
 
   useEffect(() => {
-    fetchOrders(activeTab);
+    fetchOrders(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [status]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchOrders(activeTab);
+    fetchOrders(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchOrders(page);
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <h1 className="text-2xl font-bold text-white">Orders</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-white">Orders</h1>
+        <ExportButton
+          data={orders}
+          filename="orders"
+          columns={[
+            { key: "orderNumber", header: "Order #" },
+            { key: "customerName", header: "Customer" },
+            { key: "customerPhone", header: "Phone" },
+            { key: "total", header: "Total" },
+            { key: "status", header: "Status" },
+            { key: "paymentStatus", header: "Payment" },
+            { key: (o) => new Date(o.createdAt).toLocaleDateString(), header: "Date" },
+          ]}
+        />
+      </div>
 
       {/* Status Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {statusTabs.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setActiveTab(tab.value)}
-            className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
-              activeTab === tab.value
-                ? "bg-primary text-black"
-                : "bg-slate-800 text-slate-400 hover:text-white"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={status} onValueChange={setStatus}>
+        <TabsList className="bg-slate-800 border border-slate-700">
+          <TabsTrigger value="all" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+            All
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+            Pending
+          </TabsTrigger>
+          <TabsTrigger value="confirmed" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+            Confirmed
+          </TabsTrigger>
+          <TabsTrigger value="shipped" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+            Shipped
+          </TabsTrigger>
+          <TabsTrigger value="delivered" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+            Delivered
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Search */}
       <form onSubmit={handleSearch} className="flex gap-2 max-w-md">
@@ -166,8 +194,10 @@ export default function AdminOrdersPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <p className="text-sm text-white">{order.customerName}</p>
-                      <p className="text-xs text-slate-400">{order.customerPhone}</p>
+                      <div>
+                        <p className="text-sm text-white">{order.customerName}</p>
+                        <p className="text-xs text-slate-400">{order.customerPhone}</p>
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-sm text-slate-400">
                       {new Date(order.createdAt).toLocaleDateString()}
@@ -196,10 +226,14 @@ export default function AdminOrdersPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <Button asChild variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="icon"
+                        className="text-slate-400 hover:text-white"
+                      >
                         <Link href={`/admin/orders/${order.id}`}>
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
+                          <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
                     </td>
@@ -210,6 +244,15 @@ export default function AdminOrdersPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

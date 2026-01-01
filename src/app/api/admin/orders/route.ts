@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
-// GET - List all orders
+// GET - List all orders with pagination
 export async function GET(request: Request) {
   try {
     const auth = await getAuth();
@@ -20,6 +20,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") || "";
     const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
 
     const db = await getDatabase();
 
@@ -33,6 +35,16 @@ export async function GET(request: Request) {
       );
     }
 
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count for pagination
+    const countResult = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(orders)
+      .where(whereClause);
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated orders
     const orderList = await db
       .select({
         id: orders.id,
@@ -46,10 +58,18 @@ export async function GET(request: Request) {
         createdAt: orders.createdAt,
       })
       .from(orders)
-      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
-      .orderBy(desc(orders.createdAt));
+      .where(whereClause)
+      .orderBy(desc(orders.createdAt))
+      .limit(limit)
+      .offset((page - 1) * limit);
 
-    return NextResponse.json({ orders: orderList });
+    return NextResponse.json({
+      orders: orderList,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
   } catch (error) {
     console.error("Orders list error:", error);
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });

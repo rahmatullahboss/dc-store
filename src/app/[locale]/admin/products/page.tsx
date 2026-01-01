@@ -6,6 +6,7 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Plus,
   Search,
@@ -13,6 +14,8 @@ import {
   Trash2,
   MoreHorizontal,
   Package,
+  Check,
+  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,6 +24,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { Pagination } from "@/components/admin/pagination";
+import { BulkActionBar } from "@/components/admin/bulk-action-bar";
+import { ExportButton } from "@/components/admin/export-button";
 
 interface Product {
   id: string;
@@ -36,19 +42,35 @@ interface Product {
   createdAt: string;
 }
 
+const ITEMS_PER_PAGE = 20;
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 1) => {
+    setIsLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
+      params.set("page", String(page));
+      params.set("limit", String(ITEMS_PER_PAGE));
       const res = await fetch(`/api/admin/products?${params}`);
       if (res.ok) {
-        const data = await res.json() as { products: Product[] };
+        const data = await res.json() as { products: Product[]; total?: number; totalPages?: number };
         setProducts(data.products || []);
+        // Calculate pages from total if API provides it
+        if (data.totalPages) {
+          setTotalPages(data.totalPages);
+        } else if (data.total) {
+          setTotalPages(Math.ceil(data.total / ITEMS_PER_PAGE));
+        }
+        setCurrentPage(page);
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
@@ -58,13 +80,19 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchProducts();
+    setSelectedIds(new Set());
+    fetchProducts(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setSelectedIds(new Set());
+    fetchProducts(page);
   };
 
   const handleDelete = async (id: string) => {
@@ -76,6 +104,11 @@ export default function AdminProductsPage() {
       });
       if (res.ok) {
         setProducts(products.filter((p) => p.id !== id));
+        setSelectedIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(id);
+          return newSet;
+        });
       }
     } catch (error) {
       console.error("Failed to delete product:", error);
@@ -101,17 +134,124 @@ export default function AdminProductsPage() {
     }
   };
 
+  // Selection helpers
+  const isSelected = (id: string) => selectedIds.has(id);
+  const isAllSelected = products.length > 0 && selectedIds.size === products.length;
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(products.map((p) => p.id)));
+    }
+  };
+
+  // Bulk actions
+  const handleBulkActivate = async () => {
+    setIsBulkLoading(true);
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map((id) =>
+          fetch(`/api/admin/products/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isActive: true }),
+          })
+        )
+      );
+      setProducts(
+        products.map((p) =>
+          selectedIds.has(p.id) ? { ...p, isActive: true } : p
+        )
+      );
+      setSelectedIds(new Set());
+    } catch (error) {
+      console.error("Failed to bulk activate:", error);
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
+  const handleBulkDeactivate = async () => {
+    setIsBulkLoading(true);
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map((id) =>
+          fetch(`/api/admin/products/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isActive: false }),
+          })
+        )
+      );
+      setProducts(
+        products.map((p) =>
+          selectedIds.has(p.id) ? { ...p, isActive: false } : p
+        )
+      );
+      setSelectedIds(new Set());
+    } catch (error) {
+      console.error("Failed to bulk deactivate:", error);
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedIds.size} products?`)) return;
+    
+    setIsBulkLoading(true);
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map((id) =>
+          fetch(`/api/admin/products/${id}`, { method: "DELETE" })
+        )
+      );
+      setProducts(products.filter((p) => !selectedIds.has(p.id)));
+      setSelectedIds(new Set());
+    } catch (error) {
+      console.error("Failed to bulk delete:", error);
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-white">Products</h1>
-        <Button asChild className="bg-primary hover:bg-amber-600 text-black">
-          <Link href="/admin/products/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Product
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <ExportButton
+            data={products}
+            filename="products"
+            columns={[
+              { key: "name", header: "Name" },
+              { key: "price", header: "Price" },
+              { key: "quantity", header: "Stock" },
+              { key: "categoryName", header: "Category" },
+              { key: (p) => p.isActive ? "Active" : "Inactive", header: "Status" },
+            ]}
+          />
+          <Button asChild className="bg-primary hover:bg-amber-600 text-black">
+            <Link href="/admin/products/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Search */}
@@ -144,6 +284,13 @@ export default function AdminProductsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-700">
+                  <th className="w-12 py-3 px-4">
+                    <Checkbox
+                      checked={isAllSelected}
+                      onCheckedChange={toggleSelectAll}
+                      className="border-slate-600"
+                    />
+                  </th>
                   <th className="text-left text-xs font-medium text-slate-400 py-3 px-4">
                     Product
                   </th>
@@ -168,8 +315,18 @@ export default function AdminProductsPage() {
                 {products.map((product) => (
                   <tr
                     key={product.id}
-                    className="border-b border-slate-700/50 hover:bg-slate-800/50"
+                    className={cn(
+                      "border-b border-slate-700/50 hover:bg-slate-800/50",
+                      isSelected(product.id) && "bg-slate-800/70"
+                    )}
                   >
+                    <td className="py-3 px-4">
+                      <Checkbox
+                        checked={isSelected(product.id)}
+                        onCheckedChange={() => toggleSelect(product.id)}
+                        className="border-slate-600"
+                      />
+                    </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
@@ -277,6 +434,42 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      {/* Bulk Action Bar */}
+      <BulkActionBar
+        selectedCount={selectedIds.size}
+        onClearSelection={() => setSelectedIds(new Set())}
+        actions={[
+          {
+            label: "Activate",
+            icon: <Check className="h-4 w-4 mr-1" />,
+            onClick: handleBulkActivate,
+            isLoading: isBulkLoading,
+          },
+          {
+            label: "Deactivate",
+            icon: <X className="h-4 w-4 mr-1" />,
+            onClick: handleBulkDeactivate,
+            isLoading: isBulkLoading,
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 className="h-4 w-4 mr-1" />,
+            onClick: handleBulkDelete,
+            variant: "destructive",
+            isLoading: isBulkLoading,
+          },
+        ]}
+      />
     </div>
   );
 }

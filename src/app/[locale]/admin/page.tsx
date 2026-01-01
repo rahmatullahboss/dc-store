@@ -10,14 +10,19 @@ import {
   Users,
   Plus,
   ArrowRight,
+  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { DateRangePicker, DateRangePreset, getDateRangeFromPreset } from "@/components/admin/date-range-picker";
+import { LowStockAlert } from "@/components/admin/low-stock-alert";
+import { TopProductsWidget } from "@/components/admin/top-products-widget";
 
 interface Stats {
   totalRevenue: number;
   ordersToday: number;
+  pendingOrders: number;
   activeProducts: number;
   totalUsers: number;
 }
@@ -36,6 +41,21 @@ interface RevenueDay {
   revenue: number;
 }
 
+interface TopProduct {
+  id: string;
+  name: string;
+  featuredImage: string | null;
+  totalSold: number;
+  revenue: number;
+}
+
+interface LowStockProduct {
+  id: string;
+  name: string;
+  quantity: number;
+  featuredImage: string | null;
+}
+
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-500/20 text-yellow-400",
   confirmed: "bg-blue-500/20 text-blue-400",
@@ -50,17 +70,46 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [revenueByDay, setRevenueByDay] = useState<RevenueDay[]>([]);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<LowStockProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [dateRange, setDateRange] = useState<DateRangePreset>("7days");
 
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch("/api/admin/stats");
+        const range = getDateRangeFromPreset(dateRange);
+        const params = new URLSearchParams();
+        if (range.from) {
+          params.set("dateFrom", range.from.toISOString());
+          params.set("dateTo", range.to.toISOString());
+        }
+        
+        // Set days for chart based on preset
+        const daysMap: Record<DateRangePreset, string> = {
+          today: "1",
+          "7days": "7",
+          "30days": "30",
+          "90days": "90",
+          year: "365",
+          all: "30",
+        };
+        params.set("days", daysMap[dateRange]);
+
+        const res = await fetch(`/api/admin/stats?${params}`);
         if (res.ok) {
-          const data = await res.json() as { stats: Stats; recentOrders: RecentOrder[]; revenueByDay: RevenueDay[] };
+          const data = await res.json() as {
+            stats: Stats;
+            recentOrders: RecentOrder[];
+            revenueByDay: RevenueDay[];
+            topProducts: TopProduct[];
+            lowStockProducts: LowStockProduct[];
+          };
           setStats(data.stats);
           setRecentOrders(data.recentOrders || []);
           setRevenueByDay(data.revenueByDay || []);
+          setTopProducts(data.topProducts || []);
+          setLowStockProducts(data.lowStockProducts || []);
         }
       } catch (error) {
         console.error("Failed to fetch stats:", error);
@@ -69,7 +118,7 @@ export default function AdminDashboard() {
       }
     }
     fetchStats();
-  }, []);
+  }, [dateRange]);
 
   if (isLoading) {
     return (
@@ -93,10 +142,22 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Page Title */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
+      {/* Page Title with Date Range */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
+          {(stats?.pendingOrders ?? 0) > 0 && (
+            <Link
+              href="/admin/orders?status=pending"
+              className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs hover:bg-yellow-500/30 transition-colors"
+            >
+              <Bell className="h-3 w-3" />
+              {stats?.pendingOrders} pending
+            </Link>
+          )}
+        </div>
         <div className="flex gap-2">
+          <DateRangePicker value={dateRange} onChange={setDateRange} />
           <Button asChild className="bg-primary hover:bg-amber-600 text-black">
             <Link href="/admin/products/new">
               <Plus className="h-4 w-4 mr-2" />
@@ -130,39 +191,51 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* Revenue Chart */}
-      <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">
-          Revenue (Last 7 Days)
-        </h2>
-        <div className="h-48 flex items-end gap-2">
-          {revenueByDay.length > 0 ? (
-            revenueByDay.map((day, i) => (
-              <div
-                key={i}
-                className="flex-1 flex flex-col items-center gap-2"
-              >
+      {/* Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Revenue Chart - Takes 2 columns */}
+        <div className="lg:col-span-2 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">
+            Revenue ({dateRange === "today" ? "Today" : `Last ${dateRange === "year" ? "Year" : dateRange.replace("days", " Days")}`})
+          </h2>
+          <div className="h-48 flex items-end gap-2">
+            {revenueByDay.length > 0 ? (
+              revenueByDay.map((day, i) => (
                 <div
-                  className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-md transition-all"
-                  style={{
-                    height: `${(day.revenue / maxRevenue) * 100}%`,
-                    minHeight: day.revenue > 0 ? "8px" : "2px",
-                  }}
-                />
-                <span className="text-xs text-slate-400">
-                  {new Date(day.date).toLocaleDateString("en", {
-                    weekday: "short",
-                  })}
-                </span>
+                  key={i}
+                  className="flex-1 flex flex-col items-center gap-2"
+                >
+                  <div
+                    className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-md transition-all hover:from-amber-500 hover:to-amber-300"
+                    style={{
+                      height: `${(day.revenue / maxRevenue) * 100}%`,
+                      minHeight: day.revenue > 0 ? "8px" : "2px",
+                    }}
+                    title={`${formatPrice(day.revenue)}`}
+                  />
+                  <span className="text-xs text-slate-400">
+                    {new Date(day.date).toLocaleDateString("en", {
+                      weekday: "short",
+                    })}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-slate-500">
+                No revenue data available
               </div>
-            ))
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-slate-500">
-              No revenue data available
-            </div>
-          )}
+            )}
+          </div>
         </div>
+
+        {/* Top Products Widget */}
+        <TopProductsWidget products={topProducts} />
       </div>
+
+      {/* Low Stock Alert */}
+      {lowStockProducts.length > 0 && (
+        <LowStockAlert products={lowStockProducts} />
+      )}
 
       {/* Recent Orders */}
       <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">

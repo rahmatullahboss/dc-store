@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
 import { products, categories } from "@/db/schema";
-import { eq, like, and, desc } from "drizzle-orm";
+import { eq, like, and, desc, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { nanoid } from "nanoid";
 
 export const dynamic = "force-dynamic";
 
-// GET - List all products
+// GET - List all products with pagination
 export async function GET(request: Request) {
   try {
     const auth = await getAuth();
@@ -23,6 +23,8 @@ export async function GET(request: Request) {
     const search = searchParams.get("search") || "";
     const category = searchParams.get("category") || "";
     const status = searchParams.get("status") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
 
     const db = await getDatabase();
 
@@ -39,6 +41,16 @@ export async function GET(request: Request) {
       whereConditions.push(eq(products.isActive, false));
     }
 
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    // Get total count for pagination
+    const countResult = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(products)
+      .where(whereClause);
+    const total = countResult[0]?.count || 0;
+
+    // Get paginated products
     const productList = await db
       .select({
         id: products.id,
@@ -56,10 +68,18 @@ export async function GET(request: Request) {
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
-      .orderBy(desc(products.createdAt));
+      .where(whereClause)
+      .orderBy(desc(products.createdAt))
+      .limit(limit)
+      .offset((page - 1) * limit);
 
-    return NextResponse.json({ products: productList });
+    return NextResponse.json({
+      products: productList,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
   } catch (error) {
     console.error("Products list error:", error);
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
