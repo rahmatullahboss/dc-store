@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/config/white_label_config.dart';
+import '../../../data/address_repository.dart';
+import '../../../data/models/address/address_model.dart';
+import 'providers/checkout_provider.dart';
 
 /// Address Selection Screen for Checkout
 class AddressSelectionScreen extends ConsumerStatefulWidget {
@@ -17,29 +20,48 @@ class _AddressSelectionScreenState
     extends ConsumerState<AddressSelectionScreen> {
   int _selectedIndex = 0;
 
-  // Mock addresses - in production, fetch from API
-  final _addresses = [
-    _Address(
-      id: '1',
-      type: 'Home',
-      name: 'John Doe',
-      address: '123 Main Street, Gulshan 1',
-      city: 'Dhaka',
-      postalCode: '1212',
-      phone: '01712345678',
-      isDefault: true,
-    ),
-    _Address(
-      id: '2',
-      type: 'Office',
-      name: 'John Doe',
-      address: '456 Business Center, Motijheel',
-      city: 'Dhaka',
-      postalCode: '1000',
-      phone: '01798765432',
-      isDefault: false,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // If an address was previously selected, try to keep it selected
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final checkoutState = ref.read(checkoutProvider);
+      final addressesAsync = ref.read(addressesProvider);
+      addressesAsync.whenData((addresses) {
+        if (checkoutState.selectedAddress != null && addresses.isNotEmpty) {
+          final idx = addresses.indexWhere(
+            (a) => a.id == checkoutState.selectedAddress!.id,
+          );
+          if (idx >= 0) {
+            setState(() => _selectedIndex = idx);
+          }
+        } else if (addresses.isNotEmpty) {
+          // Auto-select default address or first one
+          final defaultIdx = addresses.indexWhere((a) => a.isDefault);
+          if (defaultIdx >= 0) {
+            setState(() => _selectedIndex = defaultIdx);
+          }
+        }
+      });
+    });
+  }
+
+  void _continueToPayment(List<AddressModel> addresses) {
+    if (addresses.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please add an address first'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Save selected address to checkout state
+    final selectedAddress = addresses[_selectedIndex];
+    ref.read(checkoutProvider.notifier).setSelectedAddress(selectedAddress);
+    context.push('/checkout/payment');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +75,8 @@ class _AddressSelectionScreenState
     final borderColor = isDark
         ? const Color(0xFF334155)
         : const Color(0xFFE5E7EB);
+
+    final addressesAsync = ref.watch(addressesProvider);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -73,68 +97,150 @@ class _AddressSelectionScreenState
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _addresses.length + 1, // +1 for add button
-              itemBuilder: (context, index) {
-                if (index == _addresses.length) {
-                  return _buildAddNewAddressButton(
-                    isDark,
-                    surfaceColor,
-                    textColor,
-                    borderColor,
-                  );
-                }
-                final address = _addresses[index];
-                return _buildAddressCard(
-                  address: address,
-                  isSelected: _selectedIndex == index,
-                  onTap: () => setState(() => _selectedIndex = index),
-                  isDark: isDark,
-                  surfaceColor: surfaceColor,
-                  textColor: textColor,
-                  subtleColor: subtleColor,
-                  borderColor: borderColor,
-                );
-              },
-            ),
+      body: addressesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(LucideIcons.alertCircle, size: 48, color: subtleColor),
+              const SizedBox(height: 16),
+              Text(
+                'Failed to load addresses',
+                style: TextStyle(color: textColor),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => ref.invalidate(addressesProvider),
+                child: const Text('Retry'),
+              ),
+            ],
           ),
-          // Continue Button
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: surfaceColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(13),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => context.push('/checkout/payment'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: WhiteLabelConfig.accentColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+        ),
+        data: (addresses) => Column(
+          children: [
+            Expanded(
+              child: addresses.isEmpty
+                  ? _buildEmptyState(
+                      textColor,
+                      subtleColor,
+                      surfaceColor,
+                      borderColor,
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: addresses.length + 1, // +1 for add button
+                      itemBuilder: (context, index) {
+                        if (index == addresses.length) {
+                          return _buildAddNewAddressButton(
+                            isDark,
+                            surfaceColor,
+                            textColor,
+                            borderColor,
+                          );
+                        }
+                        final address = addresses[index];
+                        return _buildAddressCard(
+                          address: address,
+                          isSelected: _selectedIndex == index,
+                          onTap: () => setState(() => _selectedIndex = index),
+                          isDark: isDark,
+                          surfaceColor: surfaceColor,
+                          textColor: textColor,
+                          subtleColor: subtleColor,
+                          borderColor: borderColor,
+                        );
+                      },
                     ),
+            ),
+            // Continue Button
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(13),
+                    blurRadius: 10,
+                    offset: const Offset(0, -4),
                   ),
-                  child: const Text(
-                    'Continue to Payment',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ],
+              ),
+              child: SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: addresses.isEmpty
+                        ? null
+                        : () => _continueToPayment(addresses),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: WhiteLabelConfig.accentColor,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: isDark
+                          ? Colors.grey[700]
+                          : Colors.grey[300],
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      addresses.isEmpty
+                          ? 'Add an Address First'
+                          : 'Continue to Payment',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(
+    Color textColor,
+    Color subtleColor,
+    Color surfaceColor,
+    Color borderColor,
+  ) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(LucideIcons.mapPin, size: 64, color: subtleColor.withAlpha(100)),
+          const SizedBox(height: 16),
+          Text(
+            'No addresses yet',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Add a delivery address to continue',
+            style: TextStyle(fontSize: 14, color: subtleColor),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => context.push('/profile/addresses'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: WhiteLabelConfig.accentColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(LucideIcons.plus, size: 18),
+            label: const Text('Add Address'),
           ),
         ],
       ),
@@ -142,7 +248,7 @@ class _AddressSelectionScreenState
   }
 
   Widget _buildAddressCard({
-    required _Address address,
+    required AddressModel address,
     required bool isSelected,
     required VoidCallback onTap,
     required bool isDark,
@@ -203,7 +309,7 @@ class _AddressSelectionScreenState
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          address.type,
+                          _getTypeName(address.type),
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -245,7 +351,7 @@ class _AddressSelectionScreenState
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${address.address}\n${address.city} ${address.postalCode}',
+                    '${address.addressLine1}\n${address.city}${address.zipCode != null && address.zipCode!.isNotEmpty ? ' ${address.zipCode}' : ''}',
                     style: TextStyle(
                       fontSize: 13,
                       color: subtleColor,
@@ -261,7 +367,7 @@ class _AddressSelectionScreenState
               ),
             ),
             IconButton(
-              onPressed: () => context.push('/address/${address.id}/edit'),
+              onPressed: () => context.push('/profile/addresses'),
               icon: Icon(LucideIcons.edit2, size: 18, color: subtleColor),
             ),
           ],
@@ -277,7 +383,7 @@ class _AddressSelectionScreenState
     Color borderColor,
   ) {
     return GestureDetector(
-      onTap: () => context.push('/address/add'),
+      onTap: () => context.push('/profile/addresses'),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -314,26 +420,15 @@ class _AddressSelectionScreenState
       ),
     );
   }
-}
 
-class _Address {
-  final String id;
-  final String type;
-  final String name;
-  final String address;
-  final String city;
-  final String postalCode;
-  final String phone;
-  final bool isDefault;
-
-  _Address({
-    required this.id,
-    required this.type,
-    required this.name,
-    required this.address,
-    required this.city,
-    required this.postalCode,
-    required this.phone,
-    required this.isDefault,
-  });
+  String _getTypeName(AddressType type) {
+    switch (type) {
+      case AddressType.home:
+        return 'Home';
+      case AddressType.office:
+        return 'Office';
+      case AddressType.other:
+        return 'Other';
+    }
+  }
 }

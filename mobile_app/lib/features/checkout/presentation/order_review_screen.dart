@@ -120,13 +120,22 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
           'customerName': customerName,
           'customerPhone': customerPhone,
           'customerEmail': customerEmail,
-          'shippingAddress': {
-            'name': customerName,
-            'phone': customerPhone,
-            'address': 'Dhaka, Bangladesh', // TODO: Get from selected address
-            'city': 'Dhaka',
-            'country': 'Bangladesh',
-          },
+          'shippingAddress': checkoutState.selectedAddress != null
+              ? {
+                  'name': checkoutState.selectedAddress!.name,
+                  'phone': checkoutState.selectedAddress!.phone,
+                  'address': checkoutState.selectedAddress!.addressLine1,
+                  'city': checkoutState.selectedAddress!.city,
+                  'country': checkoutState.selectedAddress!.country,
+                  'zipCode': checkoutState.selectedAddress!.zipCode ?? '',
+                }
+              : {
+                  'name': customerName,
+                  'phone': customerPhone,
+                  'address': 'N/A',
+                  'city': 'N/A',
+                  'country': 'Bangladesh',
+                },
           'paymentMethod': paymentMethod,
           'paymentStatus': isStripe ? 'paid' : 'pending',
         }),
@@ -229,28 +238,33 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
                     textColor: textColor,
                     subtleColor: subtleColor,
                     borderColor: borderColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'John Doe',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
+                    child: checkoutState.selectedAddress != null
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                checkoutState.selectedAddress!.name,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${checkoutState.selectedAddress!.addressLine1}\n${checkoutState.selectedAddress!.city}${checkoutState.selectedAddress!.zipCode != null && checkoutState.selectedAddress!.zipCode!.isNotEmpty ? ' ${checkoutState.selectedAddress!.zipCode}' : ''}, ${checkoutState.selectedAddress!.country}\n${checkoutState.selectedAddress!.phone}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: subtleColor,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            'No address selected',
+                            style: TextStyle(fontSize: 14, color: subtleColor),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '123 Main Street, Gulshan 1\nDhaka 1212, Bangladesh\n01712345678',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: subtleColor,
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                   const SizedBox(height: 16),
 
