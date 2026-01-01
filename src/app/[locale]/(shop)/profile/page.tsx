@@ -386,8 +386,8 @@ export default function ProfilePage() {
                                 t("personalInfo.notSet")
                               )}
                             </p>
-                            <Button variant="link" className="p-0 h-auto mt-1 text-primary">
-                              {t("actions.manageAddresses")}
+                            <Button variant="link" className="p-0 h-auto mt-1 text-primary" asChild>
+                              <Link href="/profile/addresses">{t("actions.manageAddresses")}</Link>
                             </Button>
                           </div>
                         </div>

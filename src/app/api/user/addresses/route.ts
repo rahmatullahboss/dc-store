@@ -59,8 +59,10 @@ export async function OPTIONS() {
 export async function GET(request: NextRequest) {
   try {
     const userId = await getUserId(request);
+    console.log("📍 Addresses API: Authenticated userId =", userId);
 
     if (!userId) {
+      console.log("📍 Addresses API: No userId - returning Unauthorized");
       return NextResponse.json(
         { error: "Unauthorized", addresses: [] },
         { status: 401, headers: corsHeaders }
@@ -68,11 +70,19 @@ export async function GET(request: NextRequest) {
     }
 
     const db = await getDatabase();
+    
+    // Debug: Get all addresses to see what exists
+    const allAddresses = await db.select().from(addresses);
+    console.log("📍 Addresses API: Total addresses in DB =", allAddresses.length);
+    console.log("📍 Addresses API: All userIds in DB =", allAddresses.map(a => a.userId));
+    
     const userAddresses = await db
       .select()
       .from(addresses)
       .where(eq(addresses.userId, userId))
       .orderBy(addresses.createdAt);
+
+    console.log("📍 Addresses API: Found", userAddresses.length, "addresses for userId:", userId);
 
     return NextResponse.json(
       { addresses: userAddresses, total: userAddresses.length },
