@@ -39,7 +39,11 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 export function RevenueChart({ data, title }: RevenueChartProps) {
   const chartData = data.map((item) => ({
     ...item,
-    day: new Date(item.date).toLocaleDateString("en", { weekday: "short" }),
+    // Format as "Jan 1" for better readability
+    displayDate: new Date(item.date).toLocaleDateString("en", { 
+      month: "short", 
+      day: "numeric" 
+    }),
   }));
 
   const maxRevenue = Math.max(...data.map((d) => d.revenue), 100);
@@ -67,10 +71,10 @@ export function RevenueChart({ data, title }: RevenueChartProps) {
               vertical={false}
             />
             <XAxis
-              dataKey="day"
+              dataKey="displayDate"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 12 }}
+              tick={{ fill: "#94a3b8", fontSize: 10 }}
             />
             <YAxis
               axisLine={false}

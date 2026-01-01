@@ -97,6 +97,15 @@ export function NotificationCenter() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    // Auto-mark as seen when dropdown opens
+    if (open && unreadCount > 0) {
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    }
+  };
+
   const markAsRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
@@ -110,7 +119,7 @@ export function NotificationCenter() {
   };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
