@@ -4,6 +4,13 @@ import { users, accounts, sessions } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
+// CORS headers for mobile app access
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 // Google's token verification endpoint
 const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
 
@@ -32,6 +39,10 @@ interface RequestBody {
   idToken?: string;
 }
 
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 /**
  * Custom Google ID Token Sign-In Endpoint for Mobile Apps
  * This endpoint validates Google ID tokens from iOS/Android apps
@@ -43,7 +54,10 @@ export async function POST(request: NextRequest) {
     const { idToken } = body;
 
     if (!idToken) {
-      return NextResponse.json({ error: "Missing idToken" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing idToken" },
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     // Verify the ID token with Google
@@ -56,7 +70,10 @@ export async function POST(request: NextRequest) {
         "Google token verification failed:",
         tokenInfoResponse.status
       );
-      return NextResponse.json({ error: "Invalid ID token" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid ID token" },
+        { status: 401, headers: corsHeaders }
+      );
     }
 
     const tokenInfo: GoogleTokenInfo = await tokenInfoResponse.json();
@@ -67,7 +84,7 @@ export async function POST(request: NextRequest) {
       console.error("Valid client IDs:", VALID_CLIENT_IDS);
       return NextResponse.json(
         { error: "Token not issued for this application" },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 
@@ -79,7 +96,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Invalid token issuer" },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 
@@ -170,20 +187,24 @@ export async function POST(request: NextRequest) {
     });
 
     // Return user data and token
-    return NextResponse.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        image: user.image,
+    return NextResponse.json(
+      {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        },
+        token: sessionToken,
       },
-      token: sessionToken,
-    });
+      { headers: corsHeaders }
+    );
   } catch (error) {
     console.error("Mobile Google Sign-In error:", error);
     return NextResponse.json(
       { error: "Authentication failed" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
+
