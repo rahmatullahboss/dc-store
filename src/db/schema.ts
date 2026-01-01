@@ -551,3 +551,33 @@ export interface Address {
   postalCode?: string;
   country: string;
 }
+
+// ===========================================
+// Site Settings Table
+// ===========================================
+
+export interface SettingsData {
+  storeName?: string;
+  storeEmail?: string;
+  storePhone?: string;
+  storeAddress?: string;
+  deliveryInsideDhaka?: number;
+  deliveryOutsideDhaka?: number;
+  freeDeliveryThreshold?: number;
+  enableFreeDelivery?: boolean;
+  enableCOD?: boolean;
+  enableStripe?: boolean;
+  enableBkash?: boolean;
+  notifyNewOrder?: boolean;
+  notifyLowStock?: boolean;
+  lowStockThreshold?: number;
+}
+
+export const siteSettings = sqliteTable("site_settings", {
+  id: text("id").primaryKey().default("default"),
+  settings: text("settings", { mode: "json" }).$type<SettingsData>(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedBy: text("updated_by").references(() => users.id),
+});

@@ -28,7 +28,7 @@ export async function GET() {
         description: categories.description,
         isActive: categories.isActive,
         sortOrder: categories.sortOrder,
-        productsCount: sql<number>`COALESCE((SELECT COUNT(*) FROM products WHERE products.category_id = ${categories.id}), 0)`,
+        productsCount: sql<number>`(SELECT COUNT(*) FROM products WHERE products.category_id = ${categories.id})`,
       })
       .from(categories)
       .orderBy(categories.sortOrder, categories.name);

@@ -198,28 +198,33 @@ export default function AdminDashboard() {
           <h2 className="text-lg font-semibold text-white mb-4">
             Revenue ({dateRange === "today" ? "Today" : `Last ${dateRange === "year" ? "Year" : dateRange.replace("days", " Days")}`})
           </h2>
-          <div className="h-48 flex items-end gap-2">
+          <div className="h-48 flex items-end gap-1">
             {revenueByDay.length > 0 ? (
-              revenueByDay.map((day, i) => (
-                <div
-                  key={i}
-                  className="flex-1 flex flex-col items-center gap-2"
-                >
+              revenueByDay.map((day, i) => {
+                const heightPercent = maxRevenue > 0 ? (day.revenue / maxRevenue) * 100 : 0;
+                return (
                   <div
-                    className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t-md transition-all hover:from-amber-500 hover:to-amber-300"
-                    style={{
-                      height: `${(day.revenue / maxRevenue) * 100}%`,
-                      minHeight: day.revenue > 0 ? "8px" : "2px",
-                    }}
-                    title={`${formatPrice(day.revenue)}`}
-                  />
-                  <span className="text-xs text-slate-400">
-                    {new Date(day.date).toLocaleDateString("en", {
-                      weekday: "short",
-                    })}
-                  </span>
-                </div>
-              ))
+                    key={i}
+                    className="flex-1 flex flex-col items-center gap-1 min-w-0"
+                    style={{ maxWidth: `${100 / revenueByDay.length}%` }}
+                  >
+                    <div className="flex-1 w-full flex flex-col justify-end px-0.5">
+                      <div
+                        className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t transition-all hover:from-amber-500 hover:to-amber-300"
+                        style={{
+                          height: day.revenue > 0 ? `${Math.max(heightPercent, 8)}%` : "4px",
+                        }}
+                        title={`${formatPrice(day.revenue)}`}
+                      />
+                    </div>
+                    <span className="text-[10px] text-slate-400 truncate">
+                      {new Date(day.date).toLocaleDateString("en", {
+                        weekday: "short",
+                      })}
+                    </span>
+                  </div>
+                );
+              })
             ) : (
               <div className="flex-1 flex items-center justify-center text-slate-500">
                 No revenue data available

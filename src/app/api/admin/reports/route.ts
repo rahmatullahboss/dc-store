@@ -29,11 +29,12 @@ export async function GET(request: NextRequest) {
     const days = parseInt(searchParams.get("days") || "30");
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - days);
+    daysAgo.setHours(0, 0, 0, 0);
 
-    // Revenue by day
-    const revenueByDay = await db
+    // Revenue by day - query raw data
+    const revenueByDayRaw = await db
       .select({
-        date: sql<string>`DATE(${orders.createdAt} / 1000, 'unixepoch')`,
+        date: sql<string>`DATE(${orders.createdAt})`,
         revenue: sql<number>`COALESCE(SUM(${orders.total}), 0)`,
         orders: sql<number>`COUNT(*)`,
       })
@@ -44,8 +45,27 @@ export async function GET(request: NextRequest) {
           eq(orders.paymentStatus, "paid")
         )
       )
-      .groupBy(sql`DATE(${orders.createdAt} / 1000, 'unixepoch')`)
-      .orderBy(sql`DATE(${orders.createdAt} / 1000, 'unixepoch')`);
+      .groupBy(sql`DATE(${orders.createdAt})`)
+      .orderBy(sql`DATE(${orders.createdAt})`);
+
+    // Generate all days in range and fill missing days
+    const revenueMap = new Map<string, { revenue: number; orders: number }>();
+    for (const row of revenueByDayRaw) {
+      revenueMap.set(row.date, { revenue: row.revenue, orders: row.orders });
+    }
+
+    const revenueByDay: { date: string; revenue: number; orders: number }[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+      const data = revenueMap.get(dateStr) || { revenue: 0, orders: 0 };
+      revenueByDay.push({
+        date: dateStr,
+        revenue: data.revenue,
+        orders: data.orders,
+      });
+    }
 
     // Revenue by category
     const paidOrders = await db

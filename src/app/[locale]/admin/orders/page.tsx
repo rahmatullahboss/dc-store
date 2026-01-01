@@ -100,6 +100,33 @@ export default function AdminOrdersPage() {
     fetchOrders(page);
   };
 
+  const statusOptions = [
+    { value: "pending", label: "Pending" },
+    { value: "confirmed", label: "Confirmed" },
+    { value: "processing", label: "Processing" },
+    { value: "shipped", label: "Shipped" },
+    { value: "delivered", label: "Delivered" },
+    { value: "cancelled", label: "Cancelled" },
+  ];
+
+  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        // Update local state
+        setOrders((prev) =>
+          prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -228,14 +255,20 @@ export default function AdminOrdersPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <span
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
                         className={cn(
-                          "text-xs px-2 py-1 rounded-full capitalize",
+                          "text-xs px-2 py-1 rounded-full capitalize cursor-pointer border-0 bg-transparent focus:ring-2 focus:ring-amber-500",
                           statusColors[order.status] || statusColors.pending
                         )}
                       >
-                        {order.status}
-                      </span>
+                        {statusOptions.map((opt) => (
+                          <option key={opt.value} value={opt.value} className="bg-slate-800 text-white">
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <Button

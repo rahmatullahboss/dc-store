@@ -100,10 +100,12 @@ export async function GET(request: NextRequest) {
     const daysCount = parseInt(days) || 7;
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - daysCount);
+    daysAgo.setHours(0, 0, 0, 0);
     
-    const revenueByDay = await db
+    // Query orders with revenue by date
+    const revenueByDayRaw = await db
       .select({
-        date: sql<string>`DATE(${orders.createdAt} / 1000, 'unixepoch')`,
+        date: sql<string>`DATE(${orders.createdAt})`,
         revenue: sql<number>`COALESCE(SUM(${orders.total}), 0)`,
       })
       .from(orders)
@@ -113,8 +115,25 @@ export async function GET(request: NextRequest) {
           eq(orders.paymentStatus, "paid")
         )
       )
-      .groupBy(sql`DATE(${orders.createdAt} / 1000, 'unixepoch')`)
-      .orderBy(sql`DATE(${orders.createdAt} / 1000, 'unixepoch')`);
+      .groupBy(sql`DATE(${orders.createdAt})`)
+      .orderBy(sql`DATE(${orders.createdAt})`);
+
+    // Generate all days in range and fill missing days with zero
+    const revenueMap = new Map<string, number>();
+    for (const row of revenueByDayRaw) {
+      revenueMap.set(row.date, row.revenue);
+    }
+
+    const revenueByDay: { date: string; revenue: number }[] = [];
+    for (let i = daysCount - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+      revenueByDay.push({
+        date: dateStr,
+        revenue: revenueMap.get(dateStr) || 0,
+      });
+    }
 
     // Top Selling Products - aggregate from order items JSON
     const paidOrders = await db
