@@ -37,13 +37,18 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 };
 
 export function RevenueChart({ data, title }: RevenueChartProps) {
+  // Detect if data is hourly (format: "00:00") or daily (format: "2026-01-01")
+  const isHourlyData = data.length > 0 && data[0].date.includes(":");
+  
   const chartData = data.map((item) => ({
     ...item,
-    // Format as "Jan 1" for better readability
-    displayDate: new Date(item.date).toLocaleDateString("en", { 
-      month: "short", 
-      day: "numeric" 
-    }),
+    // For hourly, use the time directly; for daily, format as "Jan 1"
+    displayDate: isHourlyData 
+      ? item.date 
+      : new Date(item.date).toLocaleDateString("en", { 
+          month: "short", 
+          day: "numeric" 
+        }),
   }));
 
   const maxRevenue = Math.max(...data.map((d) => d.revenue), 100);

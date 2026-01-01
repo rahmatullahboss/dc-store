@@ -96,43 +96,76 @@ export async function GET(request: NextRequest) {
       .orderBy(sql`${orders.createdAt} DESC`)
       .limit(5);
 
-    // Revenue by day (configurable days)
+    // Revenue by day/hour (configurable days)
     const daysCount = parseInt(days) || 7;
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - daysCount);
     daysAgo.setHours(0, 0, 0, 0);
     
-    // Query orders with revenue by date - use unixepoch modifier for timestamp conversion
-    const revenueByDayRaw = await db
-      .select({
-        date: sql<string>`DATE(${orders.createdAt}, 'unixepoch')`,
-        revenue: sql<number>`COALESCE(SUM(${orders.total}), 0)`,
-      })
-      .from(orders)
-      .where(
-        and(
-          gte(orders.createdAt, daysAgo),
-          eq(orders.paymentStatus, "paid")
-        )
-      )
-      .groupBy(sql`DATE(${orders.createdAt}, 'unixepoch')`)
-      .orderBy(sql`DATE(${orders.createdAt}, 'unixepoch')`);
-
-    // Generate all days in range and fill missing days with zero
-    const revenueMap = new Map<string, number>();
-    for (const row of revenueByDayRaw) {
-      revenueMap.set(row.date, row.revenue);
-    }
-
     const revenueByDay: { date: string; revenue: number }[] = [];
-    for (let i = daysCount - 1; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split("T")[0];
-      revenueByDay.push({
-        date: dateStr,
-        revenue: revenueMap.get(dateStr) || 0,
-      });
+    
+    if (daysCount === 1) {
+      // For "Today", group by hour
+      const revenueByHourRaw = await db
+        .select({
+          hour: sql<number>`strftime('%H', ${orders.createdAt}, 'unixepoch')`,
+          revenue: sql<number>`COALESCE(SUM(${orders.total}), 0)`,
+        })
+        .from(orders)
+        .where(
+          and(
+            gte(orders.createdAt, daysAgo),
+            eq(orders.paymentStatus, "paid")
+          )
+        )
+        .groupBy(sql`strftime('%H', ${orders.createdAt}, 'unixepoch')`)
+        .orderBy(sql`strftime('%H', ${orders.createdAt}, 'unixepoch')`);
+
+      // Generate all 24 hours and fill missing with zero
+      const hourMap = new Map<string, number>();
+      for (const row of revenueByHourRaw) {
+        hourMap.set(String(row.hour).padStart(2, "0"), row.revenue);
+      }
+
+      for (let h = 0; h < 24; h++) {
+        const hourStr = String(h).padStart(2, "0");
+        revenueByDay.push({
+          date: `${hourStr}:00`,
+          revenue: hourMap.get(hourStr) || 0,
+        });
+      }
+    } else {
+      // For multiple days, group by date
+      const revenueByDayRaw = await db
+        .select({
+          date: sql<string>`DATE(${orders.createdAt}, 'unixepoch')`,
+          revenue: sql<number>`COALESCE(SUM(${orders.total}), 0)`,
+        })
+        .from(orders)
+        .where(
+          and(
+            gte(orders.createdAt, daysAgo),
+            eq(orders.paymentStatus, "paid")
+          )
+        )
+        .groupBy(sql`DATE(${orders.createdAt}, 'unixepoch')`)
+        .orderBy(sql`DATE(${orders.createdAt}, 'unixepoch')`);
+
+      // Generate all days in range and fill missing days with zero
+      const revenueMap = new Map<string, number>();
+      for (const row of revenueByDayRaw) {
+        revenueMap.set(row.date, row.revenue);
+      }
+
+      for (let i = daysCount - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        revenueByDay.push({
+          date: dateStr,
+          revenue: revenueMap.get(dateStr) || 0,
+        });
+      }
     }
 
     // Top Selling Products - aggregate from order items JSON
