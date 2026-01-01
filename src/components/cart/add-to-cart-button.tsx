@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart-context";
 import { cn } from "@/lib/utils";
 import type { CartItem } from "@/db/schema";
 import { useTranslations } from "next-intl";
+import { fbEvents } from "@/components/analytics/facebook-pixel";
 
 interface AddToCartButtonProps {
   item: {
@@ -48,6 +49,10 @@ export function AddToCartButton({
     };
 
     addItem(cartItem);
+
+    // Track Facebook Pixel AddToCart event
+    fbEvents.addToCart(item.id, item.name, item.price);
+
     setIsAdded(true);
 
     // Reset after animation

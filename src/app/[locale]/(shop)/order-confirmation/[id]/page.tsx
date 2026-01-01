@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { getDatabase } from "@/lib/cloudflare";
 import { orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { formatPrice } from "@/lib/config";
+import { formatPrice, siteConfig } from "@/lib/config";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-
 import { getTranslations } from "next-intl/server";
-import { siteConfig } from "@/lib/config";
+import { FBPurchase } from "@/components/analytics/fb-purchase";
 
 // Force dynamic rendering for Cloudflare context
 export const dynamic = "force-dynamic";
@@ -46,6 +45,14 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Facebook Pixel Purchase Tracking */}
+      <FBPurchase
+        orderId={order.id}
+        productIds={order.items?.map((item) => item.productId) || []}
+        numItems={order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
+        value={order.total}
+      />
+
       {/* Confetti Background Effect */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 w-4 h-4 bg-amber-400 rounded-full opacity-60 animate-bounce" style={{ animationDelay: "0.1s" }} />

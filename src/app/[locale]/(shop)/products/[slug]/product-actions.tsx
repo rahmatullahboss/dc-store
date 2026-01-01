@@ -7,6 +7,7 @@ import { QuantitySelector } from "@/components/product/quantity-selector";
 import { useCart } from "@/lib/cart-context";
 import { useRouter } from "@/i18n/routing";
 import type { Product } from "@/db/schema";
+import { fbEvents } from "@/components/analytics/facebook-pixel";
 
 interface ProductActionsProps {
   product: Product;
@@ -30,6 +31,13 @@ export function ProductActions({ product }: ProductActionsProps) {
       image: product.featuredImage || undefined,
     });
 
+    // Track Facebook Pixel AddToCart event
+    fbEvents.addToCart(
+      product.id,
+      product.name,
+      product.price * quantity
+    );
+
     setTimeout(() => {
       setIsAdding(false);
       setIsAdded(true);
@@ -48,6 +56,14 @@ export function ProductActions({ product }: ProductActionsProps) {
       quantity: quantity,
       image: product.featuredImage || undefined,
     });
+
+    // Track Facebook Pixel InitiateCheckout event
+    fbEvents.initiateCheckout(
+      [product.id],
+      quantity,
+      product.price * quantity
+    );
+
     router.push("/checkout");
   };
 

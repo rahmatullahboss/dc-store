@@ -15,6 +15,7 @@ import { useCart } from "@/lib/cart-context";
 import type { Product } from "@/db/schema";
 import { useTranslations } from "next-intl";
 import { formatPrice } from "@/lib/config";
+import { fbEvents } from "@/components/analytics/facebook-pixel";
 
 function SearchContent() {
   const t = useTranslations("Search");
@@ -78,7 +79,11 @@ function SearchContent() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/search?q=${encodeURIComponent(query)}`);
+    // Track Facebook Pixel Search event
+    if (query.trim()) {
+      fbEvents.search(query);
+    }
+    router.push(`/search?q=${encodeURIComponent(query)}`)
   };
 
   const handleAddToCart = (product: Product) => {
