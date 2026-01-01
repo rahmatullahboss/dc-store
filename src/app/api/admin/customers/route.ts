@@ -34,7 +34,7 @@ export async function GET(request: Request) {
       .where(whereClause);
     const total = countResult[0]?.count || 0;
 
-    // Get customers with order stats
+    // Get customers with order stats - match by userId OR email for guest orders
     const customerList = await db
       .select({
         id: users.id,
@@ -42,8 +42,8 @@ export async function GET(request: Request) {
         email: users.email,
         phone: users.phone,
         createdAt: users.createdAt,
-        ordersCount: sql<number>`COALESCE((SELECT COUNT(*) FROM orders WHERE orders.user_id = ${users.id}), 0)`,
-        totalSpent: sql<number>`COALESCE((SELECT SUM(total) FROM orders WHERE orders.user_id = ${users.id} AND orders.payment_status = 'paid'), 0)`,
+        ordersCount: sql<number>`COALESCE((SELECT COUNT(*) FROM orders WHERE orders.user_id = ${users.id} OR orders.customer_email = ${users.email}), 0)`,
+        totalSpent: sql<number>`COALESCE((SELECT SUM(total) FROM orders WHERE (orders.user_id = ${users.id} OR orders.customer_email = ${users.email}) AND orders.payment_status = 'paid'), 0)`,
       })
       .from(users)
       .where(whereClause)
