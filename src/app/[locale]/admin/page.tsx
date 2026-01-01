@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { DateRangePicker, DateRangePreset, getDateRangeFromPreset } from "@/components/admin/date-range-picker";
 import { LowStockAlert } from "@/components/admin/low-stock-alert";
 import { TopProductsWidget } from "@/components/admin/top-products-widget";
+import { RevenueChart } from "@/components/admin/revenue-chart";
 
 interface Stats {
   totalRevenue: number;
@@ -138,8 +139,6 @@ export default function AdminDashboard() {
     );
   }
 
-  const maxRevenue = Math.max(...revenueByDay.map((d) => d.revenue), 1);
-
   return (
     <div className="space-y-6">
       {/* Page Title with Date Range */}
@@ -194,43 +193,11 @@ export default function AdminDashboard() {
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Revenue Chart - Takes 2 columns */}
-        <div className="lg:col-span-2 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Revenue ({dateRange === "today" ? "Today" : `Last ${dateRange === "year" ? "Year" : dateRange.replace("days", " Days")}`})
-          </h2>
-          <div className="h-48 flex items-end gap-1">
-            {revenueByDay.length > 0 ? (
-              revenueByDay.map((day, i) => {
-                const heightPercent = maxRevenue > 0 ? (day.revenue / maxRevenue) * 100 : 0;
-                return (
-                  <div
-                    key={i}
-                    className="flex-1 flex flex-col items-center gap-1 min-w-0"
-                    style={{ maxWidth: `${100 / revenueByDay.length}%` }}
-                  >
-                    <div className="flex-1 w-full flex flex-col justify-end px-0.5">
-                      <div
-                        className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t transition-all hover:from-amber-500 hover:to-amber-300"
-                        style={{
-                          height: day.revenue > 0 ? `${Math.max(heightPercent, 8)}%` : "4px",
-                        }}
-                        title={`${formatPrice(day.revenue)}`}
-                      />
-                    </div>
-                    <span className="text-[10px] text-slate-400 truncate">
-                      {new Date(day.date).toLocaleDateString("en", {
-                        weekday: "short",
-                      })}
-                    </span>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-slate-500">
-                No revenue data available
-              </div>
-            )}
-          </div>
+        <div className="lg:col-span-2">
+          <RevenueChart
+            data={revenueByDay}
+            title={`Revenue (${dateRange === "today" ? "Today" : `Last ${dateRange === "year" ? "Year" : dateRange.replace("days", " Days")}`})`}
+          />
         </div>
 
         {/* Top Products Widget */}

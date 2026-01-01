@@ -133,8 +133,12 @@ export function NotificationCenter() {
           <span className="font-semibold text-white">Notifications</span>
           {unreadCount > 0 && (
             <button
-              onClick={clearAll}
-              className="text-xs text-slate-400 hover:text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                clearAll();
+              }}
+              className="text-xs text-slate-400 hover:text-white transition-colors"
             >
               Mark all as read
             </button>

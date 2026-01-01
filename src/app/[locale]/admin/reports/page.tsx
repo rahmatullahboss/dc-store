@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { DateRangePicker, DateRangePreset } from "@/components/admin/date-range-picker";
+import { RevenueChart } from "@/components/admin/revenue-chart";
 
 interface Summary {
   totalRevenue: number;
@@ -105,7 +106,6 @@ export default function AdminReportsPage() {
     }
   };
 
-  const maxRevenue = Math.max(...revenueByDay.map((d) => d.revenue), 1);
   const maxCategoryRevenue = Math.max(...revenueByCategory.map((c) => c.revenue), 1);
 
   if (isLoading) {
@@ -193,36 +193,7 @@ export default function AdminReportsPage() {
       {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Revenue Chart */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Revenue Over Time</h2>
-          <div className="h-56 flex items-end gap-1">
-            {revenueByDay.length > 0 ? (
-              revenueByDay.slice(-30).map((day, i) => (
-                <div
-                  key={i}
-                  className="flex-1 flex flex-col items-center gap-1 group relative"
-                >
-                  <div
-                    className="w-full bg-gradient-to-t from-amber-600 to-amber-400 rounded-t transition-all hover:from-amber-500 hover:to-amber-300"
-                    style={{
-                      height: `${Math.max((day.revenue / maxRevenue) * 100, 2)}%`,
-                    }}
-                  />
-                  <div className="absolute bottom-full mb-1 hidden group-hover:block z-10">
-                    <div className="bg-slate-900 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                      <div>{day.date}</div>
-                      <div className="text-amber-400">{formatPrice(day.revenue)}</div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-slate-500">
-                No data available
-              </div>
-            )}
-          </div>
-        </div>
+        <RevenueChart data={revenueByDay} title="Revenue Over Time" />
 
         {/* Revenue by Category */}
         <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
