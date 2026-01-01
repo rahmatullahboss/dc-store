@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { categories } from "@/db/schema";
-import { sql } from "drizzle-orm";
+import { categories, products } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { nanoid } from "nanoid";
 
@@ -28,7 +28,7 @@ export async function GET() {
         description: categories.description,
         isActive: categories.isActive,
         sortOrder: categories.sortOrder,
-        productsCount: sql<number>`(SELECT COUNT(*) FROM products WHERE products.category_id = ${categories.id})`,
+        productsCount: db.$count(products, eq(products.categoryId, categories.id)),
       })
       .from(categories)
       .orderBy(categories.sortOrder, categories.name);
