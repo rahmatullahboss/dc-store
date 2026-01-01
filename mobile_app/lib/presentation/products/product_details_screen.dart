@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_haptics.dart';
 import '../../core/utils/price_formatter.dart';
+import '../../core/config/app_config.dart';
 import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
 import '../../services/share_service.dart';
@@ -1126,7 +1128,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   Widget _buildReviewsTab(bool isDark, Color textColor) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
             Icon(
@@ -1142,10 +1144,246 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 color: isDark ? Colors.grey[500] : Colors.grey[400],
               ),
             ),
+            const SizedBox(height: 8),
+            Text(
+              'Be the first to review this product',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.grey[600] : Colors.grey[350],
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () =>
+                  _showWriteReviewDialog(context, isDark, textColor),
+              icon: const Icon(LucideIcons.star, size: 18),
+              label: const Text('Write a Review'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _showWriteReviewDialog(
+    BuildContext context,
+    bool isDark,
+    Color textColor,
+  ) {
+    int selectedRating = 0;
+    final titleController = TextEditingController();
+    final contentController = TextEditingController();
+    bool isSubmitting = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Write a Review',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(LucideIcons.x, color: textColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Star Rating
+              Text(
+                'Your Rating',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: List.generate(5, (index) {
+                  return GestureDetector(
+                    onTap: () =>
+                        setSheetState(() => selectedRating = index + 1),
+                    child: Icon(
+                      index < selectedRating
+                          ? LucideIcons.star
+                          : LucideIcons.star,
+                      size: 32,
+                      color: index < selectedRating
+                          ? Colors.amber
+                          : (isDark ? Colors.grey[700] : Colors.grey[300]),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 20),
+
+              // Title
+              TextField(
+                controller: titleController,
+                style: TextStyle(color: textColor),
+                decoration: InputDecoration(
+                  hintText: 'Review title (optional)',
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.grey[500] : Colors.grey[400],
+                  ),
+                  filled: true,
+                  fillColor: isDark ? AppColors.darkSurface : Colors.grey[100],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Content
+              TextField(
+                controller: contentController,
+                style: TextStyle(color: textColor),
+                maxLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Write your review...',
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.grey[500] : Colors.grey[400],
+                  ),
+                  filled: true,
+                  fillColor: isDark ? AppColors.darkSurface : Colors.grey[100],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Submit Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isSubmitting || selectedRating == 0
+                      ? null
+                      : () async {
+                          setSheetState(() => isSubmitting = true);
+                          await _submitReview(
+                            context,
+                            selectedRating,
+                            titleController.text,
+                            contentController.text,
+                          );
+                          setSheetState(() => isSubmitting = false);
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Submit Review',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitReview(
+    BuildContext context,
+    int rating,
+    String title,
+    String content,
+  ) async {
+    final productId = GoRouterState.of(context).pathParameters['slug'];
+
+    try {
+      await http.post(
+        Uri.parse('${AppConfig.baseUrl}/api/reviews'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'productId': productId,
+          'rating': rating,
+          'title': title.isNotEmpty ? title : null,
+          'content': content.isNotEmpty ? content : null,
+        }),
+      );
+
+      if (context.mounted) {
+        Navigator.pop(context);
+
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          title: const Text('Review submitted!'),
+          description: const Text('Thank you for your feedback'),
+          autoCloseDuration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          title: const Text('Failed to submit review'),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+      }
+    }
   }
 
   Widget _buildSimilarProducts(dynamic product, bool isDark, Color textColor) {

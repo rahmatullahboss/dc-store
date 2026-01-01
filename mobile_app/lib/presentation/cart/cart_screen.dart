@@ -5,10 +5,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:toastification/toastification.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/app_haptics.dart';
 import '../../core/utils/price_formatter.dart';
+import '../../core/config/app_config.dart';
 import '../../l10n/app_localizations.dart';
 import '../../features/cart/domain/cart_item_model.dart';
 import '../../features/cart/presentation/providers/cart_provider.dart';
@@ -25,6 +28,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   final _couponController = TextEditingController();
   String? _appliedCoupon;
   double _discountAmount = 0;
+  bool _isApplyingCoupon = false;
   late PriceFormatter _priceFormatter; // Set in build() for use across methods
 
   // Saved for later items - empty for now, will be populated from local storage
@@ -41,30 +45,69 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     super.dispose();
   }
 
-  void _applyCoupon() {
+  Future<void> _applyCoupon() async {
     final l10n = AppLocalizations.of(context)!;
     final code = _couponController.text.trim().toUpperCase();
-    if (code == 'SUMMER20' || code == 'SAVE10') {
-      setState(() {
-        _appliedCoupon = code;
-        _discountAmount = code == 'SUMMER20' ? 15.0 : 10.0;
-      });
+
+    if (code.isEmpty) {
       toastification.show(
         context: context,
-        type: ToastificationType.success,
-        title: Text(l10n.couponApplied),
-        description: Text(
-          "${_priceFormatter.format(_discountAmount)} ${l10n.discount.toLowerCase()}",
-        ),
+        type: ToastificationType.error,
+        title: const Text('Please enter a coupon code'),
         autoCloseDuration: const Duration(seconds: 2),
       );
-    } else {
+      return;
+    }
+
+    final cartTotal = ref.read(cartTotalProvider);
+
+    setState(() {
+      _isApplyingCoupon = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}/api/coupons/validate'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'code': code, 'cartTotal': cartTotal}),
+      );
+
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (data['valid'] == true) {
+        setState(() {
+          _appliedCoupon = data['code'] as String?;
+          _discountAmount = (data['discount'] as num?)?.toDouble() ?? 0;
+        });
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          title: Text(l10n.couponApplied),
+          description: Text(
+            "${_priceFormatter.format(_discountAmount)} ${l10n.discount.toLowerCase()}",
+          ),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+      } else {
+        final error = data['error'] as String? ?? l10n.invalidCoupon;
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          title: Text(error),
+          autoCloseDuration: const Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
       toastification.show(
         context: context,
         type: ToastificationType.error,
         title: Text(l10n.invalidCoupon),
         autoCloseDuration: const Duration(seconds: 2),
       );
+    } finally {
+      setState(() {
+        _isApplyingCoupon = false;
+      });
     }
     _couponController.clear();
   }
@@ -1064,26 +1107,37 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: _applyCoupon,
+                  onTap: _isApplyingCoupon ? null : _applyCoupon,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.grey[700]
-                          : const Color(0xFF111827),
+                      color: _isApplyingCoupon
+                          ? Colors.grey
+                          : (isDark
+                                ? Colors.grey[700]
+                                : const Color(0xFF111827)),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      "Apply",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: _isApplyingCoupon
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Apply",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ],
