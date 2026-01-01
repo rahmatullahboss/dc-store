@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { users, orders, wishlist, sessions } from "@/db/schema";
+import { users, orders, wishlist, sessions, products } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 
@@ -99,6 +99,56 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // Fetch wishlist preview (first 4 items with product details)
+    const wishlistPreview = await db
+      .select({
+        id: wishlist.id,
+        productId: wishlist.productId,
+        product: {
+          id: products.id,
+          name: products.name,
+          slug: products.slug,
+          price: products.price,
+          compareAtPrice: products.compareAtPrice,
+          featuredImage: products.featuredImage,
+        },
+      })
+      .from(wishlist)
+      .innerJoin(products, eq(wishlist.productId, products.id))
+      .where(eq(wishlist.userId, userId))
+      .limit(4);
+
+    // Extract unique products from recent orders for "Buy Again" section
+    const buyAgainProductIds = new Set<string>();
+    type OrderItemType = { productId: string; name: string; price: number; image?: string; quantity: number };
+    const buyAgainItems: OrderItemType[] = [];
+    
+    for (const order of recentOrders) {
+      if (Array.isArray(order.items)) {
+        for (const item of order.items as OrderItemType[]) {
+          if (item.productId && !buyAgainProductIds.has(item.productId) && buyAgainItems.length < 4) {
+            buyAgainProductIds.add(item.productId);
+            buyAgainItems.push(item);
+          }
+        }
+      }
+    }
+
+    // Fetch current product details for buy again items
+    const buyAgainProducts = buyAgainItems.length > 0 ? await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        price: products.price,
+        compareAtPrice: products.compareAtPrice,
+        featuredImage: products.featuredImage,
+        quantity: products.quantity,
+        isActive: products.isActive,
+      })
+      .from(products)
+      .where(sql`${products.id} IN (${sql.raw(buyAgainItems.map(i => `'${i.productId}'`).join(','))})`) : [];
+
     const stats = orderStats[0] || { orderCount: 0, totalSpent: 0 };
     const wishlistCount = wishlistStats[0]?.count || 0;
 
@@ -137,6 +187,30 @@ export async function GET(request: NextRequest) {
         total: order.total,
         items: Array.isArray(order.items) ? order.items.length : 0,
       })),
+      wishlistPreview: wishlistPreview.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        product: item.product,
+      })),
+      buyAgainProducts: buyAgainProducts.filter(p => p.isActive).map((product) => ({
+        ...product,
+        inStock: (product.quantity ?? 0) > 0,
+      })),
+      // Profile completion data
+      profileCompletion: {
+        hasName: !!user?.name,
+        hasEmail: !!user?.email,
+        hasPhone: !!user?.phone,
+        hasAddress: !!user?.defaultAddress,
+        hasImage: !!user?.image,
+        percentage: (
+          (user?.name ? 20 : 0) +
+          (user?.email ? 20 : 0) +
+          (user?.phone ? 20 : 0) +
+          (user?.defaultAddress ? 20 : 0) +
+          (user?.image ? 20 : 0)
+        ),
+      },
     });
   } catch (error) {
     console.error("Error fetching profile:", error);

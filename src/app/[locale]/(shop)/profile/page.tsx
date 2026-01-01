@@ -18,7 +18,10 @@ import {
   CheckCircle2,
   XCircle,
   Package,
-  ChevronRight
+  ChevronRight,
+  RefreshCw,
+  Sparkles,
+  Camera
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,10 +60,47 @@ interface DashboardStats {
   rewardPoints: number;
 }
 
+interface WishlistProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  compareAtPrice?: number;
+  featuredImage?: string;
+}
+
+interface WishlistPreviewItem {
+  id: string;
+  productId: string;
+  product: WishlistProduct;
+}
+
+interface BuyAgainProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  compareAtPrice?: number;
+  featuredImage?: string;
+  inStock: boolean;
+}
+
+interface ProfileCompletion {
+  hasName: boolean;
+  hasEmail: boolean;
+  hasPhone: boolean;
+  hasAddress: boolean;
+  hasImage: boolean;
+  percentage: number;
+}
+
 interface ProfileResponse {
   profile: UserProfile;
   stats: DashboardStats;
   recentOrders: Order[];
+  wishlistPreview: WishlistPreviewItem[];
+  buyAgainProducts: BuyAgainProduct[];
+  profileCompletion: ProfileCompletion;
 }
 
 export default function ProfilePage() {
@@ -78,6 +118,16 @@ export default function ProfilePage() {
     rewardPoints: 0
   });
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [wishlistPreview, setWishlistPreview] = useState<WishlistPreviewItem[]>([]);
+  const [buyAgainProducts, setBuyAgainProducts] = useState<BuyAgainProduct[]>([]);
+  const [profileCompletion, setProfileCompletion] = useState<ProfileCompletion>({
+    hasName: false,
+    hasEmail: false,
+    hasPhone: false,
+    hasAddress: false,
+    hasImage: false,
+    percentage: 0
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -111,6 +161,16 @@ export default function ProfilePage() {
           });
           setStats(data.stats);
           setRecentOrders(data.recentOrders);
+          setWishlistPreview(data.wishlistPreview || []);
+          setBuyAgainProducts(data.buyAgainProducts || []);
+          setProfileCompletion(data.profileCompletion || {
+            hasName: false,
+            hasEmail: false,
+            hasPhone: false,
+            hasAddress: false,
+            hasImage: false,
+            percentage: 0
+          });
           
           setEditForm({
             name: data.profile.name || "",
@@ -394,6 +454,163 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
+
+                {/* Profile Completion Progress */}
+                {profileCompletion.percentage < 100 && (
+                  <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-amber-500" />
+                        <h3 className="font-bold text-foreground">Complete Your Profile</h3>
+                      </div>
+                      <span className="text-sm font-medium text-primary">{profileCompletion.percentage}%</span>
+                    </div>
+                    
+                    <div className="w-full bg-muted rounded-full h-2 mb-4">
+                      <div 
+                        className="h-2 rounded-full bg-gradient-to-r from-primary to-primary/70 transition-all duration-500"
+                        style={{ width: `${profileCompletion.percentage}%` }}
+                      />
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {profileCompletion.hasName && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Name
+                        </span>
+                      )}
+                      {profileCompletion.hasEmail && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Email
+                        </span>
+                      )}
+                      {!profileCompletion.hasPhone && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground flex items-center gap-1">
+                          <Phone className="h-3 w-3" /> Add Phone
+                        </span>
+                      )}
+                      {!profileCompletion.hasAddress && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> Add Address
+                        </span>
+                      )}
+                      {!profileCompletion.hasImage && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground flex items-center gap-1">
+                          <Camera className="h-3 w-3" /> Add Photo
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Buy Again Section */}
+                {buyAgainProducts.length > 0 && (
+                  <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <RefreshCw className="h-5 w-5 text-primary" />
+                        <h3 className="font-bold text-foreground">Buy Again</h3>
+                      </div>
+                      <Button variant="ghost" size="sm" className="gap-1" asChild>
+                        <Link href="/orders">
+                          View Orders
+                          <ChevronRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {buyAgainProducts.map((product) => (
+                        <Link 
+                          key={product.id} 
+                          href={`/products/${product.slug}`}
+                          className="group"
+                        >
+                          <div className="bg-muted/50 rounded-xl p-3 border border-border group-hover:border-primary/50 transition-colors">
+                            <div className="aspect-square relative mb-2 rounded-lg overflow-hidden bg-background">
+                              {product.featuredImage ? (
+                                <Image
+                                  src={product.featuredImage}
+                                  alt={product.name}
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Package className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                              )}
+                              {!product.inStock && (
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                  <span className="text-xs text-white font-medium">Out of Stock</span>
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
+                            <p className="text-sm font-bold text-primary">{formatPrice(product.price)}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Wishlist Preview */}
+                {wishlistPreview.length > 0 && (
+                  <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Heart className="h-5 w-5 text-red-500" />
+                        <h3 className="font-bold text-foreground">My Wishlist</h3>
+                        <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                          {stats.wishlistCount} items
+                        </span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="gap-1" asChild>
+                        <Link href="/wishlist">
+                          View All
+                          <ChevronRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {wishlistPreview.map((item) => (
+                        <Link 
+                          key={item.id} 
+                          href={`/products/${item.product.slug}`}
+                          className="group"
+                        >
+                          <div className="bg-muted/50 rounded-xl p-3 border border-border group-hover:border-primary/50 transition-colors">
+                            <div className="aspect-square relative mb-2 rounded-lg overflow-hidden bg-background">
+                              {item.product.featuredImage ? (
+                                <Image
+                                  src={item.product.featuredImage}
+                                  alt={item.product.name}
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Heart className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-sm font-medium text-foreground truncate">{item.product.name}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-bold text-primary">{formatPrice(item.product.price)}</p>
+                              {item.product.compareAtPrice && item.product.compareAtPrice > item.product.price && (
+                                <p className="text-xs text-muted-foreground line-through">
+                                  {formatPrice(item.product.compareAtPrice)}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Recent Orders Preview */}
                 <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
