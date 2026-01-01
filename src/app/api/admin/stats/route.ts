@@ -102,10 +102,10 @@ export async function GET(request: NextRequest) {
     daysAgo.setDate(daysAgo.getDate() - daysCount);
     daysAgo.setHours(0, 0, 0, 0);
     
-    // Query orders with revenue by date
+    // Query orders with revenue by date - use unixepoch modifier for timestamp conversion
     const revenueByDayRaw = await db
       .select({
-        date: sql<string>`DATE(${orders.createdAt})`,
+        date: sql<string>`DATE(${orders.createdAt}, 'unixepoch')`,
         revenue: sql<number>`COALESCE(SUM(${orders.total}), 0)`,
       })
       .from(orders)
@@ -115,8 +115,8 @@ export async function GET(request: NextRequest) {
           eq(orders.paymentStatus, "paid")
         )
       )
-      .groupBy(sql`DATE(${orders.createdAt})`)
-      .orderBy(sql`DATE(${orders.createdAt})`);
+      .groupBy(sql`DATE(${orders.createdAt}, 'unixepoch')`)
+      .orderBy(sql`DATE(${orders.createdAt}, 'unixepoch')`);
 
     // Generate all days in range and fill missing days with zero
     const revenueMap = new Map<string, number>();
