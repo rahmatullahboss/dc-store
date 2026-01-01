@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/config/white_label_config.dart';
+import '../common/widgets/price_text.dart';
 
-class WalletScreen extends StatefulWidget {
+class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
 
   @override
-  State<WalletScreen> createState() => _WalletScreenState();
+  ConsumerState<WalletScreen> createState() => _WalletScreenState();
 }
 
-class _WalletScreenState extends State<WalletScreen> {
+class _WalletScreenState extends ConsumerState<WalletScreen> {
   String _selectedFilter = 'All';
   double _addMoneyAmount = 100;
 
@@ -228,9 +230,9 @@ class _WalletScreenState extends State<WalletScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                '\$2,458.50',
-                style: TextStyle(
+              PriceText(
+                price: 2458.50,
+                style: const TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -260,9 +262,9 @@ class _WalletScreenState extends State<WalletScreen> {
                             size: 16,
                           ),
                           const SizedBox(width: 4),
-                          const Text(
-                            '\$142.00',
-                            style: TextStyle(
+                          PriceText(
+                            price: 142.00,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
@@ -679,7 +681,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   iconColor: const Color(0xFF16A34A),
                   title: 'Wallet Top-up',
                   subtitle: 'Today, 10:42 AM',
-                  amount: '+\$250.00',
+                  price: 250.00,
+                  isCredit: true,
                   amountColor: const Color(0xFF16A34A),
                   status: 'Success',
                   statusColor: textSecondary,
@@ -694,7 +697,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   iconColor: const Color(0xFFDC2626),
                   title: 'Nike Store Purchase',
                   subtitle: 'Yesterday, 4:20 PM',
-                  amount: '-\$129.99',
+                  price: 129.99,
+                  isCredit: false,
                   amountColor: textPrimary,
                   status: 'Success',
                   statusColor: textSecondary,
@@ -709,7 +713,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   iconColor: WhiteLabelConfig.accentColor,
                   title: 'Transfer to John Doe',
                   subtitle: 'Oct 24, 2:30 PM',
-                  amount: '-\$50.00',
+                  price: 50.00,
+                  isCredit: false,
                   amountColor: textPrimary,
                   status: 'Pending',
                   statusColor: WhiteLabelConfig.accentColor,
@@ -724,7 +729,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   iconColor: const Color(0xFF16A34A),
                   title: 'Cashback Received',
                   subtitle: 'Oct 22, 9:15 AM',
-                  amount: '+\$12.50',
+                  price: 12.50,
+                  isCredit: true,
                   amountColor: const Color(0xFF16A34A),
                   status: 'Success',
                   statusColor: textSecondary,
@@ -747,7 +753,8 @@ class _WalletScreenState extends State<WalletScreen> {
     required Color iconColor,
     required String title,
     required String subtitle,
-    required String amount,
+    required double price,
+    required bool isCredit,
     required Color amountColor,
     required String status,
     required Color statusColor,
@@ -790,13 +797,26 @@ class _WalletScreenState extends State<WalletScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              amount,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: amountColor,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isCredit ? '+' : '-',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: amountColor,
+                  ),
+                ),
+                PriceText(
+                  price: price,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: amountColor,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 2),
             Text(status, style: TextStyle(fontSize: 12, color: statusColor)),
