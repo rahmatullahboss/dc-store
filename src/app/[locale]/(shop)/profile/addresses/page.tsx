@@ -95,7 +95,7 @@ export default function AddressesPage() {
     try {
       const res = await fetch("/api/user/addresses");
       if (res.ok) {
-        const data = await res.json();
+        const data = await res.json() as { addresses?: Address[] };
         setAddresses(data.addresses || []);
       }
     } catch (error) {
@@ -152,7 +152,7 @@ export default function AddressesPage() {
         setIsDialogOpen(false);
         fetchAddresses();
       } else {
-        const data = await res.json();
+        const data = await res.json() as { error?: string };
         toast.error(data.error || "Failed to save address");
       }
     } catch (error) {
