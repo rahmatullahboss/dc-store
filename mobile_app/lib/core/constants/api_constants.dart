@@ -7,8 +7,8 @@ class ApiConstants {
   // BASE URLs
   // ═══════════════════════════════════════════════════════════════
 
-  /// Development environment URL
-  static const String devBaseUrl = 'http://localhost:3000';
+  /// Development environment URL (use your local network IP for real device)
+  static const String devBaseUrl = 'http://192.168.0.119:3000';
 
   /// Staging environment URL
   static const String stagingBaseUrl = 'https://staging.digitalcare.site';
