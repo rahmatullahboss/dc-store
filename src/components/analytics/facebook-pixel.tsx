@@ -1,0 +1,165 @@
+"use client";
+
+import Script from "next/script";
+
+const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+
+export function FacebookPixel() {
+  // Don't render anything if no Pixel ID is configured
+  if (!FB_PIXEL_ID) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Facebook Pixel Base Code */}
+      <Script
+        id="facebook-pixel"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '${FB_PIXEL_ID}');
+            fbq('track', 'PageView');
+          `,
+        }}
+      />
+      {/* Facebook Pixel NoScript Fallback */}
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style={{ display: "none" }}
+          src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
+          alt=""
+        />
+      </noscript>
+    </>
+  );
+}
+
+// Helper function to track custom events
+export function trackFBEvent(
+  eventName: string,
+  params?: Record<string, unknown>
+) {
+  if (typeof window !== "undefined" && window.fbq && FB_PIXEL_ID) {
+    window.fbq("track", eventName, params);
+  }
+}
+
+// Predefined e-commerce events
+export const fbEvents = {
+  // When a product is added to cart
+  addToCart: (
+    contentId: string,
+    contentName: string,
+    value: number,
+    currency: string = "BDT"
+  ) => {
+    trackFBEvent("AddToCart", {
+      content_ids: [contentId],
+      content_name: contentName,
+      content_type: "product",
+      value,
+      currency,
+    });
+  },
+
+  // When checkout is initiated
+  initiateCheckout: (
+    contentIds: string[],
+    numItems: number,
+    value: number,
+    currency: string = "BDT"
+  ) => {
+    trackFBEvent("InitiateCheckout", {
+      content_ids: contentIds,
+      num_items: numItems,
+      value,
+      currency,
+    });
+  },
+
+  // When a purchase is completed
+  purchase: (
+    contentIds: string[],
+    numItems: number,
+    value: number,
+    currency: string = "BDT"
+  ) => {
+    trackFBEvent("Purchase", {
+      content_ids: contentIds,
+      num_items: numItems,
+      value,
+      currency,
+    });
+  },
+
+  // When a product is viewed
+  viewContent: (
+    contentId: string,
+    contentName: string,
+    value: number,
+    currency: string = "BDT"
+  ) => {
+    trackFBEvent("ViewContent", {
+      content_ids: [contentId],
+      content_name: contentName,
+      content_type: "product",
+      value,
+      currency,
+    });
+  },
+
+  // When a user searches
+  search: (searchString: string) => {
+    trackFBEvent("Search", {
+      search_string: searchString,
+    });
+  },
+
+  // When a user adds to wishlist
+  addToWishlist: (
+    contentId: string,
+    contentName: string,
+    value: number,
+    currency: string = "BDT"
+  ) => {
+    trackFBEvent("AddToWishlist", {
+      content_ids: [contentId],
+      content_name: contentName,
+      content_type: "product",
+      value,
+      currency,
+    });
+  },
+
+  // When user completes registration
+  completeRegistration: () => {
+    trackFBEvent("CompleteRegistration");
+  },
+
+  // When user contacts
+  contact: () => {
+    trackFBEvent("Contact");
+  },
+};
+
+// Extend Window interface for TypeScript
+declare global {
+  interface Window {
+    fbq: (
+      type: string,
+      eventName: string,
+      params?: Record<string, unknown>
+    ) => void;
+  }
+}

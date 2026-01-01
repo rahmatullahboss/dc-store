@@ -10,6 +10,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { FacebookPixel } from "@/components/analytics/facebook-pixel";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -81,6 +82,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body className="font-sans antialiased">
+        <FacebookPixel />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <CartProvider>
