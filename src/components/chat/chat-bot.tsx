@@ -475,51 +475,104 @@ export function ChatBot() {
 
   // Render message content with product cards inline
   const renderMessageContent = (message: (typeof messages)[0]) => {
-    const textContent = message.parts
-      .filter(
-        (part): part is { type: "text"; text: string } => part.type === "text"
-      )
-      .map((part) => part.text)
-      .join("");
+    const elements: React.ReactNode[] = [];
+    let elementIndex = 0;
 
-    const segments = parseProductsFromText(textContent);
-
-    return (
-      <div className="space-y-2">
-        {segments.map((segment, idx) => {
-          if (segment.type === "text") {
-            return (
-              <p key={`text-${idx}`} className="whitespace-pre-wrap">
+    // Process each part in the message
+    for (const part of message.parts) {
+      if (part.type === "text") {
+        // Parse text for product cards
+        const segments = parseProductsFromText(part.text);
+        for (const segment of segments) {
+          if (segment.type === "text" && segment.content.trim()) {
+            elements.push(
+              <p key={`text-${elementIndex++}`} className="whitespace-pre-wrap">
                 {segment.content}
               </p>
             );
           } else if (segment.type === "product") {
-            return (
+            elements.push(
               <ChatProductCard
-                key={`product-${segment.product.slug}-${idx}`}
+                key={`product-${segment.product.slug}-${elementIndex++}`}
                 product={segment.product}
               />
             );
-          } else if (segment.type === "orders") {
-            return (
+          }
+        }
+      } else if (part.type.startsWith("tool-")) {
+        // Handle tool results - AI SDK v6 uses tool-{toolName} as type
+        const toolPart = part as { type: string; state?: string; result?: unknown };
+        if (toolPart.state === "result" && toolPart.result) {
+          const result = toolPart.result as {
+            success?: boolean;
+            message?: string;
+            orders?: Array<{ orderNumber: string; status: string; total: string; itemCount: number; date: string }>;
+            order?: { orderNumber: string; status: string; total: string; orderDate: string };
+            ticketNumber?: string;
+            category?: string;
+          };
+
+          // Render orders list
+          if (result.orders && result.orders.length > 0) {
+            elements.push(
               <ChatOrderCard
-                key={`orders-${idx}`}
-                orders={segment.orders}
-                message={segment.message}
-              />
-            );
-          } else if (segment.type === "ticket") {
-            return (
-              <ChatTicketCard
-                key={`ticket-${segment.ticket.ticketNumber}-${idx}`}
-                ticket={segment.ticket}
+                key={`orders-${elementIndex++}`}
+                orders={result.orders}
+                message={result.message || "Your orders:"}
               />
             );
           }
-          return null;
-        })}
-      </div>
-    );
+          // Render single order status
+          else if (result.order) {
+            elements.push(
+              <div key={`order-status-${elementIndex++}`} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Package className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Order Status</span>
+                </div>
+                <div className="bg-white rounded-lg p-2 border border-blue-100">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs text-blue-600">#{result.order.orderNumber}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                      {result.order.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-muted-foreground">{result.order.orderDate}</span>
+                    <span className="text-sm font-semibold text-foreground">{result.order.total}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+          // Render ticket confirmation
+          else if (result.ticketNumber) {
+            elements.push(
+              <ChatTicketCard
+                key={`ticket-${result.ticketNumber}-${elementIndex++}`}
+                ticket={{
+                  ticketNumber: result.ticketNumber,
+                  category: result.category || "Support",
+                  message: result.message || "Ticket created successfully",
+                }}
+              />
+            );
+          }
+          // Show error or info message
+          else if (result.message && !result.success) {
+            elements.push(
+              <div key={`message-${elementIndex++}`} className="bg-amber-50 rounded-lg p-2 border border-amber-200">
+                <p className="text-sm text-amber-800">{result.message}</p>
+              </div>
+            );
+          }
+        }
+      }
+    }
+
+    return elements.length > 0 ? (
+      <div className="space-y-2">{elements}</div>
+    ) : null;
   };
 
   const getWhatsAppLink = () => {
