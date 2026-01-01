@@ -1,9 +1,11 @@
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { streamText, convertToModelMessages, type UIMessage } from "ai";
+import { streamText, convertToModelMessages, type UIMessage, stepCountIs } from "ai";
 import { siteConfig } from "@/lib/config";
-import { getDatabase } from "@/lib/cloudflare";
-import { products } from "@/db/schema";
+import { getDatabase, getAuth } from "@/lib/cloudflare";
+import { products, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { createChatTools, type ChatToolsContext } from "@/lib/chat-tools";
 
 // Using default runtime for OpenNext compatibility
 export const dynamic = "force-dynamic";
@@ -42,13 +44,99 @@ async function fetchProducts() {
   }
 }
 
-function generateSystemPrompt(productList: string, locale: string = "en") {
+// Get authenticated user info
+async function getAuthenticatedUser(): Promise<ChatToolsContext> {
+  try {
+    const auth = await getAuth();
+    const headersList = await headers();
+    const session = await auth.api.getSession({ headers: headersList });
+    
+    if (session?.user) {
+      // Fetch additional user info
+      const db = await getDatabase();
+      const [userProfile] = await db
+        .select({
+          phone: users.phone,
+        })
+        .from(users)
+        .where(eq(users.id, session.user.id))
+        .limit(1);
+
+      return {
+        userId: session.user.id,
+        userName: session.user.name || null,
+        userEmail: session.user.email || null,
+        userPhone: userProfile?.phone || null,
+      };
+    }
+  } catch (error) {
+    console.error("Error getting authenticated user:", error);
+  }
+  
+  return {
+    userId: null,
+    userName: null,
+    userEmail: null,
+    userPhone: null,
+  };
+}
+
+function generateSystemPrompt(productList: string, locale: string = "en", userContext: ChatToolsContext) {
   const isBengali = locale === "bn";
+  const isLoggedIn = !!userContext.userId;
+
+  const orderCapabilities = isLoggedIn
+    ? isBengali
+      ? `
+## ORDER & SUPPORT CAPABILITIES (LOGGED IN USER)
+আপনি একজন logged-in customer "${userContext.userName || 'User'}" এর সাথে কথা বলছেন।
+
+আপনি এই কাজগুলো করতে পারেন:
+1. **Orders দেখানো**: Customer যদি orders দেখতে চায়, getCustomerOrders tool ব্যবহার করুন
+2. **Order Status**: নির্দিষ্ট order এর status জানতে getOrderStatus tool ব্যবহার করুন
+3. **Support Ticket**: Complaint বা সমস্যা হলে createSupportTicket tool ব্যবহার করুন
+
+যখন customer বলে:
+- "আমার orders দেখাও" / "কি অর্ডার করেছি" → getCustomerOrders ব্যবহার করুন
+- "Order #XXX এর status কি?" → getOrderStatus ব্যবহার করুন
+- "সমস্যা আছে" / "complaint" / "রিফান্ড চাই" → createSupportTicket ব্যবহার করুন
+
+Tool result পাওয়ার পর response সুন্দরভাবে format করুন।`
+      : `
+## ORDER & SUPPORT CAPABILITIES (LOGGED IN USER)
+You are chatting with a logged-in customer "${userContext.userName || 'User'}".
+
+You can perform these actions:
+1. **Show Orders**: Use getCustomerOrders tool when customer wants to see orders
+2. **Order Status**: Use getOrderStatus tool to check specific order status
+3. **Support Ticket**: Use createSupportTicket tool for complaints or issues
+
+When customer says:
+- "show my orders" / "what did I order" → Use getCustomerOrders
+- "status of order #XXX" → Use getOrderStatus
+- "I have a problem" / "complaint" / "refund" → Use createSupportTicket
+
+Format the tool results nicely in your response.`
+    : isBengali
+      ? `
+## ORDER & SUPPORT CAPABILITIES (GUEST USER)
+এই user logged in নয়।
+
+- Orders দেখতে বা order status জানতে বলুন: "দয়া করে login করুন আপনার orders দেখতে।"
+- Support ticket এর জন্য guest ও তৈরি করতে পারে যদি phone number দেয়।`
+      : `
+## ORDER & SUPPORT CAPABILITIES (GUEST USER)
+This user is not logged in.
+
+- For orders or order status, say: "Please login to view your orders."
+- Guests can still create support tickets if they provide phone number.`;
 
   return `You are a customer support assistant for "${siteConfig.name}" e-commerce store.
 
 LANGUAGE: ${isBengali ? "Bengali (Bangla). Use English only if user asks in English or for technical terms." : "English. Use Bengali only if user asks in Bengali."}
 GREETING: ${isBengali ? 'Use "আসসালামু আলাইকুম"' : 'Use "Hello" or "Hi"'}. Never use "Namaskar".
+
+${orderCapabilities}
 
 ## PRODUCT DISPLAY FORMAT (MANDATORY)
 When showing products, you MUST use this EXACT format - no exceptions:
@@ -67,14 +155,10 @@ ${productList}
 4. For imageUrl, use the image path exactly as shown in the product list
 5. ALWAYS include product tags when recommending products - NEVER just describe them in text
 
-## EXAMPLE RESPONSE
-User: "${isBengali ? "কি কি আছে?" : "What do you have?"}"
-You: ${isBengali ? "আমাদের কিছু প্রোডাক্ট দেখুন:" : "Here are some of our products:"}
-
-[PRODUCT:premium-headphones:Premium Headphones:4999:Electronics:true:/placeholder.svg]
-[PRODUCT:classic-watch:Classic Watch:2999:Accessories:true:/placeholder.svg]
-
-${isBengali ? "আরো দেখতে চাইলে বলুন! 😊" : "Let me know if you want to see more! 😊"}
+## TOOL USAGE RULES
+1. When showing orders from getCustomerOrders, format as a nice list with order numbers, status, and totals
+2. When showing order status from getOrderStatus, include all relevant details
+3. When a ticket is created via createSupportTicket, confirm with the ticket number prominently
 
 ## ORDERING
 - Tell customers: "${isBengali ? 'প্রোডাক্ট কার্ডে ক্লিক করুন এবং Add to Cart করুন!' : 'Click the product card and Add to Cart!'}"
@@ -108,6 +192,9 @@ export async function POST(req: Request) {
     };
   });
 
+  // Get authenticated user context
+  const userContext = await getAuthenticatedUser();
+
   // Fetch real products from database
   const realProducts = await fetchProducts();
   
@@ -120,7 +207,7 @@ export async function POST(req: Request) {
         .join("\n")
     : "No products available.";
 
-  const systemPrompt = generateSystemPrompt(productListStr, locale || "en");
+  const systemPrompt = generateSystemPrompt(productListStr, locale || "en", userContext);
   const enhancedMessages = await convertToModelMessages(messages);
 
   const openrouterKey = process.env.OPENROUTER_API_KEY;
@@ -135,14 +222,21 @@ export async function POST(req: Request) {
   }
 
   try {
+    // Create AI tools with user context
+    const chatTools = createChatTools(userContext, locale || "en");
+
     const openrouter = createOpenRouter({
       apiKey: openrouterKey,
     });
+    
     const result = streamText({
-      model: openrouter("xiaomi/mimo-v2-flash:free"),
+      model: openrouter("google/gemini-2.0-flash-001"),
       system: systemPrompt,
       messages: enhancedMessages,
+      tools: chatTools,
+      stopWhen: stepCountIs(5), // Allow up to 5 tool call steps
     });
+    
     return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("OpenRouter API error:", error);
@@ -152,4 +246,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

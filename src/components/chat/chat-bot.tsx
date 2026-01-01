@@ -15,6 +15,9 @@ import {
   Phone,
   ShoppingCart,
   ExternalLink,
+  Package,
+  Ticket,
+  CheckCircle,
 } from "lucide-react";
 import { FaFacebookMessenger, FaWhatsapp } from "react-icons/fa";
 import Image from "next/image";
@@ -42,10 +45,28 @@ function generateSessionId() {
   return `chat_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
-// Content segment type for interleaving text and products
+// Order type from AI tool response
+interface OrderInfo {
+  orderNumber: string;
+  status: string;
+  total: string;
+  itemCount: number;
+  date: string;
+}
+
+// Ticket info from AI tool response
+interface TicketInfo {
+  ticketNumber: string;
+  category: string;
+  message: string;
+}
+
+// Content segment type for interleaving text, products, orders, and tickets
 type ContentSegment =
   | { type: "text"; content: string }
-  | { type: "product"; product: Product };
+  | { type: "product"; product: Product }
+  | { type: "orders"; orders: OrderInfo[]; message: string }
+  | { type: "ticket"; ticket: TicketInfo };
 
 // Parse products from AI text response - returns segments in order
 function parseProductsFromText(text: string): ContentSegment[] {
@@ -102,6 +123,56 @@ function parseProductsFromText(text: string): ContentSegment[] {
   }
 
   return segments;
+}
+
+// Order Card Component
+function ChatOrderCard({ orders, message }: { orders: OrderInfo[]; message: string }) {
+  return (
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100">
+      <div className="flex items-center gap-2 mb-2">
+        <Package className="w-4 h-4 text-blue-600" />
+        <span className="text-sm font-medium text-blue-800">{message}</span>
+      </div>
+      <div className="space-y-2">
+        {orders.map((order) => (
+          <div key={order.orderNumber} className="bg-white rounded-lg p-2 border border-blue-100">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xs text-blue-600">#{order.orderNumber}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                {order.status}
+              </span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-xs text-muted-foreground">{order.date}</span>
+              <span className="text-sm font-semibold text-foreground">{order.total}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Ticket Confirmation Card Component
+function ChatTicketCard({ ticket }: { ticket: TicketInfo }) {
+  return (
+    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 border border-green-100">
+      <div className="flex items-center gap-2 mb-2">
+        <CheckCircle className="w-4 h-4 text-green-600" />
+        <span className="text-sm font-medium text-green-800">Ticket Created</span>
+      </div>
+      <div className="bg-white rounded-lg p-3 border border-green-100">
+        <div className="flex items-center gap-2 mb-2">
+          <Ticket className="w-4 h-4 text-green-600" />
+          <span className="font-mono text-sm font-bold text-green-700">{ticket.ticketNumber}</span>
+        </div>
+        <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 mb-2">
+          {ticket.category}
+        </span>
+        <p className="text-xs text-muted-foreground">{ticket.message}</p>
+      </div>
+    </div>
+  );
 }
 
 // Product Card Component
@@ -422,14 +493,30 @@ export function ChatBot() {
                 {segment.content}
               </p>
             );
-          } else {
+          } else if (segment.type === "product") {
             return (
               <ChatProductCard
                 key={`product-${segment.product.slug}-${idx}`}
                 product={segment.product}
               />
             );
+          } else if (segment.type === "orders") {
+            return (
+              <ChatOrderCard
+                key={`orders-${idx}`}
+                orders={segment.orders}
+                message={segment.message}
+              />
+            );
+          } else if (segment.type === "ticket") {
+            return (
+              <ChatTicketCard
+                key={`ticket-${segment.ticket.ticketNumber}-${idx}`}
+                ticket={segment.ticket}
+              />
+            );
           }
+          return null;
         })}
       </div>
     );
@@ -574,14 +661,30 @@ export function ChatBot() {
                               {segment.content}
                             </p>
                           );
-                        } else {
+                        } else if (segment.type === "product") {
                           return (
                             <ChatProductCard
                               key={`product-${segment.product.slug}-${idx}`}
                               product={segment.product}
                             />
                           );
+                        } else if (segment.type === "orders") {
+                          return (
+                            <ChatOrderCard
+                              key={`orders-${idx}`}
+                              orders={segment.orders}
+                              message={segment.message}
+                            />
+                          );
+                        } else if (segment.type === "ticket") {
+                          return (
+                            <ChatTicketCard
+                              key={`ticket-${segment.ticket.ticketNumber}-${idx}`}
+                              ticket={segment.ticket}
+                            />
+                          );
                         }
+                        return null;
                       })}
                     </div>
                   </div>

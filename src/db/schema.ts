@@ -339,6 +339,46 @@ export const chatMessages = sqliteTable("chat_messages", {
 });
 
 // ===========================================
+// Support Tickets
+// ===========================================
+
+export const supportTickets = sqliteTable("support_tickets", {
+  id: text("id").primaryKey(),
+  ticketNumber: text("ticket_number").notNull().unique(),
+  userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+  orderId: text("order_id").references(() => orders.id, { onDelete: "set null" }),
+  
+  category: text("category", {
+    enum: ["order_issue", "payment_issue", "delivery_issue", "product_issue", "refund_request", "other"]
+  }).notNull(),
+  
+  subject: text("subject").notNull(),
+  description: text("description").notNull(),
+  
+  status: text("status", {
+    enum: ["open", "in_progress", "resolved", "closed"]
+  }).default("open"),
+  
+  priority: text("priority", {
+    enum: ["low", "medium", "high", "urgent"]
+  }).default("medium"),
+  
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone"),
+  
+  resolvedAt: integer("resolved_at", { mode: "timestamp" }),
+  resolution: text("resolution"),
+  
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
+// ===========================================
 // Relations
 // ===========================================
 
@@ -349,6 +389,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   reviews: many(reviews),
   carts: many(carts),
   chatConversations: many(chatConversations),
+  supportTickets: many(supportTickets),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -453,6 +494,17 @@ export const addressesRelations = relations(addresses, ({ one }) => ({
   }),
 }));
 
+export const supportTicketsRelations = relations(supportTickets, ({ one }) => ({
+  user: one(users, {
+    fields: [supportTickets.userId],
+    references: [users.id],
+  }),
+  order: one(orders, {
+    fields: [supportTickets.orderId],
+    references: [orders.id],
+  }),
+}));
+
 // ===========================================
 // Types
 // ===========================================
@@ -474,6 +526,8 @@ export type Wishlist = typeof wishlist.$inferSelect;
 export type NewWishlist = typeof wishlist.$inferInsert;
 export type UserAddress = typeof addresses.$inferSelect;
 export type NewUserAddress = typeof addresses.$inferInsert;
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type NewSupportTicket = typeof supportTickets.$inferInsert;
 
 export interface CartItem {
   productId: string;
