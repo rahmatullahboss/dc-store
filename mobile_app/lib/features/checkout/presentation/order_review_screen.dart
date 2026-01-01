@@ -10,6 +10,7 @@ import '../../../core/utils/price_formatter.dart';
 import '../../../services/payment_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../core/constants/storage_keys.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
 import '../../cart/presentation/providers/cart_provider.dart';
 import 'providers/checkout_provider.dart';
 
@@ -95,6 +96,15 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
       final storageService = await StorageService.getInstance();
       final authToken = storageService.getString(StorageKeys.authToken);
 
+      // Get current user from auth provider
+      final currentUser = ref.read(currentUserProvider);
+      final customerName =
+          currentUser?.name ??
+          currentUser?.email.split('@').first ??
+          'Customer';
+      final customerPhone = currentUser?.phone ?? '';
+      final customerEmail = currentUser?.email;
+
       // Create order via API
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/orders'),
@@ -107,13 +117,13 @@ class _OrderReviewScreenState extends ConsumerState<OrderReviewScreen> {
           'subtotal': subtotal,
           'shippingCost': shipping,
           'total': total,
-          'customerName': 'Mobile User', // TODO: Get from user profile
-          'customerPhone': '+880123456789', // TODO: Get from user profile
-          'customerEmail': null,
+          'customerName': customerName,
+          'customerPhone': customerPhone,
+          'customerEmail': customerEmail,
           'shippingAddress': {
-            'name': 'Mobile User',
-            'phone': '+880123456789',
-            'address': 'Dhaka, Bangladesh',
+            'name': customerName,
+            'phone': customerPhone,
+            'address': 'Dhaka, Bangladesh', // TODO: Get from selected address
             'city': 'Dhaka',
             'country': 'Bangladesh',
           },
