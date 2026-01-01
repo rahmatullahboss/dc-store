@@ -390,52 +390,52 @@
     }
   },
   "OrdersPage": {
-      "title": "My Orders",
-      "subtitle": "Track and manage your orders",
-      "refresh": "Refresh",
-      "status": {
-        "pending": "Pending",
-        "confirmed": "Confirmed",
-        "processing": "Processing",
-        "shipped": "Shipped",
-        "delivered": "Delivered",
-        "cancelled": "Cancelled",
-        "refunded": "Refunded"
-      },
-      "filters": {
-        "all": "All",
-        "pending": "Pending",
-        "processing": "Processing",
-        "shipped": "Shipped",
-        "delivered": "Delivered",
-        "cancelled": "Cancelled"
-      },
-      "loading": "Loading your orders...",
-      "empty": {
-        "title": "No orders yet",
-        "titleFiltered": "No {status} orders",
-        "desc": "Start shopping to see your orders here",
-        "descFiltered": "You don't have any orders with \"{status}\" status",
-        "action": "Start Shopping",
-        "viewAll": "View All Orders"
-      },
-      "card": {
-        "orderNumber": "Order #{number}",
-        "items": "{count} items",
-        "total": "Total:",
-        "payment": "Payment:",
-        "cod": "Cash on Delivery",
-        "viewDetails": "View Details",
-        "track": "Track",
-        "reorder": "Reorder"
-      },
-      "summary": "Showing {shown} of {total} orders",
-      "help": {
-        "title": "Need Help?",
-        "desc": "Have questions about your order? We're here to help!",
-        "call": "Call Support",
-        "chat": "Chat with Us"
-      }
+    "title": "My Orders",
+    "subtitle": "Track and manage your orders",
+    "refresh": "Refresh",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "loading": "Loading your orders...",
+    "empty": {
+      "title": "No orders yet",
+      "titleFiltered": "No {status} orders",
+      "desc": "Start shopping to see your orders here",
+      "descFiltered": "You don't have any orders with \"{status}\" status",
+      "action": "Start Shopping",
+      "viewAll": "View All Orders"
+    },
+    "card": {
+      "orderNumber": "Order #{number}",
+      "items": "{count} items",
+      "total": "Total:",
+      "payment": "Payment:",
+      "cod": "Cash on Delivery",
+      "viewDetails": "View Details",
+      "track": "Track",
+      "reorder": "Reorder"
+    },
+    "summary": "Showing {shown} of {total} orders",
+    "help": {
+      "title": "Need Help?",
+      "desc": "Have questions about your order? We're here to help!",
+      "call": "Call Support",
+      "chat": "Chat with Us"
+    }
   },
   "Wishlist": {
       "title": "My Wishlist",
