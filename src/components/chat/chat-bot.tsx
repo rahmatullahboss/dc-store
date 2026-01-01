@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { FaFacebookMessenger, FaWhatsapp } from "react-icons/fa";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { siteConfig, formatPrice } from "@/lib/config";
 
