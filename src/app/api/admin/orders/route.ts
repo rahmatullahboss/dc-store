@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
 import { orders } from "@/db/schema";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, gte, lte } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +22,8 @@ export async function GET(request: Request) {
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
 
     const db = await getDatabase();
 
@@ -33,6 +35,12 @@ export async function GET(request: Request) {
       whereConditions.push(
         sql`(${orders.orderNumber} LIKE ${'%' + search + '%'} OR ${orders.customerName} LIKE ${'%' + search + '%'})`
       );
+    }
+    if (dateFrom) {
+      whereConditions.push(gte(orders.createdAt, new Date(dateFrom)));
+    }
+    if (dateTo) {
+      whereConditions.push(lte(orders.createdAt, new Date(dateTo)));
     }
 
     const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;

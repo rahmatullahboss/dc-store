@@ -10,6 +10,7 @@ import { Search, Eye, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Pagination } from "@/components/admin/pagination";
 import { ExportButton } from "@/components/admin/export-button";
+import { DateRangePicker, DateRangePreset, getDateRangeFromPreset } from "@/components/admin/date-range-picker";
 
 interface Order {
   id: string;
@@ -49,6 +50,7 @@ export default function AdminOrdersPage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [dateRange, setDateRange] = useState<DateRangePreset>("30days");
 
   const fetchOrders = async (page = 1) => {
     setIsLoading(true);
@@ -58,6 +60,13 @@ export default function AdminOrdersPage() {
       if (search) params.set("search", search);
       params.set("page", String(page));
       params.set("limit", String(ITEMS_PER_PAGE));
+      
+      // Add date range filter
+      const range = getDateRangeFromPreset(dateRange);
+      if (range.from) {
+        params.set("dateFrom", range.from.toISOString());
+        params.set("dateTo", range.to.toISOString());
+      }
       
       const res = await fetch(`/api/admin/orders?${params}`);
       if (res.ok) {
@@ -80,7 +89,7 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     fetchOrders(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, dateRange]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,19 +105,22 @@ export default function AdminOrdersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-white">Orders</h1>
-        <ExportButton
-          data={orders}
-          filename="orders"
-          columns={[
-            { key: "orderNumber", header: "Order #" },
-            { key: "customerName", header: "Customer" },
-            { key: "customerPhone", header: "Phone" },
-            { key: "total", header: "Total" },
-            { key: "status", header: "Status" },
-            { key: "paymentStatus", header: "Payment" },
-            { key: (o) => new Date(o.createdAt).toLocaleDateString(), header: "Date" },
-          ]}
-        />
+        <div className="flex gap-2">
+          <DateRangePicker value={dateRange} onChange={setDateRange} />
+          <ExportButton
+            data={orders}
+            filename="orders"
+            columns={[
+              { key: "orderNumber", header: "Order #" },
+              { key: "customerName", header: "Customer" },
+              { key: "customerPhone", header: "Phone" },
+              { key: "total", header: "Total" },
+              { key: "status", header: "Status" },
+              { key: "paymentStatus", header: "Payment" },
+              { key: (o) => new Date(o.createdAt).toLocaleDateString(), header: "Date" },
+            ]}
+          />
+        </div>
       </div>
 
       {/* Status Tabs */}
