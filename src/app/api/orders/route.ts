@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { orders, sessions } from "@/db/schema";
+import { orders, sessions, products } from "@/db/schema";
 import type { OrderItem, Address } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { headers } from "next/headers";
 import { sendOrderConfirmationEmail } from "@/lib/email";
@@ -102,6 +102,19 @@ export async function POST(request: Request) {
     };
 
     await db.insert(orders).values(newOrder);
+
+    // Reduce stock for each product in the order
+    for (const item of body.items) {
+      await db
+        .update(products)
+        .set({
+          quantity: sql`MAX(COALESCE(${products.quantity}, 0) - ${item.quantity}, 0)`,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, item.productId));
+    }
+
+    console.log(`Stock reduced for order: ${orderNumber}, items: ${body.items.length}`);
 
     // Send order confirmation email
     if (body.customerEmail) {

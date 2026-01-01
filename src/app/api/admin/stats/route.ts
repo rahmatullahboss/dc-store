@@ -1,12 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
 import { orders, products, users } from "@/db/schema";
-import { sql, eq, gte, and } from "drizzle-orm";
+import { sql, eq, gte, and, lte } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export async function GET(request: NextRequest) {
   try {
     const auth = await getAuth();
     const headersList = await headers();
@@ -18,16 +25,34 @@ export async function GET() {
     }
 
     const db = await getDatabase();
+    const { searchParams } = new URL(request.url);
+    
+    // Parse date range from query params
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
+    const days = searchParams.get("days") || "7"; // Default to 7 days for chart
 
     // Get today's start
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Total Revenue
+    // Build date filter for revenue
+    const dateFilter = dateFrom && dateTo
+      ? and(
+          gte(orders.createdAt, new Date(dateFrom)),
+          lte(orders.createdAt, new Date(dateTo))
+        )
+      : undefined;
+
+    // Total Revenue (with optional date filter)
     const revenueResult = await db
       .select({ total: sql<number>`COALESCE(SUM(${orders.total}), 0)` })
       .from(orders)
-      .where(eq(orders.paymentStatus, "paid"));
+      .where(
+        dateFilter
+          ? and(eq(orders.paymentStatus, "paid"), dateFilter)
+          : eq(orders.paymentStatus, "paid")
+      );
     const totalRevenue = revenueResult[0]?.total || 0;
 
     // Orders Today
@@ -36,6 +61,13 @@ export async function GET() {
       .from(orders)
       .where(gte(orders.createdAt, today));
     const ordersToday = ordersTodayResult[0]?.count || 0;
+
+    // Pending Orders (for notifications)
+    const pendingOrdersResult = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(orders)
+      .where(eq(orders.status, "pending"));
+    const pendingOrders = pendingOrdersResult[0]?.count || 0;
 
     // Active Products
     const productsResult = await db
@@ -64,9 +96,10 @@ export async function GET() {
       .orderBy(sql`${orders.createdAt} DESC`)
       .limit(5);
 
-    // Revenue by day (last 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    // Revenue by day (configurable days)
+    const daysCount = parseInt(days) || 7;
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - daysCount);
     
     const revenueByDay = await db
       .select({
@@ -76,22 +109,88 @@ export async function GET() {
       .from(orders)
       .where(
         and(
-          gte(orders.createdAt, sevenDaysAgo),
+          gte(orders.createdAt, daysAgo),
           eq(orders.paymentStatus, "paid")
         )
       )
       .groupBy(sql`DATE(${orders.createdAt} / 1000, 'unixepoch')`)
       .orderBy(sql`DATE(${orders.createdAt} / 1000, 'unixepoch')`);
 
+    // Top Selling Products - aggregate from order items JSON
+    const paidOrders = await db
+      .select({
+        items: orders.items,
+      })
+      .from(orders)
+      .where(eq(orders.paymentStatus, "paid"));
+
+    // Aggregate product sales from order items
+    const productSales = new Map<string, { totalSold: number; revenue: number }>();
+    for (const order of paidOrders) {
+      const items = order.items as OrderItem[];
+      if (Array.isArray(items)) {
+        for (const item of items) {
+          const existing = productSales.get(item.productId) || { totalSold: 0, revenue: 0 };
+          existing.totalSold += item.quantity;
+          existing.revenue += item.price * item.quantity;
+          productSales.set(item.productId, existing);
+        }
+      }
+    }
+
+    // Get top 5 products by revenue
+    const topProductIds = Array.from(productSales.entries())
+      .sort((a, b) => b[1].revenue - a[1].revenue)
+      .slice(0, 5)
+      .map(([id]) => id);
+
+    const topProductsData = topProductIds.length > 0
+      ? await db
+          .select({
+            id: products.id,
+            name: products.name,
+            featuredImage: products.featuredImage,
+          })
+          .from(products)
+          .where(sql`${products.id} IN (${sql.join(topProductIds.map(id => sql`${id}`), sql`, `)})`)
+      : [];
+
+    const topProducts = topProductsData.map((p) => ({
+      ...p,
+      totalSold: productSales.get(p.id)?.totalSold || 0,
+      revenue: productSales.get(p.id)?.revenue || 0,
+    })).sort((a, b) => b.revenue - a.revenue);
+
+    // Low Stock Products (quantity <= 5)
+    const lowStockProducts = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        quantity: products.quantity,
+        featuredImage: products.featuredImage,
+      })
+      .from(products)
+      .where(
+        and(
+          eq(products.isActive, true),
+          lte(products.quantity, 5)
+        )
+      )
+      .orderBy(products.quantity)
+      .limit(10);
+
     return NextResponse.json({
       stats: {
         totalRevenue,
         ordersToday,
+        pendingOrders,
         activeProducts,
         totalUsers,
       },
       recentOrders,
       revenueByDay,
+      topProducts,
+      lowStockProducts,
     });
   } catch (error) {
     console.error("Admin stats error:", error);
@@ -101,3 +200,4 @@ export async function GET() {
     );
   }
 }
+
