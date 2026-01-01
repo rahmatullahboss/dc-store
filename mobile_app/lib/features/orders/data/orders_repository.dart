@@ -142,7 +142,8 @@ class Address {
     return Address(
       name: json['name'],
       phone: json['phone'],
-      street: json['street'],
+      // Handle both 'street' and 'address' field names
+      street: json['street'] ?? json['address'],
       city: json['city'],
       state: json['state'],
       postalCode: json['postalCode'],
