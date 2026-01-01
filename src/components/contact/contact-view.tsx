@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslations } from "next-intl";
+import { fbEvents } from "@/components/analytics/facebook-pixel";
 
 const socialLinks = [
   { name: "Facebook", icon: Facebook, href: "#" },
@@ -121,6 +122,8 @@ export function ContactView() {
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
+      // Track Facebook Pixel Contact event
+      fbEvents.contact();
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
     }, 1500);
   };

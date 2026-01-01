@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/queries";
 import { ProductActions } from "./product-actions";
 import { getTranslations } from "next-intl/server";
+import { FBViewContent } from "@/components/analytics/fb-view-content";
 
 // ISR: Cache for 3600 seconds (1 hour), on-demand revalidation via admin actions
 // Note: Only works with manual deploy (wrangler deploy), not Git integration
@@ -94,6 +95,13 @@ export default async function ProductDetailPage({
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
+      {/* Facebook Pixel ViewContent Tracking */}
+      <FBViewContent
+        productId={product.id}
+        productName={product.name}
+        price={product.price}
+      />
+
       {/* Background decorations */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
         <div className="absolute -top-32 -right-20 h-72 w-72 rounded-full bg-amber-200/60 blur-3xl" />

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { signUp, signIn } from "@/lib/auth-client";
 import { siteConfig } from "@/lib/config";
+import { fbEvents } from "@/components/analytics/facebook-pixel";
 
 function RegisterForm() {
   const router = useRouter();
@@ -68,6 +69,8 @@ function RegisterForm() {
       if (result.error) {
         setError(result.error.message || "Registration failed. Please try again.");
       } else {
+        // Track Facebook Pixel CompleteRegistration event
+        fbEvents.completeRegistration();
         router.push("/login?message=Account created successfully! Please sign in.");
       }
     } catch {
