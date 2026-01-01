@@ -69,6 +69,9 @@ import '../presentation/common/floating_chat_button.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/register_screen.dart';
 
+// Reviews
+import '../presentation/reviews/write_review_screen.dart';
+
 /// App Router Configuration
 class AppRouter {
   final StorageService _storageService;
@@ -540,6 +543,22 @@ class AppRouter {
           name: AppRoutes.chat,
           pageBuilder: (context, state) =>
               AppTransitions.slideUp(child: const ChatScreen(), state: state),
+        ),
+
+        // ═══════════════════════════════════════════════════════════════
+        // REVIEW ROUTES
+        // ═══════════════════════════════════════════════════════════════
+        GoRoute(
+          path: '/write-review',
+          name: 'write-review',
+          pageBuilder: (context, state) {
+            final productId = state.uri.queryParameters['productId'];
+            final orderId = state.uri.queryParameters['orderId'];
+            return AppTransitions.slideUp(
+              child: WriteReviewScreen(productId: productId, orderId: orderId),
+              state: state,
+            );
+          },
         ),
 
         // ═══════════════════════════════════════════════════════════════
