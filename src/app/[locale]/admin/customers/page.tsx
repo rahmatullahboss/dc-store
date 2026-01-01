@@ -5,6 +5,8 @@ import { formatPrice } from "@/lib/config";
 import { Input } from "@/components/ui/input";
 import { Search, Users, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/admin/pagination";
+import { ExportButton } from "@/components/admin/export-button";
 
 interface Customer {
   id: string;
@@ -16,20 +18,36 @@ interface Customer {
   createdAt: string;
 }
 
+const ITEMS_PER_PAGE = 20;
+
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (page = 1) => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
+      params.set("page", String(page));
+      params.set("limit", String(ITEMS_PER_PAGE));
       const res = await fetch(`/api/admin/customers?${params}`);
       if (res.ok) {
-        const data = await res.json() as { customers: Customer[] };
+        const data = await res.json() as { 
+          customers: Customer[]; 
+          total?: number; 
+          totalPages?: number 
+        };
         setCustomers(data.customers || []);
+        if (data.totalPages) {
+          setTotalPages(data.totalPages);
+        } else if (data.total) {
+          setTotalPages(Math.ceil(data.total / ITEMS_PER_PAGE));
+        }
+        setCurrentPage(page);
       }
     } catch (error) {
       console.error("Failed to fetch customers:", error);
@@ -39,18 +57,37 @@ export default function AdminCustomersPage() {
   };
 
   useEffect(() => {
-    fetchCustomers();
+    fetchCustomers(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchCustomers();
+    fetchCustomers(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchCustomers(page);
   };
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Customers</h1>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-white">Customers</h1>
+        <ExportButton
+          data={customers}
+          filename="customers"
+          columns={[
+            { key: "name", header: "Name" },
+            { key: "email", header: "Email" },
+            { key: "phone", header: "Phone" },
+            { key: "ordersCount", header: "Orders" },
+            { key: "totalSpent", header: "Total Spent" },
+            { key: (c) => new Date(c.createdAt).toLocaleDateString(), header: "Joined" },
+          ]}
+        />
+      </div>
 
       {/* Search */}
       <form onSubmit={handleSearch} className="flex gap-2 max-w-md">
@@ -131,6 +168,15 @@ export default function AdminCustomersPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

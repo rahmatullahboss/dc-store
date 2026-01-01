@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { AdminSidebar, MobileMenuButton } from "@/components/admin/admin-sidebar";
+import { NotificationCenter } from "@/components/admin/notification-center";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -83,6 +84,9 @@ export default function AdminLayout({
               <Store className="h-4 w-4" />
               <span className="hidden sm:inline">View Store</span>
             </Link>
+
+            {/* Notification Center */}
+            <NotificationCenter />
 
             {/* User Menu */}
             <DropdownMenu>

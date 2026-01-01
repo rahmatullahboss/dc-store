@@ -10,6 +10,7 @@ import {
   FolderTree,
   Ticket,
   Star,
+  BarChart3,
   MessageSquare,
   Settings,
   ChevronLeft,
@@ -25,6 +26,7 @@ const navItems = [
   { name: "Categories", href: "/admin/categories", icon: FolderTree },
   { name: "Coupons", href: "/admin/coupons", icon: Ticket },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
+  { name: "Reports", href: "/admin/reports", icon: BarChart3 },
   { name: "Chat", href: "/admin/chat", icon: MessageSquare },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];

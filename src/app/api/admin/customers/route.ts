@@ -18,8 +18,21 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
 
     const db = await getDatabase();
+
+    const whereClause = search
+      ? sql`(${users.name} LIKE ${'%' + search + '%'} OR ${users.email} LIKE ${'%' + search + '%'})`
+      : undefined;
+
+    // Get total count
+    const countResult = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(users)
+      .where(whereClause);
+    const total = countResult[0]?.count || 0;
 
     // Get customers with order stats
     const customerList = await db
@@ -33,16 +46,21 @@ export async function GET(request: Request) {
         totalSpent: sql<number>`COALESCE((SELECT SUM(total) FROM orders WHERE orders.user_id = ${users.id} AND orders.payment_status = 'paid'), 0)`,
       })
       .from(users)
-      .where(
-        search
-          ? sql`(${users.name} LIKE ${'%' + search + '%'} OR ${users.email} LIKE ${'%' + search + '%'})`
-          : undefined
-      )
-      .orderBy(desc(users.createdAt));
+      .where(whereClause)
+      .orderBy(desc(users.createdAt))
+      .limit(limit)
+      .offset((page - 1) * limit);
 
-    return NextResponse.json({ customers: customerList });
+    return NextResponse.json({
+      customers: customerList,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
   } catch (error) {
     console.error("Customers list error:", error);
     return NextResponse.json({ error: "Failed to fetch customers" }, { status: 500 });
   }
 }
+

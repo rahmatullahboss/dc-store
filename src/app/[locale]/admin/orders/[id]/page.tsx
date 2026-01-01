@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/routing";
-import { formatPrice } from "@/lib/config";
+import { formatPrice, siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Package, MapPin, Phone, Mail, User } from "lucide-react";
+import { ArrowLeft, Package, MapPin, Phone, Mail, User, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -107,6 +107,119 @@ export default function OrderDetailPage() {
     }
   };
 
+  const handlePrintInvoice = useCallback(() => {
+    if (!order) return;
+    
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const invoiceHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Invoice #${order.orderNumber}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
+          .header { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+          .logo { font-size: 24px; font-weight: bold; }
+          .invoice-title { text-align: right; }
+          .invoice-title h1 { font-size: 28px; color: #333; }
+          .invoice-title p { color: #666; }
+          .info-row { display: flex; justify-content: space-between; margin-bottom: 30px; }
+          .info-box { width: 48%; }
+          .info-box h3 { font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; }
+          .info-box p { font-size: 14px; line-height: 1.6; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+          th { background: #f5f5f5; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #ddd; }
+          td { padding: 12px; border-bottom: 1px solid #eee; }
+          .total-row { font-weight: bold; background: #f9f9f9; }
+          .total-row.grand { font-size: 18px; background: #333; color: white; }
+          .text-right { text-align: right; }
+          .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; }
+          @media print { body { padding: 20px; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="logo">${siteConfig.name}</div>
+          <div class="invoice-title">
+            <h1>INVOICE</h1>
+            <p>#${order.orderNumber}</p>
+            <p>${new Date(order.createdAt).toLocaleDateString()}</p>
+          </div>
+        </div>
+        
+        <div class="info-row">
+          <div class="info-box">
+            <h3>Bill To</h3>
+            <p><strong>${order.customerName}</strong></p>
+            <p>${order.customerPhone}</p>
+            ${order.customerEmail ? `<p>${order.customerEmail}</p>` : ""}
+          </div>
+          <div class="info-box">
+            <h3>Ship To</h3>
+            ${order.shippingAddress ? `
+              <p><strong>${order.shippingAddress.name}</strong></p>
+              <p>${order.shippingAddress.address}</p>
+              <p>${order.shippingAddress.city}, ${order.shippingAddress.country}</p>
+            ` : "<p>-</p>"}
+          </div>
+        </div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th class="text-right">Price</th>
+              <th class="text-right">Qty</th>
+              <th class="text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${order.items.map(item => `
+              <tr>
+                <td>${item.name}</td>
+                <td class="text-right">${formatPrice(item.price)}</td>
+                <td class="text-right">${item.quantity}</td>
+                <td class="text-right">${formatPrice(item.total)}</td>
+              </tr>
+            `).join("")}
+            <tr class="total-row">
+              <td colspan="3" class="text-right">Subtotal</td>
+              <td class="text-right">${formatPrice(order.subtotal)}</td>
+            </tr>
+            ${order.discount > 0 ? `
+              <tr class="total-row">
+                <td colspan="3" class="text-right">Discount</td>
+                <td class="text-right">-${formatPrice(order.discount)}</td>
+              </tr>
+            ` : ""}
+            <tr class="total-row">
+              <td colspan="3" class="text-right">Shipping</td>
+              <td class="text-right">${formatPrice(order.shippingCost)}</td>
+            </tr>
+            <tr class="total-row grand">
+              <td colspan="3" class="text-right">Total</td>
+              <td class="text-right">${formatPrice(order.total)}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="footer">
+          <p>Thank you for your purchase!</p>
+          <p>${siteConfig.name} | ${siteConfig.email || ""}</p>
+        </div>
+        
+        <script>window.onload = function() { window.print(); }</script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(invoiceHtml);
+    printWindow.document.close();
+  }, [order]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -129,23 +242,33 @@ export default function OrderDetailPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => router.back()}
-          className="text-slate-400 hover:text-white"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-white">
-            Order #{order.orderNumber}
-          </h1>
-          <p className="text-sm text-slate-400">
-            {new Date(order.createdAt).toLocaleString()}
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.back()}
+            className="text-slate-400 hover:text-white"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              Order #{order.orderNumber}
+            </h1>
+            <p className="text-sm text-slate-400">
+              {new Date(order.createdAt).toLocaleString()}
+            </p>
+          </div>
         </div>
+        <Button
+          onClick={handlePrintInvoice}
+          variant="outline"
+          className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
+        >
+          <Printer className="h-4 w-4 mr-2" />
+          Print Invoice
+        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
