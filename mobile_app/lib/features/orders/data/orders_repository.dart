@@ -142,11 +142,12 @@ class Address {
     return Address(
       name: json['name'],
       phone: json['phone'],
-      // Handle both 'street' and 'address' field names
-      street: json['street'] ?? json['address'],
+      // Handle all possible field name variants: street, address, addressLine1
+      street: json['street'] ?? json['address'] ?? json['addressLine1'],
       city: json['city'],
       state: json['state'],
-      postalCode: json['postalCode'],
+      // Handle both postalCode and zipCode
+      postalCode: json['postalCode'] ?? json['zipCode'],
       country: json['country'],
     );
   }
