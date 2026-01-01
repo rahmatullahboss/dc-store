@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import Image from "next/image";
 import { Package, ShoppingBag, Eye, Clock, Truck, CheckCircle, XCircle, ArrowRight, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/config";
 import { useSession } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 interface OrderItem {

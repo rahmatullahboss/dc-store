@@ -5,7 +5,7 @@ import { ShoppingBag, ShoppingCart, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuantitySelector } from "@/components/product/quantity-selector";
 import { useCart } from "@/lib/cart-context";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import type { Product } from "@/db/schema";
 
 interface ProductActionsProps {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Link } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
+import { Link, useRouter } from "@/i18n/routing";
 import Image from "next/image";
 import { Search, SlidersHorizontal, ShoppingCart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";

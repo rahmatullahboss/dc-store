@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import { Link } from "@/i18n/routing";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Link, useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { Mail, Lock, User, Phone, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

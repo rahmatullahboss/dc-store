@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Link } from "@/i18n/routing";
+import { useParams } from "next/navigation";
+import { Link, useRouter } from "@/i18n/routing";
 import Image from "next/image";
 import { 
   ArrowLeft, 
