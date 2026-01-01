@@ -670,5 +670,8 @@ class _WishlistItem {
     required this.name,
     required this.price,
     required this.imageUrl,
+    this.originalPrice,
+    this.isInStock = true,
+    this.discountPercent,
   });
 }
