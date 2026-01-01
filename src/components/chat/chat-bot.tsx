@@ -501,9 +501,15 @@ export function ChatBot() {
         }
       } else if (part.type.startsWith("tool-")) {
         // Handle tool results - AI SDK v6 uses tool-{toolName} as type
-        const toolPart = part as { type: string; state?: string; result?: unknown };
-        if (toolPart.state === "result" && toolPart.result) {
-          const result = toolPart.result as {
+        // State can be: input-available, output-available, output-error
+        const toolPart = part as { type: string; state?: string; output?: unknown; result?: unknown };
+        
+        // Check for output-available (v6) or result (v5) state
+        const isResultReady = toolPart.state === "output-available" || toolPart.state === "result";
+        const resultData = toolPart.output || toolPart.result;
+        
+        if (isResultReady && resultData) {
+          const result = resultData as {
             success?: boolean;
             message?: string;
             orders?: Array<{ orderNumber: string; status: string; total: string; itemCount: number; date: string }>;
