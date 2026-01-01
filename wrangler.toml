@@ -56,10 +56,11 @@ NEXT_PUBLIC_BRAND_NAME = "DC Store"
 BETTER_AUTH_URL = "https://store.digitalcare.site"
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = "pk_test_51SirHkR4YQ09KMxr9eovrawaHmpnjgfwBgoI1sRiHf0wT1ciZ7SBFGcUUQpzKx86vRl3nFQC0Tdl4ll4TnjUru1X00f3JFVCZj"
 # Google OAuth Client IDs (public, for ID token verification)
-GOOGLE_CLIENT_ID = "46787300862-mr4qq9ogin9paqnktvr5o34uipfq96pm.apps.googleusercontent.com"
+# The ID token's 'aud' claim contains the Web Client ID (client_type: 3)
+GOOGLE_CLIENT_ID = "46787300862-ev3ra7q0t5e1jrr1jal8tas61p33v9hr.apps.googleusercontent.com"
 GOOGLE_IOS_CLIENT_ID = "46787300862-lo0fvlgsg534qul73adhk8m2aedmv8e8.apps.googleusercontent.com"
-# Android client IDs - multiple for different SHA-1 fingerprints
-GOOGLE_ANDROID_CLIENT_ID = "46787300862-s5he2ucm8ikef1m86cp7dnk141q0sfdk.apps.googleusercontent.com"
+# Android client ID (client_type: 1) for com.dcstore.mobile_app
+GOOGLE_ANDROID_CLIENT_ID = "46787300862-bcl3nmgqhkhk5082ds6to6mspeh8srv1.apps.googleusercontent.com"
 
 # Secrets (set via: npx wrangler secret put SECRET_NAME)
 # - BETTER_AUTH_SECRET
