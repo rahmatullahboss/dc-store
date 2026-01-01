@@ -27,8 +27,15 @@ class AddressRemoteDataSource implements AddressRemoteDataSourceBase {
     );
 
     if (!response.isSuccess || response.data == null) {
+      // Log the actual error for debugging
+      print(
+        'Failed to fetch addresses: ${response.error?.message} (status: ${response.error?.statusCode})',
+      );
       throw ServerException(
-        message: response.message ?? 'Failed to fetch addresses',
+        message:
+            response.error?.message ??
+            response.message ??
+            'Failed to fetch addresses',
         statusCode: response.error?.statusCode,
       );
     }
