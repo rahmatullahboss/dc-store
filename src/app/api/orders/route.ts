@@ -6,6 +6,7 @@ import { eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { headers } from "next/headers";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { serverEvents } from "@/lib/facebook-capi";
 
 // Using default runtime for OpenNext compatibility
 
@@ -145,6 +146,33 @@ export async function POST(request: Request) {
     }
 
     console.log(`Stock reduced for order: ${orderNumber}, items: ${body.items.length}`);
+
+    // Send Facebook Conversions API Purchase event (server-side tracking)
+    try {
+      const nameParts = body.customerName.split(" ");
+      await serverEvents.purchase({
+        orderId: orderNumber,
+        value: body.total,
+        contentIds: body.items.map((item) => item.productId),
+        numItems: body.items.reduce((sum, item) => sum + item.quantity, 0),
+        userData: {
+          email: body.customerEmail || undefined,
+          phone: body.customerPhone,
+          firstName: nameParts[0],
+          lastName: nameParts.slice(1).join(" ") || undefined,
+          city: body.shippingAddress.city,
+          state: body.shippingAddress.state,
+          country: body.shippingAddress.country || "BD",
+          externalId: userId || undefined,
+          clientIpAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined,
+          clientUserAgent: request.headers.get("user-agent") || undefined,
+        },
+        eventSourceUrl: request.headers.get("referer") || undefined,
+      });
+    } catch (capiError) {
+      // Don't fail the order if CAPI fails
+      console.error("Facebook CAPI error:", capiError);
+    }
 
     // Send order confirmation email
     if (body.customerEmail) {
