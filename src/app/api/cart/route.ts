@@ -155,6 +155,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    // Check stock availability
+    const availableStock = product.quantity ?? 0;
+    if (availableStock < quantity) {
+      return NextResponse.json(
+        {
+          error: "Insufficient stock",
+          message: `Only ${availableStock} items available`,
+          available: availableStock,
+        },
+        { status: 400 }
+      );
+    }
+
     // Get or create cart
     let cart = await db
       .select()

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getDatabase, getAuth } from "@/lib/cloudflare";
-import { orders } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { orders, products } from "@/db/schema";
+import type { OrderItem } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +68,27 @@ export async function PATCH(
     }
     if (body.notes !== undefined) {
       updateData.notes = body.notes;
+    }
+
+    // If order is being cancelled or refunded, restore stock
+    if (body.status === 'cancelled' || body.status === 'refunded') {
+      const order = await db.query.orders.findFirst({
+        where: eq(orders.id, id),
+      });
+
+      if (order?.items && order.status !== 'cancelled' && order.status !== 'refunded') {
+        // Only restore stock if order wasn't already cancelled/refunded
+        for (const item of order.items as OrderItem[]) {
+          await db
+            .update(products)
+            .set({
+              quantity: sql`COALESCE(${products.quantity}, 0) + ${item.quantity}`,
+              updatedAt: new Date(),
+            })
+            .where(eq(products.id, item.productId));
+        }
+        console.log(`Stock restored for cancelled/refunded order: ${order.orderNumber}`);
+      }
     }
 
     await db.update(orders).set(updateData).where(eq(orders.id, id));

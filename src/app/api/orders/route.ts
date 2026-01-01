@@ -37,6 +37,36 @@ export async function POST(request: Request) {
 
     const db = await getDatabase();
 
+    // Validate stock availability for all items before creating order
+    for (const item of body.items) {
+      const product = await db
+        .select({ quantity: products.quantity, name: products.name })
+        .from(products)
+        .where(eq(products.id, item.productId))
+        .then((rows) => rows[0]);
+
+      if (!product) {
+        return NextResponse.json(
+          { error: `Product not found: ${item.name || item.productId}` },
+          { status: 404 }
+        );
+      }
+
+      if ((product.quantity ?? 0) < item.quantity) {
+        return NextResponse.json(
+          {
+            error: "Insufficient stock",
+            details: {
+              productName: product.name,
+              requested: item.quantity,
+              available: product.quantity ?? 0,
+            },
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     // Get current user session - check Bearer token first (mobile app), then cookie (web)
     let userId: string | null = null;
     
