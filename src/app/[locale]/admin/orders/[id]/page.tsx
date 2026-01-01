@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { formatPrice } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Package, MapPin, Phone, Mail, User } from "lucide-react";
