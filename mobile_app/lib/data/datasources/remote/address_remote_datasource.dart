@@ -1,8 +1,6 @@
 /// Address Remote Data Source - API calls for user addresses
 library;
 
-import 'package:flutter/foundation.dart';
-
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/exceptions.dart';
@@ -24,17 +22,11 @@ class AddressRemoteDataSource implements AddressRemoteDataSourceBase {
 
   @override
   Future<List<AddressModel>> getAddresses() async {
-    debugPrint('📍 AddressRemoteDataSource: Fetching addresses...');
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.userAddresses,
     );
 
-    debugPrint(
-      '📍 AddressRemoteDataSource: Response - isSuccess: ${response.isSuccess}, data: ${response.data}',
-    );
-
     if (!response.isSuccess || response.data == null) {
-      debugPrint('📍 AddressRemoteDataSource: Failed - ${response.message}');
       throw ServerException(
         message: response.message ?? 'Failed to fetch addresses',
         statusCode: response.error?.statusCode,
@@ -43,9 +35,6 @@ class AddressRemoteDataSource implements AddressRemoteDataSourceBase {
 
     final data = response.data!;
     final addressesList = data['addresses'] as List? ?? [];
-    debugPrint(
-      '📍 AddressRemoteDataSource: Found ${addressesList.length} addresses',
-    );
     return addressesList
         .map((item) => AddressModel.fromJson(item as Map<String, dynamic>))
         .toList();
