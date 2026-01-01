@@ -200,6 +200,9 @@ class AuthController extends AsyncNotifier<AuthState> {
         // Server validation failed - fall back to local account (temporary)
         // This keeps the app working while server integration is being fixed
         debugPrint('Server validation failed, using local Google account');
+        debugPrint(
+          'Response isSuccess: ${response.isSuccess}, error: ${response.error?.message}, statusCode: ${response.error?.statusCode}',
+        );
         final storage = await StorageService.getInstance();
         await storage.setString(
           StorageKeys.authToken,
