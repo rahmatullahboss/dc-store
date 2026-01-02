@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Link, useRouter } from "@/i18n/routing";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -37,6 +37,11 @@ import { useSession } from "@/lib/auth-client";
 import { formatPrice, siteConfig } from "@/lib/config";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { 
+  fbEvents, 
+  gaEvents, 
+  clarityEvents 
+} from "@/components/analytics";
 
 // Load Stripe
 const stripePromise = loadStripe(
@@ -161,6 +166,28 @@ export default function CheckoutPage() {
     ? 0 
     : siteConfig.shipping.defaultShippingCost;
   const total = subtotal + shippingCost;
+  
+  // Track when user reaches checkout page (for abandoned cart tracking)
+  const hasTrackedCheckout = useRef(false);
+  useEffect(() => {
+    // Only track once per session when items exist
+    if (items.length > 0 && !hasTrackedCheckout.current) {
+      hasTrackedCheckout.current = true;
+      
+      const productIds = items.map(item => item.productId);
+      
+      // Facebook Pixel - InitiateCheckout
+      fbEvents.initiateCheckout(productIds, items.length, subtotal);
+      
+      // Google Analytics 4 - begin_checkout
+      gaEvents.beginCheckout(subtotal, items.length);
+      
+      // Microsoft Clarity - custom event
+      clarityEvents.event("begin_checkout");
+      clarityEvents.setTag("cart_value", subtotal.toString());
+      clarityEvents.setTag("cart_items", items.length.toString());
+    }
+  }, [items, subtotal]);
 
   // Fetch and pre-fill form with user profile data
   useEffect(() => {

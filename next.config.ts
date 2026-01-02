@@ -109,6 +109,26 @@ const nextConfig: NextConfig = {
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
           },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              // Scripts: self + analytics + payment
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://www.clarity.ms https://js.stripe.com",
+              // Styles: self + inline for UI components
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              // Images: self + analytics pixels + CDNs
+              "img-src 'self' data: blob: https: http:",
+              // Fonts: self + Google Fonts
+              "font-src 'self' https://fonts.gstatic.com",
+              // Connect: APIs + analytics endpoints
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://clarity.ms https://www.clarity.ms https://api.stripe.com https://*.cloudinary.com",
+              // Frames: Stripe payment
+              "frame-src 'self' https://js.stripe.com https://www.facebook.com",
+              // Workers for service workers
+              "worker-src 'self' blob:",
+            ].join("; "),
+          },
         ],
       },
     ];
