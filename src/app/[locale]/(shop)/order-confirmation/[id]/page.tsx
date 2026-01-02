@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { FBPurchase } from "@/components/analytics/fb-purchase";
+import { GAPurchase } from "@/components/analytics/ga-purchase";
 
 // Force dynamic rendering for Cloudflare context
 export const dynamic = "force-dynamic";
@@ -51,6 +52,19 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
         productIds={order.items?.map((item) => item.productId) || []}
         numItems={order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
         value={order.total}
+      />
+      
+      {/* Google Analytics 4 + Clarity Purchase Tracking */}
+      <GAPurchase
+        orderId={order.id}
+        value={order.total}
+        shipping={order.shippingCost || 0}
+        items={order.items?.map((item) => ({
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        }))}
       />
 
       {/* Confetti Background Effect */}
