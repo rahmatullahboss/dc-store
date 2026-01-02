@@ -61,6 +61,9 @@ GOOGLE_CLIENT_ID = "46787300862-ev3ra7q0t5e1jrr1jal8tas61p33v9hr.apps.googleuser
 GOOGLE_IOS_CLIENT_ID = "46787300862-lo0fvlgsg534qul73adhk8m2aedmv8e8.apps.googleusercontent.com"
 # Android client ID (client_type: 1) for com.dcstore.mobile_app
 GOOGLE_ANDROID_CLIENT_ID = "46787300862-bcl3nmgqhkhk5082ds6to6mspeh8srv1.apps.googleusercontent.com"
+# Analytics & Tracking
+NEXT_PUBLIC_MICROSOFT_CLARITY_ID = "uuwbz0s2cv"
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID = "G-6EGKHYGS5J"
 
 # Secrets (set via: npx wrangler secret put SECRET_NAME)
 # - BETTER_AUTH_SECRET
