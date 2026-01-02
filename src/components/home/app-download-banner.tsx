@@ -1,16 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Smartphone, Apple, Download, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Smartphone, Apple, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 // GitHub Releases download URLs
 const ANDROID_APK_URL = "https://github.com/rahmatullahboss/dc-store/releases/download/v1.0.0/dc-store-arm64.apk";
-const ANDROID_LEGACY_APK_URL = "https://github.com/rahmatullahboss/dc-store/releases/download/v1.0.0/dc-store-armv7.apk";
 
 export function AppDownloadBanner() {
-  const [showAndroidOptions, setShowAndroidOptions] = useState(false);
   const t = useTranslations("AppDownload");
 
   return (
@@ -23,76 +20,51 @@ export function AppDownloadBanner() {
         </div>
 
         <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
-          {/* Phone Icon */}
-          <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-primary/20 rounded-2xl flex items-center justify-center">
-            <Smartphone className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+          {/* App Icon */}
+          <div className="flex-shrink-0 relative w-28 h-28 sm:w-36 sm:h-36 hover:scale-105 transition-transform duration-300">
+             {/* eslint-disable-next-line @next/next/no-img-element */}
+             <img 
+               src="/images/mobile-app-icon.png" 
+               alt="DC Store App" 
+               className="w-full h-full object-contain drop-shadow-2xl"
+             />
           </div>
 
           {/* Text Content */}
-          <div className="flex-1 text-center sm:text-left">
-            <h3 className="text-xl sm:text-2xl font-bold mb-2">
+          <div className="flex-1 text-center sm:text-left z-10">
+            <h3 className="text-xl sm:text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
               {t("title")}
             </h3>
-            <p className="text-muted-foreground text-sm sm:text-base">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 max-w-lg">
               {t("description")}
             </p>
-          </div>
 
-          {/* Download Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Android Download */}
-            <div className="relative">
+            {/* Download Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
+              <a
+                href={ANDROID_APK_URL}
+                // download="dc-store.apk" // Let browser handle filename from headers or URL
+                className="group relative inline-flex items-center justify-center gap-2 px-8 py-3 font-semibold text-white transition-all duration-200 bg-[#3DDC84] hover:bg-[#32c074] rounded-xl shadow-lg hover:shadow-[#3DDC84]/30 hover:-translate-y-0.5"
+              >
+                <Smartphone className="w-5 h-5 transition-transform group-hover:rotate-12" />
+                <span>{t("android")}</span>
+                <Download className="w-4 h-4 ml-1 opacity-70" />
+              </a>
+
+              {/* iOS - Coming Soon */}
               <Button
                 size="lg"
-                className="bg-[#3DDC84] hover:bg-[#32c074] text-black font-semibold rounded-xl px-6 gap-2 w-full sm:w-auto"
-                onClick={() => setShowAndroidOptions(!showAndroidOptions)}
+                variant="outline"
+                className="rounded-xl px-8 gap-2 opacity-60 cursor-not-allowed hover:bg-transparent"
+                disabled
               >
-                <Download className="w-5 h-5" />
-                {t("android")}
-                <ChevronDown className={`w-4 h-4 transition-transform ${showAndroidOptions ? 'rotate-180' : ''}`} />
+                <Apple className="w-5 h-5" />
+                {t("ios")}
+                <span className="text-xs bg-muted px-2 py-0.5 rounded-full border border-border">{t("comingSoon")}</span>
               </Button>
-              
-              {/* Android Dropdown */}
-              {showAndroidOptions && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-xl shadow-lg overflow-hidden z-20">
-                  <a
-                    href={ANDROID_APK_URL}
-                    download
-                    className="flex items-center gap-2 px-4 py-3 hover:bg-muted transition-colors"
-                  >
-                    <Smartphone className="w-4 h-4" />
-                    <div>
-                      <div className="font-medium text-sm">{t("modernPhones")}</div>
-                      <div className="text-xs text-muted-foreground">{t("recommended")}</div>
-                    </div>
-                  </a>
-                  <a
-                    href={ANDROID_LEGACY_APK_URL}
-                    download
-                    className="flex items-center gap-2 px-4 py-3 hover:bg-muted transition-colors border-t"
-                  >
-                    <Smartphone className="w-4 h-4" />
-                    <div>
-                      <div className="font-medium text-sm">{t("olderPhones")}</div>
-                      <div className="text-xs text-muted-foreground">{t("legacy")}</div>
-                    </div>
-                  </a>
-                </div>
-              )}
             </div>
-
-            {/* iOS - Coming Soon */}
-            <Button
-              size="lg"
-              variant="outline"
-              className="rounded-xl px-6 gap-2 opacity-60 cursor-not-allowed"
-              disabled
-            >
-              <Apple className="w-5 h-5" />
-              {t("ios")}
-              <span className="text-xs bg-muted px-2 py-0.5 rounded-full">{t("comingSoon")}</span>
-            </Button>
           </div>
+          
         </div>
       </div>
     </section>
