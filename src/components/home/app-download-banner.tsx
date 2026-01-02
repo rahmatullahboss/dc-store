@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Smartphone, Apple, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-// Cloudinary Raw Download URLs
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dpnccgsja";
-const ANDROID_APK_URL = `https://res.cloudinary.com/${CLOUD_NAME}/raw/upload/mobile_app/dc-store-arm64.apk`;
+// Vercel Blob Download URL (set after first CI run)
+const ANDROID_APK_URL = process.env.NEXT_PUBLIC_APK_URL || "https://mz7q7adki8rkadux.public.blob.vercel-storage.com/dc-store-arm64.apk";
 
 export function AppDownloadBanner() {
   const t = useTranslations("AppDownload");

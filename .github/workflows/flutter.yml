@@ -111,48 +111,38 @@ jobs:
           VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: "3.x"
+          node-version: "20"
 
-      - name: Install dependencies
-        run: pip install cloudinary
-
-      - name: Upload to Cloudinary
+      - name: Upload to Vercel Blob
         env:
-          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
         run: |
-          python -c "
-          import cloudinary
-          import cloudinary.uploader
-          import os
+          npm install @vercel/blob
+          node -e "
+          const { put } = require('@vercel/blob');
+          const fs = require('fs');
 
-          cloudinary.config(
-            cloud_name = os.environ['CLOUDINARY_CLOUD_NAME'],
-            api_key = os.environ['CLOUDINARY_API_KEY'],
-            api_secret = os.environ['CLOUDINARY_API_SECRET'],
-            secure = True
-          )
+          async function upload() {
+            console.log('Uploading dc-store-arm64.apk...');
+            const arm64 = fs.readFileSync('build/app/outputs/flutter-apk/dc-store-arm64.apk');
+            const result1 = await put('dc-store-arm64.apk', arm64, { 
+              access: 'public',
+              addRandomSuffix: false
+            });
+            console.log('ARM64 uploaded:', result1.url);
 
-          print('Uploading dc-store-arm64.apk...')
-          cloudinary.uploader.upload('build/app/outputs/flutter-apk/dc-store-arm64.apk', 
-            resource_type = 'raw', 
-            public_id = 'mobile_app/dc-store-arm64.apk',
-            overwrite = True,
-            unique_filename = False,
-            use_filename = True
-          )
+            console.log('Uploading dc-store-armv7.apk...');
+            const armv7 = fs.readFileSync('build/app/outputs/flutter-apk/dc-store-armv7.apk');
+            const result2 = await put('dc-store-armv7.apk', armv7, { 
+              access: 'public',
+              addRandomSuffix: false
+            });
+            console.log('ARMv7 uploaded:', result2.url);
 
-          print('Uploading dc-store-armv7.apk...')
-          cloudinary.uploader.upload('build/app/outputs/flutter-apk/dc-store-armv7.apk', 
-            resource_type = 'raw', 
-            public_id = 'mobile_app/dc-store-armv7.apk',
-            overwrite = True,
-            unique_filename = False,
-            use_filename = True
-          )
-          print('Upload complete!')
+            console.log('Upload complete!');
+          }
+          upload();
           "
