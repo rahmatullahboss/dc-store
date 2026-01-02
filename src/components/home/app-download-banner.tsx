@@ -5,9 +5,9 @@ import { Smartphone, Apple, Download, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-// TODO: Replace these URLs with your Cloudflare R2 URLs after uploading
-const ANDROID_APK_URL = "/downloads/dc-store.apk"; // arm64-v8a version
-const ANDROID_LEGACY_APK_URL = "/downloads/dc-store-legacy.apk"; // armeabi-v7a for older phones
+// GitHub Releases download URLs
+const ANDROID_APK_URL = "https://github.com/rahmatullahboss/dc-store/releases/download/v1.0.0/dc-store-arm64.apk";
+const ANDROID_LEGACY_APK_URL = "https://github.com/rahmatullahboss/dc-store/releases/download/v1.0.0/dc-store-armv7.apk";
 
 export function AppDownloadBanner() {
   const [showAndroidOptions, setShowAndroidOptions] = useState(false);
