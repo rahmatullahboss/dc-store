@@ -91,7 +91,7 @@ export function Header() {
         {/* Logo - Centered on mobile */}
         <Link href="/" className="flex items-center gap-2 flex-1 justify-center md:flex-none md:justify-start md:mr-6">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo.png" alt="DC Store" className="h-8 w-8 object-contain" />
+          <img src="https://res.cloudinary.com/dpnccgsja/image/upload/f_auto,q_auto,w_64/dc-store/logo" alt="DC Store" className="h-8 w-8 object-contain" />
           <span className="text-xl font-bold tracking-tight">
             {siteConfig.name}
           </span>

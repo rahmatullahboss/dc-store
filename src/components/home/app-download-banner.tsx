@@ -24,7 +24,7 @@ export function AppDownloadBanner() {
           <div className="flex-shrink-0 relative w-28 h-28 sm:w-36 sm:h-36 hover:scale-105 transition-transform duration-300">
              {/* eslint-disable-next-line @next/next/no-img-element */}
              <img 
-               src="/images/logo.png" 
+               src="https://res.cloudinary.com/dpnccgsja/image/upload/f_auto,q_auto,w_288/dc-store/logo" 
                alt="DC Store App" 
                className="w-full h-full object-contain drop-shadow-2xl"
              />
