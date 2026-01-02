@@ -44,3 +44,6 @@ export function cloudinaryLoader({ src, width, quality = 80 }: CloudinaryLoaderP
   // Default: assume it's a Cloudinary public_id
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto,w_${width}/${src}`;
 }
+
+// Default export required by Next.js for custom image loaders
+export default cloudinaryLoader;

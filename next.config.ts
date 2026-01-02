@@ -115,8 +115,8 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Scripts: self + analytics + payment
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://www.clarity.ms https://js.stripe.com",
+              // Scripts: self + analytics + payment + cloudflare
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://www.clarity.ms https://js.stripe.com https://static.cloudflareinsights.com",
               // Styles: self + inline for UI components
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Images: self + analytics pixels + CDNs
