@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Smartphone, Apple, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-// GitHub Releases download URLs
-const ANDROID_APK_URL = "https://github.com/rahmatullahboss/dc-store-releases/releases/download/v1.0.0/dc-store-arm64.apk";
+// Cloudinary Raw Download URLs
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dch1rxhlo"; // Fallback to avoid crash if env missing, but user should set it
+const ANDROID_APK_URL = `https://res.cloudinary.com/${CLOUD_NAME}/raw/upload/mobile_app/dc-store-arm64.apk`;
 
 export function AppDownloadBanner() {
   const t = useTranslations("AppDownload");

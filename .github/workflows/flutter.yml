@@ -103,32 +103,51 @@ jobs:
           VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Release to GitHub
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: DC Store v${{ steps.version.outputs.version }}
-          body: |
-            ## 📱 DC Store Android App
+          python-version: "3.x"
 
-            ### Download APK:
-            - **[dc-store-arm64.apk](https://github.com/${{ github.repository_owner }}/dc-store-releases/releases/download/v${{ steps.version.outputs.version }}/dc-store-arm64.apk)** - Recommended for most devices
-            - **[dc-store-armv7.apk](https://github.com/${{ github.repository_owner }}/dc-store-releases/releases/download/v${{ steps.version.outputs.version }}/dc-store-armv7.apk)** - For older devices
+      - name: Install dependencies
+        run: pip install cloudinary
 
-            ### Installation:
-            1. Download the APK file
-            2. Enable "Install from unknown sources" if prompted
-            3. Install and enjoy!
-          files: |
-            mobile_app/build/app/outputs/flutter-apk/dc-store-arm64.apk
-            mobile_app/build/app/outputs/flutter-apk/dc-store-armv7.apk
-          token: ${{ secrets.PUBLIC_REPO_TOKEN }}
-          repository: ${{ github.repository_owner }}/dc-store-releases
-          draft: false
-          prerelease: false
+      - name: Upload to Cloudinary
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+        run: |
+          python -c "
+          import cloudinary
+          import cloudinary.uploader
+          import os
+
+          cloudinary.config(
+            cloud_name = os.environ['CLOUDINARY_CLOUD_NAME'],
+            api_key = os.environ['CLOUDINARY_API_KEY'],
+            api_secret = os.environ['CLOUDINARY_API_SECRET'],
+            secure = True
+          )
+
+          print('Uploading dc-store-arm64.apk...')
+          cloudinary.uploader.upload('mobile_app/build/app/outputs/flutter-apk/dc-store-arm64.apk', 
+            resource_type = 'raw', 
+            public_id = 'mobile_app/dc-store-arm64.apk',
+            overwrite = True,
+            unique_filename = False,
+            use_filename = True
+          )
+
+          print('Uploading dc-store-armv7.apk...')
+          cloudinary.uploader.upload('mobile_app/build/app/outputs/flutter-apk/dc-store-armv7.apk', 
+            resource_type = 'raw', 
+            public_id = 'mobile_app/dc-store-armv7.apk',
+            overwrite = True,
+            unique_filename = False,
+            use_filename = True
+          )
+          print('Upload complete!')
+          "
 
   # ═══════════════════════════════════════════════════════════════
   # BUILD iOS
