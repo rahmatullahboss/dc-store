@@ -35,34 +35,34 @@ export function AppDownloadBanner() {
             <h3 className="text-xl sm:text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
               {t("title")}
             </h3>
-            <p className="text-muted-foreground text-sm sm:text-base mb-6 max-w-lg">
+            <p className="text-muted-foreground text-sm sm:text-base mb-0 max-w-lg">
               {t("description")}
             </p>
+          </div>
 
-            {/* Download Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
-              <a
-                href={ANDROID_APK_URL}
-                // download="dc-store.apk" // Let browser handle filename from headers or URL
-                className="group relative inline-flex items-center justify-center gap-2 px-8 py-3 font-semibold text-white transition-all duration-200 bg-[#3DDC84] hover:bg-[#32c074] rounded-xl shadow-lg hover:shadow-[#3DDC84]/30 hover:-translate-y-0.5"
-              >
-                <Smartphone className="w-5 h-5 transition-transform group-hover:rotate-12" />
-                <span>{t("android")}</span>
-                <Download className="w-4 h-4 ml-1 opacity-70" />
-              </a>
+          {/* Download Buttons */}
+          <div className="flex flex-col gap-3 justify-center">
+            <a
+              href={ANDROID_APK_URL}
+              // download="dc-store.apk" // Let browser handle filename from headers or URL
+              className="group relative inline-flex items-center justify-center gap-2 px-6 py-2.5 font-semibold text-white transition-all duration-200 bg-[#3DDC84] hover:bg-[#32c074] rounded-xl shadow-lg hover:shadow-[#3DDC84]/30 hover:-translate-y-0.5"
+            >
+              <Smartphone className="w-5 h-5 transition-transform group-hover:rotate-12" />
+              <span>{t("android")}</span>
+              <Download className="w-4 h-4 ml-1 opacity-70" />
+            </a>
 
-              {/* iOS - Coming Soon */}
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-xl px-8 gap-2 opacity-60 cursor-not-allowed hover:bg-transparent"
-                disabled
-              >
-                <Apple className="w-5 h-5" />
-                {t("ios")}
-                <span className="text-xs bg-muted px-2 py-0.5 rounded-full border border-border">{t("comingSoon")}</span>
-              </Button>
-            </div>
+            {/* iOS - Coming Soon */}
+            <Button
+              size="lg"
+              variant="outline"
+              className="rounded-xl px-6 gap-2 opacity-60 cursor-not-allowed hover:bg-transparent"
+              disabled
+            >
+              <Apple className="w-5 h-5" />
+              {t("ios")}
+              <span className="text-xs bg-muted px-2 py-0.5 rounded-full border border-border">{t("comingSoon")}</span>
+            </Button>
           </div>
           
         </div>
