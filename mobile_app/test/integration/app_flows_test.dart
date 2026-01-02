@@ -1,3 +1,10 @@
+// These are integration tests that require a real device/emulator to run.
+// They should be run using: flutter test integration_test/
+// Skip for regular unit test runs.
+
+@Skip('Integration tests require device/emulator. Run with: flutter drive')
+library app_flows_test;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';

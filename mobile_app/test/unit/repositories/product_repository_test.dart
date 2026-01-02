@@ -29,6 +29,12 @@ void main() {
   late MockProductLocalDataSource mockLocalDataSource;
   late MockNetworkInfo mockNetworkInfo;
 
+  // Register fallback values for mocktail
+  setUpAll(() {
+    registerFallbackValue(ProductFactory.create());
+    registerFallbackValue(ProductFactory.createList(1));
+  });
+
   setUp(() {
     mockRemoteDataSource = MockProductRemoteDataSource();
     mockLocalDataSource = MockProductLocalDataSource();
