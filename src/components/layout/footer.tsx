@@ -41,7 +41,9 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4 text-center md:text-left">
-            <Link href="/" className="text-xl font-bold inline-block">
+            <Link href="/" className="text-xl font-bold inline-flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/logo.png" alt="DC Store" className="h-8 w-8 object-contain" />
               {siteConfig.name}
             </Link>
             <p className="text-sm text-muted-foreground">
