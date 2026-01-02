@@ -5,7 +5,7 @@ import { Smartphone, Apple, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 // GitHub Releases download URLs
-const ANDROID_APK_URL = "https://github.com/rahmatullahboss/dc-store/releases/download/v1.0.0/dc-store-arm64.apk";
+const ANDROID_APK_URL = "https://github.com/rahmatullahboss/dc-store-releases/releases/download/v1.0.0/dc-store-arm64.apk";
 
 export function AppDownloadBanner() {
   const t = useTranslations("AppDownload");
