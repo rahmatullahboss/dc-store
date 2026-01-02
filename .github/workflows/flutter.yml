@@ -130,7 +130,8 @@ jobs:
             const arm64 = fs.readFileSync('build/app/outputs/flutter-apk/dc-store-arm64.apk');
             const result1 = await put('dc-store-arm64.apk', arm64, { 
               access: 'public',
-              addRandomSuffix: false
+              addRandomSuffix: false,
+              allowOverwrite: true
             });
             console.log('ARM64 uploaded:', result1.url);
 
@@ -138,7 +139,8 @@ jobs:
             const armv7 = fs.readFileSync('build/app/outputs/flutter-apk/dc-store-armv7.apk');
             const result2 = await put('dc-store-armv7.apk', armv7, { 
               access: 'public',
-              addRandomSuffix: false
+              addRandomSuffix: false,
+              allowOverwrite: true
             });
             console.log('ARMv7 uploaded:', result2.url);
 
