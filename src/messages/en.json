@@ -919,5 +919,16 @@
       "payment": { "title": "Secure Payment", "desc": "100% secure payment gateway" },
       "returns": { "title": "Easy Returns", "desc": "7-day return policy" }
     }
+  },
+  "AppDownload": {
+    "title": "Download Our App",
+    "description": "Shop faster, get exclusive deals, and track your orders on the go!",
+    "android": "Android",
+    "ios": "iOS",
+    "comingSoon": "Soon",
+    "modernPhones": "Modern Phones (64-bit)",
+    "recommended": "Recommended for most phones",
+    "olderPhones": "Older Phones (32-bit)",
+    "legacy": "For phones older than 2015"
   }
 }

@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/home/hero-section";
 import { CategoryChips } from "@/components/home/category-chips";
 import { PromoBanner } from "@/components/home/promo-banner";
 import { TrendingSection } from "@/components/home/trending-section";
+import { AppDownloadBanner } from "@/components/home/app-download-banner";
 
 import { getTranslations } from "next-intl/server";
 
@@ -34,6 +35,9 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* App Download Banner */}
+      <AppDownloadBanner />
 
       {/* Category Chips */}
       <CategoryChips />
