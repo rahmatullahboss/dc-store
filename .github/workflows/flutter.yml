@@ -84,7 +84,12 @@ jobs:
       - name: Clean build
         run: flutter clean && flutter pub get
 
+      - name: Stop Gradle Daemon
+        run: cd android && ./gradlew --stop || true
+
       - name: Build Split APKs
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.vfs.watch=false"
         run: flutter build apk --release --split-per-abi
 
       - name: Rename APKs for clarity
@@ -133,7 +138,7 @@ jobs:
           )
 
           print('Uploading dc-store-arm64.apk...')
-          cloudinary.uploader.upload('mobile_app/build/app/outputs/flutter-apk/dc-store-arm64.apk', 
+          cloudinary.uploader.upload('build/app/outputs/flutter-apk/dc-store-arm64.apk', 
             resource_type = 'raw', 
             public_id = 'mobile_app/dc-store-arm64.apk',
             overwrite = True,
@@ -142,7 +147,7 @@ jobs:
           )
 
           print('Uploading dc-store-armv7.apk...')
-          cloudinary.uploader.upload('mobile_app/build/app/outputs/flutter-apk/dc-store-armv7.apk', 
+          cloudinary.uploader.upload('build/app/outputs/flutter-apk/dc-store-armv7.apk', 
             resource_type = 'raw', 
             public_id = 'mobile_app/dc-store-armv7.apk',
             overwrite = True,
