@@ -120,7 +120,7 @@ jobs:
         env:
           BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
         run: |
-          npm install @vercel/blob
+          npm install @vercel/blob --legacy-peer-deps
           node -e "
           const { put } = require('@vercel/blob');
           const fs = require('fs');
