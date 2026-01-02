@@ -75,7 +75,6 @@ class _AboutScreenState extends State<AboutScreen> {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: WhiteLabelConfig.accentColor,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
@@ -85,10 +84,9 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                 ],
               ),
-              child: const Icon(
-                LucideIcons.shoppingBag,
-                size: 48,
-                color: Colors.white,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Image.asset('assets/images/logo.png', fit: BoxFit.cover),
               ),
             ),
             const SizedBox(height: 20),

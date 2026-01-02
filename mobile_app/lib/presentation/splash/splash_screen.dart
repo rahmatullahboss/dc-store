@@ -304,54 +304,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         final scale = 1.0 + (_pulseController.value * 0.05);
         return Transform.scale(
           scale: scale,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Outer Glow
-              Container(
-                height: outerSize,
-                width: outerSize,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(outerSize * 0.2),
-                  color: primaryColor.withValues(alpha: isDark ? 0.3 : 0.2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withValues(alpha: 0.3),
-                      blurRadius: 40,
-                      spreadRadius: 10,
-                    ),
-                  ],
+          child: Container(
+            height: outerSize,
+            width: outerSize,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(outerSize * 0.2),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withValues(alpha: 0.3),
+                  blurRadius: 40,
+                  spreadRadius: 10,
                 ),
-              ),
-
-              // Logo Box
-              Container(
-                height: innerSize,
-                width: innerSize,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(innerSize * 0.21),
-                  color: primaryColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withValues(alpha: 0.4),
-                      blurRadius: 24,
-                      offset: const Offset(0, 12),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.shopping_bag_rounded,
-                    size: iconSize,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(outerSize * 0.2),
+              child: Image.asset('assets/images/logo.png', fit: BoxFit.contain),
+            ),
           ),
         );
       },
