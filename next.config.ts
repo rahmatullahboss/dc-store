@@ -9,8 +9,10 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  // Image optimization configuration
+  // Image optimization configuration with Cloudinary loader
   images: {
+    loader: "custom",
+    loaderFile: "./src/lib/cloudinary-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
