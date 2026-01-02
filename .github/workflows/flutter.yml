@@ -81,6 +81,9 @@ jobs:
       - name: Decode google-services.json
         run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > android/app/google-services.json
 
+      - name: Clean build
+        run: flutter clean && flutter pub get
+
       - name: Build Split APKs
         run: flutter build apk --release --split-per-abi
 
