@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import type { CartItem } from "@/db/schema";
 import { useTranslations } from "next-intl";
 import { fbEvents } from "@/components/analytics/facebook-pixel";
+import { gaEvents } from "@/components/analytics/google-analytics";
+import { clarityEvents } from "@/components/analytics/microsoft-clarity";
 
 interface AddToCartButtonProps {
   item: {
@@ -50,8 +52,10 @@ export function AddToCartButton({
 
     addItem(cartItem);
 
-    // Track Facebook Pixel AddToCart event
+    // Track analytics events across all platforms
     fbEvents.addToCart(item.id, item.name, item.price);
+    gaEvents.addToCart({ id: item.id, name: item.name, price: item.price, quantity: 1 });
+    clarityEvents.event("add_to_cart");
 
     setIsAdded(true);
 

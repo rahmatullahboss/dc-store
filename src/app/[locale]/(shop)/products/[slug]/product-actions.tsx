@@ -8,6 +8,8 @@ import { useCart } from "@/lib/cart-context";
 import { useRouter } from "@/i18n/routing";
 import type { Product } from "@/db/schema";
 import { fbEvents } from "@/components/analytics/facebook-pixel";
+import { gaEvents } from "@/components/analytics/google-analytics";
+import { clarityEvents } from "@/components/analytics/microsoft-clarity";
 
 interface ProductActionsProps {
   product: Product;
@@ -31,12 +33,10 @@ export function ProductActions({ product }: ProductActionsProps) {
       image: product.featuredImage || undefined,
     });
 
-    // Track Facebook Pixel AddToCart event
-    fbEvents.addToCart(
-      product.id,
-      product.name,
-      product.price * quantity
-    );
+    // Track analytics events across all platforms
+    fbEvents.addToCart(product.id, product.name, product.price * quantity);
+    gaEvents.addToCart({ id: product.id, name: product.name, price: product.price, quantity });
+    clarityEvents.event("add_to_cart");
 
     setTimeout(() => {
       setIsAdding(false);
@@ -57,12 +57,10 @@ export function ProductActions({ product }: ProductActionsProps) {
       image: product.featuredImage || undefined,
     });
 
-    // Track Facebook Pixel InitiateCheckout event
-    fbEvents.initiateCheckout(
-      [product.id],
-      quantity,
-      product.price * quantity
-    );
+    // Track analytics events across all platforms
+    fbEvents.initiateCheckout([product.id], quantity, product.price * quantity);
+    gaEvents.beginCheckout(product.price * quantity, quantity);
+    clarityEvents.event("begin_checkout");
 
     router.push("/checkout");
   };

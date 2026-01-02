@@ -16,6 +16,8 @@ import type { Product } from "@/db/schema";
 import { useTranslations } from "next-intl";
 import { formatPrice } from "@/lib/config";
 import { fbEvents } from "@/components/analytics/facebook-pixel";
+import { gaEvents } from "@/components/analytics/google-analytics";
+import { clarityEvents } from "@/components/analytics/microsoft-clarity";
 
 function SearchContent() {
   const t = useTranslations("Search");
@@ -79,9 +81,11 @@ function SearchContent() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Track Facebook Pixel Search event
+    // Track analytics search events
     if (query.trim()) {
       fbEvents.search(query);
+      gaEvents.search(query);
+      clarityEvents.event("search");
     }
     router.push(`/search?q=${encodeURIComponent(query)}`)
   };
@@ -94,6 +98,10 @@ function SearchContent() {
       quantity: 1,
       image: product.featuredImage || undefined,
     });
+    // Track analytics add to cart events
+    fbEvents.addToCart(product.id, product.name, product.price);
+    gaEvents.addToCart({ id: product.id, name: product.name, price: product.price, quantity: 1 });
+    clarityEvents.event("add_to_cart");
   };
 
   const toggleCategory = (category: string) => {
