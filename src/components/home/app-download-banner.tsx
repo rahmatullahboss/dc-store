@@ -5,7 +5,7 @@ import { Smartphone, Apple, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 // Cloudinary Raw Download URLs
-const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dch1rxhlo"; // Fallback to avoid crash if env missing, but user should set it
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dpnccgsja";
 const ANDROID_APK_URL = `https://res.cloudinary.com/${CLOUD_NAME}/raw/upload/mobile_app/dc-store-arm64.apk`;
 
 export function AppDownloadBanner() {
