@@ -1,6 +1,8 @@
 /// Address Remote Data Source - API calls for user addresses
 library;
 
+import 'package:flutter/foundation.dart';
+
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/exceptions.dart';
@@ -28,7 +30,7 @@ class AddressRemoteDataSource implements AddressRemoteDataSourceBase {
 
     if (!response.isSuccess || response.data == null) {
       // Log the actual error for debugging
-      print(
+      debugPrint(
         'Failed to fetch addresses: ${response.error?.message} (status: ${response.error?.statusCode})',
       );
       throw ServerException(

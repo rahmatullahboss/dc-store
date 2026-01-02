@@ -665,13 +665,13 @@ class _WishlistItem {
   final bool isInStock;
   final int? discountPercent;
 
-  _WishlistItem({
+  const _WishlistItem({
     required this.id,
     required this.name,
     required this.price,
     required this.imageUrl,
-    this.originalPrice,
-    this.isInStock = true,
-    this.discountPercent,
+    required this.originalPrice,
+    required this.isInStock,
+    required this.discountPercent,
   });
 }

@@ -74,6 +74,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
       final data = jsonDecode(response.body) as Map<String, dynamic>;
 
+      if (!mounted) return;
+
       if (data['valid'] == true) {
         setState(() {
           _appliedCoupon = data['code'] as String?;
@@ -98,6 +100,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       toastification.show(
         context: context,
         type: ToastificationType.error,
@@ -105,9 +108,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         autoCloseDuration: const Duration(seconds: 2),
       );
     } finally {
-      setState(() {
-        _isApplyingCoupon = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isApplyingCoupon = false;
+        });
+      }
     }
     _couponController.clear();
   }
