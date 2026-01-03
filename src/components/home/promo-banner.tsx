@@ -1,13 +1,11 @@
-"use client";
-
 import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
-export function PromoBanner() {
-  const t = useTranslations("HomePage.Promo");
+export async function PromoBanner() {
+  const t = await getTranslations("HomePage.Promo");
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-8">

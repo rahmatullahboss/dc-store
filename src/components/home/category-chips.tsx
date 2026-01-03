@@ -1,5 +1,3 @@
-"use client";
-
 import { Link } from "@/i18n/routing";
 import {
   LayoutGrid,
@@ -10,10 +8,10 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
-export function CategoryChips() {
-  const t = useTranslations("HomePage.Categories");
+export async function CategoryChips() {
+  const t = await getTranslations("HomePage.Categories");
 
   const categories = [
     { name: t("all"), icon: LayoutGrid, href: "/products", active: true },
