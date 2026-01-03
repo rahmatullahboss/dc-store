@@ -124,7 +124,7 @@ const nextConfig: NextConfig = {
               // Fonts: self + Google Fonts
               "font-src 'self' https://fonts.gstatic.com",
               // Connect: APIs + analytics endpoints
-              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://clarity.ms https://www.clarity.ms https://api.stripe.com https://*.cloudinary.com",
+              "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://clarity.ms https://www.clarity.ms https://o.clarity.ms https://*.clarity.ms https://api.stripe.com https://*.cloudinary.com",
               // Frames: Stripe payment
               "frame-src 'self' https://js.stripe.com https://www.facebook.com",
               // Workers for service workers
