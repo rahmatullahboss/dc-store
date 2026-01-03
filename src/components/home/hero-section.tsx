@@ -1,11 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export async function HeroSection() {
-  const t = await getTranslations("HomePage.Hero");
+export function HeroSection() {
+  const t = useTranslations("HomePage.Hero");
 
   return (
     <section className="relative z-10 w-full max-w-7xl mx-auto px-4 lg:px-10 py-6 lg:py-8">

@@ -1,12 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Smartphone, Apple, Download } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
 // Vercel Blob Download URL (set after first CI run)
 const ANDROID_APK_URL = process.env.NEXT_PUBLIC_APK_URL || "https://mz7q7adki8rkadux.public.blob.vercel-storage.com/dc-store-arm64.apk";
 
-export async function AppDownloadBanner() {
-  const t = await getTranslations("AppDownload");
+export function AppDownloadBanner() {
+  const t = useTranslations("AppDownload");
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 lg:px-10 py-6">
