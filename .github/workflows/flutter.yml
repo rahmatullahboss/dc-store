@@ -84,12 +84,21 @@ jobs:
       - name: Clean build
         run: flutter clean && flutter pub get
 
-      - name: Stop Gradle Daemon
-        run: cd android && ./gradlew --stop || true
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-cleanup: always
+          add-job-summary: on-failure
+
+      - name: Stop Gradle Daemon and Clean Cache
+        run: |
+          cd android
+          ./gradlew --stop || true
+          rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin || true
 
       - name: Build Split APKs
         env:
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.vfs.watch=false"
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.vfs.watch=false -Dorg.gradle.internal.http.connectionTimeout=120000 -Dorg.gradle.internal.http.socketTimeout=120000"
         run: flutter build apk --release --split-per-abi
 
       - name: Rename APKs for clarity
