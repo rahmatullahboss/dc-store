@@ -7,6 +7,10 @@ compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 account_id = "474078d5f990169d7dadf4e1df83214a"
 
+# Disable esbuild keep_names to fix next-themes "__name is not defined" error
+# Requires Wrangler 4.13.0+ | See: https://opennext.js.org/cloudflare/howtos/keep_names
+keep_names = false
+
 # Custom Domain Route
 routes = [
   { pattern = "store.digitalcare.site", custom_domain = true }
@@ -84,7 +88,3 @@ binding = "ASSETS"
 # Build configuration
 [build]
 command = "npx opennextjs-cloudflare build"
-
-# Disable esbuild keep_names to fix next-themes "__name is not defined" error
-# See: https://opennext.js.org/cloudflare/troubleshooting
-keep_names = false
